@@ -1,4 +1,4 @@
-export type UserRole = 'STUDENT';
+export type UserRole = 'STUDENT' | 'ADMIN';
 
 export interface UserProps {
     id?: string;
@@ -48,8 +48,8 @@ export class User {
     }
 
     public setRole(role: string) {
-        if (role !== 'STUDENT') {
-            throw new Error("O perfil deve ser 'STUDENT'.");
+        if (role !== 'STUDENT' && role !== 'ADMIN') {
+            throw new Error("O perfil deve ser 'STUDENT' ou 'ADMIN'.");
         }
         this._role = role as UserRole;
     }

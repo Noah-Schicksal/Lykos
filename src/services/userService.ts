@@ -6,6 +6,7 @@ interface RequestDTO {
     name: string;
     email: string;
     password: string;//senha crua sem hash
+    role: string;
 }
 
 export class CreateUserService {
@@ -15,7 +16,7 @@ export class CreateUserService {
         this.userRepository = new UserRepository();
     }
 
-    async execute({ name, email, password }: RequestDTO): Promise<User> {
+    async execute({ name, email, password, role }: RequestDTO): Promise<User> {
         //verifica duplicidade (Regra de Aplicação)
         const exists = this.userRepository.findByEmail(email);
         if (exists) {
@@ -33,8 +34,8 @@ export class CreateUserService {
         const newUser = new User({
             name,
             email,
-            password: passwordHash
-            // role é opcional agora e defaulta para STUDENT na entidade
+            password: passwordHash,
+            role: role // passada explicitamente
         });
 
         //salva no banco
