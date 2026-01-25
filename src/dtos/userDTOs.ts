@@ -11,11 +11,6 @@ export interface UpdateUserDTO {
   password?: string;
 }
 
-export interface DeleteUserDTO {
-  userIdToDelete: string;
-  requesterId: string;
-}
-
 export interface UserResponseDTO {
   id: string;
   name: string;

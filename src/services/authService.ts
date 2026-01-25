@@ -10,27 +10,28 @@ export class AuthService {
     this.userRepository = userRepository;
   }
 
-  async login({ email, password }: LoginRequestDTO): Promise<LoginResponseDTO> {
-    //busca o usuário pelo email
+  private async validateCredentials(email: string, password: string) {
     const user = this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error('Email ou senha incorretos.'); // Mensagem genérica por segurança
+      throw new Error('Email ou senha incorretos.');
     }
 
-    //verifica a senha (Hash comparison)
-    // user.password vem do banco (hash), password vem do request (plano)
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
       throw new Error('Email ou senha incorretos.');
     }
 
+    return user;
+  }
+
+  async login({ email, password }: LoginRequestDTO): Promise<LoginResponseDTO> {
+    //busca o usuário pelo email e valida a senha
+    const user = await this.validateCredentials(email, password);
+
     //gera o token jwt
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new Error('Erro interno: JWT_SECRET não definido.');
-    }
+    const secret = process.env.JWT_SECRET!;
 
     const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
 

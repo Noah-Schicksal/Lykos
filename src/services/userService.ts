@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
 import { User } from '../entities/User';
 import { UserRepository } from '../repositories/userRepository';
-import { CreateUserDTO, UpdateUserDTO, DeleteUserDTO } from '../dtos/userDTOs';
+import { CreateUserDTO, UpdateUserDTO } from '../dtos/userDTOs';
+
+const ERROR_USER_NOT_FOUND = 'Usuário não encontrado.';
+const ERROR_EMAIL_ALREADY_EXISTS = 'Este e-mail já está cadastrado';
 
 export class UserService {
   private userRepository: UserRepository;
@@ -14,7 +17,7 @@ export class UserService {
     //verifica duplicidade (Regra de Aplicação)
     const exists = this.userRepository.findByEmail(email);
     if (exists) {
-      throw new Error('Esse email ja esta cadastrado');
+      throw new Error(ERROR_EMAIL_ALREADY_EXISTS);
     }
 
     //valida a senha crua (Regra de Negócio)
@@ -38,23 +41,15 @@ export class UserService {
     return savedUser;
   }
 
-  async delete({ userIdToDelete, requesterId }: DeleteUserDTO): Promise<void> {
-    // Regra de negócio: Usuário só pode deletar a si mesmo.
-    if (userIdToDelete !== requesterId) {
-      throw new Error('Proibido: Você só pode deletar a sua própria conta.');
-    }
-
-    // Verifica se o usuário existe (embora se ele está autenticado, deveria existir, mas é bom garantir)
-    // Como o repositório só tem findByEmail, vamos assumir que o ID veio do token e é válido.
-
-    // Deleta o usuário
-    this.userRepository.delete(userIdToDelete);
+  async delete(userId: string): Promise<void> {
+    // Deleta o usuário (já validado pelo authMiddleware)
+    this.userRepository.delete(userId);
   }
 
   async update(id: string, data: UpdateUserDTO): Promise<User> {
     const user = this.userRepository.findById(id);
     if (!user) {
-      throw new Error('Usuário não encontrado.');
+      throw new Error(ERROR_USER_NOT_FOUND);
     }
 
     if (data.name) {
@@ -65,9 +60,7 @@ export class UserService {
       // Verifica se o email já está em uso por outro usuário
       const userWithEmail = this.userRepository.findByEmail(data.email);
       if (userWithEmail && userWithEmail.id !== id) {
-        throw new Error(
-          'Este email já está sendo utilizado por outro usuário.',
-        );
+        throw new Error(ERROR_EMAIL_ALREADY_EXISTS);
       }
       user.setEmail(data.email);
     }
@@ -92,10 +85,11 @@ export class UserService {
     //salva as alterações de nome/email se houve mudança
     return this.userRepository.update(user);
   }
+
   async findById(id: string): Promise<User> {
     const user = this.userRepository.findById(id);
     if (!user) {
-      throw new Error('Usuário não encontrado.');
+      throw new Error(ERROR_USER_NOT_FOUND);
     }
     return user;
   }
