@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { ApiResponse } from '../utils/apiResponse';
 
 interface TokenPayload {
   id: string;
@@ -27,13 +28,13 @@ export function authMiddleware(
   }
 
   if (!token) {
-    return res.status(401).json({ error: 'Token não fornecido' });
+    return ApiResponse.unauthorized(res, 'Não autorizado');
   }
 
   try {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      throw new Error('Erro interno: JWT_SECRET não definido.');
+      throw new Error('JWT_SECRET não definido');
     }
 
     const decoded = jwt.verify(token, secret);
@@ -48,6 +49,6 @@ export function authMiddleware(
 
     return next();
   } catch (error) {
-    return res.status(401).json({ error: 'Token inválido' });
+    return ApiResponse.unauthorized(res, 'Não autorizado');
   }
 }
