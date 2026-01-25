@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/authService';
 import { ApiResponse } from '../utils/apiResponse';
 import { getCookieOptions } from '../config/cookie';
@@ -10,7 +10,7 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
 
     try {
@@ -24,14 +24,8 @@ export class AuthController {
         result.user,
         'Login realizado com sucesso',
       );
-    } catch (error: any) {
-      // Se for erro de credenciais, retornamos 401 Unauthorized
-      if (error.message === 'Email ou senha incorretos.') {
-        return ApiResponse.unauthorized(res, error.message);
-      }
-
-      // Outros erros
-      return ApiResponse.error(res, error.message);
+    } catch (error) {
+      next(error);
     }
   }
 
