@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/authService';
 import { ApiResponse } from '../utils/apiResponse';
+import { getCookieOptions } from '../config/cookie';
 
 export class AuthController {
   private authService: AuthService;
@@ -15,15 +16,7 @@ export class AuthController {
     try {
       const result = await this.authService.login({ email, password });
 
-      // Define o cookie httpOnly com o token
-      const isProduction = process.env.NODE_ENV === 'production';
-
-      res.cookie('token', result.token, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'strict' : 'lax',
-        maxAge: 3600000, // 1 hora
-      });
+      res.cookie('token', result.token, getCookieOptions());
 
       // Retorna apenas os dados do usuário (token não vai no body)
       return ApiResponse.success(
@@ -43,11 +36,12 @@ export class AuthController {
   }
 
   async logout(req: Request, res: Response) {
-    // Limpa o cookie httpOnly
+    const { httpOnly, secure, sameSite } = getCookieOptions();
+
     res.clearCookie('token', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+      httpOnly,
+      secure,
+      sameSite,
     });
 
     return ApiResponse.success(res, null, 'Logout realizado com sucesso');
