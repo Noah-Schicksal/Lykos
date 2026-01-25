@@ -1,11 +1,11 @@
-export type UserRole = 'ADMIN' | 'STUDENT';
+export type UserRole = 'STUDENT';
 
 export interface UserProps {
     id?: string;
     name: string;
     email: string;
     password: string; //senha em hash
-    role: string;
+    role?: string;
     createdAt?: Date;
 }
 
@@ -24,7 +24,7 @@ export class User {
 
         this.setName(props.name);
         this.setEmail(props.email);
-        this.setRole(props.role);
+        this.setRole(props.role || 'STUDENT');
 
         // O construtor assume que o que entra aqui JÁ É O HASH
         this._password = props.password;
@@ -48,8 +48,8 @@ export class User {
     }
 
     public setRole(role: string) {
-        if (role !== 'ADMIN' && role !== 'STUDENT') {
-            throw new Error("Regra de Negócio: O perfil deve ser 'ADMIN' ou 'STUDENT'.");
+        if (role !== 'STUDENT') {
+            throw new Error("O perfil deve ser 'STUDENT'.");
         }
         this._role = role as UserRole;
     }
@@ -80,3 +80,4 @@ export class User {
         };
     }
 }
+

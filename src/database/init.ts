@@ -1,7 +1,7 @@
 import db from './connection';
 
 export const initializeDatabase = () => {
-    db.exec(`
+  db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -11,5 +11,5 @@ export const initializeDatabase = () => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
-    console.log("✅ Banco de dados inicializado.");
+  console.log("Banco de dados inicializado.");
 };

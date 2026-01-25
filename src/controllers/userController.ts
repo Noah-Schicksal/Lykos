@@ -3,12 +3,12 @@ import { CreateUserService } from '../services/userService';
 
 export class UserController {
     async register(req: Request, res: Response) {
-        const { name, email, password, role } = req.body;
+        const { name, email, password } = req.body;
 
         const service = new CreateUserService();
 
         try {
-            const user = await service.execute({ name, email, password, role });
+            const user = await service.execute({ name, email, password });
 
             // Resposta limpa usando o método da entidade
             return res.status(201).json(user.toJSON());
