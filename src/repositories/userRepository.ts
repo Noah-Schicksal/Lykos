@@ -47,4 +47,9 @@ export class UserRepository {
             createdAt: new Date(row.created_at)
         });
     }
+
+    delete(id: string): void {
+        const stmt = db.prepare('DELETE FROM users WHERE id = ?');
+        stmt.run(id);
+    }
 }

@@ -14,12 +14,8 @@ app.use(router);
 // Inicializa o banco antes de subir o servidor
 initializeDatabase();
 
-
-
 export { app };
 
-if (process.env.NODE_ENV !== 'test') {
-    app.listen(PORT, () => {
-        console.log(` Server running on port ${PORT}`);
-    });
-}
+app.listen(PORT, () => {
+    console.log(` Server running on port ${PORT}`);
+});

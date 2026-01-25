@@ -26,6 +26,9 @@
                                     "    pm.expect(jsonData).to.have.property('name');",
                                     "    pm.expect(jsonData).to.have.property('email');",
                                     "    pm.expect(jsonData.role).to.eql('STUDENT');",
+                                    "    pm.collectionVariables.set(\"student_id\", jsonData.id);",
+                                    "    pm.collectionVariables.set(\"student_email\", jsonData.email);",
+                                    "    pm.collectionVariables.set(\"student_password\", \"Password123!\");",
                                     "});"
                                 ],
                                 "type": "text/javascript"
@@ -124,6 +127,7 @@
                                     "    var jsonData = pm.response.json();",
                                     "    pm.expect(jsonData).to.have.property('token');",
                                     "    pm.expect(jsonData).to.have.property('user');",
+                                    "    pm.collectionVariables.set(\"auth_token\", jsonData.token);",
                                     "});"
                                 ],
                                 "type": "text/javascript"
@@ -155,6 +159,88 @@
                         }
                     },
                     "response": []
+                },
+                {
+                    "name": "Delete Self",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 204\", function () {",
+                                    "    pm.response.to.have.status(204);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{auth_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/{{student_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "{{student_id}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Other (Should Fail)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test(\"Status code is 403\", function () {",
+                                    "    pm.response.to.have.status(403);",
+                                    "});"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{auth_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/users/wrong-id",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "users",
+                                "wrong-id"
+                            ]
+                        }
+                    },
+                    "response": []
                 }
             ]
         }
@@ -163,6 +249,16 @@
         {
             "key": "base_url",
             "value": "http://localhost:3333",
+            "type": "string"
+        },
+        {
+            "key": "student_id",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "",
             "type": "string"
         }
     ]

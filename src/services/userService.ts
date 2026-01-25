@@ -2,21 +2,26 @@ import bcrypt from 'bcrypt';
 import { User } from '../entities/User';
 import { UserRepository } from '../repositories/userRepository';
 
-interface RequestDTO {
+interface CreateUserDTO {
     name: string;
     email: string;
     password: string;//senha crua sem hash
     role: string;
 }
 
-export class CreateUserService {
+interface DeleteUserDTO {
+    userIdToDelete: string;
+    requesterId: string;
+}
+
+export class UserService {
     private userRepository: UserRepository;
 
     constructor() {
         this.userRepository = new UserRepository();
     }
 
-    async execute({ name, email, password, role }: RequestDTO): Promise<User> {
+    async create({ name, email, password, role }: CreateUserDTO): Promise<User> {
         //verifica duplicidade (Regra de Aplicação)
         const exists = this.userRepository.findByEmail(email);
         if (exists) {
@@ -42,5 +47,18 @@ export class CreateUserService {
         const savedUser = this.userRepository.save(newUser);
 
         return savedUser;
+    }
+
+    async delete({ userIdToDelete, requesterId }: DeleteUserDTO): Promise<void> {
+        // Regra de negócio: Usuário só pode deletar a si mesmo.
+        if (userIdToDelete !== requesterId) {
+            throw new Error("Proibido: Você só pode deletar a sua própria conta.");
+        }
+
+        // Verifica se o usuário existe (embora se ele está autenticado, deveria existir, mas é bom garantir)
+        // Como o repositório só tem findByEmail, vamos assumir que o ID veio do token e é válido.
+
+        // Deleta o usuário
+        this.userRepository.delete(userIdToDelete);
     }
 }
