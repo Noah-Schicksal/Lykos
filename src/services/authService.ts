@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repositories/userRepository';
 import { LoginRequestDTO, LoginResponseDTO } from '../dtos/authDTOs';
+import { ApplicationError } from './userService';
 
 export class AuthService {
   private userRepository: UserRepository;
@@ -14,25 +15,22 @@ export class AuthService {
     const user = this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error('Email ou senha incorretos.');
+      throw new ApplicationError('Email ou senha incorretos');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      throw new Error('Email ou senha incorretos.');
+      throw new ApplicationError('Email ou senha incorretos');
     }
 
     return user;
   }
 
   async login({ email, password }: LoginRequestDTO): Promise<LoginResponseDTO> {
-    //busca o usuário pelo email e valida a senha
     const user = await this.validateCredentials(email, password);
 
-    //gera o token jwt
     const secret = process.env.JWT_SECRET!;
-
     const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
 
     const token = jwt.sign(
