@@ -1,18 +1,7 @@
 import bcrypt from 'bcrypt';
 import { User } from '../entities/User';
 import { UserRepository } from '../repositories/userRepository';
-
-interface CreateUserDTO {
-  name: string;
-  email: string;
-  password: string; //senha crua sem hash
-  role: string;
-}
-
-interface DeleteUserDTO {
-  userIdToDelete: string;
-  requesterId: string;
-}
+import { CreateUserDTO, UpdateUserDTO, DeleteUserDTO } from '../dtos/userDTOs';
 
 export class UserService {
   private userRepository: UserRepository;
@@ -110,10 +99,4 @@ export class UserService {
     }
     return user;
   }
-}
-
-interface UpdateUserDTO {
-  name?: string;
-  email?: string;
-  password?: string;
 }

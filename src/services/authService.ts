@@ -1,21 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserRepository } from '../repositories/userRepository';
-
-interface LoginRequestDTO {
-  email: string;
-  password: string; // senha crua
-}
-
-interface LoginResponseDTO {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: string;
-  };
-  token: string;
-}
+import { LoginRequestDTO, LoginResponseDTO } from '../dtos/authDTOs';
 
 export class AuthService {
   private userRepository: UserRepository;
