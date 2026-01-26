@@ -1,7 +1,30 @@
 import db from '../database/connection';
 import { Enrollment } from '../entities/Enrollment';
 
+import { randomUUID } from 'crypto';
+
 export class EnrollmentRepository {
+
+    // Cria uma nova matrícula
+    save(enrollment: Enrollment): Enrollment {
+        const id = randomUUID();
+        const stmt = db.prepare(`
+            INSERT INTO enrollments (id, user_id, course_id, enrolled_at)
+            VALUES (?, ?, ?, ?)
+        `);
+
+        stmt.run(
+            id,
+            enrollment.userId,
+            enrollment.courseId,
+            enrollment.enrolledAt.toISOString()
+        );
+
+        return new Enrollment({
+            ...enrollment.toJSON(),
+            id: id
+        });
+    }
 
     // Retorna as matrículas de um aluno
     findStudentEnrollments(userId: string): Enrollment[] {

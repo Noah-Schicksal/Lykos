@@ -10,7 +10,7 @@ interface PaginationMeta {
 interface SuccessResponseData<T = any> {
   message?: string;
   data: T;
-  meta?: PaginationMeta;
+  meta?: any;
 }
 
 interface ErrorResponseData {
@@ -23,10 +23,15 @@ export class ApiResponse {
     data: T,
     message?: string,
     statusCode: number = 200,
+    meta?: any,
   ) {
     const response: SuccessResponseData<T> = {
       data,
     };
+
+    if (meta) {
+      response.meta = meta;
+    }
 
     if (message) {
       response.message = message;
