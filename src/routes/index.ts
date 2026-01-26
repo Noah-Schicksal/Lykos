@@ -6,6 +6,7 @@ import categoryRoutes from './categoryRoutes';
 import courseRoutes from './courseRoutes';
 import reviewRoutes from './reviewRoutes';
 import moduleRoutes from './moduleRoutes';
+import classRoutes from './classRoutes';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use('/categories', categoryRoutes);
 router.use('/courses', courseRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/modules', moduleRoutes);
+router.use('/classes', classRoutes);
 
 export default router;
