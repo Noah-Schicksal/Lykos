@@ -13,8 +13,11 @@ export class StudentController {
     listMyCourses = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId = req.user.id;
-            const courses = await this.studentService.listMyCourses(userId);
-            return ApiResponse.success(res, courses, 'Cursos listados com sucesso');
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+
+            const result = await this.studentService.listMyCourses(userId, page, limit);
+            return ApiResponse.success(res, result.data, 'Cursos listados com sucesso', 200, result.meta);
         } catch (error) {
             next(error);
         }

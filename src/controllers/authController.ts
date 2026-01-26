@@ -18,10 +18,10 @@ export class AuthController {
 
       res.cookie('token', result.token, getCookieOptions());
 
-      // Retorna apenas os dados do usuário (token não vai no body)
+      // Retorna os dados do usuário e o token no body
       return ApiResponse.success(
         res,
-        result.user,
+        result,
         'Login realizado com sucesso',
       );
     } catch (error) {

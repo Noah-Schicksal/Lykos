@@ -31,8 +31,8 @@ export class StudentService {
     }
 
     // Retorna lista de cursos com progresso
-    async listMyCourses(userId: string): Promise<MyCourseDTO[]> {
-        const enrollments = this.enrollmentRepository.findStudentEnrollments(userId);
+    async listMyCourses(userId: string, page: number = 1, limit: number = 10): Promise<{ data: MyCourseDTO[], meta: any }> {
+        const { enrollments, total } = this.enrollmentRepository.findStudentEnrollments(userId, page, limit);
 
         // Para cada matrícula, buscamos detalhes do curso e calculamos progresso
         const myCourses: MyCourseDTO[] = [];
@@ -59,7 +59,15 @@ export class StudentService {
             });
         }
 
-        return myCourses;
+        return {
+            data: myCourses,
+            meta: {
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                totalItems: total,
+                itemsPerPage: limit
+            }
+        };
     }
 
     // Retorna detalhes do curso com status de completude de cada aula

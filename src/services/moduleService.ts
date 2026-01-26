@@ -3,6 +3,8 @@ import { ModuleRepository } from '../repositories/moduleRepository';
 import { CreateModuleDTO, UpdateModuleDTO } from '../dtos/moduleDTOs';
 import { CourseRepository } from '../repositories/courseRepository';
 
+import { ClassRepository } from '../repositories/classRepository';
+
 export class ApplicationError extends Error {
     constructor(message: string) {
         super(message);
@@ -13,13 +15,16 @@ export class ApplicationError extends Error {
 export class ModuleService {
     private moduleRepository: ModuleRepository;
     private courseRepository: CourseRepository;
+    private classRepository: ClassRepository;
 
     constructor(
         moduleRepository: ModuleRepository = new ModuleRepository(),
-        courseRepository: CourseRepository = new CourseRepository()
+        courseRepository: CourseRepository = new CourseRepository(),
+        classRepository: ClassRepository = new ClassRepository()
     ) {
         this.moduleRepository = moduleRepository;
         this.courseRepository = courseRepository;
+        this.classRepository = classRepository;
     }
 
     // cria um novo módulo associado a um curso
@@ -89,5 +94,43 @@ export class ModuleService {
         }
 
         this.moduleRepository.delete(moduleId);
+    }
+
+    // lista módulos de um curso (exibe também as aulas para facilitar o frontend)
+    async listByCourseId(courseId: string): Promise<any[]> {
+        const course = this.courseRepository.findById(courseId);
+        if (!course) {
+            throw new ApplicationError('Curso não encontrado');
+        }
+
+        const modules = this.moduleRepository.findByCourseId(courseId);
+
+        // Popula as aulas de cada módulo
+        // Note: Isso pode gerar N+1 queries. Em produção idealmente faríamos um join ou batch fetch.
+        // Para SQLite local e escopo do desafio, está ok.
+        const result = modules.map(module => {
+            const classes = this.classRepository.findByModule(module.id as string);
+            return {
+                ...module.toJSON(),
+                classes: classes.map(c => c.toJSON())
+            };
+        });
+
+        return result;
+    }
+
+    // busca detalhes de um módulo (incluindo aulas)
+    async getById(moduleId: string): Promise<any> {
+        const module = this.moduleRepository.findById(moduleId);
+        if (!module) {
+            throw new ApplicationError('Módulo não encontrado');
+        }
+
+        const classes = this.classRepository.findByModule(moduleId);
+
+        return {
+            ...module.toJSON(),
+            classes: classes.map(c => c.toJSON())
+        };
     }
 }

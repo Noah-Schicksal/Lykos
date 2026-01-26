@@ -1,6 +1,7 @@
 import db from './connection';
 
 export const initializeDatabase = () => {
+    // 1. Criação das tabelas iniciais
     db.exec(`
     -- 1. Categorias
     CREATE TABLE IF NOT EXISTS categories (
@@ -8,7 +9,7 @@ export const initializeDatabase = () => {
         name TEXT NOT NULL UNIQUE
     );
 
-    -- 2. Usuários (Adicionado INSTRUCTOR ao CHECK)
+    -- 2. Usuários
     CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -33,17 +34,19 @@ export const initializeDatabase = () => {
         FOREIGN KEY (instructor_id) REFERENCES users(id),
         FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
     );
+    `);
 
-    // tenta adicionar a coluna is_active se ela não existir (para bancos já criados)
+    // Migração para courses.is_active
     try {
         db.exec("ALTER TABLE courses ADD COLUMN is_active INTEGER DEFAULT 1");
     } catch (error: any) {
-        // ignora erro se a coluna já existir
         if (!error.message.includes("duplicate column name")) {
-             console.error("Erro ao migrar tabela courses:", error);
+            // console.error("Erro ao migrar tabela courses (is_active):", error);
         }
     }
 
+    // Continuação da criação das tabelas
+    db.exec(`
     -- 4. Módulos
     CREATE TABLE IF NOT EXISTS modules (
         id TEXT PRIMARY KEY,
@@ -53,16 +56,18 @@ export const initializeDatabase = () => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
         FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE 
     );
+    `);
 
-    // tenta adicionar a coluna order_index se ela não existir
+    // Migração para modules.order_index
     try {
         db.exec("ALTER TABLE modules ADD COLUMN order_index INTEGER DEFAULT 0");
     } catch (error: any) {
         if (!error.message.includes("duplicate column name")) {
-             console.error("Erro ao migrar tabela modules:", error);
+            // console.error("Erro ao migrar tabela modules (order_index):", error);
         }
     }
 
+    db.exec(`
     -- 5. Aulas
     CREATE TABLE IF NOT EXISTS classes (
         id TEXT PRIMARY KEY,
@@ -120,6 +125,7 @@ export const initializeDatabase = () => {
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
     );
-  `);
-    console.log("Banco de dados inicializado com esquema completo.");
+    `);
+
+
 };

@@ -5,9 +5,11 @@ import {
   validateLogin,
 } from '../middlewares/validationMiddleware';
 
+import { loginLimiter } from '../middlewares/rateLimitMiddleware';
+
 const router = Router();
 
-router.post('/login', validateLogin, authController.login.bind(authController));
+router.post('/login', loginLimiter, validateLogin, authController.login.bind(authController));
 router.delete('/logout', authController.logout.bind(authController));
 
 router.post(

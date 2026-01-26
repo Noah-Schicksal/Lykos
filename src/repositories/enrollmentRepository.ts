@@ -26,20 +26,28 @@ export class EnrollmentRepository {
         });
     }
 
-    // Retorna as matrículas de um aluno
-    findStudentEnrollments(userId: string): Enrollment[] {
+    // Retorna as matrículas de um aluno (com paginação opcional)
+    findStudentEnrollments(userId: string, page: number = 1, limit: number = 10): { enrollments: Enrollment[], total: number } {
+        const offset = (page - 1) * limit;
+
+        const countStmt = db.prepare('SELECT COUNT(*) as total FROM enrollments WHERE user_id = ?');
+        const total = (countStmt.get(userId) as any).total;
+
         const stmt = db.prepare(`
             SELECT * FROM enrollments WHERE user_id = ?
+            LIMIT ? OFFSET ?
         `);
-        const rows = stmt.all(userId) as any[];
+        const rows = stmt.all(userId, limit, offset) as any[];
 
-        return rows.map(row => new Enrollment({
+        const enrollments = rows.map(row => new Enrollment({
             id: row.id,
             userId: row.user_id,
             courseId: row.course_id,
             enrolledAt: new Date(row.enrolled_at),
             certificateHash: row.certificate_hash
         }));
+
+        return { enrollments, total };
     }
 
     // Busca uma matrícula específica

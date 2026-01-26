@@ -47,6 +47,7 @@ export function authMiddleware(
       role,
     };
 
+
     return next();
   } catch (error) {
     return ApiResponse.unauthorized(res, 'Não autorizado');

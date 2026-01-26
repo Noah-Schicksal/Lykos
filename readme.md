@@ -1,3 +1,180 @@
-# API de Gerenciamento de Cursos Online
+# 🚀 Desafio 2 - Backend (API de Cursos)
 
-[Diagrama Entidade-Relacionamento](https://mermaid.live/edit#pako:eNq9Vs2O2zYQfhWCwAK7gLPwT-xd-abKSiLEtgzJboHCgMFKjE1UIl2S2mx2s4eih6KHvkBvPeXUY59AL9ahbNmypSyaFq0uEsmZ4cdvZj7qEUcipniIqRwxspYkXXIEz8UF-mrsOz4auWgRLvIfA88PkYsce-6-9gPPDnd25dgN0eNuxjxKS8bXiMVo9rY2y0lK0RIvOPsho0u8W39a8t3HInSDL4tVm6QpYUltdkuUei9kXFuQIjF47NHEmyKRoXC-GLnTeQ1ZlRLHn87d_LeRjy6dRRD6V3s2fBh8ARWa6aSOP6YqkmyrmeDHNUlJgraSRQbrTNL8k0CKpVlCYlFCrcSIxB2VK5aSNV1lMjF8B2MUE-SQLanaM65RSu5XSmcx5VrVkXP4yCItIFyMXtUPERFN10J-qC4fSJv4o8X4nzNi0EHOzFF4TO8bjplJRRt3dsZ2-O9zccdiKgyDtZVUxFnSvPWhUhx_4gaOZ4-hTOwg8KZvfOihiT0P8l-dxdguy8YO5itv7k7-PtpM0c_mo8aJeWLIkmbQeSSOabwi-gyzOw388XgChf9_gKAcui6p4Ki6UqnZO2bKarUhagO1-8a81lRCrSMiIHi6TagmEnXa7YtnG9WDPg3s_Of8J8P8LPBfB24Y-jvDwP3ac7_5D89rylcSbQyWuIMI6je2appC5zWV76oE3ACxBDN722oElIDeNa0fcrBnsakYgMHAHduO509tUxL-Xu0Pq86u5xlR0J5rwtkDSVEEFAhVuxc-fnzxQjwetHEIVJTuDwRddobTK8PKIbZXCA7oDQIVJCdRd5dDQ8CjD1QJ5RFrCuwWNpkkCMrIMWFPVXsft5QsE3cmlMrYMVZV0koYe51pMq_wJSErGwHajhzgXQJxl6EGdb5qOtlRD0xUO2YR3AUEMU25OgVzhv3ME06c_444dEy5fwO0Ag56xThJICFwRVxOiJb5HxHcLU3oqkpRwEsy2IGaC4Q8C-7ccU5TRIyzaoBl3wEckn_K_6SGKgEpTZrQlD1cICl8nsVQNQ9oRL8DQTzZqQZkJsVaUqWAO0dwlaWiMWWn7VqgUYopTc_g7Kvl8275L4gUnuxIJ27htWQxHkIB0xZOqYRfHBjiQhaWWG8o_Adh4x4T-b3Z7Al8toR_K0RaukmRrTd4-I4kCkbZ1ijB_qfvYELhmpWOyLjGw26vU8TAw0d8D0Orf925sW6tl51e7_amb7XwB5i9uR70-12r1x5YVuem3-k-tfBDsWv7-tbqda1Be9C1Xg56HWvw9BfFbR0t)
+![Status](https://img.shields.io/badge/Status-Concluído-success)
+![Security](https://img.shields.io/badge/Security-Hardened-blue)
+
+Uma API RESTful robusta e segura para gerenciamento de uma plataforma de cursos online, desenvolvida com **Node.js**, **Express** e **TypeScript**.
+
+O projeto foca em segurança, escalabilidade e manutenibilidade, implementando padrões de arquitetura em camadas e diversas proteções contra vulnerabilidades web comuns.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+### Core
+- **Node.js**: Runtime JavaScript.
+- **Express**: Framework web minimalista e flexível.
+- **TypeScript**: Superset JS com tipagem estática para robustez.
+- **SQLite (better-sqlite3)**: Banco de dados relacional leve e servidor-less.
+
+### Segurança
+- **Helmet**: Proteção de headers HTTP.
+- **Cors**: Controle de acesso entre origens (Cross-Origin).
+- **Rate Limit**: Proteção contra ataques de Força Bruta e DoS.
+- **Bcrypt**: Hash seguro de senhas.
+- **JWT**: Autenticação stateless via tokens.
+- **File-Type**: Validação rigorosa de arquivos via Magic Numbers (Assinatura Binária).
+
+### Utilitários
+- **Multer**: Manipulação de uploads `multipart/form-data`.
+- **Dotenv**: Gerenciamento de variáveis de ambiente.
+
+---
+
+## 🏗️ Arquitetura e Lógica
+
+O projeto segue o padrão **MVC (Model-View-Controller)** adaptado para APIs (sem View), com uma separação clara de responsabilidades em camadas:
+
+1.  **Rotas (`src/routes`)**:
+    - Definem os endpoints da API.
+    - Aplicam middlewares de validação, autenticação e autorização.
+    - Delegam a requisição para o Controller apropriado.
+
+2.  **Middlewares (`src/middlewares`)**:
+    - **AuthMiddleware**: Verifica e decodifica o Token JWT.
+    - **RoleMiddleware**: Controle de Acesso Baseado em Função (RBAC) - Aluno vs Instrutor.
+    - **ValidationMiddleware**: Valida a entrada de dados (Schema Validation).
+    - **RateLimit**: Protege rotas sensíveis (Login) e globais.
+
+3.  **Controllers (`src/controllers`)**:
+    - Recebem a requisição (`req`) e enviam a resposta (`res`).
+    - Orquestram a chamada aos Serviços.
+    - Não contém regras de negócio complexas.
+
+4.  **Services (`src/services`)**:
+    - Contém toda a regra de negócio (ex: "Aluno já comprou este curso?", "Instrutor é dono deste curso?").
+    - Chamam os Repositórios para acesso a dados.
+    - Lançam exceções (`ApplicationError`) em caso de regras violadas.
+
+5.  **Repositories (`src/repositories`)**:
+    - Camada de acesso direto ao banco de dados (SQLite).
+    - Executam queries SQL seguras (Prepared Statements) para prevenir SQL Injection.
+
+6.  **Utils (`src/utils`)**:
+    - **Validator**: Validação manual de tipos e regras sem dependências externas pesadas.
+    - **StorageService**: Gerencia salvamento seguro de arquivos no sistema local.
+
+---
+
+## 💾 Modelo de Entidades (Banco de Dados)
+
+O sistema utiliza um banco relacional com as seguintes tabelas principais:
+
+```mermaid
+erDiagram
+    USERS ||--o{ COURSES : creates
+    USERS ||--o{ ENROLLMENTS : enrolls
+    USERS ||--o{ REVIEWS : writes
+    CATEGORIES ||--o{ COURSES : contains
+    COURSES ||--o{ MODULES : has
+    MODULES ||--o{ CLASSES : has
+    CLASSES ||--o{ CLASS_PROGRESS : completed_by
+    COURSES ||--o{ REVIEWS : receives
+
+    USERS {
+        uuid id PK
+        string name
+        string email
+        string password_hash
+        enum role "STUDENT/INSTRUCTOR"
+    }
+
+    COURSES {
+        uuid id PK
+        string title
+        decimal price
+        string cover_image_url
+        uuid instructor_id FK
+    }
+
+    MODULES {
+        uuid id PK
+        string title
+        int order_index
+        uuid course_id FK
+    }
+
+    CLASSES {
+        uuid id PK
+        string title
+        string video_url
+        string material_url
+        uuid module_id FK
+    }
+
+    ENROLLMENTS {
+        uuid user_id FK
+        uuid course_id FK
+        datetime enrolled_at
+    }
+```
+
+### Explicação das Entidades
+- **Users**: Podem ser Alunos ou Instrutores.
+- **Categorias**: Classificação macro dos cursos.
+- **Cursos**: Entidade principal vendável, criada por Instrutores.
+- **Módulos**: Divisão lógica do conteúdo do curso.
+- **Aulas**: Conteúdo final (vídeo e material complementar).
+- **Matrículas (Enrollments)**: Registro de compra/entrada de um aluno em um curso.
+- **Progresso**: Rastreia quais aulas o aluno concluiu.
+- **Avaliações**: Feedback de alunos sobre cursos (Nota 1-5 e comentário).
+
+---
+
+## 🛡️ Destaques de Segurança
+
+1.  **Fail-Fast Startup**: O servidor se recusa a iniciar se variáveis críticas (`.env`) estiverem faltando.
+2.  **Validação de Uploads**:
+    - Rejeita arquivos executáveis (`.exe`, `.sh`) mesmo se renomeados.
+    - Verifica o conteúdo binário real do arquivo.
+    - Armazena arquivos com nomes aleatórios (UUID) para evitar sobrescrita e previsibilidade.
+3.  **Acesso a Arquivos**:
+    - Arquivos de aula **NÃO** são públicos.
+    - O download só é permitido se o usuário for o dono do curso ou um aluno matriculado, verificado em tempo real.
+4.  **Sanitização**:
+    - Queries SQL parametrizadas.
+    - Entradas de texto validadas rigorosamente.
+
+---
+
+## 🚀 Como Rodar o Projeto
+
+### Pré-requisitos
+- Node.js (v18+)
+- Npm ou Yarn
+
+### Instalação
+1. Clone o repositório.
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Configure o `.env` na raiz (use `.env.example` como base).
+
+### Execução
+- **Modo Desenvolvimento** (com hot-reload):
+  ```bash
+  npm run dev
+  ```
+- **Testes Manuais** (Executa script de verificação):
+  ```bash
+  npm run test:manual
+  ```
+
+---
+
+## 📄 Documentação Adicional
+
+- **[Documentação da API (Endpoints)](./API_DOCUMENTATION.md)**: Detalhes completos de todas as rotas (Auth, Cursos, Módulos, Uploads, etc).
+- **[Relatório de Testes](./RELATORIO_TESTES_FINAL.md)**: Log da última execução da suíte de testes automatizados.
+- **[Auditoria de Segurança](./security_audit.md)**: Relatório detalhado das melhorias de segurança implementadas.

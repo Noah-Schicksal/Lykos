@@ -9,7 +9,7 @@ const reviewController = new ReviewController();
 reviewRoutes.use(authMiddleware);
 
 // criar avaliação (qualquer aluno/instrutor pode avaliar)
-reviewRoutes.post('/', (req, res) => reviewController.create(req, res));
+reviewRoutes.post('/', (req, res, next) => reviewController.create(req, res, next));
 
 // deletar avaliação (apenas o proprio autor)
 reviewRoutes.delete('/:id', (req, res) => reviewController.delete(req, res));

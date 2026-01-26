@@ -8,13 +8,13 @@ const moduleRoutes = Router();
 const moduleController = new ModuleController();
 const classController = new ClassController();
 
+// rotas públicas (ou protegidas por auth apenas, sem role)
+moduleRoutes.get('/:id', (req, res) => moduleController.show(req, res));
+
 // rotas privadas (Instrutor)
-moduleRoutes.use(authMiddleware);
-moduleRoutes.use(roleMiddleware(['INSTRUCTOR']));
+moduleRoutes.put('/:id', authMiddleware, roleMiddleware(['INSTRUCTOR']), (req, res) => moduleController.update(req, res));
+moduleRoutes.delete('/:id', authMiddleware, roleMiddleware(['INSTRUCTOR']), (req, res) => moduleController.delete(req, res));
 
-moduleRoutes.put('/:id', (req, res) => moduleController.update(req, res));
-moduleRoutes.delete('/:id', (req, res) => moduleController.delete(req, res));
-
-moduleRoutes.post('/:moduleId/classes', (req, res, next) => classController.create(req, res, next));
+moduleRoutes.post('/:moduleId/classes', authMiddleware, roleMiddleware(['INSTRUCTOR']), (req, res, next) => classController.create(req, res, next));
 
 export default moduleRoutes;
