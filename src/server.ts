@@ -6,7 +6,7 @@ import routes from './routes';
 import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
-const PORT = process.env.PORT || 3333;
+const PORT = process.env.PORT;
 
 app.use(express.json());
 app.use(cookieParser());

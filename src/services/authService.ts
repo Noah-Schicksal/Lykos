@@ -31,7 +31,7 @@ export class AuthService {
     const user = await this.validateCredentials(email, password);
 
     const secret = process.env.JWT_SECRET!;
-    const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
+    const expiresIn = process.env.JWT_EXPIRES_IN;
 
     const token = jwt.sign(
       {

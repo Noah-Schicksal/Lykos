@@ -1,6 +1,6 @@
 
 
-export interface UserCourse{
+export interface UserCourse {
     id?: string;
     title: string;
     description: string;
@@ -25,20 +25,19 @@ export class Course {
     private _instructorId!: string;
     private _categoryId?: string;
 
-    constructor(props: UserCourse)
-    {
+    constructor(props: UserCourse) {
         this.id = props.id;
         this.createdAt = props.createdAt || new Date();
-        
+
         this.setTitle(props.title);
         this.setDescription(props.description);
         this.setPrice(props.price ?? 0);
 
 
-       this.setCoverImageUrl(props.coverImageUrl);
-       this.setMaxStudents(props.maxStudents);
-       this.setInstructorId(props.instructorId);
-       this.setCategoryId(props.categoryId);
+        this.setCoverImageUrl(props.coverImageUrl);
+        this.setMaxStudents(props.maxStudents);
+        this.setInstructorId(props.instructorId);
+        this.setCategoryId(props.categoryId);
 
     }
 
@@ -59,19 +58,19 @@ export class Course {
 
 
     public setPrice(price: number) {
-        if (typeof price !== "number" || price < 0) {
-            throw new Error("O preço deve ser um número válido e maior ou igual a zero.");
+        if (typeof price !== "number" || price <= 0) {
+            throw new Error("O preço deve ser um inteiro maior que 0");
         }
         this._price = price;
     }
 
-   public setCoverImageUrl(coverImageUrl?: string) {
-    if (!coverImageUrl || !coverImageUrl.trim()) {
-        this._coverImageUrl = undefined;
-        return;
-    }
+    public setCoverImageUrl(coverImageUrl?: string) {
+        if (!coverImageUrl || !coverImageUrl.trim()) {
+            this._coverImageUrl = undefined;
+            return;
+        }
 
-    this._coverImageUrl = coverImageUrl.trim();
+        this._coverImageUrl = coverImageUrl.trim();
     }
 
 

@@ -28,28 +28,28 @@ export class CartItem {
 
     public setUserId(userId: string) {
         if (!userId || userId.trim().length === 0) {
-            throw new Error('Regra de Negócio: `userId` inválido.');
+            throw new Error('`userId` inválido.');
         }
         this._userId = userId;
     }
 
     public setProductId(productId: string) {
         if (!productId || productId.trim().length === 0) {
-            throw new Error('Regra de Negócio: `productId` inválido.');
+            throw new Error('`productId` inválido.');
         }
         this._productId = productId;
     }
 
     public setQuantity(quantity: number) {
         if (!Number.isInteger(quantity) || quantity < 1) {
-            throw new Error('Regra de Negócio: `quantity` deve ser inteiro >= 1.');
+            throw new Error('`quantity` deve ser inteiro >= 1.');
         }
         this._quantity = quantity;
     }
 
     public setPrice(price: number) {
         if (typeof price !== 'number' || price < 0) {
-            throw new Error('Regra de Negócio: `price` deve ser número >= 0.');
+            throw new Error('`price` deve ser número >= 0.');
         }
         this._price = price;
     }
