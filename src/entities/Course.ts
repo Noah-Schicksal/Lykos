@@ -1,5 +1,3 @@
-
-
 export interface UserCourse {
     id?: string;
     title: string;
@@ -9,6 +7,7 @@ export interface UserCourse {
     maxStudents?: number;
     instructorId: string;
     categoryId?: string;
+    isActive?: boolean;
     createdAt?: Date;
 }
 
@@ -24,6 +23,7 @@ export class Course {
     private _maxStudents?: number;
     private _instructorId!: string;
     private _categoryId?: string;
+    private _isActive: boolean;
 
     constructor(props: UserCourse) {
         this.id = props.id;
@@ -39,8 +39,12 @@ export class Course {
         this.setInstructorId(props.instructorId);
         this.setCategoryId(props.categoryId);
 
+        // define se o curso está ativo ou não (soft delete)
+        this._isActive = props.isActive ?? true;
+
     }
 
+    // valida e define o título do curso
     public setTitle(title: string) {
 
         if (!title || title.trim().length < 3) {
@@ -49,6 +53,7 @@ export class Course {
         this._title = title.trim();
     }
 
+    // valida e define a descrição do curso
     public setDescription(description: string) {
         if (!description || description.trim().length < 3) {
             throw new Error("A descrição deve ter no mínimo 3 caracteres.");
@@ -57,13 +62,15 @@ export class Course {
     }
 
 
+    // valida e define o preço do curso
     public setPrice(price: number) {
-        if (typeof price !== "number" || price <= 0) {
-            throw new Error("O preço deve ser um inteiro maior que 0");
+        if (typeof price !== "number" || price < 0) {
+            throw new Error("O preço deve ser um valor positivo");
         }
         this._price = price;
     }
 
+    // define a url da imagem de capa, removendo espaços
     public setCoverImageUrl(coverImageUrl?: string) {
         if (!coverImageUrl || !coverImageUrl.trim()) {
             this._coverImageUrl = undefined;
@@ -74,8 +81,9 @@ export class Course {
     }
 
 
+    // valida e define o número máximo de estudantes
     public setMaxStudents(maxStudents?: number) {
-        if (maxStudents === undefined) {
+        if (maxStudents === undefined || maxStudents === null) {
             this._maxStudents = undefined;
             return;
         }
@@ -87,6 +95,7 @@ export class Course {
         this._maxStudents = maxStudents;
     }
 
+    // valida e define o id do instrutor responsável
     public setInstructorId(instructorId: string) {
         if (!instructorId || instructorId.trim().length === 0) {
             throw new Error("O instrutor é obrigatório.");
@@ -96,6 +105,7 @@ export class Course {
     }
 
 
+    // define a categoria do curso
     public setCategoryId(categoryId?: string) {
         if (!categoryId || categoryId.trim().length === 0) {
             this._categoryId = undefined;
@@ -103,6 +113,11 @@ export class Course {
         }
 
         this._categoryId = categoryId.trim();
+    }
+
+    // marca o curso como ativo ou inativo
+    public setIsActive(isActive: boolean) {
+        this._isActive = isActive;
     }
 
 
@@ -134,7 +149,12 @@ export class Course {
         return this._categoryId;
     }
 
+    public get isActive(): boolean {
+        return this._isActive;
+    }
 
+
+    // serializa o objeto para json
     public toJSON() {
         return {
             id: this.id,
@@ -145,9 +165,8 @@ export class Course {
             maxStudents: this.maxStudents,
             instructorId: this.instructorId,
             categoryId: this.categoryId,
+            isActive: this.isActive,
             createdAt: this.createdAt
         };
     }
 }
-
-

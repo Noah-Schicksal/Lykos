@@ -6,10 +6,10 @@ import { roleMiddleware } from '../middlewares/roleMiddleware';
 const categoryRoutes = Router();
 const categoryController = new CategoryController();
 
-// Público: Listar categorias
+//público: Listar categorias
 categoryRoutes.get('/', (req, res) => categoryController.index(req, res));
 
-// Privado (Instrutor): Criar categoria
+//privado (Instrutor): Criar categoria
 categoryRoutes.post(
     '/',
     authMiddleware,

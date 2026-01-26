@@ -28,10 +28,21 @@ export const initializeDatabase = () => {
         max_students INTEGER,
         instructor_id TEXT NOT NULL,
         category_id TEXT,
+        is_active INTEGER DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (instructor_id) REFERENCES users(id),
         FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
     );
+
+    // tenta adicionar a coluna is_active se ela não existir (para bancos já criados)
+    try {
+        db.exec("ALTER TABLE courses ADD COLUMN is_active INTEGER DEFAULT 1");
+    } catch (error: any) {
+        // ignora erro se a coluna já existir
+        if (!error.message.includes("duplicate column name")) {
+             console.error("Erro ao migrar tabela courses:", error);
+        }
+    }
 
     -- 4. Módulos
     CREATE TABLE IF NOT EXISTS modules (

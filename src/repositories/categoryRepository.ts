@@ -40,4 +40,16 @@ export class CategoryRepository {
             name: row.name
         });
     }
+
+    findById(id: string): Category | null {
+        const stmt = db.prepare('SELECT * FROM categories WHERE id = ?');
+        const row = stmt.get(id) as any;
+
+        if (!row) return null;
+
+        return new Category({
+            id: row.id,
+            name: row.name
+        });
+    }
 }
