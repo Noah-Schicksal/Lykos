@@ -78,34 +78,43 @@ export class StudentService {
         const completedClasses = this.enrollmentRepository.countCompletedClasses(userId, courseId);
         const progress = totalClasses > 0 ? Math.round((completedClasses / totalClasses) * 100) : 0;
 
-        // Busca módulos e aulas
+        // Busca IDs de aulas completadas para comparação rápida
         const completedClassIds = this.enrollmentRepository.getCompletedClassIds(userId, courseId);
+
+        // Busca módulos e aulas
         const modules = this.moduleRepository.findByCourseId(courseId);
-
-        // Monta a estrutura de módulos com status das aulas
-        // Precisamos buscar as aulas de cada módulo. 
-        // Note: O ModuleRepository atual talvez não retorne as aulas. Precisaremos de um método no ClassRepository ou ModuleRepository.
-        // Como o prompt anterior não criou `ClassRepository.findByModuleId` vamos assumir que precisamos instanciar ClassRepository aqui
-        // Mas para evitar imports circulares ou complexidade, vamos supor que o moduleRepository ou ClassRepository forneça isso.
-        // Vamos usar o ClassRepository diretamente aqui.
-        // (Nota: Eu não importei ClassRepository no topo, vou adicionar).
-
-        // Melhor abordagem: Adicionar findByModuleId no ClassRepository se não existir, ou usar db direto aqui se repository layer for muito simples.
-        // Vou adicionar ClassRepository aos imports.
-
-        // OBS: Como estou escrevendo o arquivo, vou incluir o import e a propriedade.
 
         const modulesWithClasses: ModuleStatusDTO[] = [];
 
-        // Pequena "trapaça": vou importar ClassRepository dinamicamente ou adicionar ao construtor
-        // Vou reescrever o arquivo com ClassRepository devidamente importado.
+        for (const module of modules) {
+            // Busca as aulas do módulo usando o ClassRepository
+            const classes = await this.classRepository.findByModule(module.id!);
+
+            const classesStatus: ClassStatusDTO[] = classes.map(c => ({
+                id: c.id!,
+                title: c.title,
+                videoUrl: c.videoUrl,
+                description: c.description,
+                materialUrl: c.materialUrl,
+                completed: completedClassIds.has(c.id!)
+            }));
+
+            // Adiciona módulo apenas se tiver aulas (opcional, mas comum para não mostrar módulos vazios)
+            // Ou mostra mesmo vazio. Vamos mostrar mesmo vazio para o aluno saber que existe.
+            modulesWithClasses.push({
+                id: module.id!,
+                title: module.title,
+                orderIndex: module.orderIndex,
+                classes: classesStatus
+            });
+        }
 
         return {
             id: course.id!,
             title: course.title,
             description: course.description,
             progress,
-            modules: [] // Placeholder até eu corrigir o código completo abaixo
+            modules: modulesWithClasses
         };
     }
 
@@ -115,6 +124,10 @@ export class StudentService {
         if (!enrollment) throw new ApplicationError('Matrícula não encontrada');
 
         if (enrollment.certificateHash) {
+            // Se já tem certificado, poderíamos retornar o existente ou erro.
+            // Vamos retornar erro conforme costume de "issue" action, ou retornar o existente.
+            // Prompt pede "Gera o hash... se o progresso for 100%".
+            // Se já gerou, throw error "Certificado já emitido" parece seguro.
             throw new ApplicationError('Certificado já emitido');
         }
 

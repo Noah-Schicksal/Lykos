@@ -65,6 +65,20 @@ export class ModuleRepository {
         });
     }
 
+    // busca módulos de um curso ordenados
+    findByCourseId(courseId: string): Module[] {
+        const stmt = db.prepare('SELECT * FROM modules WHERE course_id = ? ORDER BY order_index ASC');
+        const rows = stmt.all(courseId) as any[];
+
+        return rows.map(row => new Module({
+            id: row.id,
+            title: row.title,
+            courseId: row.course_id,
+            orderIndex: row.order_index,
+            createdAt: new Date(row.created_at)
+        }));
+    }
+
     // busca a maior ordem (índice) de um curso para adicionar no final da lista
     findMaxOrderIndex(courseId: string): number {
         const stmt = db.prepare('SELECT MAX(order_index) as maxOrder FROM modules WHERE course_id = ?');
