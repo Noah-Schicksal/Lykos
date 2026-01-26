@@ -34,9 +34,10 @@ Abaixo listamos as áreas que necessitam de melhorias, classificadas por priorid
     *   **Risco**: Os controladores (`CourseController`, `UserController`) extraem e validam dados manualmente (`req.body`). Isso é propenso a erros, não trata tipos inesperados (ex: array onde se espera string) e permitiu bugs recentes (ex: erro de parsing de preço no multipart).
     *   **Recomendação**: Adotar uma biblioteca de validação de schema como **Zod** ou **Joi** para garantir que todos os dados de entrada sigam um contrato estrito antes de chegar ao controller.
 
-3.  **Logs de Debug em Produção (Vazamento de Dados)**
-    *   **Risco**: Foi identificado código (`CourseController.ts`) com `console.log(req.body)` e `console.log(req.file)`. Isso pode vazar dados sensíveis (PII, senhas se houver erro no login, tokens, etc) nos logs do servidor.
-    *   **Recomendação**: Remover todos os `console.log` de debug ou usar um logger estruturado (Winston/Pino) configurado para não logar dados sensíveis em produção.
+3.  **Logs de Debug em Produção (Vazamento de Dados)** (SOLVED)
+    *   **Risco**: Foi identificado código (`CourseController.ts`, `AuthMiddleware`) com logs que podem vazar dados sensíveis (PII, tokens) nos logs do servidor.
+    *   **Recomendação**: Todos os `console.log` de debug foram removidos.
+
 
 ### 🟠 Prioridade MÉDIA (Importante)
 

@@ -127,5 +127,5 @@ export const initializeDatabase = () => {
     );
     `);
 
-    console.log("Banco de dados inicializado com esquema completo.");
+
 };
