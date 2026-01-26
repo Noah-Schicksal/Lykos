@@ -1,15 +1,20 @@
 import { Router } from 'express';
 import { CategoryController } from '../controllers/categoryController';
+import { CourseController } from '../controllers/courseController'; // Importando CourseController
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { roleMiddleware } from '../middlewares/roleMiddleware';
 
 const categoryRoutes = Router();
 const categoryController = new CategoryController();
+const courseController = new CourseController(); // Instanciando CourseController
 
-// Público: Listar categorias
+//público: Listar categorias
 categoryRoutes.get('/', (req, res) => categoryController.index(req, res));
 
-// Privado (Instrutor): Criar categoria
+// Público: Listar cursos de uma categoria
+categoryRoutes.get('/:id/courses', (req, res) => courseController.listByCategory(req, res));
+
+//privado (Instrutor): Criar categoria
 categoryRoutes.post(
     '/',
     authMiddleware,

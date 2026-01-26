@@ -53,6 +53,7 @@ export class CategoryRepository {
         });
     }
 
+
     update(id: string, name: string): Category {
         const stmt = db.prepare(`
             UPDATE categories 
