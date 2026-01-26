@@ -14,7 +14,8 @@ app.use(cookieParser());
 // Inicializa o banco antes de subir o servidor
 initializeDatabase();
 
-app.use('/storage', express.static('storage'));
+// Servir arquivos estáticos (removido /storage para acesso privado)
+// app.use('/storage', express.static('storage'));
 
 // Rotas
 app.use(routes);

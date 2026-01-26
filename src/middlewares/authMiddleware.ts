@@ -46,6 +46,7 @@ export function authMiddleware(
       name,
       role,
     };
+    console.log('[AuthMiddleware] Decoded User:', req.user);
 
     return next();
   } catch (error) {

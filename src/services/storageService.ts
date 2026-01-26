@@ -7,6 +7,8 @@ import { ModuleRepository } from '../repositories/moduleRepository';
 import { CourseRepository } from '../repositories/courseRepository';
 import { Class } from '../entities/Class';
 
+import { ApplicationError } from './userService';
+
 export class StorageService {
     private classRepository: ClassRepository;
     private moduleRepository: ModuleRepository;
@@ -22,16 +24,21 @@ export class StorageService {
         return name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     }
 
-    async uploadClassMaterial(classId: string, file: Express.Multer.File): Promise<string> {
+    async uploadClassMaterial(classId: string, file: Express.Multer.File, instructorId: string): Promise<string> {
         //Buscar hierarquia
         const classEntity = this.classRepository.findById(classId);
-        if (!classEntity) throw new Error('Aula não encontrada');
+        if (!classEntity) throw new ApplicationError('Aula não encontrada');
 
         const moduleEntity = this.moduleRepository.findById(classEntity.moduleId);
-        if (!moduleEntity) throw new Error('Módulo não encontrado');
+        if (!moduleEntity) throw new ApplicationError('Módulo não encontrado');
 
         const courseEntity = this.courseRepository.findById(moduleEntity.courseId);
-        if (!courseEntity) throw new Error('Curso não encontrado');
+        if (!courseEntity) throw new ApplicationError('Curso não encontrado');
+
+        // Check ownership
+        if (courseEntity.instructorId !== instructorId) {
+            throw new ApplicationError('Você não tem permissão para adicionar materiais a esta aula');
+        }
 
         //Construir caminhos
         const courseFolder = this.sanitizeName(courseEntity.title);
@@ -86,8 +93,7 @@ export class StorageService {
         // Vou checar Class entity depois, mas por hora vou recriar o objeto se necessário ou usar setter.
         // Se Class não tem setters, eu crio uma nova instância.
 
-        // Vamos assumir que posso mudar a prop ou criar nova instância.
-        // Vou usar nova instância para garantir.
+        //  nova instância para garantir.
         const updatedClass = new Class({
             id: classEntity.id,
             title: classEntity.title,

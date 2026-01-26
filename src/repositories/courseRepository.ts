@@ -163,6 +163,7 @@ export class CourseRepository {
                 id: row.category_id,
                 name: row.category_name
             } : null,
+            instructorId: row.instructor_id, // Added for compatibility with Service checks
             instructor: {
                 id: row.instructor_id,
                 name: row.instructor_name,

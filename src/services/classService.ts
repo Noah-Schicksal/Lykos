@@ -4,26 +4,28 @@ import { CreateClassDTO, UpdateClassDTO, ClassProgressDTO } from '../dtos/classD
 import { ModuleRepository } from '../repositories/moduleRepository';
 import { CourseRepository } from '../repositories/courseRepository';
 
-export class ApplicationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = 'ApplicationError';
-    }
-}
+import { EnrollmentRepository } from '../repositories/enrollmentRepository';
+
+import { ApplicationError } from './userService';
+
+// removed local ApplicationError class definition
 
 export class ClassService {
     private classRepository: ClassRepository;
     private moduleRepository: ModuleRepository;
     private courseRepository: CourseRepository;
+    private enrollmentRepository: EnrollmentRepository;
 
     constructor(
         classRepository: ClassRepository = new ClassRepository(),
         moduleRepository: ModuleRepository = new ModuleRepository(),
-        courseRepository: CourseRepository = new CourseRepository()
+        courseRepository: CourseRepository = new CourseRepository(),
+        enrollmentRepository: EnrollmentRepository = new EnrollmentRepository()
     ) {
         this.classRepository = classRepository;
         this.moduleRepository = moduleRepository;
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     // cria uma nova aula dentro de um módulo
@@ -104,6 +106,51 @@ export class ClassService {
         this.classRepository.delete(classId);
     }
 
+    // recupera o caminho do material se o usuário tiver permissão
+    async getMaterial(classId: string, userId: string, userRole: string): Promise<string> {
+        const classEntity = this.classRepository.findById(classId);
+        if (!classEntity) {
+            throw new ApplicationError('Aula não encontrada');
+        }
+
+        if (!classEntity.materialUrl) {
+            throw new ApplicationError('Nenhum material associado a esta aula');
+        }
+
+        const module = this.moduleRepository.findById(classEntity.moduleId);
+        if (!module) {
+            throw new ApplicationError('Módulo não encontrado');
+        }
+
+        const course = this.courseRepository.findById(module.courseId);
+        if (!course) {
+            throw new ApplicationError('Curso não encontrado');
+        }
+
+        // Verifica permissão baseado no role
+        if (userRole === 'INSTRUCTOR') {
+            if (course.instructorId !== userId) {
+                throw new ApplicationError('Você não tem permissão para acessar este material');
+            }
+        } else if (userRole === 'STUDENT') {
+            const enrollment = this.enrollmentRepository.findEnrollment(userId, course.id);
+            if (!enrollment) {
+                throw new ApplicationError('Você precisa estar matriculado no curso para acessar o material');
+            }
+        } else {
+            // Caso existam outros roles (ex: ADMIN), tratar aqui ou negar por padrão
+            throw new ApplicationError('Permissão negada');
+        }
+
+        // O materialUrl é salvo como path relativo (ex: /uploads/abc.pdf), queremos o path do sistema
+        // Ajuste conforme como você salva. Se salva com leading slash, remova.
+        const relativePath = classEntity.materialUrl.startsWith('/')
+            ? classEntity.materialUrl.substring(1)
+            : classEntity.materialUrl;
+
+        return relativePath;
+    }
+
     // marca a aula como concluída pelo aluno
     async markProgress(classId: string, userId: string): Promise<ClassProgressDTO> {
         // verifica se a aula existe
@@ -115,6 +162,12 @@ export class ClassService {
         // aqui poderíamos verificar se o aluno está matriculado no curso, 
         // mas como não temos o repositório de matrícula injetado ainda, vamos assumir que o middleware de rota já protegeu ou faremos depois.
         // Simplificação: qualquer aluno autenticado pode marcar progresso se a aula existir.
+
+        // Melhoria: validar enrollment se possível
+        // const module = this.moduleRepository.findById(classEntity.moduleId);
+        // const course = this.courseRepository.findById(module.courseId);
+        // const enrollment = this.enrollmentRepository.findEnrollment(userId, course.id);
+        // if (!enrollment) throw new ApplicationError('Aluno não matriculado');
 
         return this.classRepository.markProgress(classId, userId);
     }

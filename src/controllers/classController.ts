@@ -97,6 +97,7 @@ export class ClassController {
     uploadMaterial = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params as { id: string };
+            const instructorId = req.user.id;
             const file = (req as any).file;
 
             if (!file) {
@@ -109,9 +110,39 @@ export class ClassController {
             const { StorageService } = require('../services/storageService');
             const storageService = new StorageService();
 
-            const fileUrl = await storageService.uploadClassMaterial(id, file);
+            const fileUrl = await storageService.uploadClassMaterial(id, file, instructorId);
 
             return ApiResponse.success(res, { materialUrl: fileUrl }, 'Material enviado com sucesso');
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // GET /classes/:id/material
+    getMaterial = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id } = req.params as { id: string };
+            const userId = req.user.id;
+            const userRole = req.user.role;
+
+            const materialPath = await this.classService.getMaterial(id, userId, userRole);
+
+            const path = require('path');
+            const fullPath = path.resolve(process.cwd(), materialPath);
+
+            // Verifica se o arquivo existe antes de enviar (embora o service já verifique se a URL existe, o arquivo pode ter sido deletado)
+            const fs = require('fs');
+            if (!fs.existsSync(fullPath)) {
+                return ApiResponse.notFound(res, 'Arquivo físico não encontrado');
+            }
+
+            res.download(fullPath, (err) => {
+                if (err) {
+                    if (!res.headersSent) {
+                        next(err);
+                    }
+                }
+            });
         } catch (error) {
             next(error);
         }

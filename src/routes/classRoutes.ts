@@ -24,4 +24,7 @@ classRoutes.put('/:id', roleMiddleware(['INSTRUCTOR']), (req, res, next) => clas
 classRoutes.delete('/:id', roleMiddleware(['INSTRUCTOR']), (req, res, next) => classController.delete(req, res, next));
 classRoutes.post('/:id/upload', roleMiddleware(['INSTRUCTOR']), upload.single('file'), (req, res, next) => classController.uploadMaterial(req, res, next));
 
-export default classRoutes;
+// Rotas de download de material (acessível por instrutores e alunos matriculados)
+classRoutes.get('/:id/material', authMiddleware, classController.getMaterial);
+
+export { classRoutes };
