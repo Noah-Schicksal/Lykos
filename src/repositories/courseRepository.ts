@@ -128,6 +128,35 @@ export class CourseRepository {
         return { courses, total };
     }
 
+    // busca cursos de um instrutor específico
+    findByInstructorId(instructorId: string): any[] {
+        const query = `
+            SELECT 
+                c.id, c.title, c.description, c.price, c.cover_image_url, c.is_active,
+                cat.name as category_name,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
+            FROM courses c
+            LEFT JOIN categories cat ON c.category_id = cat.id
+            WHERE c.instructor_id = ?
+            ORDER BY c.created_at DESC
+        `;
+
+        const rows = db.prepare(query).all(instructorId) as any[];
+
+        return rows.map(row => ({
+            id: row.id,
+            title: row.title,
+            description: row.description,
+            price: row.price,
+            coverImageUrl: row.cover_image_url,
+            isActive: !!row.is_active,
+            enrolledCount: row.enrolled_count,
+            category: row.category_name ? {
+                name: row.category_name
+            } : null
+        }));
+    }
+
     // busca um curso pelo id com joins detalhados e média de avaliações
     findById(id: string): any | null {
         const query = `

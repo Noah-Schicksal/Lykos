@@ -6,6 +6,7 @@ import { ClassRepository } from '../repositories/classRepository';
 import { ModuleRepository } from '../repositories/moduleRepository';
 import { CourseRepository } from '../repositories/courseRepository';
 import { Class } from '../entities/Class';
+import { Course } from '../entities/Course';
 
 import { ApplicationError } from './userService';
 
@@ -59,12 +60,12 @@ export class StorageService {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
 
-        // 4. Gerar nome de arquivo único
+        //Gerar nome de arquivo único
         const fileExtension = path.extname(file.originalname);
         const fileName = `${randomUUID()}${fileExtension}`;
         const finalPath = path.join(uploadPath, fileName);
 
-        // 5. Mover arquivo
+        // Mover arquivo
         if (file.buffer) {
             fs.writeFileSync(finalPath, file.buffer);
         } else if (file.path) {
@@ -105,6 +106,71 @@ export class StorageService {
         });
 
         this.classRepository.update(updatedClass);
+
+        return webUrl;
+    }
+
+    async uploadCourseCover(courseId: string, file: Express.Multer.File, instructorId: string): Promise<string> {
+        //check Course
+        const courseEntity = this.courseRepository.findById(courseId);
+        if (!courseEntity) throw new ApplicationError('Curso não encontrado');
+
+        //check Ownership
+        if (courseEntity.instructorId !== instructorId) {
+            throw new ApplicationError('Você não tem permissão para alterar a imagem deste curso');
+        }
+
+        //build Paths
+        const courseFolder = this.sanitizeName(courseEntity.title);
+        const uploadPath = path.join('storage', 'courses', courseFolder);
+
+        //create Directory
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        //generate Unique Filename
+        const fileExtension = path.extname(file.originalname);
+        const fileName = `${randomUUID()}${fileExtension}`;
+        const finalPath = path.join(uploadPath, fileName);
+
+        //save File
+        if (file.buffer) {
+            fs.writeFileSync(finalPath, file.buffer);
+        } else if (file.path) {
+            fs.renameSync(file.path, finalPath);
+        } else {
+            throw new Error('Arquivo inválido');
+        }
+
+        //generate Encoded URL (para web)
+        // Usamos path relative, mas garantimos forward slashes
+        const relativeUrl = path.relative(process.cwd(), finalPath).split(path.sep).join('/');
+        const webUrl = `/${relativeUrl}`;
+
+        //update Entity
+        // Precisamos criar nova instância Course para atualizar, pois update requer objeto completo
+        // Se a entidade tivesse métodos setters seria melhor, mas seguindo o padrão visto em uploadClassMaterial:
+
+        // Importante: Course constructor/props podem variar, checando courseRepository.findById retorno.
+        // O findById retorna um objeto enriquecido (DTO), não exatamente a Entidade Course pura para o save/update method direto
+        // Precisamos garantir que o objeto passado para update tenha os campos corretos.
+        // O método courseRepository.update aceita "Course".
+
+        const updatedCourse = new Course({
+            id: courseEntity.id,
+            title: courseEntity.title,
+            description: courseEntity.description,
+            price: courseEntity.price,
+            coverImageUrl: webUrl, // Campo novo
+            maxStudents: courseEntity.maxStudents,
+            categoryId: courseEntity.category ? courseEntity.category.id : courseEntity.categoryId, // Fallback se o repository já fez join ou não
+            instructorId: courseEntity.instructorId,
+            isActive: courseEntity.isActive !== undefined ? courseEntity.isActive : true, // Garantir boolean
+            createdAt: typeof courseEntity.createdAt === 'string' ? new Date(courseEntity.createdAt) : courseEntity.createdAt
+        });
+
+        this.courseRepository.update(updatedCourse);
 
         return webUrl;
     }

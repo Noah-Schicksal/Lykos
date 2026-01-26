@@ -68,8 +68,8 @@ export class ModuleController {
     async listByCourse(req: Request, res: Response) {
         try {
             const courseId = req.params.id as string;
-            // aqui podemos permitir acesso público se o curso for público ou verificar matrícula.
-            // por enquanto, vamos deixar público na vitrine, mas o frontend pode filtrar.
+            // permite acesso público se o curso for público ou verificar matrícula.
+            // por enquanto, vamos deixar público na vitrine, o frontend pode filtrar.
             // Idealmente: courseService.checkAccess(user, courseId).
 
             const modules = await this.moduleService.listByCourseId(courseId);

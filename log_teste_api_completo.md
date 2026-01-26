@@ -1,6 +1,6 @@
 # Log de Teste Completo da API
 
-Data: 26/01/2026, 04:17:02
+Data: 26/01/2026, 07:54:48
 
 
 ## Inicialização
@@ -13,8 +13,8 @@ Data: 26/01/2026, 04:17:02
 > **Requisição**: `POST /auth/register/student`
 > Corpo: ```json
 {
-  "name": "Estudante 1769411822629",
-  "email": "student_1769411822629@test.com",
+  "name": "Estudante 1769424888261",
+  "email": "student_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
@@ -23,11 +23,11 @@ Data: 26/01/2026, 04:17:02
 > Corpo: ```json
 {
   "data": {
-    "id": "b7e0066c-69e0-4ffe-bc89-b3f8e1f93e5a",
-    "name": "Estudante 1769411822629",
-    "email": "student_1769411822629@test.com",
+    "id": "5132af22-6378-4a31-80ca-dbc0e3d3a09e",
+    "name": "Estudante 1769424888261",
+    "email": "student_1769424888261@test.com",
     "role": "STUDENT",
-    "createdAt": "2026-01-26T07:17:02.682Z"
+    "createdAt": "2026-01-26T10:54:48.312Z"
   },
   "message": "Estudante registrado com sucesso"
 }
@@ -37,8 +37,8 @@ Data: 26/01/2026, 04:17:02
 > **Requisição**: `POST /auth/register/instructor`
 > Corpo: ```json
 {
-  "name": "Instrutor 1769411822629",
-  "email": "instructor_1769411822629@test.com",
+  "name": "Instrutor 1769424888261",
+  "email": "instructor_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
@@ -47,11 +47,11 @@ Data: 26/01/2026, 04:17:02
 > Corpo: ```json
 {
   "data": {
-    "id": "4266a49a-d932-4f6a-96aa-9c314ec9b086",
-    "name": "Instrutor 1769411822629",
-    "email": "instructor_1769411822629@test.com",
+    "id": "5a16df34-46e0-48f0-b4b1-d20da18d3877",
+    "name": "Instrutor 1769424888261",
+    "email": "instructor_1769424888261@test.com",
     "role": "INSTRUCTOR",
-    "createdAt": "2026-01-26T07:17:02.734Z"
+    "createdAt": "2026-01-26T10:54:48.365Z"
   },
   "message": "Instrutor registrado com sucesso"
 }
@@ -61,7 +61,7 @@ Data: 26/01/2026, 04:17:02
 > **Requisição**: `POST /auth/login`
 > Corpo: ```json
 {
-  "email": "student_1769411822629@test.com",
+  "email": "student_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
@@ -71,12 +71,12 @@ Data: 26/01/2026, 04:17:02
 {
   "data": {
     "user": {
-      "id": "b7e0066c-69e0-4ffe-bc89-b3f8e1f93e5a",
-      "name": "Estudante 1769411822629",
-      "email": "student_1769411822629@test.com",
+      "id": "5132af22-6378-4a31-80ca-dbc0e3d3a09e",
+      "name": "Estudante 1769424888261",
+      "email": "student_1769424888261@test.com",
       "role": "STUDENT"
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRXN0dWRhbnRlIDE3Njk0MTE4MjI2MjkiLCJpZCI6ImI3ZTAwNjZjLTY5ZTAtNGZmZS1iYzg5LWIzZjhlMWY5M2U1YSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzY5NDExODIyLCJleHAiOjE3Njk0MTU0MjJ9.A2NqTylNVTuVhDijf1xPo36hisF5x7uyVH2L2hpH21g"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiRXN0dWRhbnRlIDE3Njk0MjQ4ODgyNjEiLCJpZCI6IjUxMzJhZjIyLTYzNzgtNGEzMS04MGNhLWRiYzBlM2QzYTA5ZSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzY5NDI0ODg4LCJleHAiOjE3Njk0Mjg0ODh9.JMG6Fe7ipXvzRZwUftshoMQU5u4mdhdqH_6UCkltUqE"
   },
   "message": "Login realizado com sucesso"
 }
@@ -86,7 +86,7 @@ Data: 26/01/2026, 04:17:02
 > **Requisição**: `POST /auth/login`
 > Corpo: ```json
 {
-  "email": "instructor_1769411822629@test.com",
+  "email": "instructor_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
@@ -96,12 +96,12 @@ Data: 26/01/2026, 04:17:02
 {
   "data": {
     "user": {
-      "id": "4266a49a-d932-4f6a-96aa-9c314ec9b086",
-      "name": "Instrutor 1769411822629",
-      "email": "instructor_1769411822629@test.com",
+      "id": "5a16df34-46e0-48f0-b4b1-d20da18d3877",
+      "name": "Instrutor 1769424888261",
+      "email": "instructor_1769424888261@test.com",
       "role": "INSTRUCTOR"
     },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSW5zdHJ1dG9yIDE3Njk0MTE4MjI2MjkiLCJpZCI6IjQyNjZhNDlhLWQ5MzItNGY2YS05NmFhLTljMzE0ZWM5YjA4NiIsInJvbGUiOiJJTlNUUlVDVE9SIiwiaWF0IjoxNzY5NDExODIyLCJleHAiOjE3Njk0MTU0MjJ9._fKeeg-vgEPlv4a81XPzhBP-8dbU0ibkfnYfieIscgE"
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSW5zdHJ1dG9yIDE3Njk0MjQ4ODgyNjEiLCJpZCI6IjVhMTZkZjM0LTQ2ZTAtNDhmMC1iNGIxLWQyMGRhMThkMzg3NyIsInJvbGUiOiJJTlNUUlVDVE9SIiwiaWF0IjoxNzY5NDI0ODg4LCJleHAiOjE3Njk0Mjg0ODh9.96uoNhyS6p8CDGzzehxi8jPkqK4VGbQhM5zMzw3CabQ"
   },
   "message": "Login realizado com sucesso"
 }
@@ -133,7 +133,7 @@ Data: 26/01/2026, 04:17:02
 > **Requisição**: `POST /courses`
 > Corpo: ```json
 {
-  "title": "Curso 1769411822629",
+  "title": "Curso 1769424888261",
   "description": "Descrição do curso de teste",
   "price": 99.99,
   "categoryId": "ede3e696-536a-4272-aac0-4cbfd98442b6"
@@ -144,21 +144,21 @@ Data: 26/01/2026, 04:17:02
 > Corpo: ```json
 {
   "data": {
-    "id": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-    "title": "Curso 1769411822629",
+    "id": "43e22fe0-c976-4eb3-a08f-17e66e2f5708",
+    "title": "Curso 1769424888261",
     "description": "Descrição do curso de teste",
     "price": 99.99,
-    "instructorId": "4266a49a-d932-4f6a-96aa-9c314ec9b086",
+    "instructorId": "5a16df34-46e0-48f0-b4b1-d20da18d3877",
     "categoryId": "ede3e696-536a-4272-aac0-4cbfd98442b6",
     "isActive": true,
-    "createdAt": "2026-01-26T07:17:02.850Z"
+    "createdAt": "2026-01-26T10:54:48.476Z"
   },
   "message": "Curso criado com sucesso"
 }
 ```
 
 ✅ **[SUCESSO]** Criar Curso
-> **Requisição**: `POST /courses/fc6f4a73-d211-4ac8-a89e-e38f7c6b7861/modules`
+> **Requisição**: `POST /courses/43e22fe0-c976-4eb3-a08f-17e66e2f5708/modules`
 > Corpo: ```json
 {
   "title": "Módulo 1: Intro",
@@ -170,18 +170,18 @@ Data: 26/01/2026, 04:17:02
 > Corpo: ```json
 {
   "data": {
-    "id": "dadff747-14cc-4698-b95e-9f7a31a894e1",
+    "id": "a09f81b0-0d3f-4a49-b908-3b3543de6e46",
     "title": "Módulo 1: Intro",
-    "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
+    "courseId": "43e22fe0-c976-4eb3-a08f-17e66e2f5708",
     "orderIndex": 1,
-    "createdAt": "2026-01-26T07:17:02.853Z"
+    "createdAt": "2026-01-26T10:54:48.480Z"
   },
   "message": "Módulo criado com sucesso"
 }
 ```
 
 ✅ **[SUCESSO]** Criar Módulo
-> **Requisição**: `POST /modules/dadff747-14cc-4698-b95e-9f7a31a894e1/classes`
+> **Requisição**: `POST /modules/a09f81b0-0d3f-4a49-b908-3b3543de6e46/classes`
 > Corpo: ```json
 {
   "title": "Aula 1: Olá Mundo",
@@ -191,407 +191,33 @@ Data: 26/01/2026, 04:17:02
 }
 ```
 
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "id": "146c0d5c-ee18-41a3-acb2-16861c634689",
-    "title": "Aula 1: Olá Mundo",
-    "description": "Primeira aula",
-    "videoUrl": "https://youtube.com/watch?v=123",
-    "moduleId": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-    "createdAt": "2026-01-26T07:17:02.856Z"
-  },
-  "message": "Aula criada com sucesso"
-}
-```
+⚠️ **[ERRO]** Erro na Requisição: fetch failed
+❌ **[FALHA]** Criar Aula
+> **Requisição**: `GET /courses/authored`
 
-✅ **[SUCESSO]** Criar Aula
-
-## 4. Storage & Materiais
-
+⚠️ **[ERRO]** Erro na Requisição: fetch failed
+❌ **[FALHA]** Listar Cursos do Instrutor (Authored)
 > **Requisição**: `POST /auth/register/instructor`
 > Corpo: ```json
 {
-  "name": "Malicious 1769411822629",
-  "email": "hacker_1769411822629@test.com",
+  "name": "Other Instr 1769424888261",
+  "email": "other_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
 
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "id": "f09e8103-b30a-44cd-b58a-a90e5f568cb7",
-    "name": "Malicious 1769411822629",
-    "email": "hacker_1769411822629@test.com",
-    "role": "INSTRUCTOR",
-    "createdAt": "2026-01-26T07:17:02.909Z"
-  },
-  "message": "Instrutor registrado com sucesso"
-}
-```
-
+⚠️ **[ERRO]** Erro na Requisição: fetch failed
 > **Requisição**: `POST /auth/login`
 > Corpo: ```json
 {
-  "email": "hacker_1769411822629@test.com",
+  "email": "other_1769424888261@test.com",
   "password": "Password123!"
 }
 ```
 
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": {
-    "user": {
-      "id": "f09e8103-b30a-44cd-b58a-a90e5f568cb7",
-      "name": "Malicious 1769411822629",
-      "email": "hacker_1769411822629@test.com",
-      "role": "INSTRUCTOR"
-    },
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiTWFsaWNpb3VzIDE3Njk0MTE4MjI2MjkiLCJpZCI6ImYwOWU4MTAzLWIzMGEtNDRjZC1iNThhLWE5MGU1ZjU2OGNiNyIsInJvbGUiOiJJTlNUUlVDVE9SIiwiaWF0IjoxNzY5NDExODIyLCJleHAiOjE3Njk0MTU0MjJ9.CHwb52tXR8PQd0U5hpXBuLsPfz9xOuJFhZEHfZXPOSc"
-  },
-  "message": "Login realizado com sucesso"
-}
-```
+> **Resposta**: Status `408`
 
-> **Requisição**: `POST /classes/146c0d5c-ee18-41a3-acb2-16861c634689/upload`
-> Corpo: ```json
-"[Dados Multipart]"
-```
-
-> **Resposta**: Status `400`
-> Corpo: ```json
-{
-  "error": "Você não tem permissão para adicionar materiais a esta aula"
-}
-```
-
-✅ **[SUCESSO]** Segurança: Bloqueio de Upload por Outro Instrutor
-> **Requisição**: `POST /classes/146c0d5c-ee18-41a3-acb2-16861c634689/upload`
-> Corpo: ```json
-"[Dados Multipart]"
-```
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": {
-    "materialUrl": "/storage/courses/curso_1769411822629/m_dulo_1__intro/1_aula_1__ol__mundo/materials/14e0a0a1-8807-4b9a-9c81-edf298210d5c.txt"
-  },
-  "message": "Material enviado com sucesso"
-}
-```
-
-✅ **[SUCESSO]** Upload de Material
-ℹ️ **[INFO]** URL retornado: /storage/courses/curso_1769411822629/m_dulo_1__intro/1_aula_1__ol__mundo/materials/14e0a0a1-8807-4b9a-9c81-edf298210d5c.txt
-✅ **[SUCESSO]** Acesso Público Direto Bloqueado (Correto)
-> **Requisição**: `GET /classes/146c0d5c-ee18-41a3-acb2-16861c634689/material`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-"Conteúdo de teste para upload."
-```
-
-✅ **[SUCESSO]** Download via Endpoint Protegido (Instrutor)
-> **Requisição**: `GET /classes/146c0d5c-ee18-41a3-acb2-16861c634689/material`
-
-> **Resposta**: Status `400`
-> Corpo: ```json
-{
-  "error": "Você precisa estar matriculado no curso para acessar o material"
-}
-```
-
-✅ **[SUCESSO]** Bloqueio Aluno Não Matriculado
-
-## 5. Jornada do Estudante
-
-> **Requisição**: `GET /courses`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": [
-    {
-      "id": "1652fd8d-72fd-4e8c-8d53-03fb267b2864",
-      "title": "Course 1769408330507",
-      "description": "A test course description",
-      "price": 99.99,
-      "coverImageUrl": null,
-      "category": {
-        "id": "ede3e696-536a-4272-aac0-4cbfd98442b6",
-        "name": "Cat 1769408330507"
-      },
-      "instructor": {
-        "name": "Instructor 1769408330507"
-      }
-    },
-    {
-      "id": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-      "title": "Curso 1769411822629",
-      "description": "Descrição do curso de teste",
-      "price": 99.99,
-      "coverImageUrl": null,
-      "category": {
-        "id": "ede3e696-536a-4272-aac0-4cbfd98442b6",
-        "name": "Cat 1769408330507"
-      },
-      "instructor": {
-        "name": "Instrutor 1769411822629"
-      }
-    }
-  ],
-  "meta": {
-    "currentPage": 1,
-    "totalPages": 1,
-    "totalItems": 2,
-    "itemsPerPage": 10
-  }
-}
-```
-
-✅ **[SUCESSO]** Listar Todos Cursos (Público)
-> **Requisição**: `GET /courses/fc6f4a73-d211-4ac8-a89e-e38f7c6b7861`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": {
-    "id": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-    "title": "Curso 1769411822629",
-    "description": "Descrição do curso de teste",
-    "price": 99.99,
-    "coverImageUrl": null,
-    "maxStudents": null,
-    "enrolledCount": 0,
-    "averageRating": 0,
-    "createdAt": "2026-01-26T07:17:02.850Z",
-    "category": {
-      "id": "ede3e696-536a-4272-aac0-4cbfd98442b6",
-      "name": "Cat 1769408330507"
-    },
-    "instructorId": "4266a49a-d932-4f6a-96aa-9c314ec9b086",
-    "instructor": {
-      "id": "4266a49a-d932-4f6a-96aa-9c314ec9b086",
-      "name": "Instrutor 1769411822629",
-      "email": "instructor_1769411822629@test.com"
-    }
-  }
-}
-```
-
-✅ **[SUCESSO]** Obter Detalhes do Curso
-> **Requisição**: `GET /courses/fc6f4a73-d211-4ac8-a89e-e38f7c6b7861/modules`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": [
-    {
-      "id": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-      "title": "Módulo 1: Intro",
-      "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-      "orderIndex": 1,
-      "createdAt": "2026-01-26T07:17:02.853Z",
-      "classes": [
-        {
-          "id": "146c0d5c-ee18-41a3-acb2-16861c634689",
-          "title": "Aula 1: Olá Mundo",
-          "description": "Primeira aula",
-          "videoUrl": "https://youtube.com/watch?v=123",
-          "materialUrl": "/storage/courses/curso_1769411822629/m_dulo_1__intro/1_aula_1__ol__mundo/materials/14e0a0a1-8807-4b9a-9c81-edf298210d5c.txt",
-          "moduleId": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-          "createdAt": "2026-01-26T07:17:02.856Z"
-        }
-      ]
-    }
-  ]
-}
-```
-
-✅ **[SUCESSO]** Listar Módulos do Curso
-> **Requisição**: `GET /modules/dadff747-14cc-4698-b95e-9f7a31a894e1`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": {
-    "id": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-    "title": "Módulo 1: Intro",
-    "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-    "orderIndex": 1,
-    "createdAt": "2026-01-26T07:17:02.853Z",
-    "classes": [
-      {
-        "id": "146c0d5c-ee18-41a3-acb2-16861c634689",
-        "title": "Aula 1: Olá Mundo",
-        "description": "Primeira aula",
-        "videoUrl": "https://youtube.com/watch?v=123",
-        "materialUrl": "/storage/courses/curso_1769411822629/m_dulo_1__intro/1_aula_1__ol__mundo/materials/14e0a0a1-8807-4b9a-9c81-edf298210d5c.txt",
-        "moduleId": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-        "createdAt": "2026-01-26T07:17:02.856Z"
-      }
-    ]
-  }
-}
-```
-
-✅ **[SUCESSO]** Obter Detalhes do Módulo (+ Aulas)
-✅ **[SUCESSO]**   Classes retornadas no módulo
-> **Requisição**: `GET /classes/146c0d5c-ee18-41a3-acb2-16861c634689`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": {
-    "id": "146c0d5c-ee18-41a3-acb2-16861c634689",
-    "title": "Aula 1: Olá Mundo",
-    "description": "Primeira aula",
-    "videoUrl": "https://youtube.com/watch?v=123",
-    "materialUrl": "/classes/146c0d5c-ee18-41a3-acb2-16861c634689/material",
-    "moduleId": "dadff747-14cc-4698-b95e-9f7a31a894e1",
-    "createdAt": "2026-01-26T07:17:02.856Z"
-  }
-}
-```
-
-✅ **[SUCESSO]** Obter Detalhes da Aula (Video/Material)
-> **Requisição**: `POST /cart`
-> Corpo: ```json
-{
-  "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861"
-}
-```
-
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "id": "b2246720-c0ca-43a3-82ec-2701fe77fb4c",
-    "userId": "b7e0066c-69e0-4ffe-bc89-b3f8e1f93e5a",
-    "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-    "addedAt": "2026-01-26T07:17:02.988Z"
-  },
-  "message": "Curso adicionado ao carrinho"
-}
-```
-
-✅ **[SUCESSO]** Adicionar ao Carrinho
-> **Requisição**: `POST /checkout`
-> Corpo: ```json
-{}
-```
-
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "enrolledCourses": 1,
-    "orderDate": "2026-01-26T07:17:02.991Z",
-    "items": [
-      {
-        "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-        "title": "Curso 1769411822629"
-      }
-    ]
-  },
-  "message": "Compra realizada com sucesso!"
-}
-```
-
-✅ **[SUCESSO]** Realizar Checkout
-> **Requisição**: `GET /classes/146c0d5c-ee18-41a3-acb2-16861c634689/material`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-"Conteúdo de teste para upload."
-```
-
-✅ **[SUCESSO]** Download via Endpoint Protegido (Aluno Matriculado)
-> **Requisição**: `GET /my-courses`
-
-> **Resposta**: Status `200`
-> Corpo: ```json
-{
-  "data": [
-    {
-      "id": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-      "title": "Curso 1769411822629",
-      "description": "Descrição do curso de teste",
-      "coverImageUrl": null,
-      "enrolledAt": "2026-01-26T07:17:02.990Z",
-      "progress": 0,
-      "totalClasses": 1,
-      "completedClasses": 0,
-      "certificateHash": null
-    }
-  ],
-  "meta": {
-    "currentPage": 1,
-    "totalPages": 1,
-    "totalItems": 1,
-    "itemsPerPage": 10
-  },
-  "message": "Cursos listados com sucesso"
-}
-```
-
-✅ **[SUCESSO]** Obter Meus Cursos
-> **Requisição**: `POST /classes/146c0d5c-ee18-41a3-acb2-16861c634689/progress`
-> Corpo: ```json
-{
-  "completed": true
-}
-```
-
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "classId": "146c0d5c-ee18-41a3-acb2-16861c634689",
-    "userId": "b7e0066c-69e0-4ffe-bc89-b3f8e1f93e5a",
-    "completedAt": "2026-01-26T07:17:02.998Z"
-  },
-  "message": "Aula marcada como concluída"
-}
-```
-
-✅ **[SUCESSO]** Marcar Aula Concluída
-> **Requisição**: `POST /courses/fc6f4a73-d211-4ac8-a89e-e38f7c6b7861/reviews`
-> Corpo: ```json
-{
-  "rating": 5,
-  "comment": "Excelente curso!"
-}
-```
-
-> **Resposta**: Status `201`
-> Corpo: ```json
-{
-  "data": {
-    "id": "73f14153-bc2b-4dfd-b256-8f5425c67d03",
-    "userId": "b7e0066c-69e0-4ffe-bc89-b3f8e1f93e5a",
-    "courseId": "fc6f4a73-d211-4ac8-a89e-e38f7c6b7861",
-    "rating": 5,
-    "comment": "Excelente curso!",
-    "createdAt": "2026-01-26T07:17:03.001Z"
-  },
-  "message": "Avaliação enviada com sucesso"
-}
-```
-
-✅ **[SUCESSO]** Postar Avaliação
-
-## 6. Limpeza (Instrutor)
-
-> **Requisição**: `DELETE /courses/fc6f4a73-d211-4ac8-a89e-e38f7c6b7861`
-
-> **Resposta**: Status `204`
-
-✅ **[SUCESSO]** Excluir Curso
+⚠️ **[ERRO]** Erro Fatal no Teste: Cannot read properties of undefined (reading 'token')
 
 ## Finalização
 

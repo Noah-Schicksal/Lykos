@@ -47,7 +47,6 @@ export class ReviewController {
     // DELETE /reviews/:id (Mantido da estrutura antiga se necessário, mas foco é course reviews now)
     delete = async (req: Request, res: Response) => {
         // Implementação antiga ou placeholder se não for requisito agora
-        // Prompt não pediu explicitamente DELETE /reviews/:id nesta task, mas estava no arquivo anterior.
         // Vou manter placeholder para não quebrar contrato se router antigo chamar.
         return ApiResponse.noContent(res);
     }

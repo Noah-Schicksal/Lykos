@@ -32,6 +32,11 @@ export class CourseService {
         return this.courseRepository.findByCategoryId(categoryId, page, limit);
     }
 
+    // lista cursos de um instrutor
+    async listByInstructor(instructorId: string): Promise<any[]> {
+        return this.courseRepository.findByInstructorId(instructorId);
+    }
+
     // busca detalhes de um curso pelo id
     async getById(id: string): Promise<any> {
         const course = this.courseRepository.findById(id);

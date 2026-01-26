@@ -53,6 +53,20 @@ export class CourseController {
         }
     }
 
+    // lista cursos criados pelo instrutor logado (dashboard)
+    async listAuthored(req: Request, res: Response) {
+        try {
+            const instructorId = req.user.id;
+            const courses = await this.courseService.listByInstructor(instructorId);
+            return ApiResponse.success(res, courses);
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                return ApiResponse.error(res, error.message);
+            }
+            return ApiResponse.error(res, 'Erro ao listar cursos do instrutor', 500);
+        }
+    }
+
     // exibe detalhes de um único curso
     // exibe detalhes de um único curso
     async show(req: Request, res: Response) {
@@ -72,13 +86,85 @@ export class CourseController {
     async create(req: Request, res: Response) {
         try {
             const instructorId = req.user.id;
+            console.log('Creates Course Body:', req.body);
+            console.log('Creates Course File:', (req as any).file);
+
+            // Fix for multipart/form-data: Parse fields manually if they are strings
+            if (req.body.price && typeof req.body.price === 'string') {
+                req.body.price = parseFloat(req.body.price);
+            }
+            if (req.body.maxStudents && typeof req.body.maxStudents === 'string') {
+                req.body.maxStudents = parseInt(req.body.maxStudents, 10);
+            }
+
             const course = await this.courseService.create(req.body, instructorId);
-            return ApiResponse.created(res, course, 'Curso criado com sucesso');
+
+            // Check for file and upload if present
+            // We use 'coverImage' field name as planned
+            if ((req as any).file) {
+                const { StorageService } = require('../services/storageService');
+                const storageService = new StorageService();
+                try {
+                    const coverUrl = await storageService.uploadCourseCover(course.id, (req as any).file, instructorId);
+                    // Update the returned object to reflect the new url locally
+                    course.setCoverImageUrl(coverUrl);
+                } catch (uploadError: any) {
+                    // If upload fails, we should ideally rollback course creation or return a warning.
+                    // For now, we will just log/warn and return the course created without image.
+                    // Or we can try to delete the course.
+                    // Making it robust:
+                    console.error('Failed to upload cover image:', uploadError);
+                    // Not failing the request, but image wont be there.
+                    return ApiResponse.created(res, course, 'Curso criado, mas falha no upload da imagem: ' + uploadError.message);
+                }
+            }
+
+            return ApiResponse.created(res, course.toJSON(), 'Curso criado com sucesso');
         } catch (error) {
             if (error instanceof Error) {
                 return ApiResponse.error(res, error.message);
             }
             return ApiResponse.error(res, 'Erro ao criar curso', 500);
+        }
+    }
+
+    // GET /courses/:id/cover
+    async getCover(req: Request, res: Response) {
+        try {
+            const id = req.params.id as string;
+            // Public route, so no user check needed for access, just fetch path.
+            // But we need to get the path from the course entity.
+            const course = await this.courseService.getById(id);
+
+            if (!course || !course.coverImageUrl) {
+                return ApiResponse.notFound(res, 'Imagem de capa não encontrada');
+            }
+
+            const path = require('path');
+            const fs = require('fs');
+
+            // Resolve local path
+            // The stored URL is like "/storage/courses/..." (web url)
+            // We need to convert back to system path.
+            // Remove leading slash if present
+            const relativePath = course.coverImageUrl.startsWith('/') || course.coverImageUrl.startsWith('\\')
+                ? course.coverImageUrl.substring(1)
+                : course.coverImageUrl;
+
+            const fullPath = path.resolve(process.cwd(), relativePath);
+
+            if (!fs.existsSync(fullPath)) {
+                return ApiResponse.notFound(res, 'Arquivo de imagem não encontrado no servidor');
+            }
+
+            // Serve the file
+            res.sendFile(fullPath);
+
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                return ApiResponse.notFound(res, error.message);
+            }
+            return ApiResponse.error(res, 'Erro ao obter imagem de capa', 500);
         }
     }
 
