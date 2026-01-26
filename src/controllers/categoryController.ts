@@ -33,4 +33,34 @@ export class CategoryController {
             return ApiResponse.error(res, 'Erro ao listar categorias', 500);
         }
     }
+
+    async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { name } = req.body;
+            const category = await this.categoryService.update(String(id), name);
+            return ApiResponse.success(res, category, 'Categoria atualizada com sucesso');
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                if (error.message.includes('não encontrada')) {
+                    return ApiResponse.error(res, error.message, 404);
+                }
+                return ApiResponse.conflict(res, error.message);
+            }
+            return ApiResponse.error(res, 'Erro ao atualizar categoria', 500);
+        }
+    }
+
+    async delete(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            await this.categoryService.delete(String(id));
+            return ApiResponse.success(res, null, 'Categoria deletada com sucesso');
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                return ApiResponse.error(res, error.message, 404);
+            }
+            return ApiResponse.error(res, 'Erro ao deletar categoria', 500);
+        }
+    }
 }
