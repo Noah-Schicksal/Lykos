@@ -9,6 +9,7 @@ import moduleRoutes from './moduleRoutes';
 import classRoutes from './classRoutes';
 import studentRoutes from './studentRoutes';
 import cartRoutes from './cartRoutes';
+import certificateRoutes from './certificateRoutes';
 
 const router = Router();
 
@@ -21,5 +22,6 @@ router.use('/', cartRoutes); // Registra na raiz para pegar /cart e /checkout
 router.use('/reviews', reviewRoutes);
 router.use('/modules', moduleRoutes);
 router.use('/classes', classRoutes);
+router.use('/certificates', certificateRoutes);
 
 export default router;

@@ -105,4 +105,23 @@ export class EnrollmentRepository {
         `);
         stmt.run(hash, enrollmentId);
     }
+
+    // Busca matrícula pelo hash do certificado (com dados para validação pública)
+    findByCertificateHash(hash: string): any | null {
+        const stmt = db.prepare(`
+            SELECT 
+                e.certificate_hash,
+                u.name as student_name,
+                c.title as course_title,
+                u2.name as instructor_name,
+                e.enrolled_at,
+                c.id as course_id
+            FROM enrollments e
+            JOIN users u ON e.user_id = u.id
+            JOIN courses c ON e.course_id = c.id
+            JOIN users u2 ON c.instructor_id = u2.id
+            WHERE e.certificate_hash = ?
+        `);
+        return stmt.get(hash);
+    }
 }
