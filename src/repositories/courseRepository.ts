@@ -102,7 +102,9 @@ export class CourseRepository {
                 c.*, 
                 cat.name as category_name, 
                 u.name as instructor_name,
-                (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as rating_average
+                u.email as instructor_email,
+                (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as rating_average,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
             FROM courses c
             LEFT JOIN categories cat ON c.category_id = cat.id
             JOIN users u ON c.instructor_id = u.id
@@ -121,17 +123,17 @@ export class CourseRepository {
             price: row.price,
             coverImageUrl: row.cover_image_url,
             maxStudents: row.max_students,
-            instructorId: row.instructor_id,
-            isActive: row.is_active === 1,
+            enrolledCount: row.enrolled_count,
+            averageRating: row.rating_average || 0,
+            createdAt: new Date(row.created_at),
             category: row.category_id ? {
                 id: row.category_id,
                 name: row.category_name
             } : null,
             instructor: {
-                name: row.instructor_name
-            },
-            stats: {
-                rating: row.rating_average || 0
+                id: row.instructor_id,
+                name: row.instructor_name,
+                email: row.instructor_email
             }
         };
     }
