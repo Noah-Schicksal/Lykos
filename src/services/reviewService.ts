@@ -1,7 +1,7 @@
+import { ReviewRepository } from '../repositories/reviewRepository';
+import { EnrollmentRepository } from '../repositories/enrollmentRepository';
+import { ReviewListResponseDTO, ReviewDTO, CreateReviewDTO } from '../dtos/reviewDTOs';
 import { Review } from '../entities/Review';
-import { ReviewRepository, FindReviewsResponse } from '../repositories/reviewRepository';
-import { CreateReviewDTO } from '../dtos/reviewDTOs';
-import { CourseRepository } from '../repositories/courseRepository';
 
 export class ApplicationError extends Error {
     constructor(message: string) {
@@ -12,56 +12,65 @@ export class ApplicationError extends Error {
 
 export class ReviewService {
     private reviewRepository: ReviewRepository;
-    private courseRepository: CourseRepository;
+    private enrollmentRepository: EnrollmentRepository;
 
     constructor(
         reviewRepository: ReviewRepository = new ReviewRepository(),
-        courseRepository: CourseRepository = new CourseRepository()
+        enrollmentRepository: EnrollmentRepository = new EnrollmentRepository()
     ) {
         this.reviewRepository = reviewRepository;
-        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
-    // cria uma nova avaliação
-    async create(userId: string, data: CreateReviewDTO): Promise<Review> {
-        // verifica se o curso existe
-        const course = this.courseRepository.findById(data.courseId);
-        if (!course) {
-            throw new ApplicationError('Curso não encontrado');
-        }
+    // Lista avaliações de um curso
+    async listReviews(courseId: string, page: number = 1, limit: number = 5): Promise<ReviewListResponseDTO> {
+        const result = this.reviewRepository.findByCourseId({ courseId, page, limit });
+        const averageRating = this.reviewRepository.getAverageRating(courseId);
 
-        // verifica se o usuário já avaliou este curso
-        const hasReviewed = this.reviewRepository.hasUserReviewed(userId, data.courseId);
-        if (hasReviewed) {
-            throw new ApplicationError('Você já avaliou este curso');
-        }
+        const reviewDTOs: ReviewDTO[] = result.reviews.map(r => ({
+            id: r.id,
+            userName: r.user.name,
+            rating: r.rating,
+            comment: r.comment,
+            createdAt: r.createdAt
+        }));
 
-        const review = new Review({
-            userId,
-            courseId: data.courseId,
-            rating: data.rating,
-            comment: data.comment
-        });
-
-        return this.reviewRepository.save(review);
+        return {
+            data: reviewDTOs,
+            meta: {
+                currentPage: page,
+                totalPages: Math.ceil(result.total / limit),
+                totalItems: result.total,
+                itemsPerPage: limit,
+                averageRating: parseFloat(averageRating.toFixed(1))
+            }
+        };
     }
 
-    // lista avaliações de um curso
-    async listByCourse(courseId: string, page: number, limit: number): Promise<FindReviewsResponse> {
-        return this.reviewRepository.findByCourseId({ courseId, page, limit });
-    }
-
-    // deleta uma avaliação, verificando permissão (somente o autor)
-    async delete(userId: string, reviewId: string): Promise<void> {
-        const review = this.reviewRepository.findById(reviewId);
-        if (!review) {
-            throw new ApplicationError('Avaliação não encontrada');
+    // Cria ou atualiza avaliação
+    async addOrUpdateReview(userId: string, courseId: string, data: CreateReviewDTO): Promise<Review> {
+        // Opcional: Verificar se aluno está matriculado.
+        const enrollment = this.enrollmentRepository.findEnrollment(userId, courseId);
+        if (!enrollment) {
+            throw new ApplicationError('Apenas alunos matriculados podem avaliar este curso.');
         }
 
-        if (review.userId !== userId) {
-            throw new ApplicationError('Você não tem permissão para remover esta avaliação');
-        }
+        const existingReview = this.reviewRepository.findByUserAndCourse(userId, courseId);
 
-        this.reviewRepository.delete(reviewId);
+        if (existingReview) {
+            // Update
+            existingReview.setRating(data.rating);
+            existingReview.setComment(data.comment);
+            return this.reviewRepository.update(existingReview);
+        } else {
+            // Create
+            const review = new Review({
+                userId,
+                courseId,
+                rating: data.rating,
+                comment: data.comment
+            });
+            return this.reviewRepository.save(review);
+        }
     }
 }

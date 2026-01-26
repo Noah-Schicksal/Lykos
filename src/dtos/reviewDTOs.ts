@@ -1,17 +1,23 @@
-export interface CreateReviewDTO {
-    courseId: string;
-    rating: number;
-    comment?: string;
-}
-
-export interface ReviewResponseDTO {
+export interface ReviewDTO {
     id: string;
-    userId: string;
-    courseId: string;
+    userName: string;
     rating: number;
     comment?: string;
     createdAt: Date;
-    user?: {
-        name: string;
+}
+
+export interface ReviewListResponseDTO {
+    data: ReviewDTO[];
+    meta: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        averageRating: number;
     };
+}
+
+export interface CreateReviewDTO {
+    rating: number;
+    comment: string;
 }

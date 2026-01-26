@@ -13,7 +13,8 @@ const moduleController = new ModuleController(); // Instanciando ModuleControlle
 // rotas públicas
 courseRoutes.get('/', (req, res) => courseController.index(req, res));
 courseRoutes.get('/:id', (req, res) => courseController.show(req, res));
-courseRoutes.get('/:id/reviews', (req, res) => reviewController.list(req, res));
+courseRoutes.get('/:id/reviews', (req, res, next) => reviewController.list(req, res, next));
+courseRoutes.post('/:id/reviews', authMiddleware, roleMiddleware(['STUDENT']), (req, res, next) => reviewController.create(req, res, next));
 
 // rotas privadas (apenas instrutores)
 // aplicando middlewares para todas as rotas abaixo

@@ -38,6 +38,23 @@ export class ReviewRepository {
         });
     }
 
+    // atualiza uma avaliação (para upsert)
+    update(review: Review): Review {
+        const stmt = db.prepare(`
+            UPDATE reviews 
+            SET rating = ?, comment = ?
+            WHERE id = ?
+        `);
+
+        stmt.run(
+            review.rating,
+            review.comment,
+            review.id
+        );
+
+        return review;
+    }
+
     // busca avaliações de um curso com paginação e dados do usuário
     findByCourseId({ courseId, page, limit }: FindReviewsParams): FindReviewsResponse {
         const offset = (page - 1) * limit;
@@ -94,10 +111,28 @@ export class ReviewRepository {
         });
     }
 
-    // verifica se um usuário já avaliou um curso
-    hasUserReviewed(userId: string, courseId: string): boolean {
-        const stmt = db.prepare('SELECT id FROM reviews WHERE user_id = ? AND course_id = ?');
-        const row = stmt.get(userId, courseId);
-        return !!row;
+    // busca avaliação por usuario e curso (para upsert)
+    findByUserAndCourse(userId: string, courseId: string): Review | null {
+        const stmt = db.prepare('SELECT * FROM reviews WHERE user_id = ? AND course_id = ?');
+        const row = stmt.get(userId, courseId) as any;
+
+        if (!row) return null;
+
+        return new Review({
+            id: row.id,
+            userId: row.user_id,
+            courseId: row.course_id,
+            rating: row.rating,
+            comment: row.comment,
+            createdAt: new Date(row.created_at)
+        });
+    }
+
+    // calcula média de avaliações de um curso
+    getAverageRating(courseId: string): number {
+        const stmt = db.prepare('SELECT AVG(rating) as avgRating FROM reviews WHERE course_id = ?');
+        const result = stmt.get(courseId) as { avgRating: number };
+        return result.avgRating || 0;
     }
 }
+
