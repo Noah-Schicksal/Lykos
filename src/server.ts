@@ -1,4 +1,9 @@
 import 'dotenv/config'; //carrega as variáveis de ambiente
+import { validateEnv } from './config/env';
+
+// Validate Env Vars immediately
+validateEnv();
+
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { initializeDatabase } from './database/init';

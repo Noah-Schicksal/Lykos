@@ -50,7 +50,7 @@ Abaixo listamos as áreas que necessitam de melhorias, classificadas por priorid
     *   **Recomendação**: `cors` instalado e configurado com whitelist via `.env`.
 
 
-6.  **Validação de Arquivos Limitada**
+6.  **Validação de Arquivos Limitada** (SOLVED)
     *   **Risco**: O upload verifica apenas a extensão do arquivo. Um atacante pode renomear um `.exe` malicioso para `.jpg` e enviá-lo. Embora o servidor não execute o arquivo, isso é má prática.
     *   **Recomendação**: Validar o *MIME Type* real do arquivo usando "Magic Numbers" (bibliotecas como `file-type` ou `mmmagic`).
 
