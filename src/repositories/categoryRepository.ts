@@ -40,4 +40,36 @@ export class CategoryRepository {
             name: row.name
         });
     }
+
+    findById(id: string): Category | null {
+        const stmt = db.prepare('SELECT * FROM categories WHERE id = ?');
+        const row = stmt.get(id) as any;
+
+        if (!row) return null;
+
+        return new Category({
+            id: row.id,
+            name: row.name
+        });
+    }
+
+    update(id: string, name: string): Category {
+        const stmt = db.prepare(`
+            UPDATE categories 
+            SET name = ? 
+            WHERE id = ?
+        `);
+
+        stmt.run(name, id);
+
+        return new Category({
+            id: id,
+            name: name
+        });
+    }
+
+    delete(id: string): void {
+        const stmt = db.prepare('DELETE FROM categories WHERE id = ?');
+        stmt.run(id);
+    }
 }
