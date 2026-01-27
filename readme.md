@@ -12,12 +12,14 @@ O projeto foca em segurança, escalabilidade e manutenibilidade, implementando p
 ## 🛠️ Tecnologias Utilizadas
 
 ### Core
+
 - **Node.js**: Runtime JavaScript.
 - **Express**: Framework web minimalista e flexível.
 - **TypeScript**: Superset JS com tipagem estática para robustez.
 - **SQLite (better-sqlite3)**: Banco de dados relacional leve e servidor-less.
 
 ### Segurança
+
 - **Helmet**: Proteção de headers HTTP.
 - **Cors**: Controle de acesso entre origens (Cross-Origin).
 - **Rate Limit**: Proteção contra ataques de Força Bruta e DoS.
@@ -26,6 +28,7 @@ O projeto foca em segurança, escalabilidade e manutenibilidade, implementando p
 - **File-Type**: Validação rigorosa de arquivos via Magic Numbers (Assinatura Binária).
 
 ### Utilitários
+
 - **Multer**: Manipulação de uploads `multipart/form-data`.
 - **Dotenv**: Gerenciamento de variáveis de ambiente.
 
@@ -120,6 +123,7 @@ erDiagram
 ```
 
 ### Explicação das Entidades
+
 - **Users**: Podem ser Alunos ou Instrutores.
 - **Categorias**: Classificação macro dos cursos.
 - **Cursos**: Entidade principal vendável, criada por Instrutores.
@@ -150,10 +154,12 @@ erDiagram
 ## 🚀 Como Rodar o Projeto
 
 ### Pré-requisitos
-- Node.js (v18+)
+
+- Node.js (v22+)
 - Npm ou Yarn
 
 ### Instalação
+
 1. Clone o repositório.
 2. Instale as dependências:
    ```bash
@@ -162,14 +168,65 @@ erDiagram
 3. Configure o `.env` na raiz (use `.env.example` como base).
 
 ### Execução
+
+#### Desenvolvimento
+
 - **Modo Desenvolvimento** (com hot-reload):
   ```bash
-  npm run dev
+  npm run start:dev
   ```
+  O servidor será iniciado com `ts-node-dev` e reiniciará automaticamente quando houver alterações no código.
+
+#### Produção
+
+- **Build** (compilar TypeScript para JavaScript):
+
+  ```bash
+  npm run build
+  ```
+
+  Os arquivos compilados serão gerados na pasta `dist/`.
+
+- **Iniciar em Produção**:
+  ```bash
+  npm run start
+  ```
+  Executa o servidor a partir dos arquivos compilados em `dist/`.
+
+#### Testes
+
 - **Testes Manuais** (Executa script de verificação):
   ```bash
   npm run test:manual
   ```
+
+---
+
+## 📚 Documentação da API (Swagger)
+
+A API possui documentação interativa completa via **Swagger UI**, acessível em:
+
+**http://localhost:3333/docs**
+
+### Recursos Documentados
+
+- ✅ **Auth**: Login, Logout, Registro (Estudante/Instrutor)
+- ✅ **Users**: Perfil do usuário
+- ✅ **Categories**: CRUD de categorias
+- ✅ **Courses**: CRUD de cursos, upload de capa, listagem
+- ✅ **Modules**: Gerenciamento de módulos
+- ✅ **Classes**: Gerenciamento de aulas, upload de materiais
+- ✅ **Reviews**: Sistema de avaliações
+- ✅ **Cart**: Carrinho de compras e checkout
+- ✅ **Student**: Dashboard do estudante, progresso
+- ✅ **Certificates**: Geração e validação de certificados
+
+A documentação Swagger permite:
+
+- 📖 Visualizar todos os endpoints disponíveis
+- 🔍 Ver schemas de request/response
+- 🧪 Testar endpoints diretamente pela interface
+- 🔐 Autenticar usando cookies httpOnly
 
 ---
 

@@ -14,16 +14,12 @@ export class AuthController {
     const { email, password } = req.body;
 
     try {
-      const result = await this.authService.login({ email, password });
+      const { user, token } = await this.authService.login({ email, password });
 
-      res.cookie('token', result.token, getCookieOptions());
+      res.cookie('token', token, getCookieOptions());
 
-      // Retorna os dados do usuário e o token no body
-      return ApiResponse.success(
-        res,
-        result,
-        'Login realizado com sucesso',
-      );
+      // Retorna apenas os dados do usuário (token já está no cookie)
+      return ApiResponse.success(res, user, 'Login realizado com sucesso');
     } catch (error) {
       next(error);
     }
@@ -38,6 +34,6 @@ export class AuthController {
       sameSite,
     });
 
-    return ApiResponse.success(res, null, 'Logout realizado com sucesso');
+    return ApiResponse.message(res, 'Logout realizado com sucesso');
   }
 }

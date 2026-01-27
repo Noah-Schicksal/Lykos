@@ -40,6 +40,10 @@ export class ApiResponse {
     return res.status(statusCode).json(response);
   }
 
+  static message(res: Response, message: string, statusCode: number = 200) {
+    return res.status(statusCode).json({ message });
+  }
+
   static paginated<T>(
     res: Response,
     data: T[],

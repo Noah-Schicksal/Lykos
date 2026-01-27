@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "jest",
     "test:manual": "ts-node src/scripts/testRunner.ts"
   },
@@ -15,7 +17,9 @@
     "file-type": "^21.3.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -28,6 +32,8 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.0.0",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "jest": "^29.7.0",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.1",
