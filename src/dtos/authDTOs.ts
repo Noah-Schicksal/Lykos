@@ -10,5 +10,4 @@ export interface LoginResponseDTO {
     email: string;
     role: string;
   };
-  token: string;
 }
