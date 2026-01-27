@@ -9,7 +9,9 @@
     "test:e2e": "jest tests/e2e",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:manual": "ts-node src/scripts/testRunner.ts"
+    "test:manual": "ts-node src/scripts/testRunner.ts",
+    "frontend:install": "npm install --prefix frontend",
+    "frontend:build": "npm run build --prefix frontend"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

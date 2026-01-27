@@ -1,0 +1,5 @@
+@import '~normalize.css';
+:root { --primary: #007bff; --bg: #f4f4f4; }
+body { font-family: sans-serif; background: var(--bg); color: #333; }
+.btn { background: var(--primary); color: white; padding: 0.5rem 1rem; border: none; cursor: pointer; }
+.course-card { background: white; border-radius: 8px; padding: 1rem; margin: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
