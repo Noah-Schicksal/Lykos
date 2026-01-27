@@ -122,7 +122,7 @@ describe('AuthService', () => {
           id: mockUser.id,
           role: mockUser.role,
         },
-        'test_secret_key',
+        'test_secret_key_12345',
         { expiresIn: '1h' },
       );
     });
