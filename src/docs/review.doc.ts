@@ -46,8 +46,7 @@
  *                         type: string
  *                         format: date-time
  *       404:
- *         description: Curso não encontrado
-
+ *         description: Curso não encontrado */
 /**
  * @swagger
  * /courses/{id}/reviews:
@@ -92,8 +91,7 @@
  *       403:
  *         description: Usuário não matriculado no curso
  *       404:
- *         description: Curso não encontrado
-
+ *         description: Curso não encontrado */
 /**
  * @swagger
  * /reviews/{id}:
@@ -148,6 +146,7 @@
  *         description: Não autorizado
  *       403:
  *         description: Sem permissão para editar esta avaliação
+ */
 
 /**
  * @swagger

@@ -39,6 +39,7 @@
  *         description: Não autorizado
  *       403:
  *         description: Acesso restrito a estudantes
+ */
 
 /**
  * @swagger
@@ -67,6 +68,7 @@
  *         description: Não autorizado
  *       403:
  *         description: Acesso restrito a estudantes
+ */
 
 /**
  * @swagger
@@ -93,6 +95,7 @@
  *         description: Não autorizado
  *       403:
  *         description: Acesso restrito a estudantes
+ */
 
 /**
  * @swagger
