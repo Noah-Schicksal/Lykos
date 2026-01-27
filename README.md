@@ -195,10 +195,85 @@ erDiagram
 
 #### Testes
 
-- **Testes Manuais** (Executa script de verificação):
+- **Executar Todos os Testes**:
+
   ```bash
-  npm run test:manual
+  npm test
   ```
+
+- **Testes Unitários** (testes isolados de services, utils, etc):
+
+  ```bash
+  npm run test:unit
+  ```
+
+- **Testes de Integração** (testes de múltiplos componentes):
+
+  ```bash
+  npm run test:integration
+  ```
+
+- **Testes E2E** (testes de fluxo completo da API):
+
+  ```bash
+  npm run test:e2e
+  ```
+
+- **Modo Watch** (reroda testes ao salvar arquivos):
+
+  ```bash
+  npm run test:watch
+  ```
+
+- **Relatório de Cobertura**:
+
+  ```bash
+  npm run test:coverage
+  ```
+
+  O relatório HTML será gerado em `coverage/lcov-report/index.html`
+
+### Estrutura de Testes
+
+O projeto utiliza **Jest** com a seguinte organização:
+
+- **`tests/unit/`**: Testes isolados de componentes individuais (services, utils)
+  - Mocks de todas as dependências externas
+  - Execução rápida
+  - Exemplo: `authService.test.ts`
+
+- **`tests/integration/`**: Testes de múltiplos componentes trabalhando juntos
+  - Pode usar banco de dados de teste
+  - Exemplo: service + repository + database
+
+- **`tests/e2e/`**: Testes de fluxos completos da API
+  - Usa supertest para requisições HTTP
+  - Testa todo o ciclo request/response
+  - Exemplo: fluxo completo de login
+
+- **`tests/setup/`**: Configuração global dos testes
+  - `testSetup.ts`: variáveis de ambiente e configurações
+- **`tests/mocks/`**: Mocks reutilizáveis
+  - `mockRepositories.ts`: implementações mockadas de repositories
+  - Compartilhados entre vários testes
+
+#### Padrão AAA (Arrange-Act-Assert)
+
+Todos os testes seguem o padrão AAA para clareza:
+
+```typescript
+it('should return user when credentials are valid', async () => {
+  // Arrange - Preparar dados e mocks
+  mockRepository.findByEmail.mockReturnValue(mockUser);
+
+  // Act - Executar a função sendo testada
+  const result = await authService.login(credentials);
+
+  // Assert - Verificar o resultado
+  expect(result.user).toBeDefined();
+  expect(result.token).toBeTruthy();
+});
+```
 
 ---
 
