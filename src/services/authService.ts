@@ -27,7 +27,13 @@ export class AuthService {
     return user;
   }
 
-  async login({ email, password }: LoginRequestDTO): Promise<LoginResponseDTO> {
+  async login({
+    email,
+    password,
+  }: LoginRequestDTO): Promise<{
+    user: LoginResponseDTO['user'];
+    token: string;
+  }> {
     const user = await this.validateCredentials(email, password);
 
     const secret = process.env.JWT_SECRET!;
@@ -43,7 +49,7 @@ export class AuthService {
       { expiresIn: expiresIn as any },
     );
 
-    //retorna os dados do usuário e o token jwt
+    //retorna os dados do usuário e o token (token é usado apenas no controller para o cookie)
     return {
       user: {
         id: user.id!,
