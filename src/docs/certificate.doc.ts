@@ -40,8 +40,7 @@
  *       401:
  *         description: Não autorizado
  *       403:
- *         description: Acesso restrito a estudantes
-
+ *         description: Acesso restrito a estudantes */
 /**
  * @swagger
  * /certificates/{hash}:
