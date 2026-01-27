@@ -15,6 +15,27 @@ const options = {
         description: 'Servidor Local',
       },
     ],
+    tags: [
+      { name: 'Auth', description: 'Gerenciamento de autenticação' },
+      { name: 'Users', description: 'Gerenciamento de usuários' },
+      {
+        name: 'Categories',
+        description: 'Gerenciamento de categorias de cursos',
+      },
+      { name: 'Courses', description: 'Gerenciamento de cursos' },
+      { name: 'Modules', description: 'Gerenciamento de módulos de cursos' },
+      { name: 'Classes', description: 'Gerenciamento de aulas e materiais' },
+      { name: 'Reviews', description: 'Gerenciamento de avaliações de cursos' },
+      { name: 'Cart', description: 'Gerenciamento de carrinho de compras' },
+      {
+        name: 'Student',
+        description: 'Dashboard e funcionalidades do estudante',
+      },
+      {
+        name: 'Certificates',
+        description: 'Gerenciamento e validação de certificados',
+      },
+    ],
     components: {
       securitySchemes: {
         cookieAuth: {
