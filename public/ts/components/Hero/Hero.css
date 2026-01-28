@@ -1,0 +1,45 @@
+/* Hero Styles */
+.hero-header {
+    margin-bottom: 3.5rem;
+    position: relative;
+}
+
+.hero-glow {
+    position: absolute;
+    left: -3rem;
+    top: -3rem;
+    width: 16rem;
+    height: 16rem;
+    background-color: rgba(var(--color-primary-rgb), 0.05);
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+}
+
+.hero-header h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+@media (min-width: 1024px) {
+    .hero-header h1 {
+        font-size: 3.75rem;
+    }
+}
+
+.gradient-text {
+    background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.25rem;
+    max-width: 42rem;
+    line-height: 1.6;
+}

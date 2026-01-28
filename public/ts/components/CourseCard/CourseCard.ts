@@ -1,6 +1,9 @@
-import { createElement } from '../utils.js';
+import { createElement, loadCSS } from '../../utils.js';
+import { Course } from '../../data.js';
 
-export function CourseCard(course) {
+export function CourseCard(course: Course): HTMLElement {
+    loadCSS('js/components/CourseCard/CourseCard.css');
+
     const card = createElement('div', { className: 'course-card' });
 
     // Image Section with Tag

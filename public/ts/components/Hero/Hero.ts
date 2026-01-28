@@ -1,6 +1,8 @@
-import { createElement } from '../utils.js';
+import { createElement, loadCSS } from '../../utils.js';
 
-export function Hero() {
+export function Hero(): HTMLElement {
+    loadCSS('js/components/Hero/Hero.css');
+
     const header = createElement('header', { className: 'hero-header' });
 
     const glow = createElement('div', { className: 'hero-glow' });

@@ -1,7 +1,10 @@
-import { createElement } from '../utils.js';
-import { CourseCard } from './CourseCard.js';
+import { createElement, loadCSS } from '../../utils.js';
+import { CourseCard } from '../CourseCard/CourseCard.js';
+import { Course } from '../../data.js';
 
-export function CourseGrid(courses) {
+export function CourseGrid(courses: Course[]): HTMLElement {
+    loadCSS('js/components/CourseGrid/CourseGrid.css');
+
     const section = createElement('section', { className: 'courses-section' });
 
     // Header

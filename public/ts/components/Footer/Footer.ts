@@ -1,6 +1,8 @@
-import { createElement } from '../utils.js';
+import { createElement, loadCSS } from '../../utils.js';
 
-export function Footer() {
+export function Footer(): HTMLElement {
+    loadCSS('js/components/Footer/Footer.css');
+
     const footer = createElement('footer', { className: 'main-footer' });
 
     const container = createElement('div', { className: 'container footer-grid' });
@@ -20,7 +22,7 @@ export function Footer() {
     col1.append(brand, p, social);
 
     // Link Cols
-    const createLinkCol = (title, items) => {
+    const createLinkCol = (title: string, items: string[]) => {
         const col = createElement('div', { className: 'footer-links-col' });
         col.appendChild(createElement('h4', {}, title));
         const ul = createElement('ul', {});

@@ -1,9 +1,9 @@
-import { Navbar } from './components/Navbar.js';
-import { Hero } from './components/Hero.js';
-import { CourseGrid } from './components/CourseGrid.js';
-import { FeaturedSection } from './components/FeaturedSection.js';
-import { TrustSection } from './components/TrustSection.js';
-import { Footer } from './components/Footer.js';
+import { Navbar } from './components/Navbar/Navbar.js';
+import { Hero } from './components/Hero/Hero.js';
+import { CourseGrid } from './components/CourseGrid/CourseGrid.js';
+import { FeaturedSection } from './components/FeaturedSection/FeaturedSection.js';
+import { TrustSection } from './components/TrustSection/TrustSection.js';
+import { Footer } from './components/Footer/Footer.js';
 import { courses, categories } from './data.js';
 import { createElement } from './utils.js';
 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDynamicEvents();
 });
 
-function initTheme() {
+function initTheme(): void {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -63,7 +63,7 @@ function initTheme() {
     }
 }
 
-function initDynamicEvents() {
+function initDynamicEvents(): void {
     // Re-attach listeners to the featured buttons now that they are in DOM
     const enrollBtn = document.getElementById('enroll-featured');
     if (enrollBtn) {
