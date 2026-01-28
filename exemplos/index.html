@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ChemAcademy | Master the Science of Matter</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ChemAcademy | Master the Science of Matter</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script>
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -25,7 +31,7 @@
             },
         };
     </script>
-<style type="text/tailwindcss">:root {
+    <style type="text/tailwindcss">:root {
     --molecular-teal: rgba(14, 165, 233, 0.15)
     }
 body {
@@ -49,367 +55,433 @@ body {
     font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
     }</style>
 </head>
+
 <body class="molecular-bg text-slate-100 min-h-screen">
-<nav class="sticky top-0 z-50 glass-nav border-b border-white/5 bg-background-dark/80">
-<div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-6">
-<div class="flex items-center gap-2 flex-shrink-0">
-<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
-<span class="material-symbols-outlined text-background-dark font-bold">science</span>
-</div>
-<span class="text-xl font-bold tracking-tight text-white hidden lg:block">ChemAcademy</span>
-</div>
-<button class="hidden md:flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors text-slate-300">
-            Explore
-            <span class="material-symbols-outlined text-lg">expand_more</span>
-</button>
-<div class="flex-grow max-w-2xl relative">
-<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-<span class="material-symbols-outlined text-slate-500 text-xl">search</span>
-</div>
-<input class="block w-full pl-11 pr-4 py-2 bg-white/5 border border-white/10 focus:ring-1 focus:ring-primary focus:bg-white/10 focus:border-primary/50 rounded-full text-sm transition-all outline-none text-white placeholder-slate-500" placeholder="Search organic mechanisms, thermodynamics, lab protocols..." type="text"/>
-</div>
-<div class="flex items-center gap-4 lg:gap-6">
-<div class="hidden xl:flex items-center gap-4 text-sm font-medium text-slate-400">
-<a class="hover:text-primary transition-colors" href="#">Solutions</a>
-<a class="hover:text-primary transition-colors" href="#">Teach</a>
-</div>
-<button class="relative p-1 hover:text-primary transition-colors text-slate-300">
-<span class="material-symbols-outlined">shopping_cart</span>
-<span id="cart-count-badge" class="absolute -top-1 -right-1 bg-primary text-background-dark text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center" style="display:none">0</span>
-</button>
-<button class="hidden sm:block p-1 hover:text-primary transition-colors text-slate-300">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<div class="w-9 h-9 rounded-full border border-primary/50 overflow-hidden cursor-pointer hover:border-primary transition-all p-0.5">
-<img alt="User avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ"/>
-</div>
-</div>
-</div>
-</nav>
-<div class="bg-black/40 border-b border-white/5 hidden md:block backdrop-blur-sm">
-<div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-slate-500">
-<a class="hover:text-primary transition-colors" href="#">General Chemistry</a>
-<a class="text-primary border-b border-primary/50 pb-1" href="#">Organic Synthesis</a>
-<a class="hover:text-primary transition-colors" href="#">Biochemistry</a>
-<a class="hover:text-primary transition-colors" href="#">Analytical</a>
-<a class="hover:text-primary transition-colors" href="#">Engineering</a>
-<a class="hover:text-primary transition-colors" href="#">Lab Safety</a>
-<a class="hover:text-primary transition-colors" href="#">Physical Chem</a>
-<a class="hover:text-primary transition-colors" href="#">Pharmacology</a>
-</div>
-</div>
-<main class="max-w-7xl mx-auto px-4 py-12 lg:py-16 relative">
-<header class="mb-14 relative">
-<div class="absolute -left-12 -top-12 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
-<h1 class="text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">Chemistry Mastery <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Courses</span></h1>
-<p class="text-slate-400 max-w-2xl text-xl leading-relaxed">
-            Unravel the molecular world with expert-led courses. From orbital mechanics to complex organic synthesis, master the science of matter.
-        </p>
-</header>
-<section class="mb-20">
-<div class="flex items-center justify-between mb-8">
-<div>
-<h2 class="text-2xl font-bold text-white flex items-center gap-2">
-<span class="material-symbols-outlined text-primary">biotech</span>
-                    Start Your Lab Journey
-                </h2>
-<p class="text-slate-500 text-sm mt-1">Personalized curriculum based on your research interests.</p>
-</div>
-<div class="flex gap-2">
-<button class="p-2 rounded-lg border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all text-slate-400 hover:text-primary">
-<span class="material-symbols-outlined">chevron_left</span>
-</button>
-<button class="p-2 rounded-lg border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all text-slate-400 hover:text-primary">
-<span class="material-symbols-outlined">chevron_right</span>
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-<div class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
-<div class="relative aspect-video overflow-hidden">
-<img alt="Organic Chemistry Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR6DGwRE1YJ8WF-DD9FAmqasKkQiz7jq169wj28XZtFmFgaxZDad34mUCAOIaE4gQ5FIqFC71LRMZqR2Bi4CmVOJyECsvY1r83JLr_vSWmFaj8UMKYEiW0SHd79WThs0nGeo6BPC8nLonaTVeOML5vp7jLMhsE9J6eAN-RJhJWxOoNVKSr_LYdSQxV0wNOlnnHa56RpMQRvfL2fCh4wYz2v9ex0_t8T7U4bcsBwD9bFbLjZbSCbhJ0BZnYiXmwb_o3CRYd5ZnjqjDp"/>
-<div class="absolute top-3 left-3 px-2 py-1 bg-primary text-background-dark text-[10px] font-black rounded uppercase tracking-tighter">Bestseller</div>
-</div>
-<div class="p-5 flex flex-col flex-grow">
-<h3 class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">Mastering Organic Chemistry: Mechanisms and Synthesis</h3>
-<p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">person</span> Dr. Sarah Jenkins, PhD
-                    </p>
-<div class="flex items-center gap-1 mb-4">
-<span class="text-primary text-sm font-bold">4.9</span>
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-</div>
-<span class="text-slate-500 text-[11px] ml-1">(12,402)</span>
-</div>
-<div class="mt-auto flex items-center justify-between">
-<div class="flex items-baseline gap-2">
-<span class="text-xl font-black text-white">$84.99</span>
-<span class="text-slate-600 text-sm line-through">$129.99</span>
-</div>
-</div>
-</div>
-</div>
-<div class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
-<div class="relative aspect-video overflow-hidden">
-<img alt="Physical Chemistry Course" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXGPsGjhvyb2xdQUvZcqfCrqxxhFdh4b4Y0V1_00an6eiDTzwbhwd2p2F8cddtH-mGAEAOW1zOb-c3j6Uzh-Dtc1960cU_ebO-RQiGd25J0DVvjiYAihvLgU9mKkJk20jtGPEVHTR-lIXops4jtY8CozvMiSbzFzBlpPCFiJ-Yuratx_qRVAZT7N3sYTu0Q2_8wjr4JLjhRwmzzoRHBHDX2xQHvPSQSs64ZerajbV1mYRcqXqCEOcNqtS5-yQYFpCbPbgqJMsQIF2Y"/>
-<div class="absolute top-3 left-3 px-2 py-1 bg-white/10 backdrop-blur-md text-white text-[10px] font-black rounded uppercase tracking-tighter border border-white/20">New</div>
-</div>
-<div class="p-5 flex flex-col flex-grow">
-<h3 class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">Computational Quantum Chemistry: From Zero to Pro</h3>
-<p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">person</span> Prof. Marcus Thorne
-                    </p>
-<div class="flex items-center gap-1 mb-4">
-<span class="text-primary text-sm font-bold">4.7</span>
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm">star_half</span>
-</div>
-<span class="text-slate-500 text-[11px] ml-1">(2,145)</span>
-</div>
-<div class="mt-auto flex items-center justify-between">
-<div class="flex items-baseline gap-2">
-<span class="text-xl font-black text-white">$49.99</span>
-<span class="text-slate-600 text-sm line-through">$89.99</span>
-</div>
-</div>
-</div>
-</div>
-<div class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
-<div class="relative aspect-video overflow-hidden">
-<img alt="Analytical Chemistry" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF0L1ijMQahBCWN2zirANGanT9CkAlXTekAmgR8vLd4d72nZ8cP_re_VxwLPNzRZGZ0phlBPL8Ke_LAdEq_grZl6lawFs2Fe5wlhN2C-DU-uU8lRr-hHWL6FIWkYaxyNRKCEkO00V0fqUyEkhcTF3nP82yfCrqO2R6-K3VvGwm-BzoNhSmd_rIdPjr0Zs4fbk9-Rmn6pcfelhtLxf0xwa6b4eg1og4DrKlt3fsIgvNNKAMh6t2eVUIye7gkBT6FMHe6iCooSAN5TV_"/>
-<div class="absolute top-3 left-3 px-2 py-1 bg-secondary text-white text-[10px] font-black rounded uppercase tracking-tighter">Top Rated</div>
-</div>
-<div class="p-5 flex flex-col flex-grow">
-<h3 class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">Advanced Analytical Methods: HPLC &amp; Mass Spec</h3>
-<p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">person</span> Dr. Elena Rodriguez
-                    </p>
-<div class="flex items-center gap-1 mb-4">
-<span class="text-primary text-sm font-bold">4.8</span>
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-</div>
-<span class="text-slate-500 text-[11px] ml-1">(876)</span>
-</div>
-<div class="mt-auto flex items-center justify-between">
-<div class="flex items-baseline gap-2">
-<span class="text-xl font-black text-white">$19.99</span>
-<span class="text-slate-600 text-sm line-through">$149.99</span>
-</div>
-</div>
-</div>
-</div>
-<div class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
-<div class="relative aspect-video overflow-hidden">
-<img alt="Lab Techniques" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApiDI_MSm9JzKWMsC-ogeVV8jnBTFjmuKt4KmnOgjUm1flqwVvujZdROILpvoK9fgXCr53alZdswcZmeu6frUrrD1K9IlKQYbkvdyx2iw65s4hCNn4gfi3KqX6pxx0-NGCxBIfaLPqpbNHK12Em0rmAajG8CQEEwZl-s_JbzZMDm8ebQU5VJf7jqAq7myHG4If3SX49tFL_esJklegzayp1b14Qy4KTyWvCJKsKtmqN-eVIBexHsEzL2nsjl7IvbczDJH1XIltv1VA"/>
-</div>
-<div class="p-5 flex flex-col flex-grow">
-<h3 class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">Essential Laboratory Techniques for Researchers</h3>
-<p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
-<span class="material-symbols-outlined text-[14px]">school</span> Technical Univ. of Berlin
-                    </p>
-<div class="flex items-center gap-1 mb-4">
-<span class="text-primary text-sm font-bold">4.6</span>
-<div class="flex text-primary">
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm fill-current">star</span>
-<span class="material-symbols-outlined text-sm">star_half</span>
-</div>
-<span class="text-slate-500 text-[11px] ml-1">(5,532)</span>
-</div>
-<div class="mt-auto flex items-center justify-between">
-<div class="flex items-baseline gap-2">
-<span class="text-xl font-black text-white">$34.99</span>
-<span class="text-slate-600 text-sm line-through">$54.99</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
-<section class="mb-20">
-<h2 class="text-2xl font-bold text-white mb-8">Course of the Month</h2>
-<div class="relative rounded-2xl overflow-hidden border border-white/10 bg-card-dark/60 backdrop-blur-md flex flex-col lg:flex-row shadow-2xl">
-<div class="lg:w-1/2 aspect-video lg:aspect-auto relative">
-<img alt="Featured Course" class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLEVdIVc5uxBTRJra3svY1M_056F7opU5FyfPImWutFm1MvFvuLOER2uTydYcskzm4Tpq5OAX-cUYw6T6ByKYTAs6C_-8kb8uyPUvbK2KuGVY2BDj_h9v23igVO8ymYJ4ba2GNRb0OtqRbMpkzv2PG2sXsYt414gWonDK1_tFV7ABFNGFaJUbWXm3px9Nug6QIYb4FTh_zuml5d0nw-BS5RgL8D6edLlhtR1hSN5YNx04ElP8GNw_pwXJogECFnn4bQd_ad2K0gzKx"/>
-<div class="absolute inset-0 bg-gradient-to-r from-card-dark/20 to-transparent"></div>
-</div>
-<div class="lg:w-1/2 p-10 lg:p-14 flex flex-col justify-center relative">
-<div class="absolute inset-0 opacity-5 pointer-events-none molecular-bg"></div>
-<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase mb-8 w-fit border border-primary/20">
-<span class="material-symbols-outlined text-xs">workspace_premium</span>
-                    Premium Selection
+    <nav class="sticky top-0 z-50 glass-nav border-b border-white/5 bg-background-dark/80">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-6">
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <div
+                    class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-background-dark font-bold">science</span>
                 </div>
-<h3 class="text-4xl font-bold text-white mb-6 leading-tight">Thermodynamics: The Physics and Chemistry of Energy</h3>
-<p class="text-slate-400 mb-10 text-lg leading-relaxed">
-                    Deep dive into entropy, enthalpy, and the laws of thermodynamics with world-renowned expert Prof. David Chen. This course includes 40 hours of HD video, downloadable molecular simulation tools, and a verified certificate.
-                </p>
-<div class="flex flex-wrap items-center gap-8 mb-10">
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Duration</span>
-<span class="font-bold text-white text-lg">42 Hours</span>
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Level</span>
-<span class="font-bold text-white text-lg">Intermediate</span>
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Students</span>
-<span class="font-bold text-white text-lg">12,450+</span>
-</div>
-</div>
-<div class="flex items-center gap-4">
-<button id="enroll-featured" data-course-id="thermo-001" class="bg-primary hover:bg-white text-background-dark font-black px-10 py-4 rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
-                        Enroll Now
-                    </button>
-<button id="wishlist-featured" data-course-id="thermo-001" class="bg-white/5 border border-white/10 hover:border-primary/50 text-white px-8 py-4 rounded-xl font-bold transition-all hover:bg-white/10">
-                        Add to Wishlist
-                    </button>
-</div>
-</div>
-</div>
-</section>
-<section class="mb-10 py-12 border-y border-white/5">
-<h2 class="text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 mb-12">Trusted by Global Research Institutions</h2>
-<div class="flex flex-wrap justify-center items-center gap-12 lg:gap-24 opacity-30 grayscale hover:opacity-80 hover:grayscale-0 transition-all duration-1000">
-<div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
-<span class="material-symbols-outlined text-3xl">biotech</span> OXFORD LABS
+                <span class="text-xl font-bold tracking-tight text-white hidden lg:block">ChemAcademy</span>
             </div>
-<div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
-<span class="material-symbols-outlined text-3xl">genetics</span> GENE-TECH
+            <button
+                class="hidden md:flex items-center gap-1 text-sm font-medium hover:text-primary transition-colors text-slate-300">
+                Explore
+                <span class="material-symbols-outlined text-lg">expand_more</span>
+            </button>
+            <div class="flex-grow max-w-2xl relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="material-symbols-outlined text-slate-500 text-xl">search</span>
+                </div>
+                <input
+                    class="block w-full pl-11 pr-4 py-2 bg-white/5 border border-white/10 focus:ring-1 focus:ring-primary focus:bg-white/10 focus:border-primary/50 rounded-full text-sm transition-all outline-none text-white placeholder-slate-500"
+                    placeholder="Search organic mechanisms, thermodynamics, lab protocols..." type="text" />
             </div>
-<div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
-<span class="material-symbols-outlined text-3xl">grid_view</span> NANO-SCIENCE
+            <div class="flex items-center gap-4 lg:gap-6">
+                <div class="hidden xl:flex items-center gap-4 text-sm font-medium text-slate-400">
+                    <a class="hover:text-primary transition-colors" href="#">Solutions</a>
+                    <a class="hover:text-primary transition-colors" href="#">Teach</a>
+                </div>
+                <button class="relative p-1 hover:text-primary transition-colors text-slate-300">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="cart-count-badge"
+                        class="absolute -top-1 -right-1 bg-primary text-background-dark text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                        style="display:none">0</span>
+                </button>
+                <button class="hidden sm:block p-1 hover:text-primary transition-colors text-slate-300">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <div
+                    class="w-9 h-9 rounded-full border border-primary/50 overflow-hidden cursor-pointer hover:border-primary transition-all p-0.5">
+                    <img alt="User avatar" class="w-full h-full rounded-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
+                </div>
             </div>
-<div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
-<span class="material-symbols-outlined text-3xl">hub</span> MOLECULAR.AI
+        </div>
+    </nav>
+    <div class="bg-black/40 border-b border-white/5 hidden md:block backdrop-blur-sm">
+        <div
+            class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-slate-500">
+            <a class="hover:text-primary transition-colors" href="#">General Chemistry</a>
+            <a class="text-primary border-b border-primary/50 pb-1" href="#">Organic Synthesis</a>
+            <a class="hover:text-primary transition-colors" href="#">Biochemistry</a>
+            <a class="hover:text-primary transition-colors" href="#">Analytical</a>
+            <a class="hover:text-primary transition-colors" href="#">Engineering</a>
+            <a class="hover:text-primary transition-colors" href="#">Lab Safety</a>
+            <a class="hover:text-primary transition-colors" href="#">Physical Chem</a>
+            <a class="hover:text-primary transition-colors" href="#">Pharmacology</a>
+        </div>
+    </div>
+    <main class="max-w-7xl mx-auto px-4 py-12 lg:py-16 relative">
+        <header class="mb-14 relative">
+            <div class="absolute -left-12 -top-12 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none">
             </div>
-</div>
-</section>
-</main>
-<footer class="bg-black/80 border-t border-white/5 pt-20 pb-10">
-<div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
-<div class="col-span-2 lg:col-span-1">
-<div class="flex items-center gap-3 mb-8">
-<div class="w-9 h-9 bg-primary rounded flex items-center justify-center shadow-lg shadow-primary/20">
-<span class="material-symbols-outlined text-background-dark text-xl font-bold">science</span>
-</div>
-<span class="text-xl font-bold tracking-tight text-white">ChemAcademy</span>
-</div>
-<p class="text-slate-500 text-sm leading-relaxed mb-8">
-                The world's premier digital infrastructure for chemical education, molecular research, and laboratory training.
+            <h1 class="text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">Chemistry Mastery <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Courses</span></h1>
+            <p class="text-slate-400 max-w-2xl text-xl leading-relaxed">
+                Unravel the molecular world with expert-led courses. From orbital mechanics to complex organic
+                synthesis, master the science of matter.
             </p>
-<div class="flex gap-5">
-<a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1" href="#"><span class="material-symbols-outlined">public</span></a>
-<a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1" href="#"><span class="material-symbols-outlined">mail</span></a>
-<a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1" href="#"><span class="material-symbols-outlined">forum</span></a>
-</div>
-</div>
-<div>
-<h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Programs</h4>
-<ul class="space-y-4 text-sm text-slate-500">
-<li><a class="hover:text-primary transition-colors" href="#">Degree Tracks</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Lab Certifications</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Enterprise Research</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Academic Partnerships</a></li>
-</ul>
-</div>
-<div>
-<h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Resources</h4>
-<ul class="space-y-4 text-sm text-slate-500">
-<li><a class="hover:text-primary transition-colors" href="#">Simulation Tools</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Safety Protocols</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Journal Access</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">API Documentation</a></li>
-</ul>
-</div>
-<div>
-<h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Global</h4>
-<ul class="space-y-4 text-sm text-slate-500">
-<li><a class="hover:text-primary transition-colors" href="#">Student Forum</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Research Blog</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Affiliates</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Scholarships</a></li>
-</ul>
-</div>
-<div class="col-span-2 lg:col-span-1">
-<h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Newsletter</h4>
-<p class="text-xs text-slate-500 mb-6 leading-relaxed">Stay updated on breakthroughs in synthetic and computational chemistry.</p>
-<div class="flex flex-col gap-3">
-<input class="bg-white/5 border border-white/10 rounded-xl text-sm px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-white transition-all" placeholder="researcher@lab.edu" type="email"/>
-<button class="bg-primary text-background-dark font-black text-sm py-3 rounded-xl hover:bg-white transition-all">Subscribe</button>
-</div>
-</div>
-</div>
-<div class="max-w-7xl mx-auto px-4 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-medium uppercase tracking-widest text-slate-600">
-<p>© 2024 ChemAcademy Education Inc. Molecularly Precise Education.</p>
-<div class="flex gap-10">
-<a class="hover:text-primary" href="#">Terms</a>
-<a class="hover:text-primary" href="#">Privacy</a>
-<a class="hover:text-primary" href="#">Security</a>
-</div>
-</div>
-</footer>
-<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-background-dark rounded-full flex items-center justify-center shadow-2xl z-[100] hover:scale-110 active:scale-95 transition-all group" onclick="document.documentElement.classList.toggle('dark')">
-<span class="material-symbols-outlined font-bold transition-transform group-hover:rotate-12">dark_mode</span>
-</button>
+        </header>
+        <section class="mb-20">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">biotech</span>
+                        Start Your Lab Journey
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">Personalized curriculum based on your research interests.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button
+                        class="p-2 rounded-lg border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all text-slate-400 hover:text-primary">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button
+                        class="p-2 rounded-lg border border-white/10 hover:bg-white/5 hover:border-primary/30 transition-all text-slate-400 hover:text-primary">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div
+                    class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
+                    <div class="relative aspect-video overflow-hidden">
+                        <img alt="Organic Chemistry Course"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR6DGwRE1YJ8WF-DD9FAmqasKkQiz7jq169wj28XZtFmFgaxZDad34mUCAOIaE4gQ5FIqFC71LRMZqR2Bi4CmVOJyECsvY1r83JLr_vSWmFaj8UMKYEiW0SHd79WThs0nGeo6BPC8nLonaTVeOML5vp7jLMhsE9J6eAN-RJhJWxOoNVKSr_LYdSQxV0wNOlnnHa56RpMQRvfL2fCh4wYz2v9ex0_t8T7U4bcsBwD9bFbLjZbSCbhJ0BZnYiXmwb_o3CRYd5ZnjqjDp" />
+                        <div
+                            class="absolute top-3 left-3 px-2 py-1 bg-primary text-background-dark text-[10px] font-black rounded uppercase tracking-tighter">
+                            Bestseller</div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3
+                            class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">
+                            Mastering Organic Chemistry: Mechanisms and Synthesis</h3>
+                        <p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">person</span> Dr. Sarah Jenkins, PhD
+                        </p>
+                        <div class="flex items-center gap-1 mb-4">
+                            <span class="text-primary text-sm font-bold">4.9</span>
+                            <div class="flex text-primary">
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                            </div>
+                            <span class="text-slate-500 text-[11px] ml-1">(12,402)</span>
+                        </div>
+                        <div class="mt-auto flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-black text-white">$84.99</span>
+                                <span class="text-slate-600 text-sm line-through">$129.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
+                    <div class="relative aspect-video overflow-hidden">
+                        <img alt="Physical Chemistry Course"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXGPsGjhvyb2xdQUvZcqfCrqxxhFdh4b4Y0V1_00an6eiDTzwbhwd2p2F8cddtH-mGAEAOW1zOb-c3j6Uzh-Dtc1960cU_ebO-RQiGd25J0DVvjiYAihvLgU9mKkJk20jtGPEVHTR-lIXops4jtY8CozvMiSbzFzBlpPCFiJ-Yuratx_qRVAZT7N3sYTu0Q2_8wjr4JLjhRwmzzoRHBHDX2xQHvPSQSs64ZerajbV1mYRcqXqCEOcNqtS5-yQYFpCbPbgqJMsQIF2Y" />
+                        <div
+                            class="absolute top-3 left-3 px-2 py-1 bg-white/10 backdrop-blur-md text-white text-[10px] font-black rounded uppercase tracking-tighter border border-white/20">
+                            New</div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3
+                            class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">
+                            Computational Quantum Chemistry: From Zero to Pro</h3>
+                        <p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">person</span> Prof. Marcus Thorne
+                        </p>
+                        <div class="flex items-center gap-1 mb-4">
+                            <span class="text-primary text-sm font-bold">4.7</span>
+                            <div class="flex text-primary">
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm">star_half</span>
+                            </div>
+                            <span class="text-slate-500 text-[11px] ml-1">(2,145)</span>
+                        </div>
+                        <div class="mt-auto flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-black text-white">$49.99</span>
+                                <span class="text-slate-600 text-sm line-through">$89.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
+                    <div class="relative aspect-video overflow-hidden">
+                        <img alt="Analytical Chemistry"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF0L1ijMQahBCWN2zirANGanT9CkAlXTekAmgR8vLd4d72nZ8cP_re_VxwLPNzRZGZ0phlBPL8Ke_LAdEq_grZl6lawFs2Fe5wlhN2C-DU-uU8lRr-hHWL6FIWkYaxyNRKCEkO00V0fqUyEkhcTF3nP82yfCrqO2R6-K3VvGwm-BzoNhSmd_rIdPjr0Zs4fbk9-Rmn6pcfelhtLxf0xwa6b4eg1og4DrKlt3fsIgvNNKAMh6t2eVUIye7gkBT6FMHe6iCooSAN5TV_" />
+                        <div
+                            class="absolute top-3 left-3 px-2 py-1 bg-secondary text-white text-[10px] font-black rounded uppercase tracking-tighter">
+                            Top Rated</div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3
+                            class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">
+                            Advanced Analytical Methods: HPLC &amp; Mass Spec</h3>
+                        <p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">person</span> Dr. Elena Rodriguez
+                        </p>
+                        <div class="flex items-center gap-1 mb-4">
+                            <span class="text-primary text-sm font-bold">4.8</span>
+                            <div class="flex text-primary">
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                            </div>
+                            <span class="text-slate-500 text-[11px] ml-1">(876)</span>
+                        </div>
+                        <div class="mt-auto flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-black text-white">$19.99</span>
+                                <span class="text-slate-600 text-sm line-through">$149.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="group flex flex-col bg-card-dark rounded-xl overflow-hidden border border-white/10 hover:border-primary/40 transition-all hover:shadow-[0_0_30px_rgba(0,245,212,0.05)]">
+                    <div class="relative aspect-video overflow-hidden">
+                        <img alt="Lab Techniques"
+                            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuApiDI_MSm9JzKWMsC-ogeVV8jnBTFjmuKt4KmnOgjUm1flqwVvujZdROILpvoK9fgXCr53alZdswcZmeu6frUrrD1K9IlKQYbkvdyx2iw65s4hCNn4gfi3KqX6pxx0-NGCxBIfaLPqpbNHK12Em0rmAajG8CQEEwZl-s_JbzZMDm8ebQU5VJf7jqAq7myHG4If3SX49tFL_esJklegzayp1b14Qy4KTyWvCJKsKtmqN-eVIBexHsEzL2nsjl7IvbczDJH1XIltv1VA" />
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3
+                            class="font-bold text-white line-clamp-2 mb-2 group-hover:text-primary transition-colors text-base leading-snug">
+                            Essential Laboratory Techniques for Researchers</h3>
+                        <p class="text-slate-500 text-xs mb-3 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">school</span> Technical Univ. of Berlin
+                        </p>
+                        <div class="flex items-center gap-1 mb-4">
+                            <span class="text-primary text-sm font-bold">4.6</span>
+                            <div class="flex text-primary">
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm fill-current">star</span>
+                                <span class="material-symbols-outlined text-sm">star_half</span>
+                            </div>
+                            <span class="text-slate-500 text-[11px] ml-1">(5,532)</span>
+                        </div>
+                        <div class="mt-auto flex items-center justify-between">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-xl font-black text-white">$34.99</span>
+                                <span class="text-slate-600 text-sm line-through">$54.99</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mb-20">
+            <h2 class="text-2xl font-bold text-white mb-8">Course of the Month</h2>
+            <div
+                class="relative rounded-2xl overflow-hidden border border-white/10 bg-card-dark/60 backdrop-blur-md flex flex-col lg:flex-row shadow-2xl">
+                <div class="lg:w-1/2 aspect-video lg:aspect-auto relative">
+                    <img alt="Featured Course"
+                        class="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-1000"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLEVdIVc5uxBTRJra3svY1M_056F7opU5FyfPImWutFm1MvFvuLOER2uTydYcskzm4Tpq5OAX-cUYw6T6ByKYTAs6C_-8kb8uyPUvbK2KuGVY2BDj_h9v23igVO8ymYJ4ba2GNRb0OtqRbMpkzv2PG2sXsYt414gWonDK1_tFV7ABFNGFaJUbWXm3px9Nug6QIYb4FTh_zuml5d0nw-BS5RgL8D6edLlhtR1hSN5YNx04ElP8GNw_pwXJogECFnn4bQd_ad2K0gzKx" />
+                    <div class="absolute inset-0 bg-gradient-to-r from-card-dark/20 to-transparent"></div>
+                </div>
+                <div class="lg:w-1/2 p-10 lg:p-14 flex flex-col justify-center relative">
+                    <div class="absolute inset-0 opacity-5 pointer-events-none molecular-bg"></div>
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase mb-8 w-fit border border-primary/20">
+                        <span class="material-symbols-outlined text-xs">workspace_premium</span>
+                        Premium Selection
+                    </div>
+                    <h3 class="text-4xl font-bold text-white mb-6 leading-tight">Thermodynamics: The Physics and
+                        Chemistry of Energy</h3>
+                    <p class="text-slate-400 mb-10 text-lg leading-relaxed">
+                        Deep dive into entropy, enthalpy, and the laws of thermodynamics with world-renowned expert
+                        Prof. David Chen. This course includes 40 hours of HD video, downloadable molecular simulation
+                        tools, and a verified certificate.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-8 mb-10">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Duration</span>
+                            <span class="font-bold text-white text-lg">42 Hours</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Level</span>
+                            <span class="font-bold text-white text-lg">Intermediate</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-1">Students</span>
+                            <span class="font-bold text-white text-lg">12,450+</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <button id="enroll-featured" data-course-id="thermo-001"
+                            class="bg-primary hover:bg-white text-background-dark font-black px-10 py-4 rounded-xl transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20">
+                            Enroll Now
+                        </button>
+                        <button id="wishlist-featured" data-course-id="thermo-001"
+                            class="bg-white/5 border border-white/10 hover:border-primary/50 text-white px-8 py-4 rounded-xl font-bold transition-all hover:bg-white/10">
+                            Add to Wishlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mb-10 py-12 border-y border-white/5">
+            <h2 class="text-center text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 mb-12">Trusted by
+                Global Research Institutions</h2>
+            <div
+                class="flex flex-wrap justify-center items-center gap-12 lg:gap-24 opacity-30 grayscale hover:opacity-80 hover:grayscale-0 transition-all duration-1000">
+                <div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
+                    <span class="material-symbols-outlined text-3xl">biotech</span> OXFORD LABS
+                </div>
+                <div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
+                    <span class="material-symbols-outlined text-3xl">genetics</span> GENE-TECH
+                </div>
+                <div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
+                    <span class="material-symbols-outlined text-3xl">grid_view</span> NANO-SCIENCE
+                </div>
+                <div class="flex items-center gap-3 text-xl font-bold text-white tracking-widest">
+                    <span class="material-symbols-outlined text-3xl">hub</span> MOLECULAR.AI
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-black/80 border-t border-white/5 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
+            <div class="col-span-2 lg:col-span-1">
+                <div class="flex items-center gap-3 mb-8">
+                    <div
+                        class="w-9 h-9 bg-primary rounded flex items-center justify-center shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-background-dark text-xl font-bold">science</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-white">ChemAcademy</span>
+                </div>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8">
+                    The world's premier digital infrastructure for chemical education, molecular research, and
+                    laboratory training.
+                </p>
+                <div class="flex gap-5">
+                    <a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1"
+                        href="#"><span class="material-symbols-outlined">public</span></a>
+                    <a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1"
+                        href="#"><span class="material-symbols-outlined">mail</span></a>
+                    <a class="text-slate-500 hover:text-primary transition-all transform hover:-translate-y-1"
+                        href="#"><span class="material-symbols-outlined">forum</span></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Programs</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="#">Degree Tracks</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Lab Certifications</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Enterprise Research</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Academic Partnerships</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Resources</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="#">Simulation Tools</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Safety Protocols</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Journal Access</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">API Documentation</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Global</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="#">Student Forum</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Research Blog</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Affiliates</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Scholarships</a></li>
+                </ul>
+            </div>
+            <div class="col-span-2 lg:col-span-1">
+                <h4 class="font-bold text-white mb-8 text-sm uppercase tracking-widest">Newsletter</h4>
+                <p class="text-xs text-slate-500 mb-6 leading-relaxed">Stay updated on breakthroughs in synthetic and
+                    computational chemistry.</p>
+                <div class="flex flex-col gap-3">
+                    <input
+                        class="bg-white/5 border border-white/10 rounded-xl text-sm px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none text-white transition-all"
+                        placeholder="researcher@lab.edu" type="email" />
+                    <button
+                        class="bg-primary text-background-dark font-black text-sm py-3 rounded-xl hover:bg-white transition-all">Subscribe</button>
+                </div>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-4 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-medium uppercase tracking-widest text-slate-600">
+            <p>© 2024 ChemAcademy Education Inc. Molecularly Precise Education.</p>
+            <div class="flex gap-10">
+                <a class="hover:text-primary" href="#">Terms</a>
+                <a class="hover:text-primary" href="#">Privacy</a>
+                <a class="hover:text-primary" href="#">Security</a>
+            </div>
+        </div>
+    </footer>
+    <button
+        class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-background-dark rounded-full flex items-center justify-center shadow-2xl z-[100] hover:scale-110 active:scale-95 transition-all group"
+        onclick="document.documentElement.classList.toggle('dark')">
+        <span class="material-symbols-outlined font-bold transition-transform group-hover:rotate-12">dark_mode</span>
+    </button>
 
-<script src="/ui.js"></script>
-<script>
-// attach dynamic behaviors: cart badge, featured enroll/wishlist
-(function(){
-    try{
-        // render cart count if ui available
-        if (window.ui && window.ui.renderCartCount) window.ui.renderCartCount();
+    <script src="/ui.js"></script>
+    <script>
+        // attach dynamic behaviors: cart badge, featured enroll/wishlist
+        (function () {
+            try {
+                // render cart count if ui available
+                if (window.ui && window.ui.renderCartCount) window.ui.renderCartCount();
 
-        const enrollBtn = document.getElementById('enroll-featured');
-        if (enrollBtn){
-            enrollBtn.addEventListener('click', async (e)=>{
-                const courseId = enrollBtn.getAttribute('data-course-id');
-                try{
-                    // prefer ui.apiFetch which handles cookie/token
-                    if (window.ui && window.ui.apiFetch){
-                        // ensure user authenticated
-                        try{ await window.ui.apiFetch('/auth/me'); }catch(err){
-                            // not authenticated - show prompt to login
-                            if (window.ui && window.ui.showMessage) window.ui.showMessage('Faça login para inscrever-se','info');
-                            if (window.ui && window.ui.promptModal){
-                                // offer to redirect to login/landing
-                                const r = await window.ui.promptModal('Entrar','');
+                const enrollBtn = document.getElementById('enroll-featured');
+                if (enrollBtn) {
+                    enrollBtn.addEventListener('click', async (e) => {
+                        const courseId = enrollBtn.getAttribute('data-course-id');
+                        try {
+                            // prefer ui.apiFetch which handles cookie/token
+                            if (window.ui && window.ui.apiFetch) {
+                                // ensure user authenticated
+                                try { await window.ui.apiFetch('/auth/me'); } catch (err) {
+                                    // not authenticated - show prompt to login
+                                    if (window.ui && window.ui.showMessage) window.ui.showMessage('Faça login para inscrever-se', 'info');
+                                    if (window.ui && window.ui.promptModal) {
+                                        // offer to redirect to login/landing
+                                        const r = await window.ui.promptModal('Entrar', '');
+                                    }
+                                    return;
+                                }
+                                await window.ui.apiFetch(`/students/${encodeURIComponent(courseId)}/enroll`, { method: 'POST' });
+                                if (window.ui && window.ui.showMessage) window.ui.showMessage('Inscrito com sucesso', 'success');
+                                if (window.ui && window.ui.renderCartCount) window.ui.renderCartCount();
+                            } else {
+                                alert('Funcionalidade de inscrição indisponível.');
                             }
-                            return;
+                        } catch (err) {
+                            console.error('Enroll error', err);
+                            if (window.ui && window.ui.showMessage) window.ui.showMessage('Erro ao inscrever: ' + (err && err.error ? err.error : err), 'error');
                         }
-                        await window.ui.apiFetch(`/students/${encodeURIComponent(courseId)}/enroll`, { method: 'POST' });
-                        if (window.ui && window.ui.showMessage) window.ui.showMessage('Inscrito com sucesso','success');
-                        if (window.ui && window.ui.renderCartCount) window.ui.renderCartCount();
-                    } else {
-                        alert('Funcionalidade de inscrição indisponível.');
-                    }
-                }catch(err){
-                    console.error('Enroll error', err);
-                    if (window.ui && window.ui.showMessage) window.ui.showMessage('Erro ao inscrever: '+(err && err.error?err.error:err),'error');
+                    });
                 }
-            });
-        }
 
-        const wish = document.getElementById('wishlist-featured');
-        if (wish){ wish.addEventListener('click', ()=>{ if (window.ui && window.ui.showMessage) window.ui.showMessage('Adicionado à lista de desejos (simulado)','success'); }); }
-    }catch(e){ console.error(e); }
-})();
-</script>
-</body></html>
+                const wish = document.getElementById('wishlist-featured');
+                if (wish) { wish.addEventListener('click', () => { if (window.ui && window.ui.showMessage) window.ui.showMessage('Adicionado à lista de desejos (simulado)', 'success'); }); }
+            } catch (e) { console.error(e); }
+        })();
+    </script>
+</body>
+
+</html>
