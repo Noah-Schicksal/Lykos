@@ -27,8 +27,8 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Routes
 app.use(routes);
 
-// // SPA Fallback
-// app.get('*', (_req, res) => {
+// SPA Fallback
+// const newLocal = app.get('*', (_req, res) => {
 //     res.sendFile(path.join(__dirname, '../public/index.html'));
 // });
 

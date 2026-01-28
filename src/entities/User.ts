@@ -1,11 +1,11 @@
-export type UserRole = 'STUDENT' | 'INSTRUCTOR';
+export type UserRole = 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
 
 export interface UserProps {
   id?: string;
   name: string;
   email: string;
   password: string; //senha em hash
-  role?: string;
+  role?: UserRole;
   createdAt?: Date;
 }
 
@@ -58,8 +58,8 @@ export class User {
     this._email = email.toLowerCase();
   }
 
-  public setRole(role: string) {
-    const validRoles: UserRole[] = ['STUDENT', 'INSTRUCTOR'];
+  public setRole(role: UserRole) {
+    const validRoles: UserRole[] = ['STUDENT', 'INSTRUCTOR', 'ADMIN'];
     if (!validRoles.includes(role as UserRole)) {
       throw new DomainError('Tipo de usuário inválido');
     }

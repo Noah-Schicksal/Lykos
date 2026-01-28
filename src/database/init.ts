@@ -15,7 +15,7 @@ export const initializeDatabase = () => {
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        role TEXT CHECK(role IN ('INSTRUCTOR', 'STUDENT')) NOT NULL,
+        role TEXT CHECK(role IN ('INSTRUCTOR', 'STUDENT', 'ADMIN')) NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
