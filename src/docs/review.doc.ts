@@ -2,15 +2,16 @@
  * @swagger
  * tags:
  *   name: Reviews
- *   description: Gerenciamento de avaliações de cursos
+ *   description: Avaliações públicas de cursos realizadas por estudantes matriculados
  */
-
 /**
  * @swagger
  * /courses/{id}/reviews:
  *   get:
  *     summary: Lista avaliações de um curso
- *     description: Retorna todas as avaliações públicas de um curso específico.
+ *     description: >
+ *       Retorna todas as avaliações públicas associadas a um curso.
+ *       As avaliações incluem nota, comentário e identificação do estudante.
  *     tags: [Reviews]
  *     parameters:
  *       - in: path
@@ -21,7 +22,7 @@
  *         description: ID do curso
  *     responses:
  *       200:
- *         description: Lista de avaliações
+ *         description: Avaliações retornadas com sucesso
  *         content:
  *           application/json:
  *             schema:
@@ -46,13 +47,16 @@
  *                         type: string
  *                         format: date-time
  *       404:
- *         description: Curso não encontrado */
+ *         description: Curso não encontrado
+ */
 /**
  * @swagger
  * /courses/{id}/reviews:
  *   post:
- *     summary: Adiciona uma avaliação ao curso
- *     description: Permite que um estudante matriculado avalie o curso com nota e comentário.
+ *     summary: Cria uma avaliação
+ *     description: >
+ *       Permite que um estudante matriculado avalie um curso.
+ *       Cada estudante pode criar apenas uma avaliação por curso.
  *     tags: [Reviews]
  *     security:
  *       - cookieAuth: []
@@ -69,9 +73,7 @@
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - rating
- *               - comment
+ *             required: [rating, comment]
  *             properties:
  *               rating:
  *                 type: integer
@@ -85,19 +87,21 @@
  *       201:
  *         description: Avaliação criada com sucesso
  *       400:
- *         description: Dados inválidos
+ *         description: Dados inválidos ou avaliação já existente
  *       401:
- *         description: Não autorizado
+ *         description: Usuário não autenticado
  *       403:
  *         description: Usuário não matriculado no curso
  *       404:
- *         description: Curso não encontrado */
+ *         description: Curso não encontrado
+ */
 /**
  * @swagger
  * /reviews/{id}:
  *   put:
  *     summary: Atualiza uma avaliação
- *     description: Permite que o autor atualize sua própria avaliação.
+ *     description: >
+ *       Permite que o autor da avaliação atualize sua nota ou comentário.
  *     tags: [Reviews]
  *     security:
  *       - cookieAuth: []
@@ -119,10 +123,8 @@
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 5
- *                 example: 4
  *               comment:
  *                 type: string
- *                 example: "Atualizado: muito bom curso!"
  *     responses:
  *       200:
  *         description: Avaliação atualizada com sucesso
@@ -147,13 +149,13 @@
  *       403:
  *         description: Sem permissão para editar esta avaliação
  */
-
 /**
  * @swagger
  * /reviews/{id}:
  *   delete:
  *     summary: Exclui uma avaliação
- *     description: Permite que o autor exclua sua própria avaliação.
+ *     description: >
+ *       Permite que o autor da avaliação exclua permanentemente sua avaliação.
  *     tags: [Reviews]
  *     security:
  *       - cookieAuth: []
@@ -167,8 +169,6 @@
  *     responses:
  *       200:
  *         description: Avaliação excluída com sucesso
- *       204:
- *         description: Avaliação excluída com sucesso (sem conteúdo)
  *       404:
  *         description: Avaliação não encontrada
  *       401:
