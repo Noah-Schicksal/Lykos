@@ -93,11 +93,11 @@
                 <form id="login-form">
                     <div style="margin-bottom: 1rem;">
                         <label class="auth-label">Email / User</label>
-                        <input type="text" class="auth-input" placeholder="user@lab.edu" />
+                        <input id="login-email" type="text" class="auth-input" placeholder="user@lab.edu" />
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label class="auth-label">Password</label>
-                        <input type="password" class="auth-input" placeholder="••••••••" />
+                        <input id="login-password" type="password" class="auth-input" placeholder="••••••••" />
                     </div>
                     <button type="submit" class="btn-auth-submit">Log In</button>
                 </form>
@@ -111,22 +111,32 @@
             <div class="auth-face auth-face-back">
                 <h3 class="auth-title">Join the Lab</h3>
                 <form id="register-form">
-                    <div style="margin-bottom: 0.75rem;">
+                    <div style="margin-bottom: 0.5rem;">
+                        <label class="auth-label">I am a...</label>
+                        <select id="register-role" class="auth-input">
+                            <option value="student">Student</option>
+                            <option value="instructor">Instructor</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
                         <label class="auth-label">Full Name</label>
-                        <input type="text" class="auth-input" placeholder="Marie Curie" />
+                        <input type="text" id="register-name" class="auth-input" placeholder="Marie Curie" required />
                     </div>
-                    <div style="margin-bottom: 0.75rem;">
+                    <div style="margin-bottom: 0.5rem;">
                         <label class="auth-label">Email</label>
-                        <input type="email" class="auth-input" placeholder="marie@science.org" />
+                        <input type="email" id="register-email" class="auth-input" placeholder="marie@science.org"
+                            required />
                     </div>
-                    <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem;">
                         <div>
                             <label class="auth-label">Password</label>
-                            <input type="password" class="auth-input" placeholder="••••" />
+                            <input type="password" id="register-password" class="auth-input" placeholder="••••"
+                                required />
                         </div>
                         <div>
                             <label class="auth-label">Confirm</label>
-                            <input type="password" class="auth-input" placeholder="••••" />
+                            <input type="password" id="register-confirm" class="auth-input" placeholder="••••"
+                                required />
                         </div>
                     </div>
                     <button type="submit" class="btn-auth-submit">Register</button>
@@ -135,6 +145,36 @@
                     <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Already have access?
                     </p>
                     <button id="btn-to-login" class="btn-link">Back to Login</button>
+                </div>
+            </div>
+
+            <!-- Logged In View (Hidden by default) -->
+            <div id="auth-logged-in" class="auth-face hidden"
+                style="justify-content: center; align-items: center; text-align: center;">
+                <div class="user-avatar-large">
+                    <span class="material-symbols-outlined"
+                        style="font-size: 3rem; color: var(--primary);">account_circle</span>
+                </div>
+                <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem;">User Name</h3>
+                <p id="user-email-display"
+                    style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">user@example.com</p>
+                <div id="user-role-badge" class="badge-tag bg-tag-secondary"
+                    style="position: relative; top: auto; left: auto; display: inline-block; margin-bottom: 2rem;">
+                    Student</div>
+
+                <div class="flex-col" style="width: 100%; gap: 1rem;">
+                    <button id="btn-my-learning" class="btn-dashboard">
+                        <span class="material-symbols-outlined">school</span> My Learning
+                    </button>
+                    <button id="btn-instructor-dash" class="btn-dashboard hidden">
+                        <span class="material-symbols-outlined">dashboard</span> Instructor Dashboard
+                    </button>
+                    <button id="btn-create-course" class="btn-dashboard hidden">
+                        <span class="material-symbols-outlined">add_circle</span> Create Course
+                    </button>
+                    <button id="btn-logout" class="btn-dashboard outline">
+                        <span class="material-symbols-outlined">logout</span> Logout
+                    </button>
                 </div>
             </div>
 
@@ -470,7 +510,7 @@
         <span class="material-symbols-outlined" style="font-weight: 700;">dark_mode</span>
     </button>
 
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

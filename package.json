@@ -3,7 +3,7 @@
     "seed:admin": "ts-node src/database/seedAdmin.ts",
     "build": "node scripts/build.js",
     "start": "node dist/src/server.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",

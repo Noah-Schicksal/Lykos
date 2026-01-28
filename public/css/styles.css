@@ -1,4 +1,8 @@
 /* BASE VARIABLES */
+@import url('./toast.css');
+@import url('./auth.css');
+
+
 :root {
     --primary: #00F5D4;
     /* Vibrant Neon Teal/Green */
@@ -747,7 +751,7 @@ p {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    items-center;
+    align-items: center;
     gap: 3rem;
     opacity: 0.3;
     filter: grayscale(100%);
@@ -978,8 +982,8 @@ p {
     background-color: #121317;
     border: 1px solid var(--border-med);
     border-radius: 0.75rem;
-    padding: 2.5rem;
-    /* Increased padding */
+    padding: 1.5rem;
+    /* Reduced padding */
     display: flex;
     flex-direction: column;
     backdrop-filter: blur(24px);
@@ -996,7 +1000,7 @@ p {
     font-weight: 700;
     color: white;
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .auth-label {
@@ -1043,7 +1047,7 @@ p {
 
 .auth-footer {
     margin-top: auto;
-    padding-top: 1.5rem;
+    padding-top: 1rem;
     text-align: center;
     border-top: 1px solid var(--border-light);
 }
