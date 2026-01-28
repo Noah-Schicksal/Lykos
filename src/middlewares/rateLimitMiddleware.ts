@@ -12,12 +12,12 @@ export const globalLimiter = rateLimit({
 });
 
 export const loginLimiter = rateLimit({
-    windowMs: 5 * 60 * 1000, // 5 minutes
+    windowMs: 1 * 60 * 1000, // 1 minutes
     max: 5, // Limit each IP to 5 login requests per `window`
     standardHeaders: true,
     legacyHeaders: false,
     message: {
         status: 429,
-        message: 'Muitas tentativas de login, por favor tente novamente após 15 minutos.'
+        message: 'Muitas tentativas de login, por favor tente novamente após 1 minutos.'
     }
 });

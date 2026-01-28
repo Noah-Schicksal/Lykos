@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 app.use(globalLimiter);
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../dist/public')));
 
 // Documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
@@ -27,10 +27,10 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 // Routes
 app.use(routes);
 
-// SPA Fallback
-app.get('*', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+// // SPA Fallback
+// app.get('*', (_req, res) => {
+//     res.sendFile(path.join(__dirname, '../public/index.html'));
+// });
 
 // Error Handling
 app.use(errorHandler);
