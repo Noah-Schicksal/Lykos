@@ -1,17 +1,18 @@
 /**
  * @swagger
  * tags:
- *   name: Classes
- *   description: Gerenciamento de aulas e materiais
+ *   - name: Classes
+ *     description: Gerenciamento de aulas, materiais e progresso do aluno
  */
 
 /**
  * @swagger
  * /classes/{id}:
  *   get:
- *     summary: Obtém detalhes de uma aula
- *     description: Retorna as informações detalhadas de uma aula.
- *     tags: [Classes]
+ *     summary: Buscar aula por ID
+ *     description: Retorna os detalhes completos de uma aula específica.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -20,10 +21,10 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     responses:
  *       200:
- *         description: Detalhes da aula
+ *         description: Aula encontrada com sucesso
  *         content:
  *           application/json:
  *             schema:
@@ -31,27 +32,33 @@
  *               properties:
  *                 id:
  *                   type: string
+ *                   example: "uuid-da-aula"
  *                 title:
  *                   type: string
+ *                   example: "Introdução ao JavaScript"
  *                 description:
  *                   type: string
+ *                   example: "Conceitos iniciais da linguagem"
  *                 videoUrl:
  *                   type: string
+ *                   example: "https://youtube.com/video"
  *                 materialUrl:
  *                   type: string
+ *                   example: "https://storage/material.pdf"
+ *       401:
+ *         description: Usuário não autenticado
  *       404:
  *         description: Aula não encontrada
- *       401:
- *         description: Não autorizado
  */
 
 /**
  * @swagger
  * /classes/{id}:
  *   put:
- *     summary: Atualiza uma aula
- *     description: Atualiza as informações de uma aula. Requer autenticação de Instrutor e autoria.
- *     tags: [Classes]
+ *     summary: Atualizar aula
+ *     description: Atualiza os dados de uma aula existente. Ação restrita ao instrutor autor do curso.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -60,7 +67,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     requestBody:
  *       required: true
  *       content:
@@ -73,10 +80,10 @@
  *                 example: "Aula Atualizada"
  *               description:
  *                 type: string
- *                 example: "Descrição atualizada"
+ *                 example: "Descrição revisada da aula"
  *               videoUrl:
  *                 type: string
- *                 example: "https://www.youtube.com/watch?v=newvideo"
+ *                 example: "https://youtube.com/newvideo"
  *               orderIndex:
  *                 type: integer
  *                 example: 2
@@ -88,28 +95,28 @@
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     title:
- *                       type: string
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 orderIndex:
+ *                   type: integer
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Usuário não autorizado
  *       404:
  *         description: Aula não encontrada
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso proibido
  */
 
 /**
  * @swagger
  * /classes/{id}:
  *   delete:
- *     summary: Exclui uma aula
- *     description: Remove permanentemente uma aula. Requer autenticação de Instrutor e autoria.
- *     tags: [Classes]
+ *     summary: Remover aula
+ *     description: Remove permanentemente uma aula. Ação restrita ao instrutor autor do curso.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -118,25 +125,26 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     responses:
  *       200:
- *         description: Aula excluída com sucesso
+ *         description: Aula removida com sucesso
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Usuário não autorizado
  *       404:
  *         description: Aula não encontrada
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso proibido
  */
 
 /**
  * @swagger
  * /classes/{id}/upload:
  *   post:
- *     summary: Upload de material de aula
- *     description: Envia um arquivo (PDF, etc.) como material complementar para a aula. Requer Instrutor.
- *     tags: [Classes]
+ *     summary: Enviar material complementar
+ *     description: Realiza upload de material complementar (PDF, slides etc.) para uma aula. Ação restrita a instrutores.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -145,7 +153,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     requestBody:
  *       required: true
  *       content:
@@ -162,21 +170,22 @@
  *     responses:
  *       200:
  *         description: Material enviado com sucesso
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Usuário não autorizado
  *       404:
  *         description: Aula não encontrada
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso proibido
  */
 
 /**
  * @swagger
  * /classes/{id}/material:
  *   get:
- *     summary: Download de material da aula
- *     description: Permite o download do material complementar da aula. Requer estar matriculado no curso.
- *     tags: [Classes]
+ *     summary: Baixar material da aula
+ *     description: Permite o download do material complementar da aula para alunos matriculados no curso.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -185,28 +194,29 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     responses:
  *       200:
- *         description: Arquivo retornado com sucesso
+ *         description: Material retornado com sucesso
  *         content:
  *           application/pdf:
  *             schema:
  *               type: string
  *               format: binary
- *       404:
- *         description: Material ou aula não encontrados
  *       403:
  *         description: Usuário não matriculado no curso
+ *       404:
+ *         description: Aula ou material não encontrado
  */
 
 /**
  * @swagger
  * /classes/{id}/progress:
  *   post:
- *     summary: Marca aula como concluída
- *     description: Registra que o estudante concluiu a aula.
- *     tags: [Classes]
+ *     summary: Marcar aula como concluída
+ *     description: Registra a conclusão de uma aula pelo aluno matriculado.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -215,7 +225,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     requestBody:
  *       required: true
  *       content:
@@ -231,19 +241,20 @@
  *     responses:
  *       200:
  *         description: Progresso registrado com sucesso
+ *       403:
+ *         description: Usuário não matriculado no curso
  *       404:
  *         description: Aula não encontrada
- *       403:
- *         description: Usuário não matriculado
  */
 
 /**
  * @swagger
  * /classes/{id}/progress:
  *   delete:
- *     summary: Desmarca aula como concluída
- *     description: Remove o registro de conclusão da aula para o estudante.
- *     tags: [Classes]
+ *     summary: Remover conclusão da aula
+ *     description: Remove o registro de conclusão da aula para o aluno.
+ *     tags:
+ *       - Classes
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -252,7 +263,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da aula
+ *         description: Identificador único da aula
  *     responses:
  *       200:
  *         description: Progresso removido com sucesso

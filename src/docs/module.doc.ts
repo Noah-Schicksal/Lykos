@@ -1,27 +1,28 @@
 /**
  * @swagger
  * tags:
- *   name: Modules
- *   description: Gerenciamento de módulos de cursos
+ *   - name: Modules
+ *     description: Gerenciamento de módulos e aulas de um curso
  */
 
 /**
  * @swagger
  * /modules/{id}:
  *   get:
- *     summary: Obtém detalhes de um módulo
- *     description: Retorna as informações detalhadas de um módulo específico, incluindo suas aulas.
- *     tags: [Modules]
+ *     summary: Buscar módulo por ID
+ *     description: Retorna os detalhes de um módulo específico, incluindo a lista de aulas associadas.
+ *     tags:
+ *       - Modules
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do módulo
+ *         description: Identificador único do módulo
  *     responses:
  *       200:
- *         description: Detalhes do módulo
+ *         description: Módulo encontrado com sucesso
  *         content:
  *           application/json:
  *             schema:
@@ -29,10 +30,13 @@
  *               properties:
  *                 id:
  *                   type: string
+ *                   example: "uuid-do-modulo"
  *                 title:
  *                   type: string
+ *                   example: "Fundamentos de JavaScript"
  *                 orderIndex:
  *                   type: integer
+ *                   example: 1
  *                 classes:
  *                   type: array
  *                   items:
@@ -40,10 +44,13 @@
  *                     properties:
  *                       id:
  *                         type: string
+ *                         example: "uuid-da-aula"
  *                       title:
  *                         type: string
+ *                         example: "Introdução ao JavaScript"
  *                       videoUrl:
  *                         type: string
+ *                         example: "https://youtube.com/video"
  *       404:
  *         description: Módulo não encontrado
  */
@@ -52,9 +59,10 @@
  * @swagger
  * /modules/{id}:
  *   put:
- *     summary: Atualiza um módulo
- *     description: Atualiza as informações de um módulo. Requer autenticação de Instrutor e autoria do curso.
- *     tags: [Modules]
+ *     summary: Atualizar módulo
+ *     description: Atualiza os dados de um módulo existente. Apenas instrutores autores do curso podem realizar esta ação.
+ *     tags:
+ *       - Modules
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -63,7 +71,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do módulo
+ *         description: Identificador único do módulo
  *     requestBody:
  *       required: true
  *       content:
@@ -85,28 +93,28 @@
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     title:
- *                       type: string
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 orderIndex:
+ *                   type: integer
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Usuário não autorizado
  *       404:
  *         description: Módulo não encontrado
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso proibido
  */
 
 /**
  * @swagger
  * /modules/{id}:
  *   delete:
- *     summary: Exclui um módulo
- *     description: Remove permanentemente um módulo e todas as suas aulas. Requer autenticação de Instrutor e autoria.
- *     tags: [Modules]
+ *     summary: Remover módulo
+ *     description: Remove permanentemente um módulo e todas as aulas associadas. Ação restrita ao instrutor autor do curso.
+ *     tags:
+ *       - Modules
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -115,25 +123,26 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do módulo
+ *         description: Identificador único do módulo
  *     responses:
  *       200:
- *         description: Módulo excluído com sucesso
+ *         description: Módulo removido com sucesso
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Usuário não autorizado
  *       404:
  *         description: Módulo não encontrado
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso proibido
  */
 
 /**
  * @swagger
  * /modules/{moduleId}/classes:
  *   post:
- *     summary: Adiciona uma aula ao módulo
- *     description: Cria uma nova aula dentro de um módulo específico. Requer autenticação de Instrutor.
- *     tags: [Modules]
+ *     summary: Criar aula em módulo
+ *     description: Cria uma nova aula dentro de um módulo específico. Ação restrita a instrutores.
+ *     tags:
+ *       - Modules
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -142,7 +151,7 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID do módulo
+ *         description: Identificador único do módulo
  *     requestBody:
  *       required: true
  *       content:
@@ -160,20 +169,20 @@
  *                 example: "Variáveis e Tipos de Dados"
  *               description:
  *                 type: string
- *                 example: "Aprenda sobre var, let e const"
+ *                 example: "Conceitos de var, let e const"
  *               videoUrl:
  *                 type: string
- *                 example: "https://www.youtube.com/watch?v=example"
+ *                 example: "https://youtube.com/video"
  *               orderIndex:
  *                 type: integer
  *                 example: 1
  *     responses:
  *       201:
  *         description: Aula criada com sucesso
- *       404:
- *         description: Módulo não encontrado
  *       401:
- *         description: Não autorizado
+ *         description: Usuário não autenticado
  *       403:
  *         description: Acesso restrito a instrutores
+ *       404:
+ *         description: Módulo não encontrado
  */
