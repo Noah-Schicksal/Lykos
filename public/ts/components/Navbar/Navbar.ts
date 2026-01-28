@@ -1,6 +1,9 @@
-import { createElement } from '../utils.js';
+import { createElement, loadCSS } from '../../utils.js';
 
-export function Navbar() {
+export function Navbar(): HTMLElement {
+    // Load component styles
+    loadCSS('js/components/Navbar/Navbar.css');
+
     const nav = createElement('nav', { className: 'main-nav glass-nav sticky-nav' });
     const container = createElement('div', { className: 'container nav-container' });
 
@@ -40,7 +43,7 @@ export function Navbar() {
 
     const cartBtn = createElement('button', { className: 'icon-btn cart-btn' },
         createElement('span', { className: 'material-symbols-outlined' }, 'shopping_cart'),
-        createElement('span', { id: 'cart-count-badge', className: 'badge', style: { display: 'none' } }, '0')
+        createElement('span', { id: 'cart-count-badge', className: 'badge', style: { display: 'none' } as any }, '0')
     );
 
     const notifBtn = createElement('button', { className: 'icon-btn notification-btn' },

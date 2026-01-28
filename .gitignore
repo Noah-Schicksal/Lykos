@@ -27,4 +27,5 @@ coverage/
 
 dist/
 storage/
+package-lock.json
 

@@ -1,4 +1,18 @@
-export const courses = [
+export interface Course {
+    id: string;
+    title: string;
+    instructor: string;
+    instructorIcon: string;
+    rating: number;
+    reviews: number;
+    price: number;
+    originalPrice: number;
+    image: string;
+    tag: string | null;
+    tagType: 'primary' | 'secondary' | 'glass' | null;
+}
+
+export const courses: Course[] = [
     {
         id: 'organic-chem',
         title: 'Mastering Organic Chemistry: Mechanisms and Synthesis',
@@ -53,7 +67,7 @@ export const courses = [
     }
 ];
 
-export const categories = [
+export const categories: string[] = [
     'General Chemistry',
     'Organic Synthesis',
     'Biochemistry',

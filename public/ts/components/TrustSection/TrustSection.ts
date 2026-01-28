@@ -1,7 +1,9 @@
-import { createElement } from '../utils.js';
-import { trustedLogos } from '../data.js';
+import { createElement, loadCSS } from '../../utils.js';
+import { trustedLogos } from '../../data.js';
 
-export function TrustSection() {
+export function TrustSection(): HTMLElement {
+    loadCSS('js/components/TrustSection/TrustSection.css');
+
     const section = createElement('section', { className: 'trust-section' });
 
     section.appendChild(createElement('h2', {}, 'Trusted by Global Research Institutions'));

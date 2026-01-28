@@ -1,6 +1,8 @@
-import { createElement } from '../utils.js';
+import { createElement, loadCSS } from '../../utils.js';
 
-export function FeaturedSection() {
+export function FeaturedSection(): HTMLElement {
+    loadCSS('js/components/FeaturedSection/FeaturedSection.css');
+
     const section = createElement('section', { className: 'featured-section' });
 
     section.appendChild(createElement('h2', {}, 'Course of the Month'));
