@@ -9,6 +9,8 @@ import { globalLimiter } from './middlewares/rateLimitMiddleware';
 import { specs } from './config/swagger';
 import { corsOptions } from './config/cors';
 
+import path from 'path';
+
 const app = express();
 
 // Middlewares
@@ -17,6 +19,7 @@ app.use(cors(corsOptions));
 app.use(globalLimiter);
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
