@@ -33,7 +33,7 @@
 }
 
 body {
-    margin: 0;
+    margin: 20px;
     font-family: var(--font-heading);
     background-color: var(--bg-dark);
     color: var(--text-primary);

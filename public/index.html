@@ -7,14 +7,10 @@
     <title>ChemAcademy | Master the Science of Matter</title>
 
     <!-- Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-    <!-- Local Styles (No Frameworks) -->
+    <!-- Local Styles -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -34,7 +30,6 @@
                 Explore <span class="material-symbols-outlined" style="font-size: 1.25rem;">expand_more</span>
             </button>
 
-            <!-- Search -->
             <div class="search-bar-container hidden md:block">
                 <div class="search-icon-wrapper">
                     <span class="material-symbols-outlined" style="font-size: 1.25rem;">search</span>
@@ -42,7 +37,6 @@
                 <input class="search-input" placeholder="Search organic mechanisms, thermodynamics..." type="text" />
             </div>
 
-            <!-- Right Actions -->
             <div class="nav-right-actions">
                 <div class="nav-links-xl">
                     <a href="#">Solutions</a>
@@ -60,10 +54,8 @@
                     <span class="material-symbols-outlined">notifications</span>
                 </button>
 
-                <!-- User Avatar (Triggers Auth Card) -->
                 <div id="user-avatar-btn">
-                    <img alt="User avatar"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
+                    <img alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
                 </div>
             </div>
         </div>
@@ -124,57 +116,40 @@
                     </div>
                     <div style="margin-bottom: 0.5rem;">
                         <label class="auth-label">Email</label>
-                        <input type="email" id="register-email" class="auth-input" placeholder="marie@science.org"
-                            required />
+                        <input type="email" id="register-email" class="auth-input" placeholder="marie@science.org" required />
                     </div>
                     <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem;">
                         <div>
                             <label class="auth-label">Password</label>
-                            <input type="password" id="register-password" class="auth-input" placeholder="••••"
-                                required />
+                            <input type="password" id="register-password" class="auth-input" placeholder="••••" required />
                         </div>
                         <div>
                             <label class="auth-label">Confirm</label>
-                            <input type="password" id="register-confirm" class="auth-input" placeholder="••••"
-                                required />
+                            <input type="password" id="register-confirm" class="auth-input" placeholder="••••" required />
                         </div>
                     </div>
                     <button type="submit" class="btn-auth-submit">Register</button>
                 </form>
                 <div class="auth-footer">
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Already have access?
-                    </p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Already have access?</p>
                     <button id="btn-to-login" class="btn-link">Back to Login</button>
                 </div>
             </div>
 
-            <!-- Logged In View (Hidden by default) -->
-            <div id="auth-logged-in" class="auth-face hidden"
-                style="justify-content: center; align-items: center; text-align: center;">
+            <!-- Logged In View -->
+            <div id="auth-logged-in" class="auth-face hidden" style="justify-content: center; align-items: center; text-align: center;">
                 <div class="user-avatar-large">
-                    <span class="material-symbols-outlined"
-                        style="font-size: 3rem; color: var(--primary);">account_circle</span>
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary);">account_circle</span>
                 </div>
                 <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem;">User Name</h3>
-                <p id="user-email-display"
-                    style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">user@example.com</p>
-                <div id="user-role-badge" class="badge-tag bg-tag-secondary"
-                    style="position: relative; top: auto; left: auto; display: inline-block; margin-bottom: 2rem;">
-                    Student</div>
+                <p id="user-email-display" style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">user@example.com</p>
+                <div id="user-role-badge" class="badge-tag bg-tag-secondary" style="display: inline-block; margin-bottom: 2rem;">Student</div>
 
                 <div class="flex-col" style="width: 100%; gap: 1rem;">
-                    <button id="btn-my-learning" class="btn-dashboard">
-                        <span class="material-symbols-outlined">school</span> My Learning
-                    </button>
-                    <button id="btn-instructor-dash" class="btn-dashboard hidden">
-                        <span class="material-symbols-outlined">dashboard</span> Instructor Dashboard
-                    </button>
-                    <button id="btn-create-course" class="btn-dashboard hidden">
-                        <span class="material-symbols-outlined">add_circle</span> Create Course
-                    </button>
-                    <button id="btn-logout" class="btn-dashboard outline">
-                        <span class="material-symbols-outlined">logout</span> Logout
-                    </button>
+                    <button id="btn-my-learning" class="btn-dashboard"><span class="material-symbols-outlined">school</span> My Learning</button>
+                    <button id="btn-instructor-dash" class="btn-dashboard hidden"><span class="material-symbols-outlined">dashboard</span> Instructor Dashboard</button>
+                    <button id="btn-create-course" class="btn-dashboard hidden"><span class="material-symbols-outlined">add_circle</span> Create Course</button>
+                    <button id="btn-logout" class="btn-dashboard outline"><span class="material-symbols-outlined">logout</span> Logout</button>
                 </div>
             </div>
 
@@ -186,247 +161,401 @@
         <header class="hero-header">
             <div class="hero-glow"></div>
             <h1 class="hero-title">Chemistry Mastery <span class="text-gradient">Courses</span></h1>
-            <p class="hero-desc">
-                Unravel the molecular world with expert-led courses. From orbital mechanics to complex organic
-                synthesis, master the science of matter.
-            </p>
+            <p class="hero-desc">Unravel the molecular world with expert-led courses. From orbital mechanics to complex organic synthesis, master the science of matter.</p>
         </header>
 
         <!-- Listing Section -->
         <section style="margin-bottom: 5rem;">
             <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
                 <div>
-                    <h2 class="section-title">
-                        <span class="material-symbols-outlined" style="color: var(--primary);">biotech</span>
-                        Start Your Lab Journey
-                    </h2>
-                    <p style="font-size: 0.875rem; color: var(--text-muted);">Personalized curriculum based on your
-                        research interests.</p>
+                    <h2 class="section-title"><span class="material-symbols-outlined" style="color: var(--primary);">biotech</span> Start Your Lab Journey</h2>
+                    <p style="font-size: 0.875rem; color: var(--text-muted);">Personalized curriculum based on your research interests.</p>
                 </div>
-                <!-- Nav Arrows -->
                 <div class="flex gap-2">
-                    <button class="btn-icon" style="border: 1px solid var(--border-med); border-radius: 0.5rem;">
-                        <span class="material-symbols-outlined">chevron_left</span>
-                    </button>
-                    <button class="btn-icon" style="border: 1px solid var(--border-med); border-radius: 0.5rem;">
-                        <span class="material-symbols-outlined">chevron_right</span>
-                    </button>
+                    <button class="btn-icon" style="border: 1px solid var(--border-med); border-radius: 0.5rem;"><span class="material-symbols-outlined">chevron_left</span></button>
+                    <button class="btn-icon" style="border: 1px solid var(--border-med); border-radius: 0.5rem;"><span class="material-symbols-outlined">chevron_right</span></button>
                 </div>
             </div>
 
-            <div class="grid-cols-basic">
-                <!-- Card 1 -->
-                <div class="card-base group">
-                    <div class="card-img-container">
-                        <img alt="Organic Chemistry" class="card-img"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR6DGwRE1YJ8WF-DD9FAmqasKkQiz7jq169wj28XZtFmFgaxZDad34mUCAOIaE4gQ5FIqFC71LRMZqR2Bi4CmVOJyECsvY1r83JLr_vSWmFaj8UMKYEiW0SHd79WThs0nGeo6BPC8nLonaTVeOML5vp7jLMhsE9J6eAN-RJhJWxOoNVKSr_LYdSQxV0wNOlnnHa56RpMQRvfL2fCh4wYz2v9ex0_t8T7U4bcsBwD9bFbLjZbSCbhJ0BZnYiXmwb_o3CRYd5ZnjqjDp" />
-                        <div class="badge-tag bg-tag-primary">Bestseller</div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">Mastering Organic Chemistry: Mechanisms and Synthesis</h3>
-                        <div class="card-instructor">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">person</span> Dr. Sarah
-                            Jenkins, PhD
-                        </div>
-                        <div class="rating-row">
-                            <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.9</span>
-                            <div class="star-set">
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                            </div>
-                            <span class="rating-count">(12,402)</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-main">$84.99</span>
-                            <span class="price-strike">$129.99</span>
-                        </div>
-                    </div>
+           <div class="grid-cols-basic">
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Software Architecture" class="card-img" src="images/organic.jpg" />
+            <div class="badge-tag bg-tag-primary">Bestseller</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Mastering Software Architecture: Patterns and Microservices</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined" style="font-size: 14px;">person</span> Dr. Sarah Jenkins, PhD</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.9</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
                 </div>
-
-                <!-- Card 2 -->
-                <div class="card-base">
-                    <div class="card-img-container">
-                        <img alt="Physical Chemistry" class="card-img"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXGPsGjhvyb2xdQUvZcqfCrqxxhFdh4b4Y0V1_00an6eiDTzwbhwd2p2F8cddtH-mGAEAOW1zOb-c3j6Uzh-Dtc1960cU_ebO-RQiGd25J0DVvjiYAihvLgU9mKkJk20jtGPEVHTR-lIXops4jtY8CozvMiSbzFzBlpPCFiJ-Yuratx_qRVAZT7N3sYTu0Q2_8wjr4JLjhRwmzzoRHBHDX2xQHvPSQSs64ZerajbV1mYRcqXqCEOcNqtS5-yQYFpCbPbgqJMsQIF2Y" />
-                        <div class="badge-tag bg-tag-new">New</div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">Computational Quantum Chemistry: From Zero to Pro</h3>
-                        <div class="card-instructor">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">person</span> Prof. Marcus
-                            Thorne
-                        </div>
-                        <div class="rating-row">
-                            <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
-                            <div class="star-set">
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
-                            </div>
-                            <span class="rating-count">(2,145)</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-main">$49.99</span>
-                            <span class="price-strike">$89.99</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="card-base">
-                    <div class="card-img-container">
-                        <img alt="Analytical Chemistry" class="card-img"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF0L1ijMQahBCWN2zirANGanT9CkAlXTekAmgR8vLd4d72nZ8cP_re_VxwLPNzRZGZ0phlBPL8Ke_LAdEq_grZl6lawFs2Fe5wlhN2C-DU-uU8lRr-hHWL6FIWkYaxyNRKCEkO00V0fqUyEkhcTF3nP82yfCrqO2R6-K3VvGwm-BzoNhSmd_rIdPjr0Zs4fbk9-Rmn6pcfelhtLxf0xwa6b4eg1og4DrKlt3fsIgvNNKAMh6t2eVUIye7gkBT6FMHe6iCooSAN5TV_" />
-                        <div class="badge-tag bg-tag-secondary">Top Rated</div>
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">Advanced Analytical Methods: HPLC &amp; Mass Spec</h3>
-                        <div class="card-instructor">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">person</span> Dr. Elena
-                            Rodriguez
-                        </div>
-                        <div class="rating-row">
-                            <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.8</span>
-                            <div class="star-set">
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                            </div>
-                            <span class="rating-count">(876)</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-main">$19.99</span>
-                            <span class="price-strike">$149.99</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="card-base">
-                    <div class="card-img-container">
-                        <img alt="Lab Techniques" class="card-img"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuApiDI_MSm9JzKWMsC-ogeVV8jnBTFjmuKt4KmnOgjUm1flqwVvujZdROILpvoK9fgXCr53alZdswcZmeu6frUrrD1K9IlKQYbkvdyx2iw65s4hCNn4gfi3KqX6pxx0-NGCxBIfaLPqpbNHK12Em0rmAajG8CQEEwZl-s_JbzZMDm8ebQU5VJf7jqAq7myHG4If3SX49tFL_esJklegzayp1b14Qy4KTyWvCJKsKtmqN-eVIBexHsEzL2nsjl7IvbczDJH1XIltv1VA" />
-                    </div>
-                    <div class="card-body">
-                        <h3 class="card-title">Essential Laboratory Techniques for Researchers</h3>
-                        <div class="card-instructor">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">school</span> Technical
-                            Univ. of Berlin
-                        </div>
-                        <div class="rating-row">
-                            <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.6</span>
-                            <div class="star-set">
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined"
-                                    style="font-size: 14px; fill: currentColor;">star</span>
-                                <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
-                            </div>
-                            <span class="rating-count">(5,532)</span>
-                        </div>
-                        <div class="price-row">
-                            <span class="price-main">$34.99</span>
-                            <span class="price-strike">$54.99</span>
-                        </div>
-                    </div>
-                </div>
+                <span class="rating-count">(12,402)</span>
             </div>
-        </section>
+            <div class="price-row"><span class="price-main">$84.99</span> <span class="price-strike">$129.99</span></div>
+        </div>
+    </div>
 
-        <!-- Course of Month -->
-        <section style="margin-bottom: 5rem;">
-            <h2 class="section-title">Course of the Month</h2>
-            <div class="featured-card">
-                <div class="featured-img-wrap">
-                    <img alt="Featured Course" class="featured-img"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLEVdIVc5uxBTRJra3svY1M_056F7opU5FyfPImWutFm1MvFvuLOER2uTydYcskzm4Tpq5OAX-cUYw6T6ByKYTAs6C_-8kb8uyPUvbK2KuGVY2BDj_h9v23igVO8ymYJ4ba2GNRb0OtqRbMpkzv2PG2sXsYt414gWonDK1_tFV7ABFNGFaJUbWXm3px9Nug6QIYb4FTh_zuml5d0nw-BS5RgL8D6edLlhtR1hSN5YNx04ElP8GNw_pwXJogECFnn4bQd_ad2K0gzKx" />
-                    <div class="absolute inset-0"
-                        style="background: linear-gradient(to right, rgba(13,20,31,0.2), transparent);"></div>
+    <div class="card-base">
+        <div class="card-img-container">
+            <img alt="Cloud Computing" class="card-img" src="images/physical.jpg" />
+            <div class="badge-tag bg-tag-new">New</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Cloud Infrastructure & Serverless: From Zero to Pro</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined" style="font-size: 14px;">person</span> Prof. Marcus Thorne</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
                 </div>
-                <div class="featured-content">
-                    <div class="featured-badge">
-                        <span class="material-symbols-outlined" style="font-size: 12px;">workspace_premium</span>
-                        Premium Selection
-                    </div>
-                    <h3 class="hero-title" style="font-size: 2.25rem; margin-bottom: 1.5rem;">Thermodynamics: The
-                        Physics and Chemistry of Energy</h3>
-                    <p class="hero-desc" style="font-size: 1.125rem; margin-bottom: 2.5rem;">
-                        Deep dive into entropy, enthalpy, and the laws of thermodynamics with world-renowned expert
-                        Prof. David Chen.
-                    </p>
-
-                    <div class="flex flex-wrap" style="gap: 2rem; margin-bottom: 2.5rem;">
-                        <div class="stat-item">
-                            <span class="stat-label">Duration</span>
-                            <span class="stat-val">42 Hours</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Level</span>
-                            <span class="stat-val">Intermediate</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Students</span>
-                            <span class="stat-val">12,450+</span>
-                        </div>
-                    </div>
-
-                    <div class="flex" style="gap: 1rem; flex-wrap: wrap;">
-                        <button id="enroll-featured" data-course-id="thermo-001" class="btn-cta-primary">
-                            Enroll Now
-                        </button>
-                        <button id="wishlist-featured" data-course-id="thermo-001" class="btn-cta-outline">
-                            Add to Wishlist
-                        </button>
-                    </div>
-                </div>
+                <span class="rating-count">(2,145)</span>
             </div>
-        </section>
+            <div class="price-row"><span class="price-main">$49.99</span> <span class="price-strike">$89.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base">
+        <div class="card-img-container">
+            <img alt="Data Engineering" class="card-img" src="images/analytical.jpg" />
+            <div class="badge-tag bg-tag-secondary">Top Rated</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Advanced Data Engineering: Big Data & ETL Pipelines</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined" style="font-size: 14px;">person</span> Dr. Elena Rodriguez</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.8</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                </div>
+                <span class="rating-count">(876)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$19.99</span> <span class="price-strike">$149.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base">
+        <div class="card-img-container">
+            <img alt="Cybersecurity" class="card-img" src="images/lab-techniques.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">SecOps & Penetration Testing for Enterprise Researchers</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined" style="font-size: 14px;">school</span> Technical Univ. of Berlin</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.6</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(5,532)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$34.99</span> <span class="price-strike">$54.99</span></div>
+        </div>
+    </div>
+</div>
+            
+        <!-- Programming Courses: Row 1 -->
+<div class="grid-cols-basic" style="margin-top: 2rem;">
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Fullstack JavaScript" class="card-img" src="images/programming1.jpg" />
+            <div class="badge-tag bg-tag-primary">Bestseller</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Fullstack JavaScript: From Zero to Hero</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Alex Turner</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.9</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                </div>
+                <span class="rating-count">(14,230)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$99.99</span> <span class="price-strike">$149.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Python Data Science" class="card-img" src="images/programming2.jpg" />
+            <div class="badge-tag bg-tag-new">New</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Python for Data Science and AI</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Maria Santos</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.8</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(10,842)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$79.99</span> <span class="price-strike">$129.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="React Advanced" class="card-img" src="images/programming3.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Advanced React & Redux: Build Real Projects</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> James Lee</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(8,540)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$89.99</span> <span class="price-strike">$139.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Java Backend" class="card-img" src="images/programming4.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Java Backend Development with Spring Boot</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Clara Martins</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.6</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(6,732)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$69.99</span> <span class="price-strike">$119.99</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Programming Courses: Row 2 -->
+<div class="grid-cols-basic" style="margin-top: 2rem;">
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="C++ Algorithms" class="card-img" src="images/programming5.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">C++ Algorithms & Data Structures</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Victor Almeida</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.8</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(9,210)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$79.99</span> <span class="price-strike">$129.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="DevOps" class="card-img" src="images/programming6.jpg" />
+            <div class="badge-tag bg-tag-primary">Popular</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">DevOps & Cloud Deployment with Docker & AWS</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Helena Costa</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(7,410)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$89.99</span> <span class="price-strike">$139.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="React Native" class="card-img" src="images/programming7.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Mobile Apps with React Native</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Bruno Lima</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.6</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(6,320)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$69.99</span> <span class="price-strike">$109.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Cybersecurity" class="card-img" src="images/programming8.jpg" />
+            <div class="badge-tag bg-tag-secondary">Top Rated</div>
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Cybersecurity Fundamentals for Developers</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Rafael Souza</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.8</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(5,210)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$59.99</span> <span class="price-strike">$99.99</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- Programming Courses: Row 3 -->
+<div class="grid-cols-basic" style="margin-top: 2rem;">
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Node.js APIs" class="card-img" src="images/programming9.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Node.js & Express: Building APIs</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Carolina Ribeiro</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(4,980)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$64.99</span> <span class="price-strike">$104.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Kotlin Android" class="card-img" src="images/programming10.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Kotlin for Android Development</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Felipe Nunes</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.6</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(3,780)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$74.99</span> <span class="price-strike">$124.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Machine Learning" class="card-img" src="images/programming11.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Machine Learning & AI with Python</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Laura Mendes</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.9</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                </div>
+                <span class="rating-count">(12,540)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$119.99</span> <span class="price-strike">$179.99</span></div>
+        </div>
+    </div>
+
+    <div class="card-base group">
+        <div class="card-img-container">
+            <img alt="Angular Frontend" class="card-img" src="images/programming12.jpg" />
+        </div>
+        <div class="card-body">
+            <h3 class="card-title">Angular Frontend Development: From Beginner to Expert</h3>
+            <div class="card-instructor"><span class="material-symbols-outlined">person</span> Eduardo Lima</div>
+            <div class="rating-row">
+                <span style="color: var(--primary); font-weight: bold; font-size: 0.875rem;">4.7</span>
+                <div class="star-set">
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; fill: currentColor;">star</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px;">star_half</span>
+                </div>
+                <span class="rating-count">(8,120)</span>
+            </div>
+            <div class="price-row"><span class="price-main">$84.99</span> <span class="price-strike">$129.99</span></div>
+        </div>
+    </div>
+</div>
+
 
         <!-- Trusted By -->
-        <section
-            style="margin-bottom: 2.5rem; padding: 3rem 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
-            <h2 class="text-center"
-                style="font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin-bottom: 3rem;">
-                Trusted by Global Research Institutions
-            </h2>
+        <section style="margin-bottom: 2.5rem; padding: 3rem 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+            <h2 class="text-center" style="font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin-bottom: 3rem;">Trusted by Global Research Institutions</h2>
             <div class="trusted-grid">
-                <div class="brand-item">
-                    <span class="material-symbols-outlined" style="font-size: 2rem;">biotech</span> OXFORD LABS
-                </div>
-                <div class="brand-item">
-                    <span class="material-symbols-outlined" style="font-size: 2rem;">genetics</span> GENE-TECH
-                </div>
-                <div class="brand-item">
-                    <span class="material-symbols-outlined" style="font-size: 2rem;">grid_view</span> NANO-SCIENCE
-                </div>
-                <div class="brand-item">
-                    <span class="material-symbols-outlined" style="font-size: 2rem;">hub</span> MOLECULAR.AI
-                </div>
+                <div class="brand-item"><span class="material-symbols-outlined" style="font-size: 2rem;">biotech</span> OXFORD LABS</div>
+                <div class="brand-item"><span class="material-symbols-outlined" style="font-size: 2rem;">genetics</span> GENE-TECH</div>
+                <div class="brand-item"><span class="material-symbols-outlined" style="font-size: 2rem;">grid_view</span> NANO-SCIENCE</div>
+                <div class="brand-item"><span class="material-symbols-outlined" style="font-size: 2rem;">hub</span> MOLECULAR.AI</div>
             </div>
         </section>
     </main>
@@ -434,7 +563,6 @@
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-grid">
-            <!-- Brand Col -->
             <div class="col-span-2-lg">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
                     <div class="logo-icon" style="width: 2.25rem; height: 2.25rem;">
@@ -442,10 +570,7 @@
                     </div>
                     <span style="font-size: 1.25rem; font-weight: 700; color: white;">ChemAcademy</span>
                 </div>
-                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; max-width: 300px;">
-                    The world's premier digital infrastructure for chemical education, molecular research, and
-                    laboratory training.
-                </p>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; max-width: 300px;">The world's premier digital infrastructure for chemical education, molecular research, and laboratory training.</p>
                 <div class="flex table" style="gap: 1.25rem;">
                     <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
                     <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
@@ -483,11 +608,9 @@
                 </ul>
             </div>
 
-            <!-- Newsletter -->
             <div class="col-span-2-lg">
                 <h4 class="footer-heading">Newsletter</h4>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;">Stay updated on
-                    breakthroughs in synthetic and computational chemistry.</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;">Stay updated on breakthroughs in synthetic and computational chemistry.</p>
                 <div class="flex-col" style="gap: 0.5rem;">
                     <input class="newsletter-input" placeholder="researcher@lab.edu" type="email" />
                     <button class="btn-sub">Subscribe</button>
@@ -512,5 +635,4 @@
 
     <script type="module" src="js/main.js"></script>
 </body>
-
 </html>
