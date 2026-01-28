@@ -127,8 +127,8 @@
  *           type: string
  *         description: Identificador único da aula
  *     responses:
- *       200:
- *         description: Aula removida com sucesso
+ *       204:
+ *         description: Aula removida com sucesso (sem conteúdo na resposta)
  *       401:
  *         description: Usuário não autenticado
  *       403:
@@ -239,8 +239,19 @@
  *                 type: boolean
  *                 example: true
  *     responses:
- *       200:
- *         description: Progresso registrado com sucesso
+ *       201:
+ *         description: Aula marcada como concluída
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Aula marcada como concluída"
+ *                 data:
+ *                   type: object
+ *                   description: Dados do registro de progresso
  *       403:
  *         description: Usuário não matriculado no curso
  *       404:
@@ -265,8 +276,8 @@
  *           type: string
  *         description: Identificador único da aula
  *     responses:
- *       200:
- *         description: Progresso removido com sucesso
+ *       204:
+ *         description: Progresso removido com sucesso (sem conteúdo na resposta)
  *       404:
  *         description: Aula não encontrada ou progresso inexistente
  */

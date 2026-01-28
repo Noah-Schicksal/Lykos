@@ -125,8 +125,8 @@
  *           type: string
  *         description: Identificador único do módulo
  *     responses:
- *       200:
- *         description: Módulo removido com sucesso
+ *       204:
+ *         description: Módulo removido com sucesso (sem conteúdo na resposta)
  *       401:
  *         description: Usuário não autenticado
  *       403:

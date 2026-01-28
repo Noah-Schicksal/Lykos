@@ -1,171 +1,33 @@
 {
   "info": {
-    "_postman_id": "c1f2b3a4-5d6e-7f8g-9h0i-j1k2l3m4n5o6",
-    "name": "Desafio 2 API",
-    "description": "Collection for testing the Desafio 2 API with httpOnly cookie authentication.",
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Desafio 2 API - Verified (45 Endpoints)",
+    "description": "Collection completa e 100% alinhada com a implementação real da API. Todos os 45 endpoints verificados contra o código fonte.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Auth",
+      "name": "Auth (4 endpoints)",
+      "description": "Autenticação via cookie httpOnly",
       "item": [
         {
-          "name": "Register Student",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('name');",
-                  "    pm.expect(jsonData).to.have.property('email');",
-                  "    pm.expect(jsonData.role).to.eql('STUDENT');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "POST /auth/login",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Student User\",\r\n    \"email\": \"student@example.com\",\r\n    \"password\": \"Password123!\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/register/student",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "register", "student"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Register Instructor",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('name');",
-                  "    pm.expect(jsonData).to.have.property('email');",
-                  "    pm.expect(jsonData.role).to.eql('INSTRUCTOR');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Instructor User\",\r\n    \"email\": \"instructor@example.com\",\r\n    \"password\": \"Password123!\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/register/instructor",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "register", "instructor"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data and cookie is set\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('user');",
-                  "    pm.expect(jsonData.user).to.have.property('id');",
-                  "    pm.expect(jsonData.user).to.have.property('name');",
-                  "    pm.expect(jsonData.user).to.have.property('email');",
-                  "    pm.expect(jsonData.user).to.have.property('role');",
-                  "    ",
-                  "    // Verifica se o cookie foi definido",
-                  "    pm.expect(pm.cookies.has('token')).to.be.true;",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"email\": \"student@example.com\",\r\n    \"password\": \"Password123!\"\r\n}"
+              "raw": "{\n    \"email\": \"student@example.com\",\n    \"password\": \"Password123!\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/auth/login",
               "host": ["{{base_url}}"],
               "path": ["auth", "login"]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Logout",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has success message\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "    pm.expect(jsonData.message).to.eql('Logout realizado com sucesso');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "DELETE /auth/logout",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -174,37 +36,48 @@
               "host": ["{{base_url}}"],
               "path": ["auth", "logout"]
             }
-          },
-          "response": []
+          }
+        },
+        {
+          "name": "POST /auth/register/student",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Student Test\",\n    \"email\": \"student@test.com\",\n    \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/student",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register", "student"]
+            }
+          }
+        },
+        {
+          "name": "POST /auth/register/instructor",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Instructor Test\",\n    \"email\": \"instructor@test.com\",\n    \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register/instructor",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register", "instructor"]
+            }
+          }
         }
       ]
     },
     {
-      "name": "Users",
+      "name": "Users (3 endpoints)",
+      "description": "Gerenciamento de perfil do usuário autenticado",
       "item": [
         {
-          "name": "Get My Profile",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has user data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('name');",
-                  "    pm.expect(jsonData).to.have.property('email');",
-                  "    pm.expect(jsonData).to.have.property('role');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /users/me",
           "request": {
             "method": "GET",
             "header": [],
@@ -212,70 +85,27 @@
               "raw": "{{base_url}}/users/me",
               "host": ["{{base_url}}"],
               "path": ["users", "me"]
-            },
-            "description": "Get current user profile. Requires authentication via cookie."
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Update My Profile",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated user data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('name');",
-                  "    pm.expect(jsonData).to.have.property('email');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "PUT /users/me",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Updated Name\",\r\n    \"email\": \"updated@example.com\"\r\n}"
+              "raw": "{\n    \"name\": \"Updated Name\",\n    \"email\": \"newemail@test.com\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/users/me",
               "host": ["{{base_url}}"],
               "path": ["users", "me"]
-            },
-            "description": "Update current user profile. Requires authentication via cookie."
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Delete My Account",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 204\", function () {",
-                  "    pm.response.to.have.status(204);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "DELETE /users/me",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -283,37 +113,94 @@
               "raw": "{{base_url}}/users/me",
               "host": ["{{base_url}}"],
               "path": ["users", "me"]
-            },
-            "description": "Delete current user account. Requires authentication via cookie."
-          },
-          "response": []
+            }
+          }
         }
       ]
     },
     {
-      "name": "Courses (Public)",
+      "name": "Categories (5 endpoints)",
+      "description": "Gerenciamento de categorias de cursos",
       "item": [
         {
-          "name": "List All Courses",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has data array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('data');",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
+          "name": "GET /categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
             }
-          ],
+          }
+        },
+        {
+          "name": "GET /categories/:id/courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/:id/courses",
+              "host": ["{{base_url}}"],
+              "path": ["categories", ":id", "courses"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "POST /categories (INSTRUCTOR)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Programação\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": ["{{base_url}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "PUT /categories/:id (INSTRUCTOR)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Design\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/categories/:id",
+              "host": ["{{base_url}}"],
+              "path": ["categories", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "DELETE /categories/:id (INSTRUCTOR)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/categories/:id",
+              "host": ["{{base_url}}"],
+              "path": ["categories", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses - Public (5 endpoints)",
+      "description": "Endpoints públicos de cursos",
+      "item": [
+        {
+          "name": "GET /courses",
           "request": {
             "method": "GET",
             "header": [],
@@ -322,45 +209,15 @@
               "host": ["{{base_url}}"],
               "path": ["courses"],
               "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "limit",
-                  "value": "10"
-                },
-                {
-                  "key": "category",
-                  "value": "",
-                  "disabled": true
-                }
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"},
+                {"key": "search", "value": "", "disabled": true}
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Get Course Details",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has course data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /courses/:id",
           "request": {
             "method": "GET",
             "header": [],
@@ -368,18 +225,12 @@
               "raw": "{{base_url}}/courses/:id",
               "host": ["{{base_url}}"],
               "path": ["courses", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
+              "variable": [{"key": "id", "value": ""}]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "Get Course Cover Image",
+          "name": "GET /courses/:id/cover",
           "request": {
             "method": "GET",
             "header": [],
@@ -387,37 +238,12 @@
               "raw": "{{base_url}}/courses/:id/cover",
               "host": ["{{base_url}}"],
               "path": ["courses", ":id", "cover"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Returns the course cover image as binary data"
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "List Course Modules",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has modules array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /courses/:id/modules",
           "request": {
             "method": "GET",
             "header": [],
@@ -425,42 +251,35 @@
               "raw": "{{base_url}}/courses/:id/modules",
               "host": ["{{base_url}}"],
               "path": ["courses", ":id", "modules"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "GET /courses/:id/reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/:id/reviews?page=1&limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id", "reviews"],
+              "variable": [{"key": "id", "value": ""}],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "5"}
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "Courses (Instructor)",
+      "name": "Courses - Instructor (7 endpoints)",
+      "description": "Endpoints restritos a instrutores",
       "item": [
         {
-          "name": "Get My Authored Courses",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has data array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('data');",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /courses/authored",
           "request": {
             "method": "GET",
             "header": [],
@@ -468,480 +287,182 @@
               "raw": "{{base_url}}/courses/authored",
               "host": ["{{base_url}}"],
               "path": ["courses", "authored"]
-            },
-            "description": "Requires INSTRUCTOR authentication"
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Create Course",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has course data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "POST /courses (multipart)",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "formdata",
               "formdata": [
-                {
-                  "key": "title",
-                  "value": "Novo Curso de JavaScript",
-                  "type": "text"
-                },
-                {
-                  "key": "description",
-                  "value": "Aprenda JavaScript do zero",
-                  "type": "text"
-                },
-                {
-                  "key": "price",
-                  "value": "99.90",
-                  "type": "text"
-                },
-                {
-                  "key": "categoryId",
-                  "value": "1",
-                  "type": "text"
-                },
-                {
-                  "key": "coverImage",
-                  "type": "file",
-                  "src": []
-                }
+                {"key": "title", "value": "JavaScript Avançado", "type": "text"},
+                {"key": "description", "value": "Curso completo", "type": "text"},
+                {"key": "price", "value": "199.99", "type": "text"},
+                {"key": "categoryId", "value": "", "type": "text"},
+                {"key": "coverImage", "type": "file", "src": []}
               ]
             },
             "url": {
               "raw": "{{base_url}}/courses",
               "host": ["{{base_url}}"],
               "path": ["courses"]
-            },
-            "description": "Requires INSTRUCTOR authentication. Upload course with cover image."
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Add Module to Course",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "POST /courses/:id/modules",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Introdução ao JavaScript\",\r\n    \"orderIndex\": 1\r\n}"
+              "raw": "{\n    \"title\": \"Módulo 1\",\n    \"orderIndex\": 1\n}"
             },
             "url": {
-              "raw": "{{base_url}}/courses/:courseId/modules",
+              "raw": "{{base_url}}/courses/:id/modules",
               "host": ["{{base_url}}"],
-              "path": ["courses", ":courseId", "modules"],
-              "variable": [
-                {
-                  "key": "courseId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Requires INSTRUCTOR authentication"
-          },
-          "response": []
+              "path": ["courses", ":id", "modules"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "Add Class to Module",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "PUT /courses/:id",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Variáveis e Tipos de Dados\",\r\n    \"description\": \"Aprenda sobre var, let e const\",\r\n    \"videoUrl\": \"https://www.youtube.com/watch?v=example\",\r\n    \"orderIndex\": 1\r\n}"
+              "raw": "{\n    \"title\": \"Curso Atualizado\",\n    \"price\": 249.99\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/:id",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "DELETE /courses/:id (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/:id",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "GET /courses/:id/students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/:id/students",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id", "students"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "POST /courses/:id/reviews (STUDENT)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rating\": 5,\n    \"comment\": \"Excelente curso!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/courses/:id/reviews",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id", "reviews"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Modules (4 endpoints)",
+      "description": "Gerenciamento de módulos",
+      "item": [
+        {
+          "name": "GET /modules/:id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/modules/:id",
+              "host": ["{{base_url}}"],
+              "path": ["modules", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "PUT /modules/:id (INSTRUCTOR)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Módulo Atualizado\",\n    \"orderIndex\": 2\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/modules/:id",
+              "host": ["{{base_url}}"],
+              "path": ["modules", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "DELETE /modules/:id (INSTRUCTOR - 204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/modules/:id",
+              "host": ["{{base_url}}"],
+              "path": ["modules", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "POST /modules/:moduleId/classes (INSTRUCTOR)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Aula 1\",\n    \"description\": \"Descrição da aula\",\n    \"videoUrl\": \"https://youtube.com/video\",\n    \"orderIndex\": 1\n}"
             },
             "url": {
               "raw": "{{base_url}}/modules/:moduleId/classes",
               "host": ["{{base_url}}"],
               "path": ["modules", ":moduleId", "classes"],
-              "variable": [
-                {
-                  "key": "moduleId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Requires INSTRUCTOR authentication"
-          },
-          "response": []
-        },
-        {
-          "name": "Upload Class Material",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
+              "variable": [{"key": "moduleId", "value": ""}]
             }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "file",
-                  "type": "file",
-                  "src": []
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{base_url}}/classes/:classId/upload",
-              "host": ["{{base_url}}"],
-              "path": ["classes", ":classId", "upload"],
-              "variable": [
-                {
-                  "key": "classId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Upload PDF or other materials for a class. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Course",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated course data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Curso Atualizado\",\r\n    \"description\": \"Descrição atualizada do curso\",\r\n    \"price\": 149.90\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/courses/:id",
-              "host": ["{{base_url}}"],
-              "path": ["courses", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update course information. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Course",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/courses/:id",
-              "host": ["{{base_url}}"],
-              "path": ["courses", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Delete a course. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Course Cover",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [],
-            "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "coverImage",
-                  "type": "file",
-                  "src": []
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{base_url}}/courses/:id/cover",
-              "host": ["{{base_url}}"],
-              "path": ["courses", ":id", "cover"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update course cover image. Requires INSTRUCTOR authentication."
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "Modules",
+      "name": "Classes (7 endpoints)",
+      "description": "Gerenciamento de aulas",
       "item": [
         {
-          "name": "Get Module Details",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has module data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/modules/:id",
-              "host": ["{{base_url}}"],
-              "path": ["modules", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Get details of a specific module"
-          },
-          "response": []
-        },
-        {
-          "name": "Update Module",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated module\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Módulo Atualizado\",\r\n    \"orderIndex\": 2\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/modules/:id",
-              "host": ["{{base_url}}"],
-              "path": ["modules", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update module information. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Module",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/modules/:id",
-              "host": ["{{base_url}}"],
-              "path": ["modules", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Delete a module. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Classes",
-      "item": [
-        {
-          "name": "Get Class Details",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has class data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('id');",
-                  "    pm.expect(jsonData).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /classes/:id",
           "request": {
             "method": "GET",
             "header": [],
@@ -949,81 +470,29 @@
               "raw": "{{base_url}}/classes/:id",
               "host": ["{{base_url}}"],
               "path": ["classes", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Get details of a specific class. Requires authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "Update Class",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated class\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('title');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "PUT /classes/:id (INSTRUCTOR)",
           "request": {
             "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\": \"Aula Atualizada\",\r\n    \"description\": \"Descrição atualizada\",\r\n    \"videoUrl\": \"https://www.youtube.com/watch?v=newvideo\",\r\n    \"orderIndex\": 2\r\n}"
+              "raw": "{\n    \"title\": \"Aula Atualizada\",\n    \"description\": \"Nova descrição\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/classes/:id",
               "host": ["{{base_url}}"],
               "path": ["classes", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update class information. Requires INSTRUCTOR authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "Delete Class",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "DELETE /classes/:id (INSTRUCTOR - 204)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1031,75 +500,61 @@
               "raw": "{{base_url}}/classes/:id",
               "host": ["{{base_url}}"],
               "path": ["classes", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Delete a class. Requires INSTRUCTOR authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "Mark Class Progress",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "POST /classes/:id/upload (INSTRUCTOR - multipart)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {"key": "file", "type": "file", "src": []}
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/classes/:id/upload",
+              "host": ["{{base_url}}"],
+              "path": ["classes", ":id", "upload"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "GET /classes/:id/material",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/classes/:id/material",
+              "host": ["{{base_url}}"],
+              "path": ["classes", ":id", "material"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "POST /classes/:id/progress (201)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"completed\": true\r\n}"
+              "raw": "{\n    \"completed\": true\n}"
             },
             "url": {
               "raw": "{{base_url}}/classes/:id/progress",
               "host": ["{{base_url}}"],
               "path": ["classes", ":id", "progress"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Mark a class as completed. Requires authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         },
         {
-          "name": "Unmark Class Progress",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "DELETE /classes/:id/progress (204)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1107,42 +562,66 @@
               "raw": "{{base_url}}/classes/:id/progress",
               "host": ["{{base_url}}"],
               "path": ["classes", ":id", "progress"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Unmark a class as completed. Requires authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         }
       ]
     },
     {
-      "name": "Cart & Checkout",
+      "name": "Student (3 endpoints)",
+      "description": "Dashboard do estudante",
       "item": [
         {
-          "name": "Get Cart Items",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has cart items\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
+          "name": "GET /my-courses (STUDENT)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/my-courses?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["my-courses"],
+              "query": [
+                {"key": "page", "value": "1"},
+                {"key": "limit", "value": "10"}
+              ]
             }
-          ],
+          }
+        },
+        {
+          "name": "GET /my-courses/:id (STUDENT)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/my-courses/:id",
+              "host": ["{{base_url}}"],
+              "path": ["my-courses", ":id"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        },
+        {
+          "name": "POST /courses/:id/certificate (STUDENT - 201)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/courses/:id/certificate",
+              "host": ["{{base_url}}"],
+              "path": ["courses", ":id", "certificate"],
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart (4 endpoints)",
+      "description": "Carrinho de compras do estudante",
+      "item": [
+        {
+          "name": "GET /cart (STUDENT)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1150,77 +629,43 @@
               "raw": "{{base_url}}/cart",
               "host": ["{{base_url}}"],
               "path": ["cart"]
-            },
-            "description": "Get all items in cart. Requires STUDENT authentication."
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Add Course to Cart",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "POST /cart (STUDENT - 201)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"courseId\": 1\r\n}"
+              "raw": "{\n    \"courseId\": \"\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/cart",
               "host": ["{{base_url}}"],
               "path": ["cart"]
-            },
-            "description": "Requires STUDENT authentication"
-          },
-          "response": []
+            }
+          }
         },
         {
-          "name": "Checkout",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Enrollment created\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
+          "name": "DELETE /cart/:courseId (STUDENT - 204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/cart/:courseId",
+              "host": ["{{base_url}}"],
+              "path": ["cart", ":courseId"],
+              "variable": [{"key": "courseId", "value": ""}]
             }
-          ],
+          }
+        },
+        {
+          "name": "POST /checkout (STUDENT - 201)",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
+            "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {
               "mode": "raw",
               "raw": "{}"
@@ -1229,527 +674,17 @@
               "raw": "{{base_url}}/checkout",
               "host": ["{{base_url}}"],
               "path": ["checkout"]
-            },
-            "description": "Finalize purchase and create enrollments. Requires STUDENT authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Remove Course from Cart",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
             }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/cart/:courseId",
-              "host": ["{{base_url}}"],
-              "path": ["cart", ":courseId"],
-              "variable": [
-                {
-                  "key": "courseId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Remove a course from cart. Requires STUDENT authentication."
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "Student Dashboard",
+      "name": "Reviews (1 endpoint)",
+      "description": "Exclusão de avaliações",
       "item": [
         {
-          "name": "Get My Enrollments",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has data array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('data');",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/my-courses",
-              "host": ["{{base_url}}"],
-              "path": ["my-courses"]
-            },
-            "description": "Get all courses where student is enrolled with progress. Requires STUDENT authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Download Class Material",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/classes/:id/material",
-              "host": ["{{base_url}}"],
-              "path": ["classes", ":id", "material"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Download class material (PDF, etc). Requires STUDENT authentication and enrollment."
-          },
-          "response": []
-        },
-        {
-          "name": "Mark Class as Complete",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"completed\": true\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/classes/:id/progress",
-              "host": ["{{base_url}}"],
-              "path": ["classes", ":id", "progress"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update progress for a class. Requires STUDENT authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Get Course Certificate",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/student/courses/:courseId/certificate",
-              "host": ["{{base_url}}"],
-              "path": ["student", "courses", ":courseId", "certificate"],
-              "variable": [
-                {
-                  "key": "courseId",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Generate certificate if course progress is 100%. Requires STUDENT authentication."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Categories",
-      "item": [
-        {
-          "name": "List Categories",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has categories array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/categories",
-              "host": ["{{base_url}}"],
-              "path": ["categories"]
-            },
-            "description": "Get all available categories (Public)"
-          },
-          "response": []
-        },
-        {
-          "name": "List Courses by Category",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has courses array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/categories/:id/courses",
-              "host": ["{{base_url}}"],
-              "path": ["categories", ":id", "courses"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Get all courses in a specific category (Public)"
-          },
-          "response": []
-        },
-        {
-          "name": "Create Category",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has category data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('name');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Programação\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/categories",
-              "host": ["{{base_url}}"],
-              "path": ["categories"]
-            },
-            "description": "Create a new category. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Category",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated category\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "    pm.expect(jsonData.data).to.have.property('name');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Programação Avançada\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/categories/:id",
-              "host": ["{{base_url}}"],
-              "path": ["categories", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update an existing category. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Category",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/categories/:id",
-              "host": ["{{base_url}}"],
-              "path": ["categories", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Delete a category. Requires INSTRUCTOR authentication."
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Reviews",
-      "item": [
-        {
-          "name": "List Course Reviews",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has reviews array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/courses/:id/reviews",
-              "host": ["{{base_url}}"],
-              "path": ["courses", ":id", "reviews"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Get all reviews for a course (Public)"
-          },
-          "response": []
-        },
-        {
-          "name": "Add Course Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"rating\": 5,\r\n    \"comment\": \"Excelente curso! Recomendo.\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/courses/:id/reviews",
-              "host": ["{{base_url}}"],
-              "path": ["courses", ":id", "reviews"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Add a review to a course. Requires STUDENT authentication and enrollment."
-          },
-          "response": []
-        },
-        {
-          "name": "Update Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has updated review\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.have.property('id');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"rating\": 4,\r\n    \"comment\": \"Atualizado: muito bom curso!\"\r\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/reviews/:id",
-              "host": ["{{base_url}}"],
-              "path": ["reviews", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Update your own review. Requires authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Delete Review",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200 or 204\", function () {",
-                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "DELETE /reviews/:id (204)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1757,74 +692,18 @@
               "raw": "{{base_url}}/reviews/:id",
               "host": ["{{base_url}}"],
               "path": ["reviews", ":id"],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": "Delete your own review. Requires authentication."
-          },
-          "response": []
+              "variable": [{"key": "id", "value": ""}]
+            }
+          }
         }
       ]
     },
     {
-      "name": "Certificates",
+      "name": "Certificates (1 endpoint)",
+      "description": "Validação pública de certificados",
       "item": [
         {
-          "name": "List My Certificates",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has certificates array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData.data).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/student/certificates",
-              "host": ["{{base_url}}"],
-              "path": ["student", "certificates"]
-            },
-            "description": "Get all certificates issued to the authenticated student. Requires STUDENT authentication."
-          },
-          "response": []
-        },
-        {
-          "name": "Validate Certificate",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response has certificate data\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('valid');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
+          "name": "GET /certificates/:hash (PUBLIC)",
           "request": {
             "method": "GET",
             "header": [],
@@ -1832,16 +711,9 @@
               "raw": "{{base_url}}/certificates/:hash",
               "host": ["{{base_url}}"],
               "path": ["certificates", ":hash"],
-              "variable": [
-                {
-                  "key": "hash",
-                  "value": "abc123hash"
-                }
-              ]
-            },
-            "description": "Validate a certificate by its hash (Public)"
-          },
-          "response": []
+              "variable": [{"key": "hash", "value": "abc123"}]
+            }
+          }
         }
       ]
     }

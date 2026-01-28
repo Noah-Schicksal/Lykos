@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /student/courses:
+ * /my-courses:
  *   get:
  *     summary: Listar cursos matriculados
  *     description: Retorna todos os cursos em que o estudante autenticado está matriculado, incluindo informações de progresso.
@@ -53,7 +53,62 @@
 
 /**
  * @swagger
- * /student/courses/{courseId}/certificate:
+ * /my-courses/{id}:
+ *   get:
+ *     summary: Obter detalhes do curso matriculado
+ *     description: Retorna os detalhes completos de um curso específico em que o estudante está matriculado, incluindo progresso detalhado por aula.
+ *     tags:
+ *       - Student
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Identificador único do curso
+ *     responses:
+ *       200:
+ *         description: Detalhes do curso retornados com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 courseId:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 progress:
+ *                   type: number
+ *                   example: 45.5
+ *                 modules:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *                       classes:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *       401:
+ *         description: Usuário não autenticado
+ *       403:
+ *         description: Acesso restrito a estudantes ou estudante não matriculado
+ *       404:
+ *         description: Curso não encontrado
+ */
+
+/**
+ * @swagger
+ * /courses/{id}/certificate:
  *   post:
  *     summary: Gerar certificado de conclusão
  *     description: Gera o certificado de conclusão do curso, desde que o estudante tenha completado 100% do conteúdo.
@@ -63,13 +118,13 @@
  *       - cookieAuth: []
  *     parameters:
  *       - in: path
- *         name: courseId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
  *         description: Identificador único do curso
  *     responses:
- *       200:
+ *       201:
  *         description: Certificado gerado com sucesso
  *         content:
  *           application/json:

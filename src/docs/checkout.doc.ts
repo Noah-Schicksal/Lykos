@@ -24,7 +24,7 @@
  *             description: Corpo vazio, o checkout utiliza os dados do carrinho
  *             example: {}
  *     responses:
- *       200:
+ *       201:
  *         description: Compra finalizada com sucesso
  *         content:
  *           application/json:
@@ -34,6 +34,9 @@
  *                 message:
  *                   type: string
  *                   example: "Compra realizada com sucesso"
+ *                 data:
+ *                   type: object
+ *                   description: Dados das matrículas criadas
  *       400:
  *         description: Carrinho vazio
  *       401:

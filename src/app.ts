@@ -28,9 +28,9 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(routes);
 
 // SPA Fallback
-app.get('*', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+// app.get('*', (_req, res) => {
+//     res.sendFile(path.join(__dirname, '../public/index.html'));
+// });
 
 // Error Handling
 app.use(errorHandler);

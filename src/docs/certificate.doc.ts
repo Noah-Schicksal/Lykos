@@ -2,45 +2,9 @@
  * @swagger
  * tags:
  *   name: Certificates
- *   description: Gerenciamento e validação de certificados
+ *   description: Validação de certificados
  */
 
-/**
- * @swagger
- * /student/certificates:
- *   get:
- *     summary: Lista certificados do estudante
- *     description: Retorna todos os certificados emitidos para o estudante autenticado.
- *     tags: [Certificates]
- *     security:
- *       - cookieAuth: []
- *     responses:
- *       200:
- *         description: Lista de certificados
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       courseTitle:
- *                         type: string
- *                       hash:
- *                         type: string
- *                         description: Hash único para validação
- *                       issuedAt:
- *                         type: string
- *                         format: date-time
- *       401:
- *         description: Não autorizado
- *       403:
- *         description: Acesso restrito a estudantes */
 /**
  * @swagger
  * /certificates/{hash}:
