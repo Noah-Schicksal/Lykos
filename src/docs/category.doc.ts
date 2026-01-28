@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @swagger
  * tags:
  *   name: Categories
@@ -31,12 +31,27 @@
  *                     properties:
  *                       id:
  *                         type: string
- *                         example: "cat_001"
+ *                         format: uuid
+ *                         example: "ede3e696-536a-4272-aac0-4cbfd98442b6"
  *                       name:
  *                         type: string
  *                         example: "Programação"
+ *             example:
+ *               data:
+ *                 - id: "ede3e696-536a-4272-aac0-4cbfd98442b6"
+ *                   name: "Programação"
+ *                 - id: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
+ *                   name: "Design"
  *       500:
  *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao listar categorias"
  */
 
 /**
@@ -54,7 +69,9 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: Identificador único da categoria
+ *           format: uuid
+ *         description: Identificador único da categoria (UUID)
+ *         example: "ede3e696-536a-4272-aac0-4cbfd98442b6"
  *     responses:
  *       200:
  *         description: Cursos da categoria retornados com sucesso
@@ -70,7 +87,8 @@
  *                     properties:
  *                       id:
  *                         type: string
- *                         example: "course_123"
+ *                         format: uuid
+ *                         example: "93425141-aa16-4096-93bb-ae3832b9d017"
  *                       title:
  *                         type: string
  *                         example: "JavaScript Avançado"
@@ -80,12 +98,35 @@
  *                       price:
  *                         type: number
  *                         format: float
- *                         example: 199.9
- *                       isPublished:
- *                         type: boolean
- *                         example: true
+ *                         example: 199.99
+ *                       coverImageUrl:
+ *                         type: string
+ *                         example: "/storage/courses/javascript_avancado/cover.jpg"
+ *                       maxStudents:
+ *                         type: number
+ *                         nullable: true
+ *                         example: null
+ *                       enrolledCount:
+ *                         type: number
+ *                         example: 25
+ *                       averageRating:
+ *                         type: number
+ *                         format: float
+ *                         example: 4.5
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2026-01-26T12:29:56.291Z"
  *       404:
  *         description: Categoria não encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Categoria não encontrada"
  *       500:
  *         description: Erro interno do servidor
  */
@@ -97,7 +138,7 @@
  *     summary: Criar uma nova categoria
  *     description: |
  *       Cria uma nova categoria de cursos.
- *       A ação é restrita a usuários com perfil de Instrutor ou Administrador.
+ *       A ação é restrita a usuários com perfil de Instrutor (INSTRUCTOR).
  *     tags: [Categories]
  *     security:
  *       - cookieAuth: []
@@ -112,8 +153,11 @@
  *             properties:
  *               name:
  *                 type: string
+ *                 minLength: 3
  *                 example: "Marketing Digital"
  *                 description: Nome único da categoria
+ *           example:
+ *             name: "Marketing Digital"
  *     responses:
  *       201:
  *         description: Categoria criada com sucesso
@@ -122,23 +166,69 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Categoria criada com sucesso"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: string
- *                       example: "cat_010"
+ *                       format: uuid
+ *                       example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
  *                     name:
  *                       type: string
  *                       example: "Marketing Digital"
  *       400:
- *         description: Dados inválidos ou categoria já existente
+ *         description: Dados inválidos (nome muito curto)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "O nome da categoria deve ter no mínimo 3 caracteres."
  *       401:
  *         description: Usuário não autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Não autorizado"
  *       403:
- *         description: Usuário sem permissão para criar categorias
+ *         description: Usuário sem permissão (apenas INSTRUCTOR)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Acesso negado"
+ *       409:
+ *         description: Já existe uma categoria com este nome
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Já existe uma categoria com este nome"
  *       500:
  *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao criar categoria"
  */
 
 /**
@@ -148,7 +238,7 @@
  *     summary: Atualizar categoria
  *     description: |
  *       Atualiza o nome de uma categoria existente.
- *       Apenas usuários autorizados podem realizar esta operação.
+ *       Apenas usuários com perfil de Instrutor (INSTRUCTOR) podem realizar esta operação.
  *     tags: [Categories]
  *     security:
  *       - cookieAuth: []
@@ -158,7 +248,9 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da categoria a ser atualizada
+ *           format: uuid
+ *         description: ID da categoria a ser atualizada (UUID)
+ *         example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
  *     requestBody:
  *       required: true
  *       content:
@@ -170,7 +262,11 @@
  *             properties:
  *               name:
  *                 type: string
+ *                 minLength: 3
  *                 example: "Marketing e Vendas"
+ *                 description: Novo nome da categoria
+ *           example:
+ *             name: "Marketing e Vendas"
  *     responses:
  *       200:
  *         description: Categoria atualizada com sucesso
@@ -179,25 +275,53 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Categoria atualizada com sucesso"
  *                 data:
  *                   type: object
  *                   properties:
  *                     id:
  *                       type: string
- *                       example: "cat_010"
+ *                       format: uuid
+ *                       example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
  *                     name:
  *                       type: string
  *                       example: "Marketing e Vendas"
- *       400:
- *         description: Dados inválidos
  *       401:
  *         description: Usuário não autenticado
  *       403:
- *         description: Usuário sem permissão
+ *         description: Usuário sem permissão (apenas INSTRUCTOR)
  *       404:
  *         description: Categoria não encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Categoria não encontrada"
+ *       409:
+ *         description: Já existe outra categoria com este nome
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Já existe uma categoria com este nome"
  *       500:
  *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao atualizar categoria"
  */
 
 /**
@@ -207,8 +331,7 @@
  *     summary: Excluir categoria
  *     description: |
  *       Remove permanentemente uma categoria do sistema.
- *       A exclusão só é permitida se não houver cursos vinculados
- *       ou conforme a regra de negócio definida.
+ *       Apenas usuários com perfil de Instrutor (INSTRUCTOR) podem realizar esta operação.
  *     tags: [Categories]
  *     security:
  *       - cookieAuth: []
@@ -218,18 +341,46 @@
  *         required: true
  *         schema:
  *           type: string
- *         description: ID da categoria a ser removida
+ *           format: uuid
+ *         description: ID da categoria a ser removida (UUID)
+ *         example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
  *     responses:
  *       200:
- *         description: Categoria removida com sucesso
+ *         description: Categoria deletada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Categoria deletada com sucesso"
+ *                 data:
+ *                   type: object
+ *                   nullable: true
+ *                   example: null
  *       401:
  *         description: Usuário não autenticado
  *       403:
- *         description: Usuário sem permissão
+ *         description: Usuário sem permissão (apenas INSTRUCTOR)
  *       404:
  *         description: Categoria não encontrada
- *       409:
- *         description: Categoria não pode ser removida pois possui cursos vinculados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Categoria não encontrada"
  *       500:
  *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Erro ao deletar categoria"
  */
