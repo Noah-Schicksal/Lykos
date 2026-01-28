@@ -1,0 +1,41 @@
+:root{
+  --bg:#0f1115; --panel:#121317; --muted:#9aa3b2; --accent:#6ee7b7; --danger:#ff7b7b; --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,var(--bg),#070709);color:#e6eef6;font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif}
+.header{display:flex;align-items:center;gap:16px;padding:18px 28px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);backdrop-filter:blur(6px)}
+.brand{font-weight:700;color:var(--accent);letter-spacing:0.6px;font-size:20px}
+.search{flex:1}
+.search input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:inherit}
+.header-actions{display:flex;gap:8px}
+.container{padding:20px}
+.hero{padding:28px 20px}
+.hero-inner{max-width:1100px;margin:0 auto}
+.hero h1{font-size:28px;margin:0}
+.content-full{max-width:1100px;margin:18px auto}
+.tabs{display:flex;gap:12px;margin-bottom:12px}
+.tab{background:transparent;border:none;padding:10px 14px;border-radius:8px;color:var(--muted);cursor:pointer}
+.tab.active{color:var(--accent);border-bottom:2px solid var(--accent)}
+
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:var(--panel);border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+.card .thumb{height:140px;background:linear-gradient(90deg,#12131a,#0b0c0f);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+.card .body{padding:12px}
+.card h4{margin:0 0 8px 0;font-size:15px}
+.card .meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+.badges{display:flex;gap:8px;margin-top:8px}
+.badge{background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:8px;font-size:12px;color:var(--muted)}
+.price{color:var(--accent);font-weight:700}
+.instructor{color:var(--muted);font-size:13px;margin-top:6px}
+
+.btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:8px;color:var(--accent);cursor:pointer}
+.muted{color:var(--muted)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+.modal .card{background:var(--panel);padding:20px;border-radius:12px;width:480px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+.hidden{display:none}
+form label{display:block;margin-top:8px;margin-bottom:6px;color:var(--muted);font-size:13px}
+input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+.muted small{color:var(--muted)}
+.course-meta{display:flex;justify-content:space-between;align-items:center}
+.lesson{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px}
+.completed{opacity:0.6;text-decoration:line-through}
