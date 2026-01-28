@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Super Admin - DB Viewer</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    /* pequenas adaptações para tabela */
+    .container { max-width: 1100px; margin: 40px auto; padding: 20px; }
+    .controls { display:flex; gap:10px; margin-bottom:12px; align-items:center }
+    input[type="search"]{ padding:8px; flex:1 }
+    table { width:100%; border-collapse:collapse; font-family:inherit }
+    th,td{ border:1px solid #ddd; padding:8px; text-align:left }
+    th{ background:#f6f6f6 }
+    pre{ margin:0; white-space:pre-wrap; word-break:break-word }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Super Admin — Visualizador do Banco</h1>
+    <p>Esta área mostra todas as chaves e valores do LevelDB. Requer autenticação como admin.</p>
+
+    <div class="controls">
+      <input id="filter" type="search" placeholder="Filtrar por chave ou valor...">
+      <button id="refresh">Atualizar</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div style="overflow:auto; max-height:65vh">
+      <table id="tbl">
+        <thead>
+          <tr><th>Chave</th><th>Valor (JSON)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // busca token do cookie ou pede ao usuário
+    function getToken() {
+      const m = document.cookie.match(/(?:^|; )token=([^;]+)/);
+      if (m) return decodeURIComponent(m[1]);
+      return prompt('Cole aqui o token JWT (admin):');
+    }
+
+    async function load() {
+      const token = getToken();
+      if (!token) return setStatus('Token não fornecido');
+      setStatus('Carregando...');
+      try {
+        const res = await fetch('/admin/dump', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        render(data.rows || []);
+        setStatus(`Carregado ${ (data.rows || []).length } linhas.`);
+      } catch (err) {
+        setStatus('Erro: ' + err.message);
+      }
+    }
+
+    function setStatus(txt){ document.getElementById('status').textContent = txt }
+
+    function render(rows){
+      const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML = '';
+      const filter = (document.getElementById('filter').value || '').toLowerCase();
+      for (const r of rows) {
+        const key = String(r.key || '');
+        const val = JSON.stringify(r.value, null, 2);
+        if (filter && !(key.toLowerCase().includes(filter) || val.toLowerCase().includes(filter))) continue;
+        const tr = document.createElement('tr');
+        const tdKey = document.createElement('td'); tdKey.textContent = key;
+        const tdVal = document.createElement('td');
+        const pre = document.createElement('pre'); pre.textContent = val; tdVal.appendChild(pre);
+        tr.appendChild(tdKey); tr.appendChild(tdVal); tbody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('filter').addEventListener('input', () => loadCached());
+
+    let lastRows = null;
+    async function loadCached(){
+      if (!lastRows) return load();
+      render(lastRows);
+    }
+
+    // load once on start
+    load();
+  </script>
+</body>
+</html>
