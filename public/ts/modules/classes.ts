@@ -55,16 +55,39 @@ export const Classes = {
   },
 
   /**
+   * Upload Material File
+   */
+  uploadMaterial: async (classId: string, file: File): Promise<{ materialUrl: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('auth_token');
+    const headers: Record<string, string> = {
+      // Content-Type must be undefined so browser sets boundary
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    try {
+      const response = await fetch(`/classes/${classId}/upload`, {
+        method: 'POST',
+        body: formData,
+        headers: headers,
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Erro no upload');
+      return data.data || data;
+    } catch (error: any) {
+      AppUI.showMessage(error.message || 'Erro ao enviar arquivo', 'error');
+      throw error;
+    }
+  },
+
+  /**
    * Deletar aula
    */
   delete: async (classId: string): Promise<boolean> => {
-    const confirmed = await AppUI.promptModal(
-      'Excluir Aula',
-      'Tem certeza que deseja excluir esta aula? Esta ação não pode ser desfeita.',
-    );
-
-    if (!confirmed) return false;
-
     try {
       await AppUI.apiFetch(`/classes/${classId}`, {
         method: 'DELETE',
@@ -74,40 +97,6 @@ export const Classes = {
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao excluir aula', 'error');
       return false;
-    }
-  },
-
-  /**
-   * Upload de material complementar
-   */
-  uploadMaterial: async (classId: string, file: File): Promise<void> => {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch(`/classes/${classId}/upload`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(
-          data.message || data.error || 'Erro ao fazer upload do material',
-        );
-      }
-
-      AppUI.showMessage(
-        'Material complementar enviado com sucesso!',
-        'success',
-      );
-    } catch (error: any) {
-      AppUI.showMessage(
-        error.message || 'Erro ao fazer upload do material',
-        'error',
-      );
-      throw error;
     }
   },
 

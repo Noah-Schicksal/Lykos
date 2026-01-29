@@ -3,6 +3,7 @@
  */
 import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
+import { Home } from './home.js';
 import { Categories } from './modules/categories.js';
 
 // Expose to window for debugging or legacy scripts if needed
@@ -11,8 +12,10 @@ import { Categories } from './modules/categories.js';
 (window as any).categories = Categories;
 
 document.addEventListener('DOMContentLoaded', () => {
+  Auth.init();
   // Check Auth Status immediately
   Auth.updateAuthUI();
+  Home.init();
 
   console.log('ChemAcademy App Initialized');
 

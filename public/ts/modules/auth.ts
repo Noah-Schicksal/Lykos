@@ -4,6 +4,31 @@
 import { AppUI } from '../utils/ui.js';
 
 export const Auth = {
+  init: () => {
+    window.addEventListener('session-expired', () => {
+      console.log('[Auth] Session expired event received');
+      // Clear data but don't call backend logout (token is already invalid)
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+
+      Auth.updateAuthUI();
+
+      // Ensure auth card is shown effectively asking for login
+      const authContainer = document.getElementById('auth-card-container');
+      if (authContainer) {
+        authContainer.classList.add('show');
+        // Reset to login face if needed
+        const cardInner = document.getElementById('auth-card');
+        if (cardInner) {
+          cardInner.classList.remove('flipped');
+          const loginFace = document.getElementById('auth-login'); // Assuming ID or class logic in updateAuthUI handles this
+        }
+      }
+
+      AppUI.showMessage('Sua sessão expirou. Faça login novamente.', 'info');
+    });
+  },
+
   login: async (email: string, password: string) => {
     try {
       const response = await AppUI.apiFetch('/auth/login', {
@@ -12,20 +37,13 @@ export const Auth = {
       });
 
       if (response.data) {
-        // Backend returns user data in 'data' field. Token is in HttpOnly cookie.
-        // We don't need to store token manually if we rely on cookies.
-        // But if we need it for authenticated requests (bearer), we have a problem.
-        // Let's check if the previous code logic assumed Bearer token.
-        // UiHelper apiFetch uses headers provided, doesn't seem to auto-attach token from localStorage yet,
-        // but previously we stored 'auth_token'.
-        // Since backend uses cookies, we might just rely on that for now.
-        // Or we can try to get the token if we modify the backend.
-        // For now, let's just make the login succeed visually.
+        // Backend now returns { user, token }
+        const { user, token } = response.data;
 
-        const user = response.data;
         localStorage.setItem('auth_user', JSON.stringify(user));
-        // If token was needed strictly for something, we might miss it.
-        // But 'response.token' was undefined, so let's skip it.
+        if (token) {
+          localStorage.setItem('auth_token', token);
+        }
 
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');

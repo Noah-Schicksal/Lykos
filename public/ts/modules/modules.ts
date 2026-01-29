@@ -94,13 +94,6 @@ export const Modules = {
    * Deletar módulo
    */
   delete: async (moduleId: string): Promise<boolean> => {
-    const confirmed = await AppUI.promptModal(
-      'Excluir Módulo',
-      'Tem certeza que deseja excluir este módulo? Todas as aulas serão excluídas. Esta ação não pode ser desfeita.',
-    );
-
-    if (!confirmed) return false;
-
     try {
       await AppUI.apiFetch(`/modules/${moduleId}`, {
         method: 'DELETE',

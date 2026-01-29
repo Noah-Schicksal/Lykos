@@ -31,6 +31,15 @@ export const AppUI: UIHelper = {
       Object.assign(headers, options.headers);
     }
 
+    // Auth Token Fallback (if cookies fail)
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      console.log('[API] Using Fallback Token from localStorage');
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      console.log('[API] No Fallback Token found in localStorage');
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
@@ -46,6 +55,11 @@ export const AppUI: UIHelper = {
       const data = await response.json();
 
       if (!response.ok) {
+        // Handle Session Expiry
+        if (response.status === 401) {
+          console.warn('[API] Session expired or unauthorized');
+          window.dispatchEvent(new CustomEvent('session-expired'));
+        }
         throw new Error(data.message || data.error || 'Erro na requisição');
       }
       return data;

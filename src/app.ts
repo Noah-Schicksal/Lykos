@@ -14,12 +14,31 @@ import path from 'path';
 const app = express();
 
 // Middlewares
-app.use(helmet());
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline needed for some inline scripts/handlers if present, or relax as needed
+                styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+                imgSrc: [
+                    "'self'",
+                    'data:',
+                    'https://lh3.googleusercontent.com', // Allow Google profile images
+                    'https://placehold.co', // Allow placeholder service
+                ],
+                fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+                connectSrc: ["'self'"],
+            },
+        },
+    }),
+);
 app.use(cors(corsOptions));
 app.use(globalLimiter);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/storage', express.static(path.join(process.cwd(), 'storage')));
 
 // Documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));

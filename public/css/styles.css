@@ -40,6 +40,32 @@ body {
   min-height: 100vh;
 }
 
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  /* Slate-700 */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 var(--bg-dark);
+}
+
 /* MOLECULAR BACKGROUND */
 .molecular-bg {
   background-color: var(--bg-dark);
@@ -166,8 +192,8 @@ p {
   position: sticky;
   top: 0;
   z-index: 50;
-  height: 4rem;
-  /* h-16 */
+  height: 3.5rem;
+  /* h-14 */
   background-color: rgba(5, 7, 10, 0.8);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -300,6 +326,7 @@ p {
 }
 
 @media (min-width: 1280px) {
+
   /* xl */
   .nav-links-xl {
     display: flex;
@@ -466,7 +493,8 @@ p {
 .grid-cols-basic {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
+  /* Reduced gap default */
 }
 
 @media (min-width: 640px) {
@@ -478,6 +506,8 @@ p {
 @media (min-width: 1024px) {
   .grid-cols-basic {
     grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    /* Reduced gap LG */
   }
 }
 
@@ -486,8 +516,8 @@ p {
   display: flex;
   flex-direction: column;
   background-color: var(--card-dark);
-  border-radius: 0.75rem;
-  /* xl */
+  border-radius: 0.5rem;
+  /* Reduced radius */
   overflow: hidden;
   border: 1px solid var(--border-med);
   transition: all 0.3s;
@@ -495,7 +525,8 @@ p {
 
 .card-base:hover {
   border-color: rgba(0, 245, 212, 0.4);
-  box-shadow: 0 0 30px rgba(0, 245, 212, 0.05);
+  box-shadow: 0 0 20px rgba(0, 245, 212, 0.05);
+  /* Reduced shadow */
 }
 
 .card-img-container {
@@ -521,11 +552,13 @@ p {
 
 .badge-tag {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
+  top: 0.5rem;
+  /* Compact spacing */
+  left: 0.5rem;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
-  font-size: 10px;
+  font-size: 9px;
+  /* Smaller font */
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.05em;
@@ -549,17 +582,18 @@ p {
 }
 
 .card-body {
-  padding: 1.25rem;
-  /* p-5 */
+  padding: 0.75rem;
+  /* Compact padding */
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
 .card-title {
-  font-size: 1rem;
+  font-size: 0.875rem;
+  /* Smaller title */
   font-weight: 700;
-  line-height: 1.375;
+  line-height: 1.35;
   margin-bottom: 0.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -992,8 +1026,7 @@ p {
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(24px);
-  overflow-y: auto;
-  /* Scroll if absolutely necessary */
+  overflow-y: hidden;
 }
 
 .auth-face-back {

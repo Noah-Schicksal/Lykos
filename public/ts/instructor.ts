@@ -27,17 +27,15 @@ window.Classes = Classes;
 window.Categories = Categories;
 
 // State management
-let currentEditingCourse: any = null;
-let currentEditingModule: any = null;
-let currentEditingClass: any = null;
-let currentCourseForModules: any = null;
+let currentCourseId: string | null = null;
+let allCategories: any[] = [];
 
 // Initialize app
 async function init() {
   await checkAuth();
-  await loadCourses();
   await loadCategories();
-  setupEventListeners();
+  await loadCoursesSidebar();
+  setupGlobalEventListeners();
 }
 
 // Check authentication and role
@@ -74,965 +72,734 @@ async function checkAuth() {
   }
 }
 
-// Load courses
-async function loadCourses() {
-  const container = document.getElementById('courses-container');
-  if (!container) return;
-
-  try {
-    const courses = await Courses.getMyCourses();
-
-    if (!courses || courses.length === 0) {
-      container.innerHTML = `
-        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
-          <span class="material-symbols-outlined" style="font-size: 4rem; opacity: 0.5;">school</span>
-          <p>Nenhum curso ainda. Crie seu primeiro curso para começar!</p>
-        </div>
-      `;
-      return;
-    }
-
-    container.innerHTML = courses
-      .map(
-        (course: any) => `
-      <div class="course-card" data-course-id="${course.id}">
-        <div class="course-cover">
-          ${
-            course.coverImageUrl
-              ? `<img src="/courses/${course.id}/cover" alt="${course.title}" />`
-              : '<span class="material-symbols-outlined">school</span>'
-          }
-        </div>
-        <div class="course-info">
-          <h3 class="course-title">${course.title}</h3>
-          <p class="course-description">${course.description || 'Sem descrição'}</p>
-          <div class="course-meta">
-            <div class="meta-item">
-              <span class="material-symbols-outlined">folder</span>
-              <span>${course.category?.name || 'Sem categoria'}</span>
-            </div>
-            <div class="meta-item">
-              <span class="material-symbols-outlined">people</span>
-              <span>${course.currentStudents || 0} alunos</span>
-            </div>
-          </div>
-          <div class="course-price">R$ ${parseFloat(course.price || 0)
-            .toFixed(2)
-            .replace('.', ',')}</div>
-        </div>
-        <div class="course-actions">
-          <button class="btn-course-action btn-edit-course" data-course-id="${course.id}">
-            <span class="material-symbols-outlined">edit</span> Editar
-          </button>
-          <button class="btn-course-action btn-manage-content" data-course-id="${course.id}">
-            <span class="material-symbols-outlined">video_library</span> Conteúdo
-          </button>
-          <button class="btn-course-action btn-course-delete" data-course-id="${course.id}">
-            <span class="material-symbols-outlined">delete</span> Excluir
-          </button>
-        </div>
-      </div>
-    `,
-      )
-      .join('');
-
-    // Add event listeners to course action buttons
-    attachCourseActionListeners();
-  } catch (error) {
-    console.error('Falha ao carregar cursos:', error);
-    container.innerHTML = `
-      <div style="text-align: center; padding: 2rem; color: #f44336;">
-        <p>Falha ao carregar cursos. Por favor, tente novamente mais tarde.</p>
-      </div>
-    `;
-  }
-}
-
-// Load categories for dropdown
+// Load categories globally
 async function loadCategories() {
-  const select = document.getElementById(
-    'course-category',
-  ) as HTMLSelectElement;
-  if (!select) return;
-
   try {
-    const categories = await Categories.getAll();
-
-    select.innerHTML = '<option value="">Select a category</option>';
-    categories.forEach((cat: any) => {
-      const option = document.createElement('option');
-      option.value = cat.id;
-      option.textContent = cat.name;
-      select.appendChild(option);
-    });
+    allCategories = await Categories.getAll();
   } catch (error) {
     console.error('Failed to load categories:', error);
   }
 }
 
-// Attach event listeners to course cards
-function attachCourseActionListeners() {
-  // Edit course
-  document.querySelectorAll('.btn-edit-course').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const courseId = (e.currentTarget as HTMLElement).dataset.courseId;
-      if (courseId) await openEditCourseModal(courseId);
-    });
-  });
+// Load courses into sidebar
+async function loadCoursesSidebar() {
+  const listContainer = document.getElementById('courses-sidebar-list');
+  if (!listContainer) return;
 
-  // Manage content (modules & classes)
-  document.querySelectorAll('.btn-manage-content').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const courseId = (e.currentTarget as HTMLElement).dataset.courseId;
-      if (courseId) await openModulesModal(courseId);
-    });
-  });
-
-  // Delete course
-  document.querySelectorAll('.btn-course-delete').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const courseId = (e.currentTarget as HTMLElement).dataset.courseId;
-      if (courseId) await deleteCourse(courseId);
-    });
-  });
-}
-
-// Open create course modal
-function openCreateCourseModal() {
-  currentEditingCourse = null;
-
-  const modal = document.getElementById('course-modal');
-  const title = document.getElementById('course-modal-title');
-  const form = document.getElementById('course-form') as HTMLFormElement;
-
-  if (title) title.textContent = 'Criar Novo Curso';
-  if (form) form.reset();
-
-  // Clear file input
-  const coverInput = document.getElementById(
-    'course-cover',
-  ) as HTMLInputElement;
-  if (coverInput) coverInput.value = '';
-
-  modal?.classList.remove('hidden');
-}
-
-// Open edit course modal
-async function openEditCourseModal(courseId: string) {
   try {
-    const course = await Courses.getById(courseId);
-    currentEditingCourse = course;
+    // Show loading
+    listContainer.innerHTML = `
+      <div class="sidebar-loading">
+        <span class="material-symbols-outlined spin">sync</span> Carregando...
+      </div>
+    `;
 
-    const modal = document.getElementById('course-modal');
-    const title = document.getElementById('course-modal-title');
+    const courses = await Courses.getMyCourses();
 
-    if (title) title.textContent = 'Editar Curso';
-
-    // Fill form
-    (document.getElementById('course-id') as HTMLInputElement).value =
-      course.id;
-    (document.getElementById('course-title') as HTMLInputElement).value =
-      course.title;
-    (
-      document.getElementById('course-description') as HTMLTextAreaElement
-    ).value = course.description || '';
-
-    // Preencher preço com máscara
-    const priceInput = document.getElementById(
-      'course-price',
-    ) as HTMLInputElement;
-    const priceInCents = Math.round((course.price || 0) * 100);
-    priceInput.setAttribute('data-price-cents', priceInCents.toString());
-    priceInput.value = `R$ ${(priceInCents / 100).toFixed(2).replace('.', ',')}`;
-
-    // Wait for categories to load before setting value
-    setTimeout(() => {
-      const categoryId = course.category?.id || course.categoryId || '';
-      (document.getElementById('course-category') as HTMLSelectElement).value =
-        categoryId;
-      console.log('Setting category:', categoryId);
-    }, 100);
-
-    (document.getElementById('course-max-students') as HTMLInputElement).value =
-      course.maxStudents ? String(course.maxStudents) : '';
-
-    // Show cover preview if exists
-    const coverInput = document.getElementById(
-      'course-cover',
-    ) as HTMLInputElement;
-    if (coverInput && course.coverImageUrl) {
-      // Add a preview element if doesn't exist
-      let preview = document.getElementById('cover-preview');
-      if (!preview) {
-        preview = document.createElement('div');
-        preview.id = 'cover-preview';
-        preview.style.cssText = 'margin-top: 0.5rem; text-align: center;';
-        coverInput.parentElement?.appendChild(preview);
+    if (!courses || courses.length === 0) {
+      listContainer.innerHTML = `
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+          <p>Nenhum curso.</p>
+        </div>
+      `;
+      // If we are not in create mode, show empty state
+      if (!currentCourseId) {
+        showEmptyState();
       }
-      preview.innerHTML = `<img src="/courses/${course.id}/cover" alt="Capa atual" style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 2px solid var(--border);" />`;
+      return;
     }
 
-    modal?.classList.remove('hidden');
+    // Render list
+    listContainer.innerHTML = courses.map((course: any) => `
+      <div class="course-list-item ${currentCourseId === course.id ? 'active' : ''}" data-course-id="${course.id}">
+        <div class="course-item-thumb">
+           ${course.coverImageUrl
+        ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
+        : '<span class="material-symbols-outlined">school</span>'}
+        </div>
+        <div class="course-item-info">
+          <p class="course-item-title">${course.title}</p>
+          <p class="course-item-meta">${course.category?.name || 'Sem categoria'}</p>
+        </div>
+      </div>
+    `).join('');
+
+    // Attach click listeners
+    document.querySelectorAll('.course-list-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const id = (e.currentTarget as HTMLElement).dataset.courseId;
+        if (id) selectCourse(id);
+      });
+    });
+
   } catch (error) {
-    console.error('Falha ao carregar curso:', error);
-    AppUI.showMessage('Falha ao carregar detalhes do curso', 'error');
+    console.error('Falha ao carregar cursos:', error);
+    listContainer.innerHTML = `
+      <div style="text-align: center; padding: 1rem; color: var(--danger);">
+        Erro ao carregar.
+      </div>
+    `;
   }
 }
 
-// Close course modal
-function closeCourseModal() {
-  const modal = document.getElementById('course-modal');
-  const form = document.getElementById('course-form') as HTMLFormElement;
-
-  // Remove cover preview if exists
-  const preview = document.getElementById('cover-preview');
-  if (preview) {
-    preview.remove();
-  }
-
-  modal?.classList.add('hidden');
-  form?.reset();
-  currentEditingCourse = null;
+// Setup Global Listeners
+function setupGlobalEventListeners() {
+  // Create New Course Button
+  document.getElementById('btn-create-new-course')?.addEventListener('click', () => {
+    showCreateCourseView();
+  });
 }
 
-// Handle course form submission
+// Select a course from sidebar
+async function selectCourse(courseId: string) {
+  currentCourseId = courseId;
+
+  // Update sidebar active state & Manage Badges
+  document.querySelectorAll('.course-list-item').forEach(el => {
+    el.classList.remove('active');
+    // Remove existing badges if any
+    const badge = el.querySelector('.editing-badge');
+    if (badge) badge.remove();
+  });
+
+  const activeItem = document.querySelector(`.course-list-item[data-course-id="${courseId}"]`);
+  if (activeItem) {
+    activeItem.classList.add('active');
+
+    // Add "Em Edição" badge
+    const badge = document.createElement('span');
+    badge.className = 'editing-badge';
+    badge.textContent = 'Em Edição';
+    activeItem.appendChild(badge);
+  }
+
+  await renderCourseDetails(courseId);
+}
+
+// Show Empty State
+function showEmptyState() {
+  currentCourseId = null;
+  const contentArea = document.getElementById('dashboard-content');
+  if (!contentArea) return;
+
+  contentArea.innerHTML = `
+    <div class="empty-state-view">
+       <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--text-muted);">arrow_back</span>
+       <h3>Selecione um curso</h3>
+       <p>Escolha um curso na lista lateral para ver detalhes ou editar.</p>
+    </div>
+  `;
+}
+
+// Render Course Details View
+async function renderCourseDetails(courseId: string) {
+  const contentArea = document.getElementById('dashboard-content');
+  const template = document.getElementById('template-course-detail') as HTMLTemplateElement;
+  if (!contentArea || !template) return;
+
+  // Show loading in main area
+  contentArea.innerHTML = '<div class="sidebar-loading"><span class="material-symbols-outlined spin">sync</span> Carregando detalhes...</div>';
+
+  try {
+    const course = await Courses.getById(courseId);
+
+    // Clone template
+    const clone = template.content.cloneNode(true) as DocumentFragment;
+
+    // Fill data
+    setText(clone, 'detail-title', course.title);
+    setText(clone, 'detail-category', course.category?.name || 'Sem Categoria');
+    setText(clone, 'detail-students', `${course.enrolledCount || 0} alunos`);
+    setText(clone, 'detail-description', course.description || 'Sem descrição.');
+
+    // Cover
+    const coverContainer = clone.getElementById('detail-cover');
+    // Using querySelector since we are working with a fragment and getElementById might not work on some browsers/TS versions on non-document
+    if (coverContainer) {
+      if (course.coverImageUrl) {
+        coverContainer.innerHTML = `<img src="/courses/${course.id}/cover" alt="${course.title}" />`;
+      } else {
+        coverContainer.innerHTML = '<span class="material-symbols-outlined" style="font-size: 4rem;">school</span>';
+      }
+    }
+
+    // Buttons
+    clone.getElementById('btn-edit-current')?.addEventListener('click', () => {
+      showEditCourseView(course);
+    });
+
+    clone.getElementById('btn-delete-current')?.addEventListener('click', () => {
+      deleteCourse(course.id);
+    });
+
+    contentArea.innerHTML = '';
+    contentArea.appendChild(clone);
+
+    // Setup Content Editor Listeners (Must be after appending to DOM)
+    setupContentListeners(courseId);
+
+  } catch (error) {
+    contentArea.innerHTML = `<div class="empty-state-view">Erro ao carregar detalhes do curso.</div>`;
+    console.error(error);
+  }
+}
+
+// Show Create Course Form
+function showCreateCourseView() {
+  currentCourseId = null; // No course selected
+  document.querySelectorAll('.course-list-item').forEach(el => el.classList.remove('active'));
+
+  const contentArea = document.getElementById('dashboard-content');
+  const template = document.getElementById('template-course-form') as HTMLTemplateElement;
+  if (!contentArea || !template) return;
+
+  contentArea.innerHTML = '';
+  const clone = template.content.cloneNode(true) as DocumentFragment;
+
+  // Setup Form for Create
+  setText(clone, 'form-view-title', 'Criar Novo Curso');
+
+  // Populate Categories
+  const selectInfo = clone.getElementById('course-category') as HTMLSelectElement;
+  populateCategories(selectInfo);
+
+  // Currency Mask
+  const priceInput = clone.getElementById('course-price') as HTMLInputElement;
+  if (priceInput) setupCurrencyMask(priceInput);
+
+  // Handle Submit
+  const form = clone.getElementById('course-inline-form') as HTMLFormElement;
+  form.addEventListener('submit', handleCourseSubmit);
+
+  // Handle Cancel
+  clone.getElementById('btn-cancel-form')?.addEventListener('click', () => {
+    showEmptyState();
+  });
+
+  contentArea.appendChild(clone);
+}
+
+// Show Edit Course Form
+function showEditCourseView(course: any) {
+  const contentArea = document.getElementById('dashboard-content');
+  const template = document.getElementById('template-course-form') as HTMLTemplateElement;
+  if (!contentArea || !template) return;
+
+  contentArea.innerHTML = '';
+  const clone = template.content.cloneNode(true) as DocumentFragment;
+
+  // Setup Form for Edit
+  setText(clone, 'form-view-title', 'Editar Curso');
+  (clone.getElementById('course-id') as HTMLInputElement).value = course.id;
+  (clone.getElementById('course-title') as HTMLInputElement).value = course.title;
+  (clone.getElementById('course-description') as HTMLTextAreaElement).value = course.description || '';
+
+  // Price
+  const priceInput = clone.getElementById('course-price') as HTMLInputElement;
+  if (priceInput) {
+    const priceInCents = Math.round((course.price || 0) * 100);
+    priceInput.value = (priceInCents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    setupCurrencyMask(priceInput);
+  }
+
+  // Max Students
+  if (course.maxStudents) {
+    (clone.getElementById('course-max-students') as HTMLInputElement).value = course.maxStudents;
+  }
+
+  // Populate Categories & Set Value
+  const selectInfo = clone.getElementById('course-category') as HTMLSelectElement;
+  populateCategories(selectInfo, course.category?.id || course.categoryId);
+
+  // Cover Preview
+  const coverInput = clone.getElementById('course-cover');
+  if (coverInput && course.coverImageUrl) {
+    const previewContainer = clone.getElementById('cover-preview-container');
+    if (previewContainer) {
+      previewContainer.innerHTML = `<img src="/courses/${course.id}/cover" alt="Cover" />`;
+    }
+  }
+
+  // Disable/Hide Image Upload in Edit Mode
+  const uploadWrapper = clone.querySelector('.file-upload-wrapper');
+  if (uploadWrapper) {
+    (uploadWrapper as HTMLElement).style.display = 'none';
+    // Append a note saying image cannot be edited
+    const note = document.createElement('p');
+    note.textContent = 'A imagem de capa não pode ser alterada na edição.';
+    note.style.color = 'var(--text-muted)';
+    note.style.fontSize = '0.8rem';
+    note.style.fontStyle = 'italic';
+    uploadWrapper.parentElement?.appendChild(note);
+  }
+
+  // Handle Submit
+  const form = clone.getElementById('course-inline-form') as HTMLFormElement;
+  form.addEventListener('submit', handleCourseSubmit);
+
+  // Handle Cancel
+  clone.getElementById('btn-cancel-form')?.addEventListener('click', () => {
+    renderCourseDetails(course.id);
+  });
+
+  contentArea.appendChild(clone);
+}
+
+// Helper: Populate Categories
+function populateCategories(selectElement: HTMLSelectElement, selectedId?: string) {
+  selectElement.innerHTML = '<option value="">Selecione...</option>';
+  allCategories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat.id;
+    option.textContent = cat.name;
+    if (selectedId && cat.id === selectedId) {
+      option.selected = true;
+    }
+    selectElement.appendChild(option);
+  });
+}
+
+// Helper: Set Text
+function setText(fragment: DocumentFragment | HTMLElement, id: string, text: string) {
+  const el = fragment.querySelector(`#${id}`);
+  if (el) el.textContent = text;
+}
+
+// Handle Form Submit
 async function handleCourseSubmit(e: Event) {
   e.preventDefault();
-
   const form = e.target as HTMLFormElement;
-  const courseId = (document.getElementById('course-id') as HTMLInputElement)
-    .value;
 
-  const priceInput = document.getElementById(
-    'course-price',
-  ) as HTMLInputElement;
+  // Get values
+  const courseId = (document.getElementById('course-id') as HTMLInputElement).value;
+  const title = (document.getElementById('course-title') as HTMLInputElement).value;
+  const description = (document.getElementById('course-description') as HTMLTextAreaElement).value;
+  const categoryId = (document.getElementById('course-category') as HTMLSelectElement).value;
+  const priceStr = (document.getElementById('course-price') as HTMLInputElement).value;
+  const maxStudentsStr = (document.getElementById('course-max-students') as HTMLInputElement).value;
+  const coverInput = document.getElementById('course-cover') as HTMLInputElement;
 
-  const data = {
-    title: (document.getElementById('course-title') as HTMLInputElement).value,
-    description: (
-      document.getElementById('course-description') as HTMLTextAreaElement
-    ).value,
-    price: AppUI.getPriceValue(priceInput),
-    categoryId: (
-      document.getElementById('course-category') as HTMLSelectElement
-    ).value,
-    maxStudents: (
-      document.getElementById('course-max-students') as HTMLInputElement
-    ).value
-      ? parseInt(
-          (document.getElementById('course-max-students') as HTMLInputElement)
-            .value,
-        )
-      : undefined,
+  // Parse price (pt-BR format 1.234,56 -> float)
+  // Remove thousand separators and replace decimal comma
+  const rawValue = priceStr.replace(/\./g, '').replace(',', '.');
+  const price = rawValue ? parseFloat(rawValue) : 0;
+
+  const data: any = {
+    title,
+    description,
+    price,
+    categoryId,
+    maxStudents: maxStudentsStr ? parseInt(maxStudentsStr) : undefined
   };
 
   try {
     let savedCourse;
     if (courseId) {
+      // UPDATE
       savedCourse = await Courses.update(courseId, data);
-      AppUI.showMessage('Curso atualizado com sucesso!', 'success');
+      AppUI.showMessage('Curso atualizado!', 'success');
     } else {
-      // Get cover image if provided
-      const coverInput = document.getElementById(
-        'course-cover',
-      ) as HTMLInputElement;
-      const coverFile =
-        coverInput.files && coverInput.files[0]
-          ? coverInput.files[0]
-          : undefined;
-
+      // CREATE
+      const coverFile = coverInput.files ? coverInput.files[0] : undefined;
       savedCourse = await Courses.create(data, coverFile);
-      AppUI.showMessage('Curso criado com sucesso!', 'success');
+      AppUI.showMessage('Curso criado!', 'success');
     }
 
-    closeCourseModal();
-    await loadCourses();
+    // Refresh Sidebar
+    await loadCoursesSidebar();
+
+    // Show Details
+    if (savedCourse && savedCourse.id) {
+      selectCourse(savedCourse.id);
+    }
+
   } catch (error: any) {
-    console.error('Falha ao salvar curso:', error);
-    AppUI.showMessage(error.message || 'Falha ao salvar curso', 'error');
+    console.error(error);
+    AppUI.showMessage(error.message || 'Erro ao salvar', 'error');
   }
 }
 
-// Delete course
+
+// --- Currency Mask Helper ---
+function setupCurrencyMask(input: HTMLInputElement) {
+  const format = () => {
+    let value = input.value.replace(/\D/g, ''); // Remove non-digits
+    if (!value) {
+      input.value = '';
+      return;
+    }
+    // Treat as integer cents
+    const amount = parseInt(value, 10) / 100;
+    // Format as BRL: 1.234,56
+    input.value = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  input.addEventListener('input', format);
+  // Also format initially if value exists (though usually handled by creation logic)
+  // format(); 
+}
+
+// Custom Confirm Modal Logic
+function customConfirm(title: string, message: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('delete-confirm-modal');
+    const titleEl = modal?.querySelector('.modal-title');
+    const msgEl = document.getElementById('modal-msg');
+    const btnCancel = document.getElementById('btn-modal-cancel');
+    const btnConfirm = document.getElementById('btn-modal-confirm');
+
+    if (!modal || !btnCancel || !btnConfirm) {
+      resolve(window.confirm(message));
+      return;
+    }
+
+    if (titleEl) titleEl.textContent = title;
+    if (msgEl) msgEl.textContent = message;
+
+    // Show
+    modal.classList.add('active');
+
+    const close = (result: boolean) => {
+      modal.classList.remove('active');
+      resolve(result);
+      // Cleanup listeners
+      btnCancel.onclick = null;
+      btnConfirm.onclick = null;
+    };
+
+    btnCancel.onclick = () => close(false);
+    btnConfirm.onclick = () => close(true);
+  });
+}
+
+// Delete Course
 async function deleteCourse(courseId: string) {
-  const confirmed = await AppUI.promptModal(
-    'Excluir Curso',
-    'Tem certeza que deseja excluir este curso? Esta ação não pode ser desfeita.',
+  const confirmed = await customConfirm(
+    'Excluir Curso?',
+    'Tem certeza que deseja excluir este curso? Todas as aulas serão perdidas.'
   );
 
   if (confirmed) {
     try {
       await Courses.delete(courseId);
-      AppUI.showMessage('Curso excluído com sucesso', 'success');
-      await loadCourses();
+      AppUI.showMessage('Curso excluído.', 'success');
+      showEmptyState();
+      await loadCoursesSidebar();
     } catch (error: any) {
-      console.error('Falha ao excluir curso:', error);
-      AppUI.showMessage(error.message || 'Falha ao excluir curso', 'error');
+      AppUI.showMessage('Erro ao excluir.', 'error');
     }
   }
 }
 
-// Open modules modal
-async function openModulesModal(courseId: string) {
-  try {
-    const course = await Courses.getById(courseId);
-    currentCourseForModules = course;
+// --- Inline Tree Content Editor Logic ---
 
-    const modal = document.getElementById('modules-modal');
-    const title = document.getElementById('modules-modal-title');
-    (document.getElementById('current-course-id') as HTMLInputElement).value =
-      courseId;
+// --- Inline Tree Content Editor Logic ---
 
-    if (title) title.textContent = `Gerenciar Conteúdo: ${course.title}`;
+let isContentExpanded = false;
 
-    modal?.classList.remove('hidden');
+// Initialize Content Listeners (called after rendering detail template)
+function setupContentListeners(courseId: string) {
+  const btnToggle = document.getElementById('btn-toggle-content');
+  if (btnToggle) {
+    btnToggle.addEventListener('click', () => toggleCourseContent(courseId));
+  }
 
-    await loadModulesList(courseId);
-  } catch (error) {
-    console.error('Falha ao abrir modal de módulos:', error);
-    AppUI.showMessage('Falha ao carregar conteúdo do curso', 'error');
+  const contentArea = document.getElementById('course-content-area');
+  if (contentArea) {
+    // Event Delegation
+    contentArea.addEventListener('click', async (e) => {
+      const target = (e.target as HTMLElement).closest('button');
+      if (!target) return;
+
+      const action = target.dataset.action;
+      if (!action) return;
+
+      // Module Actions
+      if (action === 'create-module') {
+        await handleCreateModule(courseId);
+      } else if (action === 'delete-module') {
+        const moduleId = target.dataset.id;
+        if (moduleId) await handleDeleteModule(moduleId, courseId);
+      }
+      // Class Actions
+      else if (action === 'create-class') {
+        const moduleId = target.dataset.moduleId;
+        if (moduleId) await handleCreateClass(moduleId, courseId);
+      } else if (action === 'delete-class') {
+        const classId = target.dataset.id;
+        if (classId) await handleDeleteClass(classId, courseId);
+      }
+    });
+
+    contentArea.addEventListener('change', async (e) => {
+      const target = e.target as HTMLInputElement;
+
+      // Upload Material
+      if (target.type === 'file' && target.dataset.action === 'upload-material') {
+        const classId = target.dataset.classId;
+        if (classId && target.files && target.files[0]) {
+          await handleUploadClassMaterial(classId, target.files[0]);
+        }
+        return;
+      }
+
+      // Input Fields
+      if (!target.classList.contains('tree-input')) return;
+      const classId = target.dataset.classId;
+      const field = target.dataset.field;
+
+      if (classId && field) {
+        await handleUpdateClassField(classId, field, target.value);
+      }
+    });
+
+    contentArea.addEventListener('focusout', async (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains('editable-title')) return;
+
+      const newValue = target.innerText.trim();
+      const moduleId = target.dataset.moduleId;
+      const classId = target.dataset.classId;
+
+      if (moduleId) {
+        await handleUpdateModuleTitle(moduleId, newValue);
+      } else if (classId) {
+        await handleUpdateClassTitle(classId, newValue);
+      }
+    });
   }
 }
 
-// Close modules modal
-function closeModulesModal() {
-  const modal = document.getElementById('modules-modal');
-  modal?.classList.add('hidden');
-  currentCourseForModules = null;
-  currentEditingModule = null;
-  currentEditingClass = null;
+async function toggleCourseContent(courseId: string) {
+  const contentArea = document.getElementById('course-content-area');
+  const summaryArea = document.getElementById('course-content-summary');
+  const btnText = document.querySelector('#btn-toggle-content');
+  const descriptionSection = document.getElementById('course-description-section');
+  const detailBody = document.querySelector('.detail-body');
 
-  // Hide forms
-  document.getElementById('module-form-container')?.classList.add('hidden');
-  document.getElementById('class-form-container')?.classList.add('hidden');
-  document.getElementById('classes-section')?.classList.add('hidden');
+  if (!contentArea || !summaryArea) return;
+
+  isContentExpanded = !isContentExpanded;
+
+  if (isContentExpanded) {
+    contentArea.classList.remove('hidden');
+    summaryArea.classList.add('hidden');
+
+    // Expand formatting
+    if (descriptionSection) descriptionSection.classList.add('hidden');
+    if (detailBody) detailBody.classList.add('expanded-mode');
+
+    if (btnText) btnText.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1rem;">close</span> Fechar Edição';
+
+    await renderContentTree(courseId);
+  } else {
+    contentArea.classList.add('hidden');
+    summaryArea.classList.remove('hidden');
+
+    // Revert formatting
+    if (descriptionSection) descriptionSection.classList.remove('hidden');
+    if (detailBody) detailBody.classList.remove('expanded-mode');
+
+    if (btnText) btnText.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1rem;">edit_note</span> Editar Conteúdo';
+  }
 }
 
-// Load modules list
-async function loadModulesList(courseId: string) {
-  const container = document.getElementById('modules-list');
+async function renderContentTree(courseId: string) {
+  const container = document.getElementById('course-content-area');
+  const scrollContainer = document.getElementById('dashboard-content');
   if (!container) return;
+
+  // Capture scroll position
+  let savedScrollTop = 0;
+  if (scrollContainer) savedScrollTop = scrollContainer.scrollTop;
+
+  // Only show loading if empty (initial load)
+  if (!container.innerHTML.trim()) {
+    container.innerHTML = `<div class="sidebar-loading"><span class="material-symbols-outlined spin">sync</span> Carregando árvore de conteúdo...</div>`;
+  }
 
   try {
     const modules = await Modules.getByCourse(courseId);
 
-    if (!modules || modules.length === 0) {
-      container.innerHTML = `<p style="color: var(--text-muted)">Nenhum módulo ainda. Crie um para começar.</p>`;
-      return;
+    let html = '';
+
+    if (modules.length === 0) {
+      html += `<div style="text-align: center; padding: 2rem; border: 1px dashed var(--dash-border); border-radius: 0.5rem; margin-bottom: 1rem;">
+                <p class="text-muted">Nenhum módulo criado.</p>
+            </div>`;
+    } else {
+      for (const module of modules) {
+        const moduleWithClasses = await Modules.getById(module.id);
+        const classes = moduleWithClasses.classes || [];
+
+        html += `
+                 <div class="tree-module-node">
+                    <div class="tree-module-header">
+                        <div class="tree-module-title">
+                            <span class="material-symbols-outlined">folder</span>
+                            <span contenteditable="true" class="editable-title" data-module-id="${module.id}">${module.title}</span>
+                        </div>
+                        <button class="tree-btn-icon" data-action="delete-module" data-id="${module.id}" title="Excluir Módulo">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </div>
+                    
+                    <div class="tree-class-list">
+                        ${classes.map((cls: any) => `
+                        <div class="tree-class-item">
+                            <div class="tree-class-header">
+                                <div class="tree-class-title">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">article</span>
+                                    <span contenteditable="true" class="editable-title" data-class-id="${cls.id}">${cls.title}</span>
+                                </div>
+                                <button class="tree-btn-icon" data-action="delete-class" data-id="${cls.id}" title="Excluir Aula">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">close</span>
+                                </button>
+                            </div>
+                            
+                            <div class="tree-input-group">
+                                <input type="text" class="tree-input" placeholder="URL do Vídeo (Youtube/Vimeo)" 
+                                    value="${cls.videoUrl || ''}" 
+                                    data-class-id="${cls.id}" data-field="videoUrl">
+                                    
+                                <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
+                                    <input type="text" class="tree-input" placeholder="URL Material" 
+                                        value="${cls.materialUrl || ''}" 
+                                        data-class-id="${cls.id}" data-field="materialUrl"
+                                        id="material-url-${cls.id}"
+                                        style="flex: 1;">
+                                        
+                                    <label class="btn-icon-small" title="Upload Arquivo" style="cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card);">
+                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">upload_file</span>
+                                        <input type="file" style="display: none;" data-action="upload-material" data-class-id="${cls.id}">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        `).join('')}
+
+                        <button class="btn-add-inline" data-action="create-class" data-module-id="${module.id}">
+                            <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1rem;">add</span> Adicionar Aula
+                        </button>
+                    </div>
+                 </div>
+                 `;
+      }
     }
 
-    container.innerHTML = modules
-      .map(
-        (module: any) => `
-      <div class="module-block" data-module-id="${module.id}">
-        <div class="module-header">
-          <div class="module-info">
-            <h5 class="module-title">
-              <span class="material-symbols-outlined">folder</span>
-              ${module.title}
-            </h5>
-            <p class="module-meta">Ordem: ${module.orderIndex}</p>
-          </div>
-          <div class="module-actions">
-            <button class="btn-content-action btn-add-class-to-module" data-module-id="${module.id}" title="Adicionar Aula">
-              <span class="material-symbols-outlined">add</span>
-            </button>
-            <button class="btn-content-action btn-edit-module" data-module-id="${module.id}" title="Editar Módulo">
-              <span class="material-symbols-outlined">edit</span>
-            </button>
-            <button class="btn-content-action danger btn-delete-module" data-module-id="${module.id}" title="Excluir Módulo">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
-          </div>
-        </div>
-        <div class="classes-container" id="classes-${module.id}">
-          <p style="color: var(--text-muted); padding: 0.5rem; font-size: 0.875rem;">Carregando aulas...</p>
-        </div>
-      </div>
-    `,
-      )
-      .join('');
-
-    attachModuleActionListeners();
-
-    // Load classes for each module
-    for (const module of modules) {
-      await loadClassesForModule(module.id);
-    }
-  } catch (error) {
-    console.error('Falha ao carregar módulos:', error);
-    container.innerHTML = `<p style="color: #f44336;">Falha ao carregar módulos.</p>`;
-  }
-}
-
-// Attach module action listeners
-function attachModuleActionListeners() {
-  // Add class to module
-  document.querySelectorAll('.btn-add-class-to-module').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const moduleId = (e.currentTarget as HTMLElement).dataset.moduleId;
-      if (moduleId) showAddClassForm(moduleId);
-    });
-  });
-
-  // Edit module
-  document.querySelectorAll('.btn-edit-module').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const moduleId = (e.currentTarget as HTMLElement).dataset.moduleId;
-      if (moduleId) await openEditModuleForm(moduleId);
-    });
-  });
-
-  // Delete module
-  document.querySelectorAll('.btn-delete-module').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const moduleId = (e.currentTarget as HTMLElement).dataset.moduleId;
-      if (moduleId) await deleteModule(moduleId);
-    });
-  });
-}
-
-// Load classes for a specific module
-async function loadClassesForModule(moduleId: string) {
-  const container = document.getElementById(`classes-${moduleId}`);
-  if (!container) return;
-
-  try {
-    const module = await Modules.getById(moduleId);
-    const classes = module.classes || [];
-
-    if (classes.length === 0) {
-      container.innerHTML = `<p style="color: var(--text-muted); padding: 0.5rem; font-size: 0.875rem;">Nenhuma aula ainda.</p>`;
-      return;
-    }
-
-    container.innerHTML = classes
-      .map(
-        (cls: any) => `
-      <div class="class-item" data-class-id="${cls.id}">
-        <div class="class-info">
-          <span class="material-symbols-outlined class-icon">play_circle</span>
-          <div class="class-details">
-            <h6 class="class-title">${cls.title}</h6>
-            <p class="class-description">${cls.description || 'Sem descrição'}</p>
-            <div class="class-links">
-              ${cls.videoUrl ? `<a href="${cls.videoUrl}" target="_blank" class="class-link video-link" title="Assistir vídeo"><span class="material-symbols-outlined">play_circle</span> Vídeo da Aula</a>` : '<span class="class-link-empty">Sem vídeo</span>'}
-              ${cls.materialUrl ? `<a href="/classes/${cls.id}/material" target="_blank" class="class-link material-link" title="Baixar material"><span class="material-symbols-outlined">download</span> Material</a>` : ''}
+    // Inline "New Module" Form
+    html += `
+        <div class="new-module-form" style="margin-top: 1rem; padding: 1rem; border: 1px dashed var(--dash-border); border-radius: 0.5rem;">
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="new-module-title" class="tree-input" placeholder="Nome do novo módulo..." style="margin-bottom: 0;">
+                <button class="btn-primary" data-action="create-module" style="width: auto; padding: 0 1rem;">
+                    <span class="material-symbols-outlined">add</span>
+                </button>
             </div>
-          </div>
         </div>
-        <div class="class-actions">
-          <button class="btn-content-action btn-edit-class" data-class-id="${cls.id}" data-module-id="${moduleId}" title="Editar Aula">
-            <span class="material-symbols-outlined">edit</span>
-          </button>
-          <button class="btn-content-action danger btn-delete-class" data-class-id="${cls.id}" data-module-id="${moduleId}" title="Excluir Aula">
-            <span class="material-symbols-outlined">delete</span>
-          </button>
-        </div>
-      </div>
-    `,
-      )
-      .join('');
+        `;
 
-    attachClassActionListeners(moduleId);
+    container.innerHTML = html;
+
+    // Restore scroll position
+    if (scrollContainer) scrollContainer.scrollTop = savedScrollTop;
+
   } catch (error) {
-    console.error('Falha ao carregar aulas:', error);
-    container.innerHTML = `<p style="color: #f44336; padding: 0.5rem; font-size: 0.875rem;">Falha ao carregar aulas.</p>`;
+    console.error(error);
+    container.innerHTML = '<p class="text-danger">Erro ao carregar conteúdo.</p>';
   }
 }
 
-// Show add module form
-function showAddModuleForm() {
-  const container = document.getElementById('module-form-container');
-  const title = document.getElementById('module-form-title');
-  const form = document.getElementById('module-form') as HTMLFormElement;
+// --- Handlers (Internal) ---
 
-  if (title) title.textContent = 'Novo Módulo';
-  form?.reset();
-  (document.getElementById('module-id') as HTMLInputElement).value = '';
+async function handleCreateModule(courseId: string) {
+  const input = document.getElementById('new-module-title') as HTMLInputElement;
+  if (!input) return; // Should not happen if rendered correctly
 
-  container?.classList.remove('hidden');
-}
-
-// Open edit module form
-async function openEditModuleForm(moduleId: string) {
-  try {
-    const module = await Modules.getById(moduleId);
-    currentEditingModule = module;
-
-    const container = document.getElementById('module-form-container');
-    const title = document.getElementById('module-form-title');
-
-    if (title) title.textContent = 'Editar Módulo';
-
-    (document.getElementById('module-id') as HTMLInputElement).value =
-      module.id;
-    (document.getElementById('module-title') as HTMLInputElement).value =
-      module.title;
-    (document.getElementById('module-order') as HTMLInputElement).value =
-      module.orderIndex;
-
-    container?.classList.remove('hidden');
-  } catch (error) {
-    console.error('Falha ao carregar módulo:', error);
-    AppUI.showMessage('Falha ao carregar detalhes do módulo', 'error');
+  const title = input.value.trim();
+  if (!title) {
+    AppUI.showMessage('Digite o nome do módulo', 'info');
+    return;
   }
-}
-
-// Cancel module form
-function cancelModuleForm() {
-  const container = document.getElementById('module-form-container');
-  const form = document.getElementById('module-form') as HTMLFormElement;
-  container?.classList.add('hidden');
-  form?.reset();
-  currentEditingModule = null;
-}
-
-// Handle module form submission
-async function handleModuleSubmit(e: Event) {
-  e.preventDefault();
-
-  const moduleId = (document.getElementById('module-id') as HTMLInputElement)
-    .value;
-  const courseId = (
-    document.getElementById('current-course-id') as HTMLInputElement
-  ).value;
-
-  const data = {
-    title: (document.getElementById('module-title') as HTMLInputElement).value,
-    orderIndex: parseInt(
-      (document.getElementById('module-order') as HTMLInputElement).value,
-    ),
-  };
 
   try {
-    if (moduleId) {
-      await Modules.update(moduleId, data);
-      AppUI.showMessage('Módulo atualizado com sucesso!', 'success');
-    } else {
-      await Modules.create(courseId, data);
-      AppUI.showMessage('Módulo criado com sucesso!', 'success');
-    }
-
-    cancelModuleForm();
-    await loadModulesList(courseId);
-  } catch (error: any) {
-    console.error('Falha ao salvar módulo:', error);
-    AppUI.showMessage(error.message || 'Falha ao salvar módulo', 'error');
-  }
+    await Modules.create(courseId, { title, orderIndex: 99 });
+    await renderContentTree(courseId);
+    AppUI.showMessage('Módulo criado', 'success');
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
 }
 
-// Delete module
-async function deleteModule(moduleId: string) {
-  const confirmed = await AppUI.promptModal(
-    'Excluir Módulo',
-    'Tem certeza que deseja excluir este módulo? Todas as aulas deste módulo também serão excluídas.',
+async function handleUpdateModuleTitle(moduleId: string, newTitle: string) {
+  try {
+    await Modules.update(moduleId, { title: newTitle });
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+}
+
+async function handleDeleteModule(moduleId: string, courseId: string) {
+  const confirmed = await customConfirm(
+    "Excluir Módulo?",
+    "Tem certeza que deseja excluir este módulo e todas as suas aulas?"
   );
-
-  if (confirmed) {
-    try {
-      await Modules.delete(moduleId);
-      AppUI.showMessage('Módulo excluído com sucesso', 'success');
-
-      const courseId = (
-        document.getElementById('current-course-id') as HTMLInputElement
-      ).value;
-      await loadModulesList(courseId);
-    } catch (error: any) {
-      console.error('Falha ao excluir módulo:', error);
-      AppUI.showMessage(error.message || 'Falha ao excluir módulo', 'error');
-    }
-  }
-}
-
-// Attach class action listeners
-function attachClassActionListeners(moduleId: string) {
-  // Edit class
-  document.querySelectorAll('.btn-edit-class').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const classId = (e.currentTarget as HTMLElement).dataset.classId;
-      const modId = (e.currentTarget as HTMLElement).dataset.moduleId;
-      if (classId && modId) await openEditClassForm(classId, modId);
-    });
-  });
-
-  // Delete class
-  document.querySelectorAll('.btn-delete-class').forEach((btn) => {
-    btn.addEventListener('click', async (e) => {
-      const classId = (e.currentTarget as HTMLElement).dataset.classId;
-      const modId = (e.currentTarget as HTMLElement).dataset.moduleId;
-      if (classId && modId) await deleteClass(classId, modId);
-    });
-  });
-}
-
-// Show add class form
-function showAddClassForm(moduleId: string) {
-  const container = document.getElementById('class-form-container');
-  const title = document.getElementById('class-form-title');
-  const form = document.getElementById('class-form') as HTMLFormElement;
-
-  (document.getElementById('current-module-id') as HTMLInputElement).value =
-    moduleId;
-
-  if (title) title.textContent = 'Nova Aula';
-  form?.reset();
-  (document.getElementById('class-id') as HTMLInputElement).value = '';
-
-  container?.classList.remove('hidden');
-  container?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// Open edit class form
-async function openEditClassForm(classId: string, moduleId: string) {
-  try {
-    const cls = await Classes.getById(classId);
-    currentEditingClass = cls;
-
-    const container = document.getElementById('class-form-container');
-    const title = document.getElementById('class-form-title');
-
-    if (title) title.textContent = 'Editar Aula';
-
-    (document.getElementById('current-module-id') as HTMLInputElement).value =
-      moduleId;
-    (document.getElementById('class-id') as HTMLInputElement).value = cls.id;
-    (document.getElementById('class-title') as HTMLInputElement).value =
-      cls.title;
-    (
-      document.getElementById('class-description') as HTMLTextAreaElement
-    ).value = cls.description || '';
-    (document.getElementById('class-video-url') as HTMLInputElement).value =
-      cls.videoUrl;
-
-    container?.classList.remove('hidden');
-    container?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  } catch (error) {
-    console.error('Falha ao carregar aula:', error);
-    AppUI.showMessage('Falha ao carregar detalhes da aula', 'error');
-  }
-}
-
-// Cancel class form
-function cancelClassForm() {
-  const container = document.getElementById('class-form-container');
-  const form = document.getElementById('class-form') as HTMLFormElement;
-  container?.classList.add('hidden');
-  form?.reset();
-  currentEditingClass = null;
-}
-
-// Handle class form submission
-async function handleClassSubmit(e: Event) {
-  e.preventDefault();
-
-  const classId = (document.getElementById('class-id') as HTMLInputElement)
-    .value;
-  const moduleId = (
-    document.getElementById('current-module-id') as HTMLInputElement
-  ).value;
-
-  const data = {
-    title: (document.getElementById('class-title') as HTMLInputElement).value,
-    description: (
-      document.getElementById('class-description') as HTMLTextAreaElement
-    ).value,
-    videoUrl: (document.getElementById('class-video-url') as HTMLInputElement)
-      .value,
-  };
-
-  const materialInput = document.getElementById(
-    'class-material',
-  ) as HTMLInputElement;
-  const materialFile = materialInput?.files?.[0];
+  if (!confirmed) return;
 
   try {
-    let savedClassId = classId;
+    await Modules.delete(moduleId);
+    await renderContentTree(courseId);
+    AppUI.showMessage('Módulo excluído', 'success');
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+}
 
-    if (classId) {
-      // Update existing class
+async function handleCreateClass(moduleId: string, courseId: string) {
+  try {
+    // Create with defaults (can be expanded to an inline form if needed, but this is efficient)
+    await Modules.createClass(moduleId, {
+      title: "Nova Aula (Clique para editar)",
+      description: "",
+      videoUrl: ""
+    });
+    await renderContentTree(courseId);
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+}
+
+async function handleUpdateClassTitle(classId: string, newTitle: string) {
+  try {
+    await Classes.update(classId, { title: newTitle });
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+}
+
+async function handleUpdateClassField(classId: string, field: string, value: string) {
+  try {
+    const data: any = {};
+    if (field === 'videoUrl' || field === 'materialUrl') {
+      data[field] = value;
       await Classes.update(classId, data);
-      AppUI.showMessage('Aula atualizada com sucesso!', 'success');
-    } else {
-      // Create new class
-      const newClass = await Modules.createClass(moduleId, data);
-      savedClassId = newClass.id;
-      AppUI.showMessage('Aula criada com sucesso!', 'success');
+      // No toast for every keystroke/blur, too noisy. Maybe subtle indicator or just error handling.
     }
-
-    // Upload material if provided
-    if (materialFile && savedClassId) {
-      try {
-        await Classes.uploadMaterial(savedClassId, materialFile);
-        AppUI.showMessage('Material enviado com sucesso!', 'success');
-      } catch (uploadError: any) {
-        console.error('Falha ao enviar material:', uploadError);
-        AppUI.showMessage(
-          `Aula salva, mas falha ao enviar material: ${uploadError.message}`,
-          'error',
-        );
-      }
-    }
-
-    cancelClassForm();
-    await loadClassesForModule(moduleId);
-  } catch (error: any) {
-    console.error('Falha ao salvar aula:', error);
-    AppUI.showMessage(error.message || 'Falha ao salvar aula', 'error');
-  }
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
 }
 
-// Delete class
-async function deleteClass(classId: string, moduleId: string) {
-  const confirmed = await AppUI.promptModal(
-    'Excluir Aula',
-    'Tem certeza que deseja excluir esta aula? Esta ação não pode ser desfeita.',
+async function handleUploadClassMaterial(classId: string, file: File) {
+  try {
+    AppUI.showMessage('Enviando...', 'info');
+    const res = await Classes.uploadMaterial(classId, file);
+    const input = document.getElementById(`material-url-${classId}`) as HTMLInputElement;
+    if (input) input.value = res.materialUrl;
+    AppUI.showMessage('Arquivo enviado!', 'success');
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+}
+
+async function handleDeleteClass(classId: string, courseId: string) {
+  const confirmed = await customConfirm(
+    "Excluir Aula?",
+    "Tem certeza que deseja excluir esta aula?"
   );
+  if (!confirmed) return;
 
-  if (confirmed) {
-    try {
-      await Classes.delete(classId);
-      AppUI.showMessage('Aula excluída com sucesso', 'success');
-
-      await loadClassesForModule(moduleId);
-    } catch (error: any) {
-      console.error('Falha ao excluir aula:', error);
-      AppUI.showMessage(error.message || 'Falha ao excluir aula', 'error');
-    }
-  }
+  try {
+    await Classes.delete(classId);
+    await renderContentTree(courseId);
+  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
 }
 
-// Setup event listeners
-function setupEventListeners() {
-  // Auth Card Logic (replicado do main.ts)
-  const avatarBtn = document.getElementById('user-avatar-btn');
-  const authContainer = document.getElementById('auth-card-container');
-  const cardInner = document.getElementById('auth-card');
-  const btnToRegister = document.getElementById('btn-to-register');
-  const btnToLogin = document.getElementById('btn-to-login');
-
-  // Toggle Auth Card
-  if (avatarBtn && authContainer) {
-    avatarBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      authContainer.classList.toggle('show');
-    });
-
-    document.addEventListener('click', (e) => {
-      if (
-        !authContainer.contains(e.target as Node) &&
-        e.target !== avatarBtn &&
-        !avatarBtn.contains(e.target as Node)
-      ) {
-        authContainer.classList.remove('show');
-      }
-    });
-  }
-
-  // Flip Logic
-  if (btnToRegister && cardInner) {
-    btnToRegister.addEventListener('click', (e) => {
-      e.preventDefault();
-      cardInner.classList.add('flipped');
-    });
-  }
-
-  if (btnToLogin && cardInner) {
-    btnToLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      cardInner.classList.remove('flipped');
-    });
-  }
-
-  // Handle Login
-  const loginForm = document.getElementById('login-form');
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = (document.getElementById('login-email') as HTMLInputElement)
-        .value;
-      const password = (
-        document.getElementById('login-password') as HTMLInputElement
-      ).value;
-
-      try {
-        await Auth.login(email, password);
-        const authContainer = document.getElementById('auth-card-container');
-        if (authContainer) authContainer.classList.remove('show');
-
-        // Recarregar cursos após login
-        await loadCourses();
-      } catch (error) {
-        console.error('Login error:', error);
-      }
-    });
-  }
-
-  // Handle Logout
-  const btnLogout = document.getElementById('btn-logout');
-  if (btnLogout) {
-    btnLogout.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await Auth.logout();
-      window.location.href = 'index.html';
-    });
-  }
-
-  // Handle View Profile
-  const btnViewProfile = document.getElementById('btn-view-profile');
-  if (btnViewProfile) {
-    btnViewProfile.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.showProfileView();
-    });
-  }
-
-  // Handle Back from Profile View
-  const btnBackFromProfile = document.getElementById('btn-back-from-profile');
-  if (btnBackFromProfile) {
-    btnBackFromProfile.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.updateAuthUI();
-    });
-  }
-
-  // Handle Edit Profile Button
-  const btnEditProfile = document.getElementById('btn-edit-profile');
-  if (btnEditProfile) {
-    btnEditProfile.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.showProfileEdit();
-    });
-  }
-
-  // Handle Cancel Edit
-  const btnCancelEdit = document.getElementById('btn-cancel-edit');
-  if (btnCancelEdit) {
-    btnCancelEdit.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.showProfileView();
-    });
-  }
-
-  // Handle Profile Edit Form
-  const profileEditForm = document.getElementById('profile-edit-form');
-  if (profileEditForm) {
-    profileEditForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = (document.getElementById('edit-name') as HTMLInputElement)
-        .value;
-      const email = (document.getElementById('edit-email') as HTMLInputElement)
-        .value;
-      const password = (
-        document.getElementById('edit-password') as HTMLInputElement
-      ).value;
-
-      try {
-        await Auth.updateUserProfile({ name, email, password });
-        Auth.showProfileView();
-      } catch (error) {
-        console.error('Update error:', error);
-      }
-    });
-  }
-
-  // Handle Delete Account
-  const btnDeleteAccount = document.getElementById('btn-delete-account');
-  if (btnDeleteAccount) {
-    btnDeleteAccount.addEventListener('click', async (e) => {
-      e.preventDefault();
-      await Auth.deleteUserAccount();
-    });
-  }
-
-  // Password Toggle Buttons
-  const passwordToggleBtns = document.querySelectorAll('.btn-toggle-password');
-  passwordToggleBtns.forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const button = e.currentTarget as HTMLElement;
-      const targetId = button.dataset.target;
-      if (!targetId) return;
-
-      const input = document.getElementById(targetId) as HTMLInputElement;
-      if (!input) return;
-
-      const icon = button.querySelector('.material-symbols-outlined');
-      if (!icon) return;
-
-      if (input.type === 'password') {
-        input.type = 'text';
-        icon.textContent = 'visibility_off';
-      } else {
-        input.type = 'password';
-        icon.textContent = 'visibility';
-      }
-    });
-  });
-
-  // Create new course button
-  document
-    .getElementById('btn-create-new-course')
-    ?.addEventListener('click', openCreateCourseModal);
-
-  // Close course modal
-  document
-    .getElementById('btn-close-course-modal')
-    ?.addEventListener('click', closeCourseModal);
-  document
-    .getElementById('btn-cancel-course')
-    ?.addEventListener('click', closeCourseModal);
-
-  // Course form submission
-  document
-    .getElementById('course-form')
-    ?.addEventListener('submit', handleCourseSubmit);
-
-  // Close modules modal
-  document
-    .getElementById('btn-close-modules-modal')
-    ?.addEventListener('click', closeModulesModal);
-
-  // Add module button
-  document
-    .getElementById('btn-add-module')
-    ?.addEventListener('click', showAddModuleForm);
-
-  // Cancel module form
-  document
-    .getElementById('btn-cancel-module')
-    ?.addEventListener('click', cancelModuleForm);
-
-  // Module form submission
-  document
-    .getElementById('module-form')
-    ?.addEventListener('submit', handleModuleSubmit);
-
-  // Cancel class form
-  document
-    .getElementById('btn-cancel-class')
-    ?.addEventListener('click', cancelClassForm);
-
-  // Class form submission
-  document
-    .getElementById('class-form')
-    ?.addEventListener('submit', handleClassSubmit);
-
-  // Aplicar máscara de preço no campo de preço
-  const priceInput = document.getElementById(
-    'course-price',
-  ) as HTMLInputElement;
-  if (priceInput) {
-    AppUI.applyPriceMask(priceInput);
-  }
-}
-
-// Start the app when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+// Start
+init();

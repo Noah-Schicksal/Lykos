@@ -18,8 +18,8 @@ export class AuthController {
 
       res.cookie('token', token, getCookieOptions());
 
-      // Retorna apenas os dados do usuário (token já está no cookie)
-      return ApiResponse.success(res, user, 'Login realizado com sucesso');
+      // Retorna dados do usuário e token (para fallback no frontend)
+      return ApiResponse.success(res, { user, token }, 'Login realizado com sucesso');
     } catch (error) {
       next(error);
     }
