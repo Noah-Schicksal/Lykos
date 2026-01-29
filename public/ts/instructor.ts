@@ -239,8 +239,14 @@ async function openEditCourseModal(courseId: string) {
     (
       document.getElementById('course-description') as HTMLTextAreaElement
     ).value = course.description || '';
-    (document.getElementById('course-price') as HTMLInputElement).value =
-      String(course.price);
+
+    // Preencher preço com máscara
+    const priceInput = document.getElementById(
+      'course-price',
+    ) as HTMLInputElement;
+    const priceInCents = Math.round((course.price || 0) * 100);
+    priceInput.setAttribute('data-price-cents', priceInCents.toString());
+    priceInput.value = `R$ ${(priceInCents / 100).toFixed(2).replace('.', ',')}`;
 
     // Wait for categories to load before setting value
     setTimeout(() => {
@@ -300,14 +306,16 @@ async function handleCourseSubmit(e: Event) {
   const courseId = (document.getElementById('course-id') as HTMLInputElement)
     .value;
 
+  const priceInput = document.getElementById(
+    'course-price',
+  ) as HTMLInputElement;
+
   const data = {
     title: (document.getElementById('course-title') as HTMLInputElement).value,
     description: (
       document.getElementById('course-description') as HTMLTextAreaElement
     ).value,
-    price: parseFloat(
-      (document.getElementById('course-price') as HTMLInputElement).value,
-    ),
+    price: AppUI.getPriceValue(priceInput),
     categoryId: (
       document.getElementById('course-category') as HTMLSelectElement
     ).value,
@@ -1012,6 +1020,14 @@ function setupEventListeners() {
   document
     .getElementById('class-form')
     ?.addEventListener('submit', handleClassSubmit);
+
+  // Aplicar máscara de preço no campo de preço
+  const priceInput = document.getElementById(
+    'course-price',
+  ) as HTMLInputElement;
+  if (priceInput) {
+    AppUI.applyPriceMask(priceInput);
+  }
 }
 
 // Start the app when DOM is ready
