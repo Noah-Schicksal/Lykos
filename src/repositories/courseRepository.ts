@@ -52,7 +52,8 @@ export class CourseRepository {
             SELECT 
                 c.*, 
                 cat.name as category_name, 
-                u.name as instructor_name
+                u.name as instructor_name,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
             FROM courses c
             LEFT JOIN categories cat ON c.category_id = cat.id
             JOIN users u ON c.instructor_id = u.id
@@ -83,6 +84,8 @@ export class CourseRepository {
             description: row.description,
             price: row.price,
             coverImageUrl: row.cover_image_url,
+            maxStudents: row.max_students,
+            enrolledCount: row.enrolled_count,
             category: row.category_id ? {
                 id: row.category_id,
                 name: row.category_name
@@ -104,7 +107,8 @@ export class CourseRepository {
 
         const query = `
             SELECT 
-                c.id, c.title, c.description, c.price, c.cover_image_url,
+                c.id, c.title, c.description, c.price, c.cover_image_url, c.max_students,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count,
                 u.name as instructor_name
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
@@ -120,6 +124,8 @@ export class CourseRepository {
             description: row.description,
             price: row.price,
             coverImageUrl: row.cover_image_url,
+            maxStudents: row.max_students,
+            enrolledCount: row.enrolled_count,
             instructor: {
                 name: row.instructor_name
             }

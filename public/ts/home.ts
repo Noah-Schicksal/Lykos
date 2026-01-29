@@ -168,12 +168,13 @@ export const Home = {
             ${course.instructor?.name || 'Instrutor Desconhecido'}
           </div>
 
-          ${course.maxStudents ? `
-            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-              <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span>
-              Limite: ${course.maxStudents} alunos
-            </div>
-          ` : ''}
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span>
+            ${(course.maxStudents === undefined || course.maxStudents === null)
+          ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas'
+          : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`
+        }
+          </div>
           
           <div class="price-row" style="margin-top: auto; padding-top: 0.5rem;">
             <span class="price-main" style="font-size: 1rem;">${priceFormatted}</span>
