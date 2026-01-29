@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 app.use(globalLimiter);
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../dist/public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Documentation
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs));
