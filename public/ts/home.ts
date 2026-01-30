@@ -4,6 +4,7 @@
 import { AppUI } from './utils/ui.js';
 import { Courses, Course } from './modules/courses.js';
 import { Categories } from './modules/categories.js';
+import { Modules } from './modules/modules.js';
 
 export const Home = {
   allCourses: [] as Course[], // Store all courses locally
@@ -11,6 +12,7 @@ export const Home = {
   selectedCategory: '',
   currentPage: 1,
   itemsPerPage: 12,
+  cartItems: [] as string[], // Track simulated cart items
 
   /**
    * Inicializa a página Home
@@ -48,6 +50,31 @@ export const Home = {
     const categorySelect = document.getElementById('category-filter');
     if (categorySelect) {
       categorySelect.addEventListener('change', () => Home.applyFilters());
+    }
+
+    // Modal Close listeners
+    const closeModalBtn = document.getElementById('close-modal');
+    const modalOverlay = document.getElementById('course-modal');
+    if (closeModalBtn) {
+      closeModalBtn.addEventListener('click', () => Home.closeCourseModal());
+    }
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) Home.closeCourseModal();
+      });
+    }
+
+    // Modal Cart listener
+    const modalCartBtn = document.getElementById('modal-add-cart-btn');
+    if (modalCartBtn) {
+      modalCartBtn.addEventListener('click', () => {
+        const courseId = modalCartBtn.getAttribute('data-course-id');
+        if (courseId) {
+          Home.addToCart(courseId);
+          // Optional: close modal or change button state
+          // Home.closeCourseModal();
+        }
+      });
     }
   },
 
@@ -128,7 +155,15 @@ export const Home = {
 
     courses.forEach(course => {
       const card = document.createElement('div');
-      card.className = 'card-base group';
+      card.className = 'card-base group cursor-pointer';
+      card.setAttribute('data-course-id', course.id);
+
+      // Add click listener to card (but not if clicking the cart button)
+      card.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('.btn-add-cart')) return;
+        Home.openCourseModal(course.id);
+      });
 
       // Handle Image URL
       let imageUrl = course.coverImageUrl;
@@ -277,12 +312,25 @@ export const Home = {
     console.log(`Adding course ${courseId} to cart`);
     AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
 
+    // Track it
+    if (!Home.cartItems.includes(courseId)) {
+      Home.cartItems.push(courseId);
+    }
+
     // Update badge (simulated)
     const badge = document.getElementById('cart-count-badge');
     if (badge) {
-      const current = parseInt(badge.textContent || '0');
-      badge.textContent = (current + 1).toString();
+      badge.textContent = Home.cartItems.length.toString();
       badge.style.display = 'flex';
+    }
+
+    // Update modal button if open
+    const modalCartBtn = document.getElementById('modal-add-cart-btn');
+    if (modalCartBtn && modalCartBtn.getAttribute('data-course-id') === courseId) {
+      modalCartBtn.innerHTML = `
+        <span class="material-symbols-outlined">shopping_cart_checkout</span>
+        Ir para Carrinho
+      `;
     }
   },
 
@@ -336,6 +384,125 @@ export const Home = {
 
     console.log(`Filter: term="${term}", cat="${categoryId}" found ${Home.filteredCourses.length}`);
     Home.renderPage(1, false);
+  },
+
+  /**
+   * Abre o modal de detalhes do curso
+   */
+  openCourseModal: async (courseId: string) => {
+    try {
+      const modal = document.getElementById('course-modal');
+      if (!modal) return;
+
+      // Show modal immediately with loading state
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden'; // Prevent scroll
+
+      // Reset modal content to loading or empty
+      const modulesList = document.getElementById('modal-modules-list');
+      if (modulesList) modulesList.innerHTML = '<p class="loading-msg">Carregando módulos...</p>';
+
+      // Fetch data in parallel
+      const [course, modules] = await Promise.all([
+        Courses.getById(courseId),
+        Modules.getByCourse(courseId)
+      ]);
+
+      // Populate Modal
+      const title = document.getElementById('modal-course-title');
+      const desc = document.getElementById('modal-course-desc');
+      const instructor = document.getElementById('modal-course-instructor');
+      const date = document.getElementById('modal-course-date');
+      const price = document.getElementById('modal-course-price');
+      const img = document.getElementById('modal-course-img') as HTMLImageElement;
+      const category = document.getElementById('modal-course-category');
+      const slots = document.getElementById('modal-course-slots');
+      const cartBtn = document.getElementById('modal-add-cart-btn');
+
+      if (title) title.textContent = course.title;
+      if (desc) desc.textContent = course.description || 'Sem descrição disponível.';
+      if (instructor) instructor.textContent = course.instructor?.name || 'Instrutor Desconhecido';
+
+      // Format Date
+      if (date) {
+        const d = new Date(course.createdAt);
+        date.textContent = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+      }
+
+      // Format Price
+      if (price) {
+        price.textContent = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        }).format(course.price);
+      }
+
+      if (img) {
+        let imageUrl = course.coverImageUrl;
+        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+          imageUrl = '/' + imageUrl;
+        }
+        img.src = imageUrl || 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+      }
+
+      if (category) category.textContent = course.category?.name || 'Sem Categoria';
+
+      if (slots) {
+        slots.textContent = (course.maxStudents === undefined || course.maxStudents === null)
+          ? '∞ ilimitadas'
+          : `${course.maxStudents} total`;
+      }
+
+      if (cartBtn) {
+        cartBtn.setAttribute('data-course-id', course.id);
+
+        if (Home.cartItems.includes(courseId)) {
+          cartBtn.innerHTML = `
+            <span class="material-symbols-outlined">shopping_cart_checkout</span>
+            Ir para Carrinho
+          `;
+        } else {
+          cartBtn.innerHTML = `
+            <span class="material-symbols-outlined">shopping_cart</span>
+            Adicionar ao Carrinho
+          `;
+        }
+      }
+
+      // Render Modules
+      if (modulesList) {
+        if (modules.length === 0) {
+          modulesList.innerHTML = '<p class="loading-msg">Nenhum módulo cadastrado ainda.</p>';
+        } else {
+          modulesList.innerHTML = '';
+          modules.forEach((mod, index) => {
+            const item = document.createElement('div');
+            item.className = 'module-item';
+            item.innerHTML = `
+              <span class="module-index">${(index + 1).toString().padStart(2, '0')}</span>
+              <span class="module-name">${mod.title}</span>
+            `;
+            modulesList.appendChild(item);
+          });
+        }
+      }
+
+    } catch (error) {
+      console.error('Error opening course modal:', error);
+      AppUI.showMessage('Erro ao carregar detalhes do curso.', 'error');
+      Home.closeCourseModal();
+    }
+  },
+
+  /**
+   * Fecha o modal de detalhes do curso
+   */
+  closeCourseModal: () => {
+    const modal = document.getElementById('course-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = ''; // Restore scroll
+    }
   }
 };
 
