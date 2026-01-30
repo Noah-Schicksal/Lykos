@@ -4,27 +4,49 @@
 @import url('./cart.css');
 
 :root {
-  --primary: #00f5d4;
-  /* Vibrant Neon Teal/Green */
-  --secondary: #0ea5e9;
-  /* Teal/Blue accent */
-  --bg-dark: #05070a;
-  /* Near-black */
-  --card-dark: #0d141f;
+  --primary: #5e17eb;
+  /* Vibrant Purple */
+  --secondary: #004953;
+  /* Deep Teal */
+  --bg-dark: #000000;
+  /* Pure Black */
+  --card-dark: #0a0a0a;
   --text-primary: #f1f5f9;
   /* Slate-100 */
   --text-secondary: #94a3b8;
   /* Slate-400 */
   --text-muted: #64748b;
   /* Slate-500 */
-  --border-light: rgba(255, 255, 255, 0.05);
-  /* white/5 */
-  --border-med: rgba(255, 255, 255, 0.1);
-  /* white/10 */
+  --border-light: rgba(94, 23, 235, 0.1);
+  --border-med: rgba(94, 23, 235, 0.2);
   --glass: rgba(255, 255, 255, 0.03);
 
-  --font-heading: 'Inter', sans-serif;
-  --font-mono: 'Fira Code', monospace;
+  --font-heading: 'Libre Baskerville', serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+/* LIGHT MODE */
+:root.light {
+  --primary: #5e17eb;
+  --secondary: #004953;
+  --bg-dark: #ffffff;
+  --card-dark: #f8f9fa;
+  --text-primary: #0d1b2a;
+  /* Azul escuro quase preto */
+  --text-secondary: #004953;
+  /* Azul petróleo da paleta */
+  --text-muted: #64748b;
+  /* Cinza azulado */
+  --border-light: rgba(94, 23, 235, 0.15);
+  --border-med: rgba(94, 23, 235, 0.25);
+  --glass: rgba(0, 0, 0, 0.03);
+}
+
+/* Smooth transition for theme switching */
+body {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* RESET & BASE */
@@ -72,7 +94,7 @@ body {
   background-color: var(--bg-dark);
   background-image:
     radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0, 245, 212, 0.02), rgba(14, 165, 233, 0.01));
+    linear-gradient(180deg, rgba(94, 23, 235, 0.03), rgba(0, 73, 83, 0.02));
   background-size:
     40px 40px,
     cover;
@@ -220,13 +242,13 @@ p {
 .logo-icon {
   width: 2.5rem;
   height: 2.5rem;
-  background-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 15px -3px rgba(0, 245, 212, 0.2);
-  color: var(--bg-dark);
+  box-shadow: 0 10px 15px -3px rgba(94, 23, 235, 0.3);
+  color: white;
   font-weight: bold;
 }
 
@@ -309,7 +331,7 @@ p {
 
 .search-input:focus {
   background-color: var(--border-med);
-  border-color: rgba(0, 245, 212, 0.5);
+  border-color: rgba(94, 23, 235, 0.5);
   box-shadow: 0 0 0 1px var(--primary);
 }
 
@@ -327,7 +349,6 @@ p {
 }
 
 @media (min-width: 1280px) {
-
   /* xl */
   .nav-links-xl {
     display: flex;
@@ -362,7 +383,7 @@ p {
   top: -0.25rem;
   right: -0.25rem;
   background-color: var(--primary);
-  color: var(--bg-dark);
+  color: white;
   font-size: 10px;
   font-weight: bold;
   width: 1rem;
@@ -378,7 +399,7 @@ p {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 50%;
-  border: 1px solid rgba(0, 245, 212, 0.5);
+  border: 2px solid var(--primary);
   overflow: hidden;
   cursor: pointer;
   padding: 2px;
@@ -386,7 +407,8 @@ p {
 }
 
 #user-avatar-btn:hover {
-  border-color: var(--primary);
+  border-color: var(--secondary);
+  box-shadow: 0 0 15px rgba(94, 23, 235, 0.5);
 }
 
 #user-avatar-btn img {
@@ -429,7 +451,7 @@ p {
 
 .active-link {
   color: var(--primary);
-  border-bottom: 1px solid rgba(0, 245, 212, 0.5);
+  border-bottom: 1px solid rgba(94, 23, 235, 0.5);
   padding-bottom: 0.25rem;
 }
 
@@ -452,7 +474,7 @@ p {
   top: -3rem;
   width: 16rem;
   height: 16rem;
-  background-color: rgba(0, 245, 212, 0.05);
+  background-color: rgba(94, 23, 235, 0.05);
   /* primary/5 */
   border-radius: 50%;
   filter: blur(100px);
@@ -525,8 +547,8 @@ p {
 }
 
 .card-base:hover {
-  border-color: rgba(0, 245, 212, 0.4);
-  box-shadow: 0 0 20px rgba(0, 245, 212, 0.05);
+  border-color: var(--primary);
+  box-shadow: 0 0 30px rgba(94, 23, 235, 0.2);
   /* Reduced shadow */
 }
 
@@ -723,12 +745,12 @@ p {
   gap: 0.5rem;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
-  background-color: rgba(0, 245, 212, 0.1);
+  background-color: rgba(94, 23, 235, 0.1);
   color: var(--primary);
   font-size: 10px;
   font-weight: 900;
   text-transform: uppercase;
-  border: 1px solid rgba(0, 245, 212, 0.2);
+  border: 1px solid rgba(94, 23, 235, 0.2);
   width: fit-content;
   margin-bottom: 2rem;
 }
@@ -753,8 +775,8 @@ p {
 }
 
 .btn-cta-primary {
-  background-color: var(--primary);
-  color: var(--bg-dark);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
   font-weight: 900;
   padding: 1rem 2.5rem;
   border-radius: 0.75rem;
@@ -763,12 +785,12 @@ p {
   transition:
     transform 0.2s,
     background-color 0.3s;
-  box-shadow: 0 4px 6px -1px rgba(0, 245, 212, 0.2);
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
 }
 
 .btn-cta-primary:hover {
-  transform: scale(1.05);
-  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(94, 23, 235, 0.4);
 }
 
 .btn-cta-outline {
@@ -783,8 +805,8 @@ p {
 }
 
 .btn-cta-outline:hover {
-  background-color: var(--border-med);
-  border-color: rgba(0, 245, 212, 0.5);
+  background-color: rgba(94, 23, 235, 0.1);
+  border-color: var(--primary);
 }
 
 /* TRUSTED BY */
@@ -903,19 +925,21 @@ p {
 
 .btn-sub {
   width: 100%;
-  background-color: var(--primary);
-  color: var(--bg-dark);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
   font-weight: 900;
   font-size: 0.875rem;
   padding: 0.75rem;
   border-radius: 0.75rem;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
 }
 
 .btn-sub:hover {
-  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(94, 23, 235, 0.4);
 }
 
 .footer-bottom {
@@ -946,13 +970,13 @@ p {
   right: 2rem;
   width: 3.5rem;
   height: 3.5rem;
-  background-color: var(--primary);
-  color: var(--bg-dark);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px rgba(94, 23, 235, 0.3);
   z-index: 100;
   cursor: pointer;
   border: none;
@@ -961,6 +985,7 @@ p {
 
 .btn-theme-toggle:hover {
   transform: scale(1.1);
+  box-shadow: 0 15px 30px rgba(94, 23, 235, 0.5);
 }
 
 .btn-theme-toggle:active {
@@ -1003,8 +1028,8 @@ p {
 .flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 550px;
-  /* Increased height to fit register form */
+  display: grid;
+  grid-template-areas: 'card';
   transition: transform 0.7s;
   transform-style: preserve-3d;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -1016,23 +1041,37 @@ p {
 }
 
 .auth-face {
-  position: absolute;
-  inset: 0;
+  grid-area: card;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background-color: #121317;
   border: 1px solid var(--border-med);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  /* Reduced padding */
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(24px);
-  overflow-y: hidden;
+  z-index: 2;
+}
+
+.auth-face.hidden {
+  display: none;
+}
+
+.flip-card-inner.flipped .auth-face:not(.auth-face-back) {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .auth-face-back {
   transform: rotateY(180deg);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.flip-card-inner.flipped .auth-face-back {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .auth-title {
@@ -1071,18 +1110,20 @@ p {
 .btn-auth-submit {
   margin-top: 0.5rem;
   width: 100%;
-  background-color: var(--primary);
-  color: var(--bg-dark);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
   font-weight: 700;
   padding: 0.75rem;
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
 }
 
 .btn-auth-submit:hover {
-  background-color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(94, 23, 235, 0.4);
 }
 
 .auth-footer {
@@ -1109,7 +1150,7 @@ p {
 
 .btn-link:hover {
   background: var(--primary);
-  color: var(--bg-dark);
+  color: white;
   border-color: var(--primary);
 }
 
@@ -1133,7 +1174,7 @@ p {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background-color: rgba(5, 7, 10, 0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -1149,7 +1190,7 @@ p {
 }
 
 .glass-card {
-  background-color: rgba(13, 20, 31, 0.7);
+  background-color: var(--card-dark);
   backdrop-filter: blur(20px);
   border: 1px solid var(--border-med);
   border-radius: 1.5rem;
@@ -1316,6 +1357,70 @@ p {
   margin-top: auto;
 }
 
+/* ============================================
+   LIGHT MODE SPECIFIC ADJUSTMENTS
+   ============================================ */
+
+/* Logo na navbar */
+:root.light .logo-text {
+  color: #004953; /* Azul petróleo */
+}
+
+/* Todos os headings */
+:root.light h1,
+:root.light h2,
+:root.light h3,
+:root.light h4 {
+  color: #0d1b2a; /* Azul escuro quase preto */
+}
+
+/* Preços dos cursos */
+:root.light .price-main {
+  color: #0d1b2a; /* Azul escuro */
+}
+
+/* Apoiadores/Marcas */
+:root.light .brand-item {
+  color: #004953; /* Azul petróleo */
+}
+
+/* Footer adjustments */
+:root.light .site-footer {
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+:root.light .footer-heading {
+  color: #0d1b2a;
+}
+
+:root.light .site-footer .logo-text {
+  color: #004953;
+}
+
+/* Navbar adjustments */
+:root.light .navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Molecular background for light mode */
+:root.light .molecular-bg {
+  background-image:
+    radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(94, 23, 235, 0.03), rgba(0, 73, 83, 0.02));
+}
+
+/* Category filter section for light mode */
+:root.light .category-filter-section {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Scroll navigation buttons for light mode */
+:root.light .scroll-nav-btn {
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 .modal-price-box {
   display: flex;
   flex-direction: column;

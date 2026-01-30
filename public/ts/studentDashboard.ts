@@ -4,6 +4,7 @@
  */
 import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
+import { Categories } from './modules/categories.js';
 
 let allCourses: any[] = [];
 
@@ -49,7 +50,7 @@ function updateUserInfo(user: any) {
 
     if (roleText) {
         const userRole = (user.role || 'STUDENT').toUpperCase();
-        roleText.textContent = userRole === 'INSTRUCTOR' ? 'Instrutor' : 'Estudante';
+        roleText.textContent = userRole === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
     }
 
     if (welcomeTitle) {
@@ -171,17 +172,79 @@ function setupNavigation() {
     if (btnToggle && sidebar) {
         btnToggle.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
-            const icon = btnToggle.querySelector('span');
-            if (icon) {
-                // Tooltip or state management could go here if needed
+        });
+    }
+
+    // --- Auth Card UI Listeners ---
+    const avatarBtn = document.getElementById('user-avatar-btn');
+    const authContainer = document.getElementById('auth-card-container');
+    const cardInner = document.getElementById('auth-card');
+
+    if (avatarBtn && authContainer) {
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            authContainer.classList.toggle('show');
+            // Refresh content when showing
+            if (authContainer.classList.contains('show')) {
+                Auth.updateAuthUI();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (
+                authContainer.classList.contains('show') &&
+                !authContainer.contains(e.target as Node) &&
+                !avatarBtn.contains(e.target as Node)
+            ) {
+                authContainer.classList.remove('show');
             }
         });
     }
 
+    // Auth Card Action Handlers
+    document.getElementById('btn-logout')?.addEventListener('click', async () => {
+        const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
+        if (confirmed) {
+            await Auth.logout();
+            window.location.href = 'index.html';
+        }
+    });
+
+    document.getElementById('btn-my-learning')?.addEventListener('click', () => {
+        authContainer?.classList.remove('show');
+        // Already here, but just in case
+        window.location.href = 'studentDashboard.html';
+    });
+
+    document.getElementById('btn-instructor-dash')?.addEventListener('click', () => {
+        window.location.href = 'instructor.html';
+    });
+
+    document.getElementById('btn-create-course')?.addEventListener('click', () => {
+        window.location.href = 'instructor.html';
+    });
+
+    document.getElementById('btn-manage-categories')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Redirect to instructor dash for this for now as it needs complex templates
+        window.location.href = 'instructor.html';
+    });
+
+    document.getElementById('btn-view-profile')?.addEventListener('click', () => {
+        Auth.showProfileView();
+    });
+
+    document.getElementById('btn-back-from-profile')?.addEventListener('click', () => {
+        Auth.updateAuthUI();
+    });
+
+    // Mirroring instructor's initial update
+    Auth.updateAuthUI();
+
     // Home link in breadcrumb or logo
     const homeLinks = document.querySelectorAll('a');
     homeLinks.forEach(link => {
-        if (link.textContent?.trim() === 'Home') {
+        if (link.textContent?.trim() === 'Início') {
             link.href = 'index.html';
         }
     });

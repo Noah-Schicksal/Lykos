@@ -68,6 +68,7 @@ export const Categories = {
         response.message || 'Categoria criada com sucesso!',
         'success',
       );
+      window.dispatchEvent(new CustomEvent('categories-changed'));
       return response.data;
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao criar categoria', 'error');
@@ -89,6 +90,7 @@ export const Categories = {
         response.message || 'Categoria atualizada com sucesso!',
         'success',
       );
+      window.dispatchEvent(new CustomEvent('categories-changed'));
       return response.data;
     } catch (error: any) {
       AppUI.showMessage(
@@ -116,6 +118,7 @@ export const Categories = {
       });
 
       AppUI.showMessage('Categoria excluída com sucesso!', 'success');
+      window.dispatchEvent(new CustomEvent('categories-changed'));
       return true;
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao excluir categoria', 'error');

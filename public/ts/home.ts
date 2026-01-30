@@ -136,7 +136,7 @@ export const Home = {
       Home.renderPage(1, false);
 
     } catch (error) {
-      console.error('Error loading courses:', error);
+      console.error('Erro ao carregar cursos:', error);
       const gridContainer = document.getElementById('courses-grid');
       if (gridContainer) {
         gridContainer.innerHTML = `
@@ -442,7 +442,7 @@ export const Home = {
         });
       }
     } catch (error) {
-      console.error('Error loading categories:', error);
+      console.error('Erro ao carregar categorias:', error);
     }
   },
 

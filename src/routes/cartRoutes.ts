@@ -8,7 +8,7 @@ const cartController = new CartController();
 
 // Rotas exclusivas para alunos
 cartRoutes.use(authMiddleware);
-cartRoutes.use(roleMiddleware(['STUDENT']));
+cartRoutes.use(roleMiddleware(['STUDENT', 'INSTRUCTOR']));
 
 cartRoutes.get('/cart', (req, res, next) => cartController.listCart(req, res, next));
 cartRoutes.post('/cart', (req, res, next) => cartController.addToCart(req, res, next));

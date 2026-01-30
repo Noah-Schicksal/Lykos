@@ -36,6 +36,21 @@ async function init() {
   await loadCategories();
   await loadCoursesSidebar();
   setupGlobalEventListeners();
+  setupCategoryChangeListener();
+}
+
+function setupCategoryChangeListener() {
+  window.addEventListener('categories-changed', async () => {
+    await loadCategories();
+    // Refresh any category selects currently in the DOM
+    document.querySelectorAll('#course-category').forEach(el => {
+      const select = el as HTMLSelectElement;
+      const currentSelectedId = (select as any)._pendingSelectedId || select.value;
+      populateCategories(select, currentSelectedId);
+      // Clear pending
+      delete (select as any)._pendingSelectedId;
+    });
+  });
 }
 
 // Check authentication and role
@@ -148,6 +163,112 @@ function setupGlobalEventListeners() {
   document.getElementById('btn-create-new-course')?.addEventListener('click', () => {
     showCreateCourseView();
   });
+
+  // --- Auth Card UI Listeners ---
+  const avatarBtn = document.getElementById('user-avatar-btn');
+  const authContainer = document.getElementById('auth-card-container');
+  const cardInner = document.getElementById('auth-card');
+  const btnToRegister = document.getElementById('btn-to-register');
+  const btnToLogin = document.getElementById('btn-to-login');
+
+  if (avatarBtn && authContainer) {
+    avatarBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      authContainer.classList.toggle('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (
+        authContainer.classList.contains('show') &&
+        !authContainer.contains(e.target as Node) &&
+        !avatarBtn.contains(e.target as Node)
+      ) {
+        authContainer.classList.remove('show');
+      }
+    });
+  }
+
+  if (btnToRegister && cardInner) {
+    btnToRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      cardInner.classList.add('flipped');
+    });
+  }
+
+  if (btnToLogin && cardInner) {
+    btnToLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      cardInner.classList.remove('flipped');
+    });
+  }
+
+  // Auth Card Button Handlers
+  document.getElementById('btn-logout')?.addEventListener('click', () => {
+    Auth.logout();
+  });
+
+  document.getElementById('btn-view-profile')?.addEventListener('click', () => {
+    Auth.showProfileView();
+  });
+
+  document.getElementById('btn-back-from-profile')?.addEventListener('click', () => {
+    Auth.updateAuthUI();
+  });
+
+  document.getElementById('btn-manage-categories')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showCategoriesView();
+  });
+
+  document.getElementById('btn-back-from-categories')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    Auth.updateAuthUI();
+  });
+
+  // Category Create Form
+  const categoryCreateForm = document.getElementById('category-create-form') as HTMLFormElement;
+  if (categoryCreateForm) {
+    categoryCreateForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById('category-name-input') as HTMLInputElement;
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        AppUI.showMessage('Por favor, digite um nome para a categoria.', 'error');
+        return;
+      }
+
+      try {
+        await Categories.create(name);
+        nameInput.value = '';
+        // Refresh categories
+        await loadCategories();
+        Categories.renderCategoriesList('categories-list-container');
+
+        // If a select is open, refresh it (though not directly possible easily, we refresh the state)
+        // The loadCategories already updates 'allCategories'
+      } catch (error) {
+        console.error('Error creating category:', error);
+      }
+    });
+  }
+}
+
+// Function to show categories view
+function showCategoriesView() {
+  const loggedInFace = document.getElementById('auth-logged-in');
+  const profileViewFace = document.getElementById('auth-profile-view');
+  const profileEditFace = document.getElementById('auth-profile-edit');
+  const categoriesViewFace = document.getElementById('auth-categories-view');
+
+  if (loggedInFace) loggedInFace.classList.add('hidden');
+  if (profileViewFace) profileViewFace.classList.add('hidden');
+  if (profileEditFace) profileEditFace.classList.add('hidden');
+  if (categoriesViewFace) {
+    categoriesViewFace.classList.remove('hidden');
+    // Load categories when view is shown
+    Categories.renderCategoriesList('categories-list-container');
+  }
 }
 
 // Select a course from sidebar
@@ -347,7 +468,11 @@ function showEditCourseView(course: any) {
 
 // Helper: Populate Categories
 function populateCategories(selectElement: HTMLSelectElement, selectedId?: string) {
-  selectElement.innerHTML = '<option value="">Selecione...</option>';
+  selectElement.innerHTML = `
+    <option value="">Selecione...</option>
+    <option value="NEW_CATEGORY" style="font-weight: bold; color: var(--primary);">+ Nova Categoria</option>
+  `;
+
   allCategories.forEach(cat => {
     const option = document.createElement('option');
     option.value = cat.id;
@@ -357,6 +482,75 @@ function populateCategories(selectElement: HTMLSelectElement, selectedId?: strin
     }
     selectElement.appendChild(option);
   });
+
+  // Add listeners for "New Category" option (ensure they are only added once)
+  if (!(selectElement as any)._hasListeners) {
+    let previousValue = selectElement.value;
+    selectElement.addEventListener('focus', () => {
+      previousValue = selectElement.value;
+    });
+
+    selectElement.addEventListener('change', () => {
+      if (selectElement.value === 'NEW_CATEGORY') {
+        // Revert select to previous value
+        selectElement.value = previousValue;
+
+        // Show Category Modal
+        showCreateCategoryModal(selectElement);
+      } else {
+        previousValue = selectElement.value;
+      }
+    });
+    (selectElement as any)._hasListeners = true;
+  }
+}
+
+/**
+ * Show a small modal to create a new category
+ * @param triggerSelect The select element that triggered this, to update it after creation
+ */
+async function showCreateCategoryModal(triggerSelect: HTMLSelectElement) {
+  const modal = document.getElementById('category-modal');
+  const input = document.getElementById('modal-category-name') as HTMLInputElement;
+  const btnCancel = document.getElementById('btn-cat-modal-cancel');
+  const btnSave = document.getElementById('btn-cat-modal-save');
+
+  if (!modal || !input || !btnCancel || !btnSave) return;
+
+  // Clear input
+  input.value = '';
+
+  // Show modal
+  modal.classList.add('active');
+  input.focus();
+
+  const close = () => {
+    modal.classList.remove('active');
+    // Cleanup listeners
+    btnCancel.onclick = null;
+    btnSave.onclick = null;
+  };
+
+  btnCancel.onclick = () => close();
+
+  btnSave.onclick = async () => {
+    const name = input.value.trim();
+    if (!name) {
+      AppUI.showMessage('Por favor, digite um nome para a categoria.', 'error');
+      return;
+    }
+
+    try {
+      const newCat = await Categories.create(name);
+      if (newCat && newCat.id) {
+        // Mark this select to select the new ID after the 'categories-changed' event refreshes it
+        (triggerSelect as any)._pendingSelectedId = newCat.id;
+      }
+      close();
+    } catch (error) {
+      console.error('Error in cat modal save:', error);
+    }
+  };
 }
 
 // Helper: Set Text
