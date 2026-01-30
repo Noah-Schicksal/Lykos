@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Admin Dashboard | Lykos.eng</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/toast.css">
+</head>
+
+<body class="molecular-bg">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-xl nav-inner">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <span class="material-symbols-outlined">code</span>
+                </div>
+                <span class="logo-text">Lykos.eng</span>
+            </div>
+
+            <div class="admin-badge-container">
+                <span class="badge bg-tag-admin">
+                    <span class="material-symbols-outlined" style="font-size: 1rem;">admin_panel_settings</span>
+                    Admin Dashboard
+                </span>
+            </div>
+
+            <div class="nav-right-actions">
+                <button id="btn-home" class="btn-icon" title="Voltar ao início">
+                    <span class="material-symbols-outlined">home</span>
+                </button>
+
+                <button id="btn-logout" class="btn-icon" title="Logout">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
+
+                <!-- User Avatar -->
+                <div id="user-avatar-btn">
+                    <img alt="Admin avatar" class="admin-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-xl" style="padding-top: 6rem; padding-bottom: 4rem;">
+
+        <!-- Header -->
+        <div class="admin-header">
+            <div>
+                <h1 class="gradient-text" style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.5rem;">
+                    Dashboard Administrativo
+                </h1>
+                <p style="color: var(--text-muted); font-size: 1rem;">
+                    Gerencie todos os cursos da plataforma Lykos.eng
+                </p>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span class="material-symbols-outlined">school</span>
+                    <div>
+                        <div class="stat-value" id="total-courses">0</div>
+                        <div class="stat-label">Total de Cursos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="admin-controls">
+            <div class="search-bar-container" style="flex: 1; max-width: 500px;">
+                <div class="search-icon-wrapper">
+                    <span class="material-symbols-outlined" style="font-size: 1.25rem;">search</span>
+                </div>
+                <input id="course-search" class="search-input" placeholder="Buscar cursos por nome, instrutor..." type="text" />
+            </div>
+            <button id="btn-refresh" class="btn-secondary">
+                <span class="material-symbols-outlined">refresh</span>
+                Atualizar
+            </button>
+        </div>
+
+        <!-- Courses Table -->
+        <div class="table-container">
+            <table class="courses-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Imagem</th>
+                        <th>Título</th>
+                        <th>Instrutor</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Alunos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="courses-table-body">
+                    <!-- Courses will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-state" style="display: none;">
+            <div class="spinner"></div>
+            <p>Carregando cursos...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--text-muted);">search_off</span>
+            <h3>Nenhum curso encontrado</h3>
+            <p>Não há cursos disponíveis no momento.</p>
+        </div>
+
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button id="modal-close" class="btn-icon-modal">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este curso?</p>
+                <div class="course-preview">
+                    <strong id="modal-course-title"></strong>
+                    <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">
+                        ID: <span id="modal-course-id"></span>
+                    </p>
+                </div>
+                <p style="color: var(--error); font-size: 0.875rem; margin-top: 1rem;">
+                    <strong>Atenção:</strong> Esta ação não pode ser desfeita!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel" class="btn-secondary">Cancelar</button>
+                <button id="modal-confirm-delete" class="btn-danger">
+                    <span class="material-symbols-outlined">delete</span>
+                    Excluir Curso
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Dark/Light Mode Toggle -->
+    <button class="btn-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <span class="material-symbols-outlined dark-icon" style="font-weight: 700;">dark_mode</span>
+        <span class="material-symbols-outlined light-icon" style="font-weight: 700;">light_mode</span>
+    </button>
+
+    <!-- Scripts -->
+    <script type="module" src="js/admin.js"></script>
+
+</body>
+
+</html>

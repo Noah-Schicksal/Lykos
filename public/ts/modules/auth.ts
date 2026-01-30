@@ -12,20 +12,17 @@ export const Auth = {
             });
 
             if (response.data) {
-                // Backend returns user data in 'data' field. Token is in HttpOnly cookie.
-                // We don't need to store token manually if we rely on cookies.
-                // But if we need it for authenticated requests (bearer), we have a problem.
-                // Let's check if the previous code logic assumed Bearer token.
-                // UiHelper apiFetch uses headers provided, doesn't seem to auto-attach token from localStorage yet,
-                // but previously we stored 'auth_token'. 
-                // Since backend uses cookies, we might just rely on that for now.
-                // Or we can try to get the token if we modify the backend.
-                // For now, let's just make the login succeed visually.
-
-                const user = response.data;
+                const { user, isAdmin } = response.data;
                 localStorage.setItem('auth_user', JSON.stringify(user));
-                // If token was needed strictly for something, we might miss it.
-                // But 'response.token' was undefined, so let's skip it.
+
+                // Check if user is ADMIN and redirect to admin dashboard
+                if (isAdmin) {
+                    AppUI.showMessage('Bem-vindo, Administrador!', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/admin.html';
+                    }, 1000);
+                    return;
+                }
 
                 Auth.updateAuthUI();
                 AppUI.showMessage('Login realizado com sucesso!', 'success');
@@ -49,6 +46,17 @@ export const Auth = {
 
         const authContainer = document.getElementById('auth-card-container');
         if (authContainer) authContainer.classList.remove('show');
+    },
+
+    getUserProfile: async () => {
+        const userStr = localStorage.getItem('auth_user');
+        if (!userStr) return null;
+        try {
+            return JSON.parse(userStr);
+        } catch (error) {
+            console.error('Error parsing user profile:', error);
+            return null;
+        }
     },
 
     updateAuthUI: () => {

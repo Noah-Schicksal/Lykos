@@ -19,7 +19,16 @@ export class AuthController {
       res.cookie('token', token, getCookieOptions());
 
       // Retorna dados do usuário e token (para fallback no frontend)
-      return ApiResponse.success(res, { user, token }, 'Login realizado com sucesso');
+      // Inclui flag isAdmin para redirecionamento no frontend
+      return ApiResponse.success(
+        res,
+        {
+          user,
+          token,
+          isAdmin: user.role === 'ADMIN'
+        },
+        'Login realizado com sucesso'
+      );
     } catch (error) {
       next(error);
     }

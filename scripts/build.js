@@ -77,6 +77,12 @@ if (fs.existsSync(path.join(publicSrc, 'instructor.html'))) {
     path.join(publicDist, 'instructor.html'),
   );
 }
+if (fs.existsSync(path.join(publicSrc, 'admin.html'))) {
+  fs.copyFileSync(
+    path.join(publicSrc, 'admin.html'),
+    path.join(publicDist, 'admin.html'),
+  );
+}
 
 // css folder
 if (fs.existsSync(path.join(publicSrc, 'css'))) {

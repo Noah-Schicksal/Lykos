@@ -1,0 +1,664 @@
+/* Admin Dashboard Styles */
+
+/* Theme Variables - EXATAMENTE como styles.css */
+:root {
+    --primary: #5e17eb;
+    --secondary: #004953;
+    --bg-dark: #000000;
+    --card-dark: #0a0a0a;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-light: rgba(94, 23, 235, 0.1);
+    --border-med: rgba(94, 23, 235, 0.2);
+    --glass: rgba(255, 255, 255, 0.03);
+
+    /* Admin specific */
+    --bg-primary: var(--bg-dark);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(94, 23, 235, 0.2);
+    --error: #ef4444;
+}
+
+/* LIGHT MODE - EXATAMENTE como styles.css */
+:root.light {
+    --primary: #5e17eb;
+    --secondary: #004953;
+    --bg-dark: #ffffff;
+    --card-dark: #f8f9fa;
+    --text-primary: #0d1b2a;
+    --text-secondary: #004953;
+    --text-muted: #64748b;
+    --border-light: rgba(94, 23, 235, 0.15);
+    --border-med: rgba(94, 23, 235, 0.25);
+    --glass: rgba(0, 0, 0, 0.03);
+
+    /* Admin specific */
+    --bg-primary: #ffffff;
+    --glass-bg: rgba(0, 0, 0, 0.03);
+    --glass-border: rgba(94, 23, 235, 0.25);
+}
+
+/* Smooth transitions for theme changes */
+body,
+.table-container,
+.stat-card,
+.courses-table,
+.modal-content,
+.course-preview,
+.btn-secondary {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Background molecular para light mode */
+:root.light .molecular-bg {
+    background-image:
+        radial-gradient(rgba(94, 23, 235, 0.08) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(94, 23, 235, 0.05), rgba(0, 73, 83, 0.03));
+}
+
+/* Headings no light mode */
+:root.light h1,
+:root.light h2,
+:root.light h3,
+:root.light h4 {
+    color: #0d1b2a !important;
+}
+
+/* Navbar no light mode */
+:root.light .navbar {
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+:root.light .logo-text {
+    color: #004953;
+}
+
+/* Admin Badge */
+.admin-badge-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bg-tag-admin {
+    background: linear-gradient(135deg, #d946ef 0%, #7c3aed 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgba(217, 70, 239, 0.3);
+}
+
+.admin-avatar {
+    border: 3px solid #d946ef !important;
+    box-shadow: 0 0 15px rgba(217, 70, 239, 0.5);
+}
+
+/* Admin Header */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.admin-stats {
+    display: flex;
+    gap: 1rem;
+}
+
+.stat-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 200px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Admin Controls */
+.admin-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Table Styles */
+.table-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.courses-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.courses-table thead {
+    background: linear-gradient(135deg, rgba(94, 23, 235, 0.1) 0%, rgba(0, 73, 83, 0.1) 100%);
+    border-bottom: 2px solid var(--glass-border);
+}
+
+.courses-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+}
+
+.courses-table tbody tr {
+    border-bottom: 1px solid var(--glass-border);
+    transition: background-color 0.3s ease;
+}
+
+.courses-table tbody tr:hover {
+    background: rgba(94, 23, 235, 0.05);
+}
+
+.courses-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.courses-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.course-thumbnail {
+    width: 80px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.course-title-cell {
+    max-width: 300px;
+}
+
+.course-title-cell strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+}
+
+.course-title-cell small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.instructor-cell {
+    font-weight: 500;
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.price-cell {
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 1.125rem;
+}
+
+.students-count {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--text-muted);
+}
+
+.students-count .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-view,
+.btn-delete {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-view {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+}
+
+.btn-view:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: scale(1.05);
+}
+
+.btn-delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.05);
+}
+
+.btn-delete:active {
+    transform: scale(0.95);
+}
+
+/* Buttons */
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-secondary:hover {
+    background: rgba(94, 23, 235, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-danger:hover {
+    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--glass-border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-state p {
+    margin-top: 1rem;
+    color: var(--text-muted);
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.empty-state h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    color: var(--text-muted);
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.btn-icon-modal {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.btn-icon-modal:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.course-preview {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .courses-table {
+        font-size: 0.875rem;
+    }
+
+    .courses-table th,
+    .courses-table td {
+        padding: 0.75rem;
+    }
+
+    .course-thumbnail {
+        width: 60px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-stats {
+        width: 100%;
+    }
+
+    .stat-card {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    .courses-table {
+        min-width: 800px;
+    }
+}
+
+/* Dark/Light Mode Toggle Button */
+.btn-theme-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    box-shadow: 0 10px 20px rgba(94, 23, 235, 0.4);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+    z-index: 1000;
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 25px 50px -12px rgba(94, 23, 235, 0.7);
+}
+
+.btn-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.btn-theme-toggle .dark-icon {
+    display: block;
+}
+
+.btn-theme-toggle .light-icon {
+    display: none;
+}
+
+:root.light .btn-theme-toggle .dark-icon {
+    display: none;
+}
+
+:root.light .btn-theme-toggle .light-icon {
+    display: block;
+}
+
+/* ============================================
+   LIGHT MODE - COMPONENTES ADMIN
+   ============================================ */
+
+/* Tabela no light mode */
+:root.light .courses-table thead {
+    background: linear-gradient(135deg, rgba(94, 23, 235, 0.15) 0%, rgba(0, 73, 83, 0.15) 100%);
+}
+
+:root.light .courses-table tbody tr:hover {
+    background: rgba(94, 23, 235, 0.08);
+}
+
+:root.light .course-thumbnail {
+    border: 1px solid rgba(94, 23, 235, 0.25);
+}
+
+/* Stat cards no light mode */
+:root.light .stat-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(94, 23, 235, 0.25);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Table container no light mode */
+:root.light .table-container {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(94, 23, 235, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Modal no light mode */
+:root.light .modal-content {
+    background: #ffffff;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+:root.light .modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Botões no light mode */
+:root.light .btn-secondary {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(94, 23, 235, 0.25);
+}
+
+:root.light .btn-secondary:hover {
+    background: rgba(94, 23, 235, 0.15);
+    border-color: var(--primary);
+}
+
+:root.light .btn-view {
+    background: rgba(59, 130, 246, 0.15);
+}
+
+:root.light .btn-view:hover {
+    background: rgba(59, 130, 246, 0.25);
+}
+
+:root.light .btn-delete {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+:root.light .btn-delete:hover {
+    background: rgba(239, 68, 68, 0.25);
+}
+
+/* Price cell no light mode */
+:root.light .price-cell {
+    color: var(--primary);
+}
+
+/* Empty and Loading states no light mode */
+:root.light .empty-state h3,
+:root.light .loading-state p {
+    color: var(--text-primary);
+}
+
+/* Search bar no light mode */
+:root.light .search-bar-container {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(94, 23, 235, 0.25);
+}
+
+:root.light .search-input {
+    color: var(--text-primary);
+}
+
+:root.light .search-input::placeholder {
+    color: var(--text-muted);
+}
