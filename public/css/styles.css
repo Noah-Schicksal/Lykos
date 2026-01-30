@@ -1,6 +1,7 @@
 /* BASE VARIABLES */
 @import url('./toast.css');
 @import url('./auth.css');
+@import url('./cart.css');
 
 :root {
   --primary: #00f5d4;

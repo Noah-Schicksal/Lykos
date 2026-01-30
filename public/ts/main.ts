@@ -5,11 +5,13 @@ import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
 import { Home } from './home.js';
 import { Categories } from './modules/categories.js';
+import { Cart } from './modules/cart.js';
 
 // Expose to window for debugging or legacy scripts if needed
 (window as any).ui = AppUI;
 (window as any).auth = Auth;
 (window as any).categories = Categories;
+(window as any).cart = Cart;
 
 document.addEventListener('DOMContentLoaded', () => {
   Auth.init();
@@ -19,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('ChemAcademy App Initialized');
 
-  // 1. Initialize Cart Badge
-  if (AppUI.renderCartCount) AppUI.renderCartCount();
+  // 1. Initialize Cart
+  Cart.updateBadge();
 
   // 2. Setup Password Toggle Buttons
   const passwordToggleBtns = document.querySelectorAll('.btn-toggle-password');
@@ -45,24 +47,118 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Setup "Enroll" Button
-  const enrollBtn = document.getElementById('enroll-featured');
-  if (enrollBtn) {
-    enrollBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const courseId = enrollBtn.getAttribute('data-course-id');
-      if (!courseId) return;
-      AppUI.showMessage('Feature de matrícula em breve!', 'info');
+  // 3. Setup Cart Modal Toggle
+  const cartToggleBtn = document.getElementById('cart-toggle-btn');
+  const cartModal = document.getElementById('cart-modal');
+  const closeCartBtn = document.getElementById('close-cart-btn');
+
+  if (cartToggleBtn && cartModal) {
+    cartToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Check if logged in before showing cart
+      if (!localStorage.getItem('auth_user')) {
+        AppUI.showMessage('Por favor, faça login para ver seu carrinho.', 'info');
+        const authContainer = document.getElementById('auth-card-container');
+        if (authContainer) authContainer.classList.add('show');
+        return;
+      }
+
+      cartModal.classList.toggle('show');
+      if (cartModal.classList.contains('show')) {
+        renderCartItems();
+      }
+    });
+
+    if (closeCartBtn) {
+      closeCartBtn.addEventListener('click', () => {
+        cartModal.classList.remove('show');
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (
+        cartModal.classList.contains('show') &&
+        !cartModal.contains(e.target as Node) &&
+        !cartToggleBtn.contains(e.target as Node)
+      ) {
+        cartModal.classList.remove('show');
+      }
     });
   }
 
-  // 3. Setup "Wishlist" Button
-  const wishBtn = document.getElementById('wishlist-featured');
-  if (wishBtn) {
-    wishBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      AppUI.showMessage('Adicionado à lista de desejos (simulado)', 'success');
+  // Handle Checkout Button
+  const checkoutBtn = document.getElementById('btn-cart-checkout');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', async () => {
+      const confirm = await AppUI.promptModal('Finalizar Compra', 'Deseja confirmar a compra dos itens no carrinho?');
+      if (confirm) {
+        const success = await Cart.checkout();
+        if (success) {
+          cartModal?.classList.remove('show');
+        }
+      }
     });
+  }
+
+  /**
+   * Renderiza os itens do carrinho no modal
+   */
+  async function renderCartItems() {
+    const listContainer = document.getElementById('cart-items-list');
+    const totalPriceEl = document.getElementById('cart-total-price');
+    const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
+
+    if (!listContainer || !totalPriceEl) return;
+
+    listContainer.innerHTML = '<div class="cart-empty-msg">Carregando itens...</div>';
+
+    try {
+      const items = await Cart.getCart();
+
+      if (items.length === 0) {
+        listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
+        totalPriceEl.textContent = 'R$ 0,00';
+        if (checkoutBtn) checkoutBtn.disabled = true;
+        return;
+      }
+
+      let total = 0;
+      listContainer.innerHTML = items.map(item => {
+        total += item.price;
+        const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price);
+
+        return `
+          <div class="cart-item">
+            <img src="${item.coverImageUrl || 'https://placehold.co/100x60'}" class="cart-item-img" alt="${item.title}">
+            <div class="cart-item-info">
+              <h4 class="cart-item-title">${item.title}</h4>
+              <div class="cart-item-price">${price}</div>
+            </div>
+            <button class="btn-remove-cart" data-id="${item.courseId}" title="Remover">
+              <span class="material-symbols-outlined" style="font-size: 1.25rem">delete</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
+      if (checkoutBtn) checkoutBtn.disabled = false;
+
+      // Add remove listeners
+      const removeBtns = listContainer.querySelectorAll('.btn-remove-cart');
+      removeBtns.forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const courseId = (btn as HTMLElement).dataset.id!;
+          const success = await Cart.remove(courseId);
+          if (success) {
+            renderCartItems(); // Refresh
+          }
+        });
+      });
+
+    } catch (error) {
+      listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
+    }
   }
 
   // 4. Auth Card Logic
@@ -108,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle Login
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       // Use specific IDs we added to index.html
       const emailInput = document.getElementById(
@@ -124,7 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
           AppUI.showMessage('Por favor, preencha todos os campos.', 'error');
           return;
         }
-        Auth.login(emailInput.value, passInput.value);
+        await Auth.login(emailInput.value, passInput.value);
+        // After successful login, update cart badge
+        Cart.updateBadge();
       } else {
         AppUI.showMessage(
           'Erro interno: Campos de login não encontrados.',
@@ -141,6 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLogout.addEventListener('click', (e) => {
       e.preventDefault();
       Auth.logout();
+      // Update badge on logout (will clear it)
+      Cart.updateBadge();
     });
   }
 
@@ -220,7 +320,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle Manage Categories
+  // Handle My Learning (Student Dashboard)
+  const btnMyLearning = document.getElementById('btn-my-learning');
+  if (btnMyLearning) {
+    btnMyLearning.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.href = 'studentDashboard.html';
+    });
+  }
+
   const btnManageCategories = document.getElementById('btn-manage-categories');
   if (btnManageCategories) {
     btnManageCategories.addEventListener('click', (e) => {

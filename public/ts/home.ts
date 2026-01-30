@@ -4,6 +4,7 @@
 import { AppUI } from './utils/ui.js';
 import { Courses, Course } from './modules/courses.js';
 import { Categories } from './modules/categories.js';
+import { Cart } from './modules/cart.js';
 
 export const Home = {
   allCourses: [] as Course[], // Store all courses locally
@@ -270,20 +271,18 @@ export const Home = {
   },
 
   /**
-   * Adiciona ao carrinho (Simulado por enquanto)
+   * Adiciona ao carrinho
    */
-  addToCart: (courseId: string) => {
-    // TODO: Integrate with real Cart module
-    console.log(`Adding course ${courseId} to cart`);
-    AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
-
-    // Update badge (simulated)
-    const badge = document.getElementById('cart-count-badge');
-    if (badge) {
-      const current = parseInt(badge.textContent || '0');
-      badge.textContent = (current + 1).toString();
-      badge.style.display = 'flex';
+  addToCart: async (courseId: string) => {
+    // Check if logged in
+    if (!localStorage.getItem('auth_user')) {
+      AppUI.showMessage('Por favor, faça login para adicionar cursos ao carrinho.', 'info');
+      const authContainer = document.getElementById('auth-card-container');
+      if (authContainer) authContainer.classList.add('show');
+      return;
     }
+
+    await Cart.add(courseId);
   },
 
   /**
@@ -338,6 +337,3 @@ export const Home = {
     Home.renderPage(1, false);
   }
 };
-
-// Remove global exposure as we use event delegation
-// (window as any).HomeModule = Home;

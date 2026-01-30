@@ -18,6 +18,8 @@ yarn-error.log*
 # Test coverage
 coverage/
 *.lcov
+seed_sample.js
+
 
 # IDEs
 .vscode/
@@ -29,3 +31,5 @@ storage/
 package-lock.json
 
 .agent
+README_PRIVADO.md
+src/database/seedProgramming.ts
