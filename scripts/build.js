@@ -83,10 +83,10 @@ if (fs.existsSync(path.join(publicSrc, 'studentDashboard.html'))) {
     path.join(publicDist, 'studentDashboard.html'),
   );
 }
-if (fs.existsSync(path.join(publicSrc, 'coursePlayer.html'))) {
+if (fs.existsSync(path.join(publicSrc, 'player.html'))) {
   fs.copyFileSync(
-    path.join(publicSrc, 'coursePlayer.html'),
-    path.join(publicDist, 'coursePlayer.html'),
+    path.join(publicSrc, 'player.html'),
+    path.join(publicDist, 'player.html'),
   );
 }
 
