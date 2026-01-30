@@ -3,7 +3,6 @@
  */
 
 export interface UIHelper {
-  renderCartCount: () => void;
   apiFetch: (url: string, options?: RequestInit) => Promise<any>;
   showMessage: (msg: string, type: 'success' | 'error' | 'info') => void;
   promptModal: (title: string, msg: string) => Promise<boolean>;
@@ -12,14 +11,6 @@ export interface UIHelper {
 }
 
 export const AppUI: UIHelper = {
-  renderCartCount: () => {
-    const badge = document.getElementById('cart-count-badge');
-    if (!badge) return;
-    const count = 0;
-    badge.textContent = count.toString();
-    badge.style.display = count > 0 ? 'flex' : 'none';
-  },
-
   apiFetch: async (url: string, options: RequestInit = {}) => {
     console.log(`[API] ${url}`, options);
 

@@ -140,36 +140,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- AUTH STATE MANAGEMENT ---
     const updateAuthUI = (user) => {
         const authCard = document.getElementById('auth-card');
-        const authProfile = document.getElementById('auth-profile');
-        if (!authCard || !authProfile)
-            return;
+        const authLoggedIn = document.getElementById('auth-logged-in');
+
+        // Face of the card that shows login/register
+        const loginFace = authCard?.querySelector('.auth-face:not(.auth-face-back):not(#auth-logged-in)');
+
+        if (!authCard || !authLoggedIn) return;
+
         if (user) {
-            // SHOW PROFILE
-            authCard.style.display = 'none';
-            authProfile.style.display = 'block';
+            // SHOW LOGGED IN STATE
+            if (loginFace) loginFace.classList.add('hidden');
+            authLoggedIn.classList.remove('hidden');
+
             // Populate Data
-            const nameEl = document.getElementById('profile-name');
-            const emailEl = document.getElementById('profile-email');
-            const roleEl = document.getElementById('profile-role-badge');
-            if (nameEl)
-                nameEl.textContent = user.name;
-            if (emailEl)
-                emailEl.textContent = user.email;
+            const nameEl = document.getElementById('user-name-display');
+            const emailEl = document.getElementById('user-email-display');
+            const roleEl = document.getElementById('user-role-badge');
+
+            if (nameEl) nameEl.textContent = user.name;
+            if (emailEl) emailEl.textContent = user.email;
+
+            const userRole = (user.role || 'STUDENT').toUpperCase();
             if (roleEl) {
-                roleEl.textContent = user.role;
-                // Adjust badge color
-                if (user.role === 'INSTRUCTOR') {
-                    roleEl.className = 'badge-tag bg-tag-secondary';
-                }
-                else {
-                    roleEl.className = 'badge-tag bg-tag-primary';
-                }
+                roleEl.textContent = userRole === 'INSTRUCTOR' ? 'Instructor' : 'Student';
+                roleEl.className = `badge-tag ${userRole === 'INSTRUCTOR' ? 'bg-tag-primary' : 'bg-tag-secondary'}`;
+                roleEl.style.display = 'inline-block';
+            }
+
+            // Toggle role-specific buttons
+            const btnInstructor = document.getElementById('btn-instructor-dash');
+            const btnManageCats = document.getElementById('btn-manage-categories');
+
+            if (userRole === 'INSTRUCTOR') {
+                if (btnInstructor) btnInstructor.classList.remove('hidden');
+                if (btnManageCats) btnManageCats.classList.remove('hidden');
+            } else {
+                if (btnInstructor) btnInstructor.classList.add('hidden');
+                if (btnManageCats) btnManageCats.classList.add('hidden');
             }
         }
         else {
-            // SHOW LOGIN/REGISTER
-            authCard.style.display = 'block';
-            authProfile.style.display = 'none';
+            // SHOW GUEST STATE
+            if (loginFace) loginFace.classList.remove('hidden');
+            authLoggedIn.classList.add('hidden');
         }
     };
     // Check Session on Load
@@ -256,6 +269,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }));
     }
+    // Handle My Learning (Student Dashboard)
+    const btnMyLearning = document.getElementById('btn-my-learning');
+    if (btnMyLearning) {
+        btnMyLearning.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Navigating to Student Dashboard...');
+            window.location.href = 'studentDashboard.html';
+        });
+    }
+
+    // Handle Instructor Dashboard
+    const btnInstructorDash = document.getElementById('btn-instructor-dash');
+    if (btnInstructorDash) {
+        btnInstructorDash.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'instructor.html';
+        });
+    }
+
     // Handle Logout
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout) {
