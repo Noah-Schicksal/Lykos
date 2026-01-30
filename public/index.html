@@ -568,6 +568,77 @@
     <span class="material-symbols-outlined" style="font-weight: 700">dark_mode</span>
   </button>
 
+  <!-- Course Detail Modal -->
+  <div id="course-modal" class="modal-overlay hidden">
+    <div class="modal-content glass-card">
+      <button id="close-modal" class="btn-close-modal">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div class="modal-body-grid">
+        <!-- Left: Image & Info -->
+        <div class="modal-info-col">
+          <div class="modal-img-container">
+            <img id="modal-course-img" src="" alt="Course Cover">
+            <div id="modal-course-category" class="badge-tag bg-tag-primary">Category</div>
+          </div>
+
+          <div class="modal-meta-box">
+            <div class="modal-meta-item">
+              <span class="material-symbols-outlined">person</span>
+              <div>
+                <span class="label">Instrutor</span>
+                <span id="modal-course-instructor" class="val">Name</span>
+              </div>
+            </div>
+            <div class="modal-meta-item">
+              <span class="material-symbols-outlined">calendar_today</span>
+              <div>
+                <span class="label">Publicado em</span>
+                <span id="modal-course-date" class="val">Date</span>
+              </div>
+            </div>
+            <div class="modal-meta-item">
+              <span class="material-symbols-outlined">group</span>
+              <div>
+                <span class="label">Vagas</span>
+                <span id="modal-course-slots" class="val">Unlimited</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Content & Modules -->
+        <div class="modal-content-col">
+          <h2 id="modal-course-title" class="modal-course-title">Course Title</h2>
+          <p id="modal-course-desc" class="modal-course-desc">Course Description goes here...</p>
+
+          <div class="modules-section">
+            <h3 class="modules-title">
+              <span class="material-symbols-outlined">list_alt</span>
+              Grade Curricular
+            </h3>
+            <div id="modal-modules-list" class="modules-list">
+              <!-- Modules loaded here -->
+              <p class="loading-msg">Carregando módulos...</p>
+            </div>
+          </div>
+
+          <div class="modal-footer-actions">
+            <div class="modal-price-box">
+              <span class="price-label">Preço Total</span>
+              <span id="modal-course-price" class="price-val">R$ 0,00</span>
+            </div>
+            <button id="modal-add-cart-btn" class="btn-cta-primary">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              Adicionar ao Carrinho
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="js/main.js"></script>
 </body>
 
