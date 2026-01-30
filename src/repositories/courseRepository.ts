@@ -200,8 +200,8 @@ export class CourseRepository {
     }
 
     // busca um curso pelo id com joins detalhados e média de avaliações
-    findById(id: string): any | null {
-        const query = `
+    findById(id: string, userId?: string): any | null {
+        let query = `
             SELECT 
                 c.*, 
                 cat.name as category_name, 
@@ -209,15 +209,53 @@ export class CourseRepository {
                 u.email as instructor_email,
                 (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as rating_average,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
+        `;
+
+        // Add progress columns if userId is provided
+        if (userId) {
+            query += `,
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id AND user_id = ?) as is_enrolled,
+                (SELECT COUNT(cl.id) 
+                 FROM classes cl 
+                 JOIN modules m ON cl.module_id = m.id 
+                 WHERE m.course_id = c.id) as total_classes,
+                (SELECT COUNT(cp.class_id) 
+                 FROM class_progress cp 
+                 JOIN classes cl ON cp.class_id = cl.id 
+                 JOIN modules m ON cl.module_id = m.id 
+                 WHERE m.course_id = c.id AND cp.user_id = ?) as completed_classes
+            `;
+        }
+
+        query += `
             FROM courses c
             LEFT JOIN categories cat ON c.category_id = cat.id
             JOIN users u ON c.instructor_id = u.id
             WHERE c.id = ?
         `;
 
-        const row = db.prepare(query).get(id) as any;
+        const params: any[] = [];
+        if (userId) {
+            params.push(userId, userId);
+        }
+        params.push(id);
+
+        const row = db.prepare(query).get(...params) as any;
 
         if (!row) return null;
+
+        // Calculate progress
+        let progress = undefined;
+        let isEnrolled = false;
+
+        if (userId) {
+            isEnrolled = !!row.is_enrolled;
+            if (isEnrolled && row.total_classes > 0) {
+                progress = Math.round((row.completed_classes / row.total_classes) * 100);
+            } else if (isEnrolled) {
+                progress = 0;
+            }
+        }
 
         // mapeia para objeto de retorno (não estritamente a Entidade Course, mas um DTO enriquecido)
         return {
@@ -229,12 +267,14 @@ export class CourseRepository {
             maxStudents: row.max_students,
             enrolledCount: row.enrolled_count,
             averageRating: row.rating_average || 0,
+            isEnrolled: isEnrolled,
+            progress: progress,
             createdAt: new Date(row.created_at),
             category: row.category_id ? {
                 id: row.category_id,
                 name: row.category_name
             } : null,
-            instructorId: row.instructor_id, // Added for compatibility with Service checks
+            instructorId: row.instructor_id,
             instructor: {
                 id: row.instructor_id,
                 name: row.instructor_name,

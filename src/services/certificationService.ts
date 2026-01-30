@@ -1,5 +1,6 @@
 import { EnrollmentRepository } from '../repositories/enrollmentRepository';
 import { CertificateValidationDTO } from '../dtos/certificateDTOs';
+import crypto from 'crypto';
 
 export class ApplicationError extends Error {
     constructor(message: string) {
@@ -25,9 +26,8 @@ export class CertificationService {
         }
 
         // Estimando carga horária baseada no número de aulas (1 aula = 1 hora)
-        // Isso é uma simplificação pois não temos campo de duração/workload no banco.
         const totalClasses = this.enrollmentRepository.countCourseClasses(enrollment.course_id);
-        const estimatedWorkload = totalClasses > 0 ? totalClasses : 20; // Default fallback
+        const estimatedWorkload = totalClasses > 0 ? totalClasses : 20;
 
         return {
             certificateHash: enrollment.certificate_hash,
@@ -36,17 +36,36 @@ export class CertificationService {
             courseTitle: enrollment.course_title,
             workloadHours: estimatedWorkload,
             instructorName: enrollment.instructor_name,
-            issuedAt: new Date(enrollment.enrolled_at) // Na verdade deveria ser date de issue, mas enrollment não tem issue date separado no DB além do enrolled_at ou certificate_hash timestamp?
-            // Wait, enrollment table tem enrolled_at. Init.ts não tem issued_at timestamp.
-            // O updateCertificateHash apenas salva o hash. 
-            // O "issuedAt" real seria quando o hash foi gerado.
-            // Como não salvamos timestamp separado, vamos usar enrolled_at ou current date? 
-            // Melhor: usar enrolled_at como "data de inicio/conclusão" aproximada ou aceitar limitação.
-            // Ou melhor: O prompt example retorno tem "issuedAt".
-            // Vou usar enrolled_at por falta de coluna específica, ou assumir que o certificado foi emitido na conclusão.
-            // Se fosse crítico, criaria coluna `certificate_issued_at`.
-            // Vou usar enrolled_at para simplificar e não alterar schema de novo agora, 
-            // ou assumir que enrolled_at é a data relevante disponível.
+            issuedAt: new Date(enrollment.enrolled_at)
         };
+    }
+
+    async generateCertificate(userId: string, courseId: string): Promise<string> {
+        // 1. Verify Enrollment
+        const enrollment = this.enrollmentRepository.findEnrollment(userId, courseId);
+        if (!enrollment) {
+            throw new ApplicationError('Matrícula não encontrada.');
+        }
+
+        // 2. Return existing hash if already issued
+        if (enrollment.certificateHash) {
+            return enrollment.certificateHash;
+        }
+
+        // 3. Verify Completion (100%)
+        const totalClasses = this.enrollmentRepository.countCourseClasses(courseId);
+        const completedClasses = this.enrollmentRepository.countCompletedClasses(userId, courseId);
+
+        if (totalClasses === 0 || completedClasses < totalClasses) {
+            throw new ApplicationError('O curso não foi concluído 100%. Complete todas as aulas antes de gerar o certificado.');
+        }
+
+        // 4. Generate Hash (UUID)
+        const hash = crypto.randomUUID();
+
+        // 5. Save Hash
+        this.enrollmentRepository.updateCertificateHash(enrollment.id!, hash);
+
+        return hash;
     }
 }

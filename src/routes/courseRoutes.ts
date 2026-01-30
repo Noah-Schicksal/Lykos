@@ -25,13 +25,15 @@ courseRoutes.get(
   (req, res) => courseController.listAuthored(req, res),
 );
 
-courseRoutes.get('/:id', (req, res) => courseController.show(req, res));
+import { optionalAuthMiddleware } from '../middlewares/optionalAuthMiddleware';
+
+courseRoutes.get('/:id', optionalAuthMiddleware, (req, res) => courseController.show(req, res));
 courseRoutes.get('/:id/cover', (req, res) =>
   courseController.getCover(req, res),
 );
 
 // Rotas de módulos do curso (sub-recurso)
-courseRoutes.get('/:id/modules', (req, res) =>
+courseRoutes.get('/:id/modules', optionalAuthMiddleware, (req, res) =>
   moduleController.listByCourse(req, res),
 );
 courseRoutes.post(
@@ -67,6 +69,16 @@ courseRoutes.get(
   authMiddleware,
   roleMiddleware(['INSTRUCTOR']),
   (req, res) => courseController.getStudents(req, res),
+);
+
+// Rota de Certificado (Aluno)
+import { CertificationController } from '../controllers/certificationController';
+const certificationController = new CertificationController();
+
+courseRoutes.post(
+  '/:id/certificate',
+  authMiddleware,
+  (req, res, next) => certificationController.issueCertificate(req, res, next)
 );
 
 export default courseRoutes;

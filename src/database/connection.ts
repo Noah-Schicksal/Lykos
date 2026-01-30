@@ -7,7 +7,7 @@ dotenv.config();
 
 const dbPath = process.env.DATABASE_PATH
   ? path.resolve(process.cwd(), process.env.DATABASE_PATH)
-  : path.resolve(__dirname, '../../data/database.db');
+  : path.resolve(process.cwd(), 'data/database.db');
 
 const dbDir = path.dirname(dbPath);
 

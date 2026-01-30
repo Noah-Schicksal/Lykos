@@ -1,40 +1,55 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-interface JwtPayload {
+interface TokenPayload {
     id: string;
-    email?: string;
-    name?: string;
+    name: string;
     role: string;
+    iat: number;
+    exp: number;
 }
 
-export const optionalAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+export function optionalAuthMiddleware(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) {
+    // Try to get token from cookie or header
+    let token = req.cookies?.token;
 
-    // Also check cookies if available
-    const cookieToken = req.cookies && req.cookies.auth_token;
+    if (!token) {
+        const { authorization } = req.headers;
+        if (authorization) {
+            [, token] = authorization.split(' ');
+        }
+    }
 
-    const finalToken = token || cookieToken;
-
-    if (!finalToken) {
+    // If no token, just proceed (guest)
+    if (!token) {
         return next();
     }
 
     try {
-        const secret = process.env.JWT_SECRET || 'default_secret'; // Fallback for dev
-        const decoded = jwt.verify(finalToken, secret) as JwtPayload;
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            // Log warning but proceed as guest if config missing to avoid crash
+            console.warn('JWT_SECRET not defined in optionalAuth');
+            return next();
+        }
+
+        const decoded = jwt.verify(token, secret);
+        const { id, name, role } = decoded as TokenPayload;
 
         req.user = {
-            id: decoded.id,
-            name: decoded.name || 'User',
-            email: decoded.email,
-            role: decoded.role as 'ADMIN' | 'INSTRUCTOR' | 'STUDENT'
+            id,
+            name,
+            role,
         };
 
-        next();
+        return next();
     } catch (error) {
-        // If token is invalid, we just proceed as guest (ignoring the error)
-        next();
+        // If token is invalid/expired, we treat as guest. 
+        // We do NOT block the request.
+        return next();
     }
-};
+}

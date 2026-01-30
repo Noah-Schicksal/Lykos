@@ -72,21 +72,36 @@ export class ClassRepository {
         });
     }
 
-    // marca uma aula como concluída pelo aluno
-    // Busca aulas por módulo (ordenadas, se houver lógica de ordem, mas por enquanto criação desc ou asc)
-    findByModule(moduleId: string): Class[] {
-        const stmt = db.prepare(`SELECT * FROM classes WHERE module_id = ?`);
-        const rows = stmt.all(moduleId) as any[];
+    // busca aulas por módulo (ordenadas, se houver lógica de ordem, mas por enquanto criação desc ou asc)
+    findByModule(moduleId: string, userId?: string): (Class & { isCompleted: boolean })[] {
+        let query = `SELECT c.* FROM classes c WHERE c.module_id = ?`;
 
-        return rows.map(row => new Class({
-            id: row.id,
-            moduleId: row.module_id,
-            title: row.title,
-            description: row.description,
-            videoUrl: row.video_url,
-            materialUrl: row.material_url,
-            createdAt: new Date(row.created_at)
-        }));
+        if (userId) {
+            query = `
+                SELECT c.*, 
+                CASE WHEN cp.completed_at IS NOT NULL THEN 1 ELSE 0 END as is_completed
+                FROM classes c
+                LEFT JOIN class_progress cp ON c.id = cp.class_id AND cp.user_id = ?
+                WHERE c.module_id = ?
+            `;
+        }
+
+        const stmt = db.prepare(query);
+        const rows = userId ? stmt.all(userId, moduleId) as any[] : stmt.all(moduleId) as any[];
+
+        return rows.map(row => {
+            const cls = new Class({
+                id: row.id,
+                moduleId: row.module_id,
+                title: row.title,
+                description: row.description,
+                videoUrl: row.video_url,
+                materialUrl: row.material_url,
+                createdAt: new Date(row.created_at)
+            });
+            (cls as any).isCompleted = !!row.is_completed;
+            return cls as Class & { isCompleted: boolean };
+        });
     }
 
     markProgress(classId: string, userId: string): ClassProgressDTO {
