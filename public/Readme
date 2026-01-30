@@ -1,0 +1,384 @@
+# 🚀 Lykos.eng - Platform de Educação em Programação
+
+## 📋 Sumário de Alterações Implementadas
+
+### ✨ **1. Rebranding Completo**
+- ❌ **Removido:** ChemAcademy (Química)
+- ✅ **Adicionado:** Lykos.eng (Programação & Tecnologia)
+- 🎨 **Nova Paleta de Cores:**
+  - Primary: `#5e17eb` (Roxo Vibrante)
+  - Secondary: `#004953` (Azul Petróleo)
+  - Background: `#000000` (Preto Puro)
+
+### 🌓 **2. Sistema Dark/Light Mode**
+- ✅ **Botão flutuante** com ícones dinâmicos (🌙/☀️)
+- ✅ **Salva preferência** no localStorage
+- ✅ **Animação de rotação** no clique
+- ✅ **Transições suaves** em todos os elementos
+- ✅ **Textos ajustados** para legibilidade em ambos os modos
+
+**Cores Light Mode:**
+- Texto Principal: `#0d1b2a` (Azul Escuro)
+- Texto Secundário: `#004953` (Azul Petróleo)
+- Background: `#ffffff` (Branco)
+- Cards: `#f8f9fa` (Cinza Claro)
+
+### 🖼️ **3. Imagens Profissionais (Unsplash)**
+Substituídas todas as imagens genéricas por fotos reais de alta qualidade:
+- 🐍 Python: Código em teclado
+- ⚛️ React: Logo e desenvolvimento
+- ☁️ AWS: Tecnologia cloud
+- 🐳 Docker: Containers
+- 🤖 Machine Learning: AI/Data Science
+- 📱 Mobile: iOS Development
+- 🔒 Cybersecurity: Segurança
+- 💻 Web Dev: Coding
+- ☕ Java: Desenvolvimento
+- 🗄️ SQL: Databases
+- 🔧 Git: Version Control
+- 📊 Node.js: Backend Development
+
+### 🎬 **4. Animações Lottie no Hero**
+- ✨ **Dark Mode:** Animação de estrelas/espaço
+- ☁️ **Light Mode:** Nuvens flutuantes
+- 🔄 **Troca automática** ao mudar o tema
+- 📱 **Totalmente responsivo**
+- ⚡ **Alta performance**
+
+### ⬅️➡️ **5. Navegação por Scroll Horizontal**
+- ✅ **Botões direcionais** aparecem automaticamente
+- ✅ **Desabilitam** quando atingem os limites
+- ✅ **Scroll suave** de 2 cards por vez
+- ✅ **Design elegante** com hover effects
+- ✅ **Detecta resize** da janela
+- ✅ **Funciona em todas as resoluções**
+
+### 📚 **6. Sistema de Cursos**
+- ✅ **Grid responsivo:** 1/2/4 colunas
+- ✅ **12 cursos mock** com dados reais
+- ✅ **Filtro por categoria** (12 categorias)
+- ✅ **Busca em tempo real** por nome/instrutor
+- ✅ **Infinite scroll** + botão "Load More"
+- ✅ **Badges:** Bestseller, New, Top Rated
+- ✅ **Ratings com estrelas** dinâmicas
+- ✅ **Preços** com desconto strike-through
+
+### 🔐 **7. Sistema de Autenticação**
+- ✅ **Login/Register** com flip animation
+- ✅ **Roles:** Student e Instructor
+- ✅ **JWT Token** storage
+- ✅ **User profile** display
+- ✅ **Dashboard buttons** por role
+- ✅ **Logout** functionality
+
+### 🎨 **8. Design & UX**
+- ✅ **Tipografia profissional:**
+  - Headings: Libre Baskerville (Serif)
+  - Body: Space Mono (Monospace)
+- ✅ **Animações suaves:**
+  - Fade-in cards com delay
+  - Hover effects
+  - Theme transitions
+- ✅ **Toast notifications** elegantes
+- ✅ **Loading states** com spinners
+- ✅ **Empty states** informativos
+- ✅ **Sticky navbar** com blur
+- ✅ **Sticky category tabs**
+
+## 🗂️ **Estrutura de Arquivos**
+
+```
+lykos-eng/
+├── index.html              # HTML principal com Lottie
+├── css/
+│   ├── styles.css         # Estilos principais + Light Mode
+│   ├── toast.css          # Toast notifications
+│   └── auth.css           # Autenticação
+├── js/
+│   └── main.js            # JavaScript completo (sem erros TS)
+└── README.md              # Este arquivo
+```
+
+## ⚙️ **Configuração do Backend**
+
+### **1. Configurar URL da API**
+
+**Arquivo:** `js/main.js` (linha ~7)
+
+```javascript
+const API_BASE_URL = '/api';  // ⬅️ ALTERAR AQUI
+```
+
+**Exemplos:**
+```javascript
+// Node.js/Express
+const API_BASE_URL = 'http://localhost:3000/api';
+
+// Spring Boot
+const API_BASE_URL = 'http://localhost:8080/api';
+
+// .NET
+const API_BASE_URL = 'http://localhost:5000/api';
+
+// Python/FastAPI
+const API_BASE_URL = 'http://localhost:8000/api';
+```
+
+### **2. Endpoints Esperados**
+
+#### **GET /api/courses**
+Query params: `?page=1&limit=12&category=Python`
+
+```json
+{
+  "data": {
+    "courses": [
+      {
+        "id": 1,
+        "title": "Nome do Curso",
+        "instructor": "Nome do Instrutor",
+        "category": "Python",
+        "rating": 4.8,
+        "reviewCount": 1234,
+        "price": 49.99,
+        "oldPrice": 99.99,
+        "thumbnail": "url-da-imagem",
+        "badge": "Bestseller"
+      }
+    ],
+    "totalPages": 5,
+    "currentPage": 1,
+    "totalCourses": 48
+  }
+}
+```
+
+#### **GET /api/categories**
+```json
+{
+  "data": [
+    "Python",
+    "React",
+    "Node.js",
+    "Machine Learning"
+  ]
+}
+```
+
+#### **POST /auth/login**
+```json
+{
+  "email": "user@email.com",
+  "password": "senha123"
+}
+```
+
+**Resposta:**
+```json
+{
+  "data": {
+    "user": {
+      "name": "Nome do Usuário",
+      "email": "user@email.com",
+      "role": "STUDENT" // ou "INSTRUCTOR"
+    },
+    "token": "jwt-token-aqui"
+  }
+}
+```
+
+### **3. Configurar CORS (Backend)**
+
+#### **Node.js/Express:**
+```javascript
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:5500',
+  credentials: true
+}));
+```
+
+#### **Spring Boot:**
+```java
+@CrossOrigin(origins = "http://localhost:5500")
+```
+
+#### **.NET:**
+```csharp
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("http://localhost:5500")
+                       .AllowAnyHeader()
+                       .AllowAnyMethod());
+});
+```
+
+#### **Python/FastAPI:**
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5500"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+## 🎯 **Funcionalidades Implementadas**
+
+### **✅ Já Funcionando:**
+- [x] Grid de cursos 4 colunas (responsivo)
+- [x] Filtro por categoria
+- [x] Busca em tempo real
+- [x] Infinite scroll
+- [x] Load more button
+- [x] Dark/Light mode toggle
+- [x] Animações Lottie no hero
+- [x] Scroll navigation buttons
+- [x] Toast notifications
+- [x] Auth system (login/register)
+- [x] Mock data fallback
+- [x] Imagens profissionais Unsplash
+- [x] Sistema de ratings
+- [x] Badges (Bestseller, New, Top Rated)
+- [x] Loading states
+- [x] Empty states
+- [x] Responsive design
+- [x] TypeScript error-free
+
+### **📦 Mock Data Incluído:**
+- **12 cursos** de programação
+- **12 categorias** de tecnologia
+- **Imagens reais** do Unsplash
+- **Ratings** e reviews
+- **Preços** com descontos
+
+## 🚀 **Como Usar**
+
+### **Sem Backend (Mock Data):**
+1. Abra `index.html` no navegador
+2. Os cursos mock carregam automaticamente
+3. Todas as funcionalidades funcionam
+
+### **Com Backend:**
+1. Configure `API_BASE_URL` em `js/main.js`
+2. Configure CORS no backend
+3. Inicie o backend
+4. Abra `index.html` no navegador
+5. Dados reais serão carregados
+
+## 🎨 **Customização**
+
+### **Trocar Cores:**
+**Arquivo:** `css/styles.css` (linhas 10-30)
+
+```css
+:root {
+    --primary: #5e17eb;
+    --secondary: #004953;
+    /* ... */
+}
+
+:root.light {
+    --text-primary: #0d1b2a;
+    --text-secondary: #004953;
+    /* ... */
+}
+```
+
+### **Trocar Animações Lottie:**
+**Arquivo:** `js/main.js` (função `setupHeroAnimation`)
+
+```javascript
+const darkModeAnimation = 'URL_DA_SUA_ANIMACAO';
+const lightModeAnimation = 'URL_DA_SUA_ANIMACAO';
+```
+
+**Fontes de animações:**
+- [LottieFiles](https://lottiefiles.com/)
+- [Lottie Host](https://lottie.host/)
+
+### **Ajustar Cursos por Página:**
+**Arquivo:** `js/main.js` (linha ~8)
+
+```javascript
+const COURSES_PER_PAGE = 12;  // Alterar aqui
+```
+
+## 🐛 **Resolução de Problemas**
+
+### **Animação Lottie não aparece:**
+1. Verifique se o script Lottie está no HTML
+2. Abra o Console (F12) e procure por erros
+3. Verifique se `setupHeroAnimation()` está sendo chamado
+
+### **API não conecta:**
+1. Verifique `API_BASE_URL` em `js/main.js`
+2. Confirme que o backend está rodando
+3. Verifique CORS no backend
+4. Veja o Console (F12) para erros
+
+### **Dark/Light mode não muda:**
+1. Verifique se `setupThemeToggle()` está sendo chamado
+2. Limpe o localStorage: `localStorage.clear()`
+3. Recarregue a página (Ctrl + F5)
+
+### **Scroll buttons não aparecem:**
+1. Adicione mais de 4 cursos
+2. Verifique se `setupScrollNavigation()` está sendo chamado
+3. Redimensione a janela
+
+## 📊 **Comparação Antes/Depois**
+
+| Aspecto | Antes | Depois |
+|---------|-------|--------|
+| **Tema** | Química | Programação |
+| **Nome** | ChemAcademy | Lykos.eng |
+| **Cores** | Teal/Cyan | Roxo/Petróleo |
+| **Dark Mode** | ❌ | ✅ |
+| **Animações** | Básicas | Lottie Pro |
+| **Imagens** | Genéricas | Unsplash HD |
+| **Scroll Nav** | ❌ | ✅ |
+| **TypeScript** | Erros | ✅ Limpo |
+| **Mock Data** | 8 cursos | 12 cursos |
+| **Light Mode** | ❌ | ✅ Completo |
+
+## 🎓 **Tecnologias Utilizadas**
+
+- **HTML5** - Estrutura semântica
+- **CSS3** - Animations, Grid, Flexbox
+- **JavaScript ES6+** - Async/Await, Modules
+- **Lottie** - Animações vetoriais
+- **Google Fonts** - Tipografia profissional
+- **Material Symbols** - Ícones
+- **Unsplash** - Imagens de alta qualidade
+- **LocalStorage** - Persistência de dados
+
+## 📝 **Notas Importantes**
+
+1. ⚠️ **Lottie é obrigatório** - Sem ele, animações do hero não funcionam
+2. 🔒 **CORS precisa estar configurado** no backend
+3. 💾 **Mock data é automático** - Funciona sem backend
+4. 🎨 **Light mode totalmente funcional** - Todos os textos visíveis
+5. 🔄 **Theme persiste** - Salvo no localStorage
+6. 📱 **100% Responsivo** - Mobile, Tablet, Desktop
+7. ✅ **Zero erros TypeScript** - Código limpo e type-safe
+
+## 🎉 **Resultado Final**
+
+Uma plataforma de educação em programação moderna, profissional e totalmente funcional com:
+- ✨ Design elegante e animações suaves
+- 🌓 Dark/Light mode completo
+- 📚 Sistema de cursos robusto
+- 🔐 Autenticação implementada
+- 📱 Responsividade perfeita
+- ⚡ Performance otimizada
+- 🎨 UX/UI de alta qualidade
+
+---
+
+**Built with ❤️ for programming education**
+
+**Lykos.eng © 2024 - Code Your Future**

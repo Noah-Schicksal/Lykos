@@ -1,553 +1,320 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>ChemAcademy | Master the Science of Matter</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Lykos.eng | Master Programming & Technology</title>
 
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Fira+Code:wght@400&amp;display=swap"
-    rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-    rel="stylesheet" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-  <!-- Local Styles (No Frameworks) -->
-  <link rel="stylesheet" href="css/styles.css" />
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body class="molecular-bg">
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="container-xl nav-inner">
-      <div class="logo-container">
-        <div class="logo-icon">
-          <span class="material-symbols-outlined">science</span>
-        </div>
-        <span class="logo-text hidden lg:block">ChemAcademy</span>
-      </div>
 
-      <button class="btn-nav hidden md:flex">
-        Explore
-        <span class="material-symbols-outlined" style="font-size: 1.25rem">expand_more</span>
-      </button>
-
-      <!-- Search -->
-      <div class="search-bar-container hidden md:block">
-        <div class="search-icon-wrapper">
-          <span class="material-symbols-outlined" style="font-size: 1.25rem">search</span>
-        </div>
-        <input class="search-input" placeholder="Search organic mechanisms, thermodynamics..." type="text" />
-      </div>
-
-      <!-- Right Actions -->
-      <div class="nav-right-actions">
-        <div class="nav-links-xl">
-          <a href="#">Solutions</a>
-          <a href="#">Teach</a>
-        </div>
-
-        <div class="relative">
-          <button class="btn-icon">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            <span id="cart-count-badge" class="badge-count" style="display: none">0</span>
-          </button>
-        </div>
-
-        <button class="btn-icon hidden sm:block">
-          <span class="material-symbols-outlined">notifications</span>
-        </button>
-
-        <!-- User Avatar (Triggers Auth Card) -->
-        <div id="user-avatar-btn">
-          <img alt="User avatar"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Auth Flip Card -->
-  <div id="auth-card-container" class="auth-container perspective-1000">
-    <div id="auth-card" class="flip-card-inner">
-      <!-- Front: Login -->
-      <div class="auth-face">
-        <h3 class="auth-title">Welcome Back</h3>
-        <form id="login-form">
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Email / User</label>
-            <input id="login-email" type="text" class="auth-input" placeholder="user@lab.edu" />
-          </div>
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Password</label>
-            <div class="password-input-wrapper">
-              <input id="login-password" type="password" class="auth-input" placeholder="••••••••" />
-              <button type="button" class="btn-toggle-password" data-target="login-password">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container-xl nav-inner">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <span class="material-symbols-outlined">code</span>
+                </div>
+                <span class="logo-text">Lykos.eng</span>
             </div>
-          </div>
-          <button type="submit" class="btn-auth-submit">Log In</button>
-        </form>
-        <div class="auth-footer">
-          <p style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              ">
-            New Researcher?
-          </p>
-          <button id="btn-to-register" class="btn-link">
-            Create Account
-          </button>
-        </div>
-      </div>
 
-      <!-- Back: Register -->
-      <div class="auth-face auth-face-back">
-        <h3 class="auth-title">Join the Lab</h3>
-        <form id="register-form">
-          <div style="margin-bottom: 0.5rem">
-            <label class="auth-label">I am a...</label>
-            <select id="register-role" class="auth-input">
-              <option value="student">Student</option>
-              <option value="instructor">Instructor</option>
-            </select>
-          </div>
-          <div style="margin-bottom: 0.5rem">
-            <label class="auth-label">Full Name</label>
-            <input type="text" id="register-name" class="auth-input" placeholder="Marie Curie" required />
-          </div>
-          <div style="margin-bottom: 0.5rem">
-            <label class="auth-label">Email</label>
-            <input type="email" id="register-email" class="auth-input" placeholder="marie@science.org" required />
-          </div>
-          <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem">
-            <div>
-              <label class="auth-label">Password</label>
-              <div class="password-input-wrapper">
-                <input type="password" id="register-password" class="auth-input" placeholder="••••" required />
-                <button type="button" class="btn-toggle-password" data-target="register-password">
-                  <span class="material-symbols-outlined">visibility</span>
+            <button class="btn-nav">
+                Explore <span class="material-symbols-outlined" style="font-size: 1.25rem;">expand_more</span>
+            </button>
+
+            <!-- Search -->
+            <div class="search-bar-container">
+                <div class="search-icon-wrapper">
+                    <span class="material-symbols-outlined" style="font-size: 1.25rem;">search</span>
+                </div>
+                <input id="course-search" class="search-input" placeholder="Search courses: Python, React, DevOps..." type="text" />
+            </div>
+
+            <div class="nav-right-actions">
+                <div class="nav-links-xl">
+                    <a href="#">Solutions</a>
+                    <a href="#">Teach</a>
+                </div>
+
+                <div class="relative">
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span id="cart-count-badge" class="badge-count" style="display:none">0</span>
+                    </button>
+                </div>
+
+                <button class="btn-icon hidden sm:block">
+                    <span class="material-symbols-outlined">notifications</span>
                 </button>
-              </div>
+
+                <!-- User Avatar -->
+                <div id="user-avatar-btn">
+                    <img alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
+                </div>
             </div>
-            <div>
-              <label class="auth-label">Confirm</label>
-              <div class="password-input-wrapper">
-                <input type="password" id="register-confirm" class="auth-input" placeholder="••••" required />
-                <button type="button" class="btn-toggle-password" data-target="register-confirm">
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
+        </div>
+    </nav>
+
+    <!-- Category Filter Tabs -->
+    <div class="category-filter-section">
+        <div class="container-xl">
+            <div class="category-tabs" id="category-tabs">
+                <button class="category-tab active" data-category="">All Courses</button>
             </div>
-          </div>
-          <button type="submit" class="btn-auth-submit">Register</button>
-        </form>
-        <div class="auth-footer">
-          <p style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              ">
-            Already have access?
-          </p>
-          <button id="btn-to-login" class="btn-link">Back to Login</button>
         </div>
-      </div>
-
-      <!-- Logged In View (Hidden by default) -->
-      <div id="auth-logged-in" class="auth-face hidden" style="
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-          ">
-        <div class="user-avatar-large">
-          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
-        </div>
-        <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem">
-          User Name
-        </h3>
-        <p id="user-email-display" style="
-              font-size: 0.875rem;
-              color: var(--text-muted);
-              margin-bottom: 0.5rem;
-            ">
-          user@example.com
-        </p>
-        <div id="user-role-badge" class="badge-tag bg-tag-secondary" style="
-              position: relative;
-              top: auto;
-              left: auto;
-              display: inline-block;
-              margin-bottom: 2rem;
-            ">
-          Student
-        </div>
-
-        <div class="flex-col gap-2" style="width: 100%">
-          <button id="btn-my-learning" class="btn-dashboard">
-            <span class="material-symbols-outlined">school</span> My Learning
-          </button>
-          <button id="btn-instructor-dash" class="btn-dashboard hidden">
-            <span class="material-symbols-outlined">dashboard</span>
-            Instructor Dashboard
-          </button>
-
-          <button id="btn-manage-categories" class="btn-dashboard hidden">
-            <span class="material-symbols-outlined">category</span> Manage
-            Categories
-          </button>
-          <button id="btn-view-profile" class="btn-dashboard">
-            <span class="material-symbols-outlined">person</span> View Profile
-          </button>
-          <button id="btn-logout" class="btn-dashboard outline">
-            <span class="material-symbols-outlined">logout</span> Logout
-          </button>
-        </div>
-      </div>
-
-      <!-- Categories Management View (Instructors Only) -->
-      <div id="auth-categories-view" class="auth-face hidden">
-        <div style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            ">
-          <h3 class="auth-title" style="margin: 0">Manage Categories</h3>
-          <button id="btn-back-from-categories" class="btn-icon">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
-
-        <form id="category-create-form" style="margin-bottom: 1.5rem">
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">New Category Name</label>
-            <div style="display: flex; gap: 0.5rem">
-              <input id="new-category-name" type="text" class="auth-input" placeholder="e.g., Web Development" required
-                style="flex: 1" />
-              <button type="submit" class="btn-auth-submit" style="width: auto; padding: 0 1.5rem">
-                <span class="material-symbols-outlined" style="font-size: 1.25rem">add</span>
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <div>
-          <label class="auth-label" style="margin-bottom: 0.75rem; display: block">Existing Categories</label>
-          <div id="categories-list" class="categories-container">
-            <p style="color: var(--text-muted); text-align: center">
-              Loading...
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile View (View Mode) -->
-      <div id="auth-profile-view" class="auth-face hidden">
-        <div style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            ">
-          <h3 class="auth-title" style="margin: 0">My Profile</h3>
-          <button id="btn-back-from-profile" class="btn-icon">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
-
-        <div class="user-avatar-large" style="margin-bottom: 1rem">
-          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
-        </div>
-
-        <div style="text-align: left; width: 100%; margin-bottom: 1.5rem">
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Name</label>
-            <p id="profile-view-name" style="color: var(--text-primary); font-weight: 500">
-              User Name
-            </p>
-          </div>
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Email</label>
-            <p id="profile-view-email" style="color: var(--text-primary); font-weight: 500">
-              user@example.com
-            </p>
-          </div>
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Role</label>
-            <p id="profile-view-role" style="color: var(--text-primary); font-weight: 500">
-              Student
-            </p>
-          </div>
-        </div>
-
-        <div class="flex-col" style="width: 100%; gap: 0.75rem">
-          <button id="btn-edit-profile" class="btn-auth-submit">
-            <span class="material-symbols-outlined" style="font-size: 1.25rem">edit</span>
-            Edit Profile
-          </button>
-          <button id="btn-delete-account" class="btn-dashboard outline" style="color: #ef4444; border-color: #ef4444">
-            <span class="material-symbols-outlined">delete</span> Delete
-            Account
-          </button>
-        </div>
-      </div>
-
-      <!-- Profile Edit (Edit Mode) -->
-      <div id="auth-profile-edit" class="auth-face hidden">
-        <div style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            ">
-          <h3 class="auth-title" style="margin: 0">Edit Profile</h3>
-          <button id="btn-cancel-edit" class="btn-icon">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <form id="profile-edit-form">
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Name</label>
-            <input id="edit-name" type="text" class="auth-input" placeholder="Your name" />
-          </div>
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">Email</label>
-            <input id="edit-email" type="email" class="auth-input" placeholder="your@email.com" />
-          </div>
-          <div style="margin-bottom: 1rem">
-            <label class="auth-label">New Password (optional)</label>
-            <div class="password-input-wrapper">
-              <input id="edit-password" type="password" class="auth-input" placeholder="Leave empty to keep current" />
-              <button type="button" class="btn-toggle-password" data-target="edit-password">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="btn-auth-submit">Save Changes</button>
-        </form>
-      </div>
     </div>
-  </div>
 
-  <main class="main-content">
-    <!-- Hero -->
-    <header class="hero-section">
-      <div class="container-xl">
-        <div class="hero-glow"></div>
-        <h1 class="hero-title">
-          Explore Nossos <span class="text-gradient">Cursos</span>
-        </h1>
-        <p class="hero-desc">
-          Expanda seus conhecimentos com cursos ministrados por especialistas em diversas áreas.
-          Tecnologia, Ciências, Negócios e muito mais para impulsionar sua carreira.
-        </p>
-      </div>
-    </header>
+    <!-- Auth Flip Card -->
+    <div id="auth-card-container" class="auth-container perspective-1000">
+        <div id="auth-card" class="flip-card-inner">
 
-    <!-- Listing Section -->
-    <section id="courses-section" style="margin-bottom: 5rem">
-      <div class="container-xl">
-        <div class="flex justify-between items-center" style="margin-bottom: 2rem">
-          <div>
-            <h2 class="section-title">
-              <span class="material-symbols-outlined" style="color: var(--primary)">school</span>
-              Comece Sua Jornada
+            <!-- Front: Login -->
+            <div class="auth-face">
+                <h3 class="auth-title">Welcome Back</h3>
+                <form id="login-form">
+                    <div style="margin-bottom: 1rem;">
+                        <label class="auth-label">Email / User</label>
+                        <input id="login-email" type="text" class="auth-input" placeholder="user@company.com" />
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label class="auth-label">Password</label>
+                        <input id="login-password" type="password" class="auth-input" placeholder="••••••••" />
+                    </div>
+                    <button type="submit" class="btn-auth-submit">Log In</button>
+                </form>
+                <div class="auth-footer">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">New Developer?</p>
+                    <button id="btn-to-register" class="btn-link">Create Account</button>
+                </div>
+            </div>
+
+            <!-- Back: Register -->
+            <div class="auth-face auth-face-back">
+                <h3 class="auth-title">Join the Platform</h3>
+                <form id="register-form">
+                    <div style="margin-bottom: 0.5rem;">
+                        <label class="auth-label">I am a...</label>
+                        <select id="register-role" class="auth-input">
+                            <option value="student">Student</option>
+                            <option value="instructor">Instructor</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label class="auth-label">Full Name</label>
+                        <input type="text" id="register-name" class="auth-input" placeholder="John Doe" required />
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label class="auth-label">Email</label>
+                        <input type="email" id="register-email" class="auth-input" placeholder="dev@company.com" required />
+                    </div>
+                    <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <div>
+                            <label class="auth-label">Password</label>
+                            <input type="password" id="register-password" class="auth-input" placeholder="••••" required />
+                        </div>
+                        <div>
+                            <label class="auth-label">Confirm</label>
+                            <input type="password" id="register-confirm" class="auth-input" placeholder="••••" required />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-auth-submit">Register</button>
+                </form>
+                <div class="auth-footer">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">Already have access?</p>
+                    <button id="btn-to-login" class="btn-link">Back to Login</button>
+                </div>
+            </div>
+
+            <!-- Logged In View -->
+            <div id="auth-logged-in" class="auth-face hidden" style="justify-content: center; align-items: center; text-align: center;">
+                <div class="user-avatar-large">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary);">account_circle</span>
+                </div>
+                <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem;">User Name</h3>
+                <p id="user-email-display" style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">user@example.com</p>
+                <div id="user-role-badge" class="badge-tag bg-tag-secondary" style="position: relative; top: auto; left: auto; display: inline-block; margin-bottom: 2rem;">Student</div>
+
+                <div class="flex-col" style="width: 100%; gap: 1rem;">
+                    <button id="btn-my-learning" class="btn-dashboard"><span class="material-symbols-outlined">school</span> My Learning</button>
+                    <button id="btn-instructor-dash" class="btn-dashboard hidden"><span class="material-symbols-outlined">dashboard</span> Instructor Dashboard</button>
+                    <button id="btn-create-course" class="btn-dashboard hidden"><span class="material-symbols-outlined">add_circle</span> Create Course</button>
+                    <button id="btn-logout" class="btn-dashboard outline"><span class="material-symbols-outlined">logout</span> Logout</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <main class="main-content">
+        <!-- Hero -->
+        <header class="hero-header">
+            <div class="hero-glow"></div>
+            <h1 class="hero-title">Programming Mastery <span class="text-gradient">Courses</span></h1>
+            <p class="hero-desc">
+                Master the art of coding with expert-led courses. From fundamentals to advanced systems, build your tech career with hands-on projects.
+            </p>
+        </header>
+
+        <!-- Course Listing Section -->
+        <section style="margin-bottom: 5rem;">
+            <div class="flex justify-between items-center" style="margin-bottom: 2rem;">
+                <div>
+                    <h2 class="section-title">
+                        <span class="material-symbols-outlined" style="color: var(--primary);">terminal</span>
+                        <span id="section-title-text">All Courses</span>
+                    </h2>
+                    <p id="course-count" style="font-size: 0.875rem; color: var(--text-muted);">Loading courses...</p>
+                </div>
+                <!-- Scroll Navigation Arrows -->
+                <div class="flex gap-2" id="scroll-nav-container" style="display: none;">
+                    <button id="scroll-left-btn" class="scroll-nav-btn" aria-label="Scroll left">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button id="scroll-right-btn" class="scroll-nav-btn" aria-label="Scroll right">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-indicator" class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading courses...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <span class="material-symbols-outlined" style="font-size: 4rem; color: var(--text-muted);">search_off</span>
+                <h3>No courses found</h3>
+                <p>Try adjusting your filters or search terms</p>
+            </div>
+
+            <!-- Courses Grid -->
+            <div id="courses-grid" class="grid-cols-basic"></div>
+
+            <!-- Load More Button -->
+            <div id="load-more-container" class="load-more-container hidden">
+                <button id="load-more-btn" class="btn-load-more">
+                    <span class="material-symbols-outlined">expand_more</span>
+                    Load More Courses
+                </button>
+            </div>
+
+            <!-- Infinite Scroll Loading -->
+            <div id="infinite-scroll-loading" class="infinite-scroll-loading hidden">
+                <div class="loading-spinner-small"></div>
+                <p>Loading more courses...</p>
+            </div>
+            
+
+        <!-- Trusted By -->
+        <section style="margin-bottom: 2.5rem; padding: 3rem 0; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+            <h2 class="text-center" style="font-size: 0.625rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4em; color: var(--text-muted); margin-bottom: 3rem;">
+                Trusted by Leading Tech Companies
             </h2>
-            <p style="font-size: 0.875rem; color: var(--text-muted)">
-              Currículo personalizado baseado nos seus interesses de aprendizado.
-            </p>
-          </div>
-        </div>
-
-
-
-        <!-- Filters Container -->
-        <div style="
-            display: flex; 
-            justify-content: center; 
-            max-width: 800px; 
-            margin: 0 auto 2rem auto; 
-            gap: 1rem;
-            flex-wrap: wrap;
-            padding: 0 1rem;
-        ">
-          <!-- Search Filter -->
-          <div style="flex: 2; min-width: 280px; position: relative;">
-            <span class="material-symbols-outlined" style="
-              position: absolute; 
-              left: 1rem; 
-              top: 50%; 
-              transform: translateY(-50%); 
-              color: #8b949e; 
-            ">search</span>
-            <input type="text" id="course-search" placeholder="Buscar cursos..." style="
-                width: 100%;
-                padding: 0.75rem 1rem 0.75rem 3rem;
-                background-color: #0d1117;
-                border: 1px solid #30363d;
-                border-radius: 2rem;
-                color: white;
-                font-size: 1rem;
-                outline: none;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-              ">
-          </div>
-
-          <!-- Category Filter -->
-          <div style="flex: 1; min-width: 200px;">
-            <select id="category-filter" style="
-                width: 100%;
-                padding: 0.75rem 1rem;
-                background-color: #0d1117;
-                border: 1px solid #30363d;
-                border-radius: 2rem;
-                color: white;
-                font-size: 1rem;
-                outline: none;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                cursor: pointer;
-                appearance: none;
-                background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-                background-repeat: no-repeat;
-                background-position: right 1rem center;
-                background-size: 0.65em auto;
-            ">
-              <option value="" style="background-color: #0d1117; color: white;">Todas Categorias</option>
-              <option disabled style="background-color: #0d1117; color: white;">Carregando...</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Pagination Top -->
-        <div id="pagination-top" style="
-              display: flex; 
-              justify-content: center; 
-              align-items: center; 
-              gap: 1rem; 
-              margin-bottom: 2rem;
-            ">
-        </div>
-
-        <div id="courses-grid" class="grid-cols-basic">
-          <!-- Courses will be loaded here dynamically -->
-          <p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">
-            Carregando cursos...
-          </p>
-        </div>
-
-        <!-- Pagination Bottom -->
-        <div id="pagination-bottom" style="
-              display: flex; 
-              justify-content: center; 
-              align-items: center; 
-              gap: 1rem; 
-              margin-top: 3rem;
-            ">
-        </div>
-      </div>
-    </section>
-
-
-
-    <!-- Trusted By -->
-    <section style="
-          margin-bottom: 2.5rem;
-          padding: 3rem 0;
-          border-top: 1px solid var(--border-light);
-          border-bottom: 1px solid var(--border-light);
-        ">
-      <div class="container-xl">
-        <h2 class="text-center" style="
-              font-size: 0.625rem;
-              font-weight: 900;
-              text-transform: uppercase;
-              letter-spacing: 0.4em;
-              color: var(--text-muted);
-              margin-bottom: 3rem;
-            ">
-          Reconhecido por Grandes Instituições
-        </h2>
-        <div class="trusted-grid">
-          <div class="brand-item">
-            <span class="material-symbols-outlined" style="font-size: 2rem">biotech</span>
-            OXFORD LABS
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined" style="font-size: 2rem">genetics</span>
-            GENE-TECH
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined" style="font-size: 2rem">grid_view</span>
-            NANO-SCIENCE
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined" style="font-size: 2rem">hub</span>
-            MOLECULAR.AI
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <!-- Brand Col -->
-      <div class="col-span-2-lg" style="grid-column: span 5; text-align: center;">
-        <div style="
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 0.75rem;
-              margin-bottom: 2rem;
-            ">
-          <div class="logo-icon" style="width: 2.25rem; height: 2.25rem">
-            <span class="material-symbols-outlined" style="font-size: 1.25rem">science</span>
-          </div>
-          <span style="font-size: 1.25rem; font-weight: 700; color: white">ChemAcademy</span>
-        </div>
-        <p style="
-              color: var(--text-muted);
-              font-size: 0.875rem;
-              margin-bottom: 2rem;
-              max-width: 500px;
-              margin-left: auto;
-              margin-right: auto;
-            ">
-          The world's premier digital infrastructure for chemical education,
-          molecular research, and laboratory training.
-        </p>
-        <div class="flex table" style="gap: 1.25rem; margin: 0 auto; justify-content: center;">
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
-        </div>
-      </div>
-
+            <div class="trusted-grid">
+                <div class="brand-item">
+                    <span class="material-symbols-outlined" style="font-size: 2rem;">laptop_mac</span> MICROSOFT
+                </div>
+                <div class="brand-item">
+                    <span class="material-symbols-outlined" style="font-size: 2rem;">cloud</span> AWS
+                </div>
+                <div class="brand-item">
+                    <span class="material-symbols-outlined" style="font-size: 2rem;">terminal</span> GITHUB
+                </div>
+                <div class="brand-item">
+                    <span class="material-symbols-outlined" style="font-size: 2rem;">psychology</span> OPENAI
+                </div>
+                <span class="rating-count">(5,210)</span>
+           
     </div>
+</div>
 
-    <div class="footer-bottom">
-      <p>© 2024 ChemAcademy Education Inc. Molecularly Precise Education.</p>
-      <div class="flex" style="gap: 2.5rem">
-        <a href="#" style="color: inherit; text-decoration: none">Terms</a>
-        <a href="#" style="color: inherit; text-decoration: none">Privacy</a>
-        <a href="#" style="color: inherit; text-decoration: none">Security</a>
-      </div>
-    </div>
-  </footer>
 
-  <!-- Dark Mode Toggle -->
-  <button class="btn-theme-toggle" onclick="document.documentElement.classList.toggle('dark')">
-    <span class="material-symbols-outlined" style="font-weight: 700">dark_mode</span>
-  </button>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="col-span-2-lg">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem;">
+                    <div class="logo-icon" style="width: 2.25rem; height: 2.25rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem;">code</span>
+                    </div>
+                    <span style="font-size: 1.25rem; font-weight: 700; color: white;">Lykos.eng</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 2rem; max-width: 300px;">
+                    The premier platform for programming education, software development training, and tech career advancement.
+                </p>
+                <div class="flex table" style="gap: 1.25rem;">
+                    <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
+                    <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
+                    <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
+                </div>
+            </div>
 
-  <script type="module" src="js/main.js"></script>
+            <div>
+                <h4 class="footer-heading">Programs</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Career Paths</a></li>
+                    <li><a href="#">Certifications</a></li>
+                    <li><a href="#">Enterprise Training</a></li>
+                    <li><a href="#">University Partnerships</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-heading">Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Code Sandbox</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Tech Blog</a></li>
+                    <li><a href="#">API Reference</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-heading">Community</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Developer Forum</a></li>
+                    <li><a href="#">Tech Blog</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Scholarships</a></li>
+                </ul>
+            </div>
+
+            <div class="col-span-2-lg">
+                <h4 class="footer-heading">Newsletter</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.5rem;">Stay updated on the latest programming trends, frameworks, and tech innovations.</p>
+                <div class="flex-col" style="gap: 0.5rem;">
+                    <input class="newsletter-input" placeholder="developer@company.com" type="email" />
+                    <button class="btn-sub">Subscribe</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2024 Lykos.eng Education Platform. Code Your Future.</p>
+            <div class="flex" style="gap: 2.5rem;">
+                <a href="#" style="color: inherit; text-decoration: none;">Terms</a>
+                <a href="#" style="color: inherit; text-decoration: none;">Privacy</a>
+                <a href="#" style="color: inherit; text-decoration: none;">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dark/Light Mode Toggle -->
+    <button class="btn-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <span class="material-symbols-outlined dark-icon" style="font-weight: 700;">dark_mode</span>
+        <span class="material-symbols-outlined light-icon" style="font-weight: 700;">light_mode</span>
+    </button>
+
+    <script type="module" src="js/main.js"></script>
 </body>
-
 </html>
