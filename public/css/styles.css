@@ -1003,8 +1003,8 @@ p {
 .flip-card-inner {
   position: relative;
   width: 100%;
-  min-height: 550px;
-  /* Increased height to fit register form */
+  display: grid;
+  grid-template-areas: "card";
   transition: transform 0.7s;
   transform-style: preserve-3d;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -1016,23 +1016,37 @@ p {
 }
 
 .auth-face {
-  position: absolute;
-  inset: 0;
+  grid-area: card;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background-color: #121317;
   border: 1px solid var(--border-med);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  /* Reduced padding */
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(24px);
-  overflow-y: hidden;
+  z-index: 2;
+}
+
+.auth-face.hidden {
+  display: none;
+}
+
+.flip-card-inner.flipped .auth-face:not(.auth-face-back) {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .auth-face-back {
   transform: rotateY(180deg);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.flip-card-inner.flipped .auth-face-back {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .auth-title {

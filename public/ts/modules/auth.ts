@@ -203,7 +203,7 @@ export const Auth = {
       if (emailDisplay) emailDisplay.textContent = user.email;
       if (roleBadge) {
         roleBadge.textContent =
-          userRole === 'instructor' ? 'Instructor' : 'Student';
+          userRole === 'instructor' ? 'Instrutor' : 'Aluno';
         roleBadge.className = `badge-tag ${userRole === 'instructor' ? 'bg-tag-primary' : 'bg-tag-secondary'}`;
         roleBadge.style.display = 'inline-block';
         roleBadge.style.marginBottom = '2rem';
@@ -262,7 +262,7 @@ export const Auth = {
       if (emailEl) emailEl.textContent = user.email;
       if (roleEl)
         roleEl.textContent =
-          user.role === 'INSTRUCTOR' ? 'Instructor' : 'Student';
+          user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
     }
   },
 

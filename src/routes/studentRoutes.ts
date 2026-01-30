@@ -14,8 +14,8 @@ studentRoutes.use(authMiddleware);
 // Mas se quisermos restringir a ROLE, usaríamos roleMiddleware(['STUDENT']).
 // O prompt diz "Acesso: Aluno". Vamos restringir.
 
-studentRoutes.get('/my-courses', roleMiddleware(['STUDENT']), (req, res, next) => studentController.listMyCourses(req, res, next));
-studentRoutes.get('/my-courses/:id', roleMiddleware(['STUDENT']), (req, res, next) => studentController.getCourseDetails(req, res, next));
-studentRoutes.post('/courses/:id/certificate', roleMiddleware(['STUDENT']), (req, res, next) => studentController.issueCertificate(req, res, next));
+studentRoutes.get('/my-courses', roleMiddleware(['STUDENT', 'INSTRUCTOR']), (req, res, next) => studentController.listMyCourses(req, res, next));
+studentRoutes.get('/my-courses/:id', roleMiddleware(['STUDENT', 'INSTRUCTOR']), (req, res, next) => studentController.getCourseDetails(req, res, next));
+studentRoutes.post('/courses/:id/certificate', roleMiddleware(['STUDENT', 'INSTRUCTOR']), (req, res, next) => studentController.issueCertificate(req, res, next));
 
 export default studentRoutes;
