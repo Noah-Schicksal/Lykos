@@ -148,7 +148,7 @@ export class ClassController {
             const path = require('path');
             const fullPath = path.resolve(process.cwd(), materialPath);
 
-            // Verifica se o arquivo existe antes de enviar (embora o service já verifique se a URL existe, o arquivo pode ter sido deletado)
+            // Verifica se o arquivo existe antes de enviar
             const fs = require('fs');
             if (!fs.existsSync(fullPath)) {
                 return ApiResponse.notFound(res, 'Arquivo físico não encontrado');

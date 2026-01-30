@@ -72,7 +72,8 @@ export class CourseController {
     async show(req: Request, res: Response) {
         try {
             const id = req.params.id as string;
-            const course = await this.courseService.getById(id);
+            const userId = (req as any).user?.id; // Optional auth for progress check
+            const course = await this.courseService.getById(id, userId);
             return ApiResponse.success(res, course);
         } catch (error) {
             if (error instanceof ApplicationError) {

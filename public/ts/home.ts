@@ -218,36 +218,42 @@ export const Home = {
 
       const categoryName = course.category?.name || 'Sem Categoria';
 
-      card.innerHTML = `
-        <div class="card-img-container">
-          <img
-            alt="${course.title}"
-            class="card-img"
-            src="${imageUrl}"
-            onerror="this.onerror=null;this.src='https://placehold.co/600x400/1e293b/cbd5e1?text=Erro+Imagem';"
-          />
-          <div class="badge-tag bg-tag-primary">${categoryName}</div>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title" title="${course.title}">
-            ${course.title}
-          </h3>
-          
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">person</span>
-            ${course.instructor?.name || 'Instrutor Desconhecido'}
-          </div>
+      // Check enrollment status (requires matching backend support)
+      // Assuming course object now has isEnrolled and progress from updated backend
+      const isEnrolled = (course as any).isEnrolled;
+      const progress = (course as any).progress || 0;
 
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span>
-            ${(course.maxStudents === undefined || course.maxStudents === null)
-          ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas'
-          : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`
-        }
-          </div>
-          
-          <div class="price-row" style="margin-top: auto; padding-top: 0.5rem;">
-            <span class="price-main" style="font-size: 1rem;">${priceFormatted}</span>
+      let actionButtonHTML = '';
+      if (isEnrolled) {
+        actionButtonHTML = `
+            <a 
+              class="btn-icon btn-play-course" 
+              href="player.html?courseId=${course.id}"
+              style="
+                background: #10b981; 
+                color: white;
+                border-radius: 0.5rem; 
+                width: auto; 
+                height: 2rem; 
+                padding: 0 1rem;
+                display: flex; 
+                align-items: center; 
+                justify-content: center;
+                gap: 0.5rem;
+                margin-left: auto;
+                font-weight: bold;
+                font-size: 0.8rem;
+                text-decoration: none;
+              "
+              title="Continuar Estudo"
+              onclick="event.stopPropagation();"
+            >
+              <span class="material-symbols-outlined" style="font-size: 1.25rem;">play_circle</span>
+              <span>Assistir</span>
+            </a>
+          `;
+      } else {
+        actionButtonHTML = `
             <button 
               class="btn-icon btn-add-cart" 
               data-course-id="${course.id}"
@@ -266,6 +272,52 @@ export const Home = {
             >
               <span class="material-symbols-outlined" style="font-size: 1.25rem;">shopping_cart</span>
             </button>
+          `;
+      }
+
+      // Progress Bar HTML (only if enrolled)
+      let progressHTML = '';
+      if (isEnrolled) {
+        progressHTML = `
+            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 0.5rem; overflow: hidden;">
+                <div style="width: ${progress}%; height: 100%; background: #10b981;"></div>
+            </div>
+            <div style="font-size: 0.7rem; color: #10b981; margin-top: 2px; text-align: right;">${progress}% Concluído</div>
+          `;
+      }
+
+      card.innerHTML = `
+        <div class="card-img-container">
+          <img
+            alt="${course.title}"
+            class="card-img"
+            src="${imageUrl}"
+            onerror="this.onerror=null;this.src='https://placehold.co/600x400/1e293b/cbd5e1?text=Erro+Imagem';"
+          />
+          <div class="badge-tag bg-tag-primary">${categoryName}</div>
+          ${isEnrolled ? '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">MATRICULADO</div>' : ''}
+        </div>
+        <div class="card-body">
+          <h3 class="card-title" title="${course.title}">
+            ${course.title}
+          </h3>
+          
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">person</span>
+            ${course.instructor?.name || 'Instrutor Desconhecido'}
+          </div>
+
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+             ${isEnrolled ?
+          `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>` :
+          `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${(course.maxStudents === undefined || course.maxStudents === null) ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
+        }
+          </div>
+          
+          <div class="price-row" style="margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
+             ${!isEnrolled ? `<span class="price-main" style="font-size: 1rem;">${priceFormatted}</span>` : ''}
+             ${actionButtonHTML}
+             ${progressHTML}
           </div>
         </div>
       `;

@@ -127,5 +127,13 @@ export const initializeDatabase = () => {
     );
     `);
 
+    // Migração para class_progress.completed_at
+    try {
+        db.exec("ALTER TABLE class_progress ADD COLUMN completed_at DATETIME DEFAULT CURRENT_TIMESTAMP");
+    } catch (error: any) {
+        if (!error.message.includes("duplicate column name")) {
+            // console.error("Erro ao migrar tabela class_progress (completed_at):", error);
+        }
+    }
 
 };

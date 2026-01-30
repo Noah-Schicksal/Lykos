@@ -134,10 +134,10 @@ function renderCourses(courses: any[]) {
                         <div class="w-full h-1.5 bg-white/5 rounded-full mb-6 overflow-hidden">
                             <div class="h-full bg-primary shadow-primary-md transition-all duration-1000" style="width: ${progress}%"></div>
                         </div>
-                        <button onclick="window.location.href='coursePlayer.html?id=${course.id}'" class="w-full bg-white/5 text-primary py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-black transition-all">
-                            <span>${progress === 100 ? 'Revisar' : 'Continuar Estudando'}</span>
+                        <a href="player.html?courseId=${course.id}" class="w-full bg-white/5 text-primary py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-black transition-all" style="text-decoration: none;">
+                            <span>${progress === 100 ? 'Revisar Conteúdo' : 'Continuar Estudo'}</span>
                             <span class="material-symbols-outlined text-sm">${progress === 100 ? 'verified' : 'play_circle'}</span>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

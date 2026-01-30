@@ -29,6 +29,8 @@ app.use(
                 ],
                 fontSrc: ["'self'", 'https://fonts.gstatic.com'],
                 connectSrc: ["'self'"],
+                frameSrc: ["'self'", 'https://www.youtube.com', 'https://youtube.com', 'https://player.vimeo.com', 'https://vimeo.com'],
+                mediaSrc: ["'self'", 'data:', 'blob:'],
             },
         },
     }),

@@ -38,8 +38,8 @@ export class CourseService {
     }
 
     // busca detalhes de um curso pelo id
-    async getById(id: string): Promise<any> {
-        const course = this.courseRepository.findById(id);
+    async getById(id: string, userId?: string): Promise<any> {
+        const course = this.courseRepository.findById(id, userId);
         if (!course) {
             throw new ApplicationError('Curso não encontrado');
         }
