@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Auth.updateAuthUI();
   Home.init();
 
-  console.log('ChemAcademy App Initialized');
+  console.log('Lykos App Initialized');
 
   // 1. Initialize Cart
   Cart.updateBadge();
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'studentDashboard.html';
+      window.location.href = 'student.html';
     });
   }
 

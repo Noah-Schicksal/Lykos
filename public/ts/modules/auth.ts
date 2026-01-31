@@ -48,8 +48,9 @@ export const Auth = {
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
 
-        const authContainer = document.getElementById('auth-card-container');
-        if (authContainer) authContainer.classList.remove('show');
+        // Mantém o card aberto para ver a transição para o estado logado
+        // const authContainer = document.getElementById('auth-card-container');
+        // if (authContainer) authContainer.classList.remove('show');
       } else {
         throw new Error('Resposta de login inválida');
       }
@@ -182,10 +183,11 @@ export const Auth = {
     ) as HTMLElement;
     const userAvatarBtn = document.getElementById('user-avatar-btn');
 
-    if (user && loggedInFace && loginFace && registerFace) {
+    if (user && loggedInFace && loginFace) {
       // LOGGED IN STATE
+      console.log('[Auth] Updating UI to Logged In state');
       loginFace.classList.add('hidden');
-      registerFace.classList.add('hidden');
+      if (registerFace) registerFace.classList.add('hidden');
       loggedInFace.classList.remove('hidden');
       if (profileViewFace) profileViewFace.classList.add('hidden');
       if (profileEditFace) profileEditFace.classList.add('hidden');

@@ -1,880 +1,549 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Lykos | Plataforma de Ensino Online</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lykos | Master Programming & Technology</title>
 
-    <!-- Local Styles (No Frameworks) -->
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet">
 
-  <body class="molecular-bg">
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="container-xl nav-inner">
-        <div class="logo-container">
-          <div class="logo-icon">
-            <span class="material-symbols-outlined">school</span>
-          </div>
-          <span class="logo-text hidden lg:block">Lykos</span>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">code</span>
         </div>
+        <span class="logo-text">Lykos</span>
+      </div>
 
-        <button class="btn-nav hidden md:flex">
-          Explore
-          <span class="material-symbols-outlined" style="font-size: 1.25rem"
-            >expand_more</span
-          >
-        </button>
+      <!-- Explore removed per user request -->
 
-        <!-- Search -->
-        <div class="search-bar-container hidden md:block">
-          <div class="search-icon-wrapper">
-            <span class="material-symbols-outlined" style="font-size: 1.25rem"
-              >search</span
-            >
-          </div>
-          <input
-            class="search-input"
-            placeholder="Buscar cursos, tópicos..."
-            type="text"
-          />
-        </div>
 
-        <!-- Right Actions -->
-        <div class="nav-right-actions">
-          <div class="nav-links-xl">
-            <a href="#">Soluções</a>
-            <a href="#">Ensinar</a>
-          </div>
+      <!-- Right Actions -->
+      <div class="nav-actions">
+        <!-- Solutions and Teach removed per user request -->
 
-          <div class="relative">
-            <button id="cart-toggle-btn" class="btn-icon">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span
-                id="cart-count-badge"
-                class="badge-count"
-                style="display: none"
-                >0</span
-              >
-            </button>
-          </div>
-
-          <button class="btn-icon hidden sm:block">
-            <span class="material-symbols-outlined">notifications</span>
+        <div class="cart-wrapper">
+          <button id="cart-toggle-btn" class="btn-icon">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span id="cart-count-badge" class="badge-count">0</span>
           </button>
-
-          <!-- User Avatar (Triggers Auth Card) -->
-          <div id="user-avatar-btn">
-            <img
-              alt="User avatar"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ"
-            />
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Auth Flip Card -->
-    <div id="auth-card-container" class="auth-container perspective-1000">
-      <div id="auth-card" class="flip-card-inner">
-        <!-- Front: Login -->
-        <div class="auth-face">
-          <h3 class="auth-title">Bem-vindo de Volta</h3>
-          <form id="login-form">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Email / Usuário</label>
-              <input
-                id="login-email"
-                type="text"
-                class="auth-input"
-                placeholder="usuario@lab.edu"
-              />
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Senha</label>
-              <div class="password-input-wrapper">
-                <input
-                  id="login-password"
-                  type="password"
-                  class="auth-input"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  data-target="login-password"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">Entrar</button>
-          </form>
-          <div class="auth-footer">
-            <p
-              style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              "
-            >
-              Novo Pesquisador?
-            </p>
-            <button id="btn-to-register" class="btn-link">Criar Conta</button>
-          </div>
         </div>
 
-        <!-- Back: Register -->
-        <div class="auth-face auth-face-back">
-          <h3 class="auth-title">Junte-se ao Laboratório</h3>
-          <form id="register-form">
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Eu sou um...</label>
-              <select id="register-role" class="auth-input">
-                <option value="student">Aluno</option>
-                <option value="instructor">Instrutor</option>
-              </select>
-            </div>
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Nome Completo</label>
-              <input
-                type="text"
-                id="register-name"
-                class="auth-input"
-                placeholder="Marie Curie"
-                required
-              />
-            </div>
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Email</label>
-              <input
-                type="email"
-                id="register-email"
-                class="auth-input"
-                placeholder="usuario@exemplo.com"
-                required
-              />
-            </div>
-            <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem">
-              <div>
-                <label class="auth-label">Senha</label>
-                <div class="password-input-wrapper">
-                  <input
-                    type="password"
-                    id="register-password"
-                    class="auth-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-password"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label class="auth-label">Confirmar</label>
-                <div class="password-input-wrapper">
-                  <input
-                    type="password"
-                    id="register-confirm"
-                    class="auth-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-confirm"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">Registrar</button>
-          </form>
-          <div class="auth-footer">
-            <p
-              style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              "
-            >
-              Já tem acesso?
-            </p>
-            <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
-          </div>
-        </div>
-
-        <!-- Logged In View (Hidden by default) -->
-        <div
-          id="auth-logged-in"
-          class="auth-face hidden"
-          style="
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-          "
-        >
-          <div class="user-avatar-large">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-          <h3
-            id="user-name-display"
-            class="auth-title"
-            style="margin-bottom: 0.25rem"
-          >
-            Nome do Usuário
-          </h3>
-          <p
-            id="user-email-display"
-            style="
-              font-size: 0.875rem;
-              color: var(--text-muted);
-              margin-bottom: 0.5rem;
-            "
-          >
-            user@example.com
-          </p>
-          <div
-            id="user-role-badge"
-            class="badge-tag bg-tag-secondary"
-            style="
-              position: relative;
-              top: auto;
-              left: auto;
-              display: inline-block;
-              margin-bottom: 2rem;
-            "
-          >
-            Aluno
-          </div>
-
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-my-learning" class="btn-dashboard">
-              <span class="material-symbols-outlined">school</span> Meus Cursos
-            </button>
-            <button id="btn-instructor-dash" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">dashboard</span>
-              Painel do Instrutor
-            </button>
-
-            <button id="btn-manage-categories" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">category</span> Gerenciar
-              Categorias
-            </button>
-            <button id="btn-view-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">person</span> Ver Perfil
-            </button>
-            <button id="btn-logout" class="btn-dashboard outline">
-              <span class="material-symbols-outlined">logout</span> Sair
-            </button>
-          </div>
-        </div>
-
-        <!-- Categories Management View (Instructors Only) -->
-        <div id="auth-categories-view" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Gerenciar Categorias</h3>
-            <button id="btn-back-from-categories" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-
-          <form id="category-create-form" style="margin-bottom: 1.5rem">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Nome da Nova Categoria</label>
-              <div style="display: flex; gap: 0.5rem">
-                <input
-                  id="new-category-name"
-                  type="text"
-                  class="auth-input"
-                  placeholder="ex: Desenvolvimento Web"
-                  required
-                  style="flex: 1"
-                />
-                <button
-                  type="submit"
-                  class="btn-auth-submit"
-                  style="width: auto; padding: 0 1.5rem"
-                >
-                  <span
-                    class="material-symbols-outlined"
-                    style="font-size: 1.25rem"
-                    >add</span
-                  >
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <div>
-            <label
-              class="auth-label"
-              style="margin-bottom: 0.75rem; display: block"
-              >Categorias Existentes</label
-            >
-            <div id="categories-list" class="categories-container">
-              <p style="color: var(--text-muted); text-align: center">
-                Carregando...
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Profile View (View Mode) -->
-        <div id="auth-profile-view" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Meu Perfil</h3>
-            <button id="btn-back-from-profile" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-
-          <div class="user-avatar-large" style="margin-bottom: 1rem">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-
-          <div style="text-align: left; width: 100%; margin-bottom: 1.5rem">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Nome</label>
-              <p
-                id="profile-view-name"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                Nome do Usuário
-              </p>
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Email</label>
-              <p
-                id="profile-view-email"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                user@example.com
-              </p>
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Cargo/Função</label>
-              <p
-                id="profile-view-role"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                Aluno
-              </p>
-            </div>
-          </div>
-
-          <div class="flex-col" style="width: 100%; gap: 0.75rem">
-            <button id="btn-edit-profile" class="btn-auth-submit">
-              <span class="material-symbols-outlined" style="font-size: 1.25rem"
-                >edit</span
-              >
-              Editar Perfil
-            </button>
-            <button
-              id="btn-delete-account"
-              class="btn-dashboard outline"
-              style="color: #ef4444; border-color: #ef4444"
-            >
-              <span class="material-symbols-outlined">delete</span> Excluir
-              Conta
-            </button>
-          </div>
-        </div>
-
-        <!-- Profile Edit (Edit Mode) -->
-        <div id="auth-profile-edit" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Editar Perfil</h3>
-            <button id="btn-cancel-edit" class="btn-icon">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <form id="profile-edit-form">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Nome</label>
-              <input
-                id="edit-name"
-                type="text"
-                class="auth-input"
-                placeholder="Seu nome"
-              />
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Email</label>
-              <input
-                id="edit-email"
-                type="email"
-                class="auth-input"
-                placeholder="your@email.com"
-              />
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Nova Senha (opcional)</label>
-              <div class="password-input-wrapper">
-                <input
-                  id="edit-password"
-                  type="password"
-                  class="auth-input"
-                  placeholder="Deixe em branco para manter a atual"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  data-target="edit-password"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">
-              Salvar Alterações
-            </button>
-          </form>
+        <!-- User Avatar (Triggers Auth Card) -->
+        <div id="user-avatar-btn" class="user-avatar">
+          <img alt="User avatar"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ">
         </div>
       </div>
     </div>
+  </nav>
 
-    <!-- Cart Modal -->
-    <div id="cart-modal" class="cart-modal-container">
-      <div class="cart-header">
-        <h3 class="cart-title">Carrinho de Compras</h3>
-        <button id="close-cart-btn" class="btn-icon">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div id="cart-items-list" class="cart-body">
-        <!-- Items will be loaded here -->
-        <div class="cart-empty-msg">Seu carrinho está vazio.</div>
-      </div>
-      <div class="cart-footer">
-        <div class="cart-total-row">
-          <span>Total</span>
-          <span id="cart-total-price">R$ 0,00</span>
-        </div>
-        <button id="btn-cart-checkout" class="btn-checkout" disabled>
-          Finalizar Compra
-        </button>
-      </div>
-    </div>
-
-    <main class="main-content">
-      <!-- Hero -->
-      <header class="hero-section">
-        <div class="container-xl">
-          <div class="hero-glow"></div>
-          <h1 class="hero-title">
-            Explore Nossos <span class="text-gradient">Cursos</span>
-          </h1>
-          <p class="hero-desc">
-            Expanda seus conhecimentos com cursos ministrados por especialistas
-            em diversas áreas. Tecnologia, Ciências, Negócios e muito mais para
-            impulsionar sua carreira.
-          </p>
-        </div>
-      </header>
-
-      <!-- Listing Section -->
-      <section id="courses-section" style="margin-bottom: 5rem">
-        <div class="container-xl">
-          <div
-            class="flex justify-between items-center"
-            style="margin-bottom: 2rem"
-          >
-            <div>
-              <h2 class="section-title">
-                <span
-                  class="material-symbols-outlined"
-                  style="color: var(--primary)"
-                  >school</span
-                >
-                Comece Sua Jornada
-              </h2>
-              <p style="font-size: 0.875rem; color: var(--text-muted)">
-                Currículo personalizado baseado nos seus interesses de
-                aprendizado.
-              </p>
-            </div>
+  <!-- Auth Flip Card -->
+  <div id="auth-card-container" class="auth-container">
+    <div id="auth-card" class="auth-card">
+      <!-- Front: Login -->
+      <div class="auth-face auth-login">
+        <h3 class="auth-title">Bem-vindo de Volta</h3>
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label">Email / Usuário</label>
+            <input id="login-email" type="text" class="form-input" placeholder="usuario@empresa.com">
           </div>
-
-          <!-- Filters Container -->
-          <div
-            style="
-              display: flex;
-              justify-content: center;
-              max-width: 800px;
-              margin: 0 auto 2rem auto;
-              gap: 1rem;
-              flex-wrap: wrap;
-              padding: 0 1rem;
-            "
-          >
-            <!-- Search Filter -->
-            <div style="flex: 2; min-width: 280px; position: relative">
-              <span
-                class="material-symbols-outlined"
-                style="
-                  position: absolute;
-                  left: 1rem;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  color: #8b949e;
-                "
-                >search</span
-              >
-              <input
-                type="text"
-                id="course-search"
-                placeholder="Buscar cursos..."
-                style="
-                  width: 100%;
-                  padding: 0.75rem 1rem 0.75rem 3rem;
-                  background-color: #0d1117;
-                  border: 1px solid #30363d;
-                  border-radius: 2rem;
-                  color: white;
-                  font-size: 1rem;
-                  outline: none;
-                  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                "
-              />
-            </div>
-
-            <!-- Category Filter -->
-            <div style="flex: 1; min-width: 200px">
-              <select
-                id="category-filter"
-                style="
-                  width: 100%;
-                  padding: 0.75rem 1rem;
-                  background-color: #0d1117;
-                  border: 1px solid #30363d;
-                  border-radius: 2rem;
-                  color: white;
-                  font-size: 1rem;
-                  outline: none;
-                  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-                  cursor: pointer;
-                  appearance: none;
-                  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-                  background-repeat: no-repeat;
-                  background-position: right 1rem center;
-                  background-size: 0.65em auto;
-                "
-              >
-                <option
-                  value=""
-                  style="background-color: #0d1117; color: white"
-                >
-                  Todas Categorias
-                </option>
-                <option
-                  disabled
-                  style="background-color: #0d1117; color: white"
-                >
-                  Carregando...
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Pagination Top -->
-          <div
-            id="pagination-top"
-            style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              gap: 1rem;
-              margin-bottom: 2rem;
-            "
-          ></div>
-
-          <div id="courses-grid" class="grid-cols-basic">
-            <!-- Courses will be loaded here dynamically -->
-            <p
-              style="
-                grid-column: 1 / -1;
-                text-align: center;
-                color: var(--text-muted);
-                padding: 2rem;
-              "
-            >
-              Carregando cursos...
-            </p>
-          </div>
-
-          <!-- Pagination Bottom -->
-          <div
-            id="pagination-bottom"
-            style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              gap: 1rem;
-              margin-top: 3rem;
-            "
-          ></div>
-        </div>
-      </section>
-
-      <!-- Trusted By -->
-      <section
-        style="
-          margin-bottom: 2.5rem;
-          padding: 3rem 0;
-          border-top: 1px solid var(--border-light);
-          border-bottom: 1px solid var(--border-light);
-        "
-      >
-        <div class="container-xl">
-          <h2
-            class="text-center"
-            style="
-              font-size: 0.625rem;
-              font-weight: 900;
-              text-transform: uppercase;
-              letter-spacing: 0.4em;
-              color: var(--text-muted);
-              margin-bottom: 3rem;
-            "
-          >
-            Reconhecido por Grandes Instituições
-          </h2>
-          <div class="trusted-grid">
-            <div class="brand-item">
-              <span class="material-symbols-outlined" style="font-size: 2rem"
-                >biotech</span
-              >
-              OXFORD LABS
-            </div>
-            <div class="brand-item">
-              <span class="material-symbols-outlined" style="font-size: 2rem"
-                >genetics</span
-              >
-              GENE-TECH
-            </div>
-            <div class="brand-item">
-              <span class="material-symbols-outlined" style="font-size: 2rem"
-                >grid_view</span
-              >
-              TECH-EDU
-            </div>
-            <div class="brand-item">
-              <span class="material-symbols-outlined" style="font-size: 2rem"
-                >hub</span
-              >
-              MOLECULAR.AI
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="footer-grid">
-        <!-- Brand Col -->
-        <div
-          class="col-span-2-lg"
-          style="grid-column: span 5; text-align: center"
-        >
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 0.75rem;
-              margin-bottom: 2rem;
-            "
-          >
-            <div class="logo-icon" style="width: 2.25rem; height: 2.25rem">
-              <span class="material-symbols-outlined" style="font-size: 1.25rem"
-                >school</span
-              >
-            </div>
-            <span style="font-size: 1.25rem; font-weight: 700; color: white"
-              >Lykos</span
-            >
-          </div>
-          <p
-            style="
-              color: var(--text-muted);
-              font-size: 0.875rem;
-              margin-bottom: 2rem;
-              max-width: 500px;
-              margin-left: auto;
-              margin-right: auto;
-            "
-          >
-            Plataforma de ensino online de elite mundial, proporcionando
-            educação de excelência e treinamento avançado.
-          </p>
-          <div
-            class="flex table"
-            style="gap: 1.25rem; margin: 0 auto; justify-content: center"
-          >
-            <a href="#" class="btn-icon"
-              ><span class="material-symbols-outlined">public</span></a
-            >
-            <a href="#" class="btn-icon"
-              ><span class="material-symbols-outlined">mail</span></a
-            >
-            <a href="#" class="btn-icon"
-              ><span class="material-symbols-outlined">forum</span></a
-            >
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>© 2024 Lykos Education Inc. Educação de Excelência.</p>
-        <div class="flex" style="gap: 2.5rem">
-          <a href="#" style="color: inherit; text-decoration: none">Termos</a>
-          <a href="#" style="color: inherit; text-decoration: none"
-            >Privacidade</a
-          >
-          <a href="#" style="color: inherit; text-decoration: none"
-            >Segurança</a
-          >
-        </div>
-      </div>
-    </footer>
-
-    <!-- Dark Mode Toggle -->
-    <button
-      class="btn-theme-toggle"
-      onclick="document.documentElement.classList.toggle('dark')"
-    >
-      <span class="material-symbols-outlined" style="font-weight: 700"
-        >dark_mode</span
-      >
-    </button>
-
-    <!-- Course Detail Modal -->
-    <div id="course-modal" class="modal-overlay hidden">
-      <div class="modal-content glass-card">
-        <button id="close-modal" class="btn-close-modal">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-
-        <div class="modal-body-grid">
-          <!-- Left: Image & Info -->
-          <div class="modal-info-col">
-            <div class="modal-img-container">
-              <img id="modal-course-img" src="" alt="Course Cover" />
-              <div id="modal-course-category" class="badge-tag bg-tag-primary">
-                Category
-              </div>
-            </div>
-
-            <div class="modal-meta-box">
-              <div class="modal-meta-item">
-                <span class="material-symbols-outlined">person</span>
-                <div>
-                  <span class="label">Instrutor</span>
-                  <span id="modal-course-instructor" class="val">Name</span>
-                </div>
-              </div>
-              <div class="modal-meta-item">
-                <span class="material-symbols-outlined">calendar_today</span>
-                <div>
-                  <span class="label">Publicado em</span>
-                  <span id="modal-course-date" class="val">Date</span>
-                </div>
-              </div>
-              <div class="modal-meta-item">
-                <span class="material-symbols-outlined">group</span>
-                <div>
-                  <span class="label">Vagas</span>
-                  <span id="modal-course-slots" class="val">Unlimited</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Right: Content & Modules -->
-          <div class="modal-content-col">
-            <h2 id="modal-course-title" class="modal-course-title">
-              Course Title
-            </h2>
-            <p id="modal-course-desc" class="modal-course-desc">
-              Course Description goes here...
-            </p>
-
-            <div class="modules-section">
-              <h3 class="modules-title">
-                <span class="material-symbols-outlined">list_alt</span>
-                Grade Curricular
-              </h3>
-              <div id="modal-modules-list" class="modules-list">
-                <!-- Modules loaded here -->
-                <p class="loading-msg">Carregando módulos...</p>
-              </div>
-            </div>
-
-            <div class="modal-footer-actions">
-              <div class="modal-price-box">
-                <span class="price-label">Preço Total</span>
-                <span id="modal-course-price" class="price-val">R$ 0,00</span>
-              </div>
-              <button id="modal-add-cart-btn" class="btn-cta-primary">
-                <span class="material-symbols-outlined">shopping_cart</span>
-                Adicionar ao Carrinho
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <div class="password-wrapper">
+              <input id="login-password" type="password" class="form-input" placeholder="••••••••">
+              <button type="button" class="btn-toggle-password" data-target="login-password">
+                <span class="material-symbols-outlined">visibility</span>
               </button>
             </div>
           </div>
+          <button type="submit" class="btn-submit">Entrar</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Novo Desenvolvedor?</p>
+          <button id="btn-to-register" class="btn-link">Criar Conta</button>
+        </div>
+      </div>
+
+      <!-- Back: Register -->
+      <div class="auth-face auth-register auth-face-back">
+        <h3 class="auth-title">Junte-se ao Lab</h3>
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label">Eu sou um...</label>
+            <select id="register-role" class="form-input">
+              <option value="student">Estudante</option>
+              <option value="instructor">Instrutor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="register-name" class="form-input" placeholder="Maria Silva" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="register-email" class="form-input" placeholder="maria@email.com" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Senha</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password" class="form-input" placeholder="••••" required>
+                <button type="button" class="btn-toggle-password" data-target="register-password">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-confirm" class="form-input" placeholder="••••" required>
+                <button type="button" class="btn-toggle-password" data-target="register-confirm">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Registrar</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Já tem acesso?</p>
+          <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
+        </div>
+      </div>
+
+      <!-- Logged In View -->
+      <div id="auth-logged-in" class="auth-face auth-logged-in hidden">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
+        <p id="user-email-display" class="user-email">usuario@exemplo.com</p>
+        <div id="user-role-badge" class="role-badge">Estudante</div>
+
+        <div class="dashboard-actions">
+          <button id="btn-my-learning" class="btn-dashboard">
+            <span class="material-symbols-outlined">school</span> Meu Aprendizado
+          </button>
+          <button id="btn-instructor-dash" class="btn-dashboard">
+            <span class="material-symbols-outlined">dashboard</span> Painel do Instrutor
+          </button>
+          <button id="btn-manage-categories" class="btn-dashboard">
+            <span class="material-symbols-outlined">category</span> Gerenciar Categorias
+          </button>
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> Ver Perfil
+          </button>
+          <button id="btn-logout" class="btn-dashboard btn-logout">
+            <span class="material-symbols-outlined">logout</span> Sair
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Management View -->
+      <div id="auth-categories-view" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Gerenciar Categorias</h3>
+          <button id="btn-back-from-categories" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <form id="category-create-form" class="category-form">
+          <div class="form-group">
+            <label class="form-label">Nome da Nova Categoria</label>
+            <div class="category-input-group">
+              <input id="new-category-name" type="text" class="form-input" placeholder="ex: Desenvolvimento Web" required>
+              <button type="submit" class="btn-add">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div>
+          <label class="form-label">Categorias Existentes</label>
+          <div id="categories-list" class="categories-list">
+            <p class="loading-text">Carregando...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="auth-profile-view" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Meu Perfil</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Nome</label>
+            <p id="profile-view-name" class="info-value">Nome do Usuário</p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-view-email" class="info-value">usuario@exemplo.com</p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Função</label>
+            <p id="profile-view-role" class="info-value">Estudante</p>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
+            <span class="material-symbols-outlined">edit</span> Editar Perfil
+          </button>
+          <button id="btn-delete-account" class="btn-delete">
+            <span class="material-symbols-outlined">delete</span> Excluir Conta
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Editar Perfil</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="seu@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Senha (opcional)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="Deixe vazio para manter a atual">
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-container">
+        <div class="hero-glow"></div>
+        <h1 class="hero-title">
+          Maestria em Programação <span class="text-gradient">Cursos</span>
+        </h1>
+        <p class="hero-description">
+          Domine a arte da programação com cursos liderados por especialistas. De fundamentos a sistemas avançados, construa sua
+          carreira em tecnologia com projetos práticos.
+        </p>
+      </div>
+    </header>
+
+    <!-- Courses Section -->
+    <section id="courses-section" class="courses-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">terminal</span>
+              Todos os Cursos
+            </h2>
+            <p id="courses-subtitle" class="section-subtitle">Carregando cursos...</p>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-container">
+          <div class="search-filter">
+            <span class="material-symbols-outlined">search</span>
+            <input id="main-search-input" placeholder="Buscar cursos: Python, React, DevOps..." type="text">
+          </div>
+
+          <div class="category-filter">
+            <select id="category-filter">
+              <option value="">Todas Categorias</option>
+              <option disabled>Carregando...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pagination Top -->
+        <div id="pagination-top" class="pagination"></div>
+
+        <!-- Courses Grid -->
+        <div id="courses-grid" class="courses-grid">
+          <p class="loading-message">Carregando cursos...</p>
+        </div>
+
+        <!-- Pagination Bottom -->
+        <div id="pagination-bottom" class="pagination"></div>
+      </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="trusted-section">
+      <div class="trusted-container">
+        <h2 class="trusted-title">Confiado por Empresas Líderes em Tecnologia</h2>
+        <div class="trusted-grid">
+          <div class="brand-item">
+            <span class="material-symbols-outlined">cloud</span>
+            GOOGLE CLOUD
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">terminal</span>
+            MICROSOFT
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">code</span>
+            META DEV
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">developer_mode</span>
+            AWS EDUCATE
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-icon">
+            <span class="material-symbols-outlined">code</span>
+          </div>
+          <span class="brand-name">Lykos.eng</span>
+        </div>
+        <p class="footer-description">
+          A principal infraestrutura digital do mundo para educação em programação,
+          desenvolvimento de software e treinamento em tecnologia.
+        </p>
+        <div class="social-links">
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
         </div>
       </div>
     </div>
 
-    <script type="module" src="js/main.js"></script>
-  </body>
+    <div class="footer-bottom">
+      <p>© 2024 Lykos.eng Plataforma de Educação. Programe Seu Futuro.</p>
+      <div class="footer-links">
+        <a href="#" id="btn-terms">Termos</a>
+        <a href="#" id="btn-privacy">Privacidade</a>
+        <a href="#" id="btn-security">Segurança</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Terms Modal -->
+  <div id="terms-modal" class="policy-modal">
+    <div class="policy-modal-content">
+      <div class="policy-modal-header">
+        <h2>Termos de Uso</h2>
+        <button class="policy-modal-close" data-modal="terms-modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="policy-modal-body">
+        <h3>1. Aceitação dos Termos</h3>
+        <p>Ao acessar e usar a plataforma Lykos.eng, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não poderá usar nossos serviços.</p>
+
+        <h3>2. Uso da Plataforma</h3>
+        <p>Você concorda em usar a plataforma apenas para fins legais e de acordo com estes Termos. É proibido:</p>
+        <ul>
+          <li>Usar a plataforma de qualquer forma que viole leis locais, nacionais ou internacionais</li>
+          <li>Transmitir material que seja difamatório, obsceno ou ofensivo</li>
+          <li>Tentar obter acesso não autorizado a qualquer parte da plataforma</li>
+          <li>Compartilhar suas credenciais de acesso com terceiros</li>
+        </ul>
+
+        <h3>3. Propriedade Intelectual</h3>
+        <p>Todo o conteúdo da plataforma, incluindo textos, gráficos, logos, vídeos e software, é propriedade da Lykos.eng e protegido por leis de direitos autorais.</p>
+
+        <h3>4. Contas de Usuário</h3>
+        <p>Você é responsável por manter a confidencialidade de sua conta e senha. Notifique-nos imediatamente sobre qualquer uso não autorizado de sua conta.</p>
+
+        <h3>5. Modificações</h3>
+        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Continuando a usar a plataforma após as alterações, você aceita os novos termos.</p>
+
+        <h3>6. Rescisão</h3>
+        <p>Podemos encerrar ou suspender seu acesso à plataforma imediatamente, sem aviso prévio, por qualquer violação destes Termos de Uso.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Modal -->
+  <div id="privacy-modal" class="policy-modal">
+    <div class="policy-modal-content">
+      <div class="policy-modal-header">
+        <h2>Política de Privacidade</h2>
+        <button class="policy-modal-close" data-modal="privacy-modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="policy-modal-body">
+        <h3>1. Informações que Coletamos</h3>
+        <p>Coletamos informações que você nos fornece diretamente, incluindo:</p>
+        <ul>
+          <li>Nome completo e endereço de e-mail</li>
+          <li>Informações de perfil e preferências</li>
+          <li>Histórico de cursos e progresso de aprendizado</li>
+          <li>Informações de pagamento (processadas por terceiros seguros)</li>
+        </ul>
+
+        <h3>2. Como Usamos suas Informações</h3>
+        <p>Utilizamos suas informações para:</p>
+        <ul>
+          <li>Fornecer, manter e melhorar nossos serviços</li>
+          <li>Processar transações e enviar informações relacionadas</li>
+          <li>Enviar comunicações técnicas, atualizações e suporte</li>
+          <li>Personalizar sua experiência de aprendizado</li>
+          <li>Monitorar e analisar tendências e uso da plataforma</li>
+        </ul>
+
+        <h3>3. Compartilhamento de Informações</h3>
+        <p>Não vendemos suas informações pessoais. Podemos compartilhar informações apenas:</p>
+        <ul>
+          <li>Com instrutores dos cursos que você está matriculado</li>
+          <li>Com provedores de serviços terceirizados necessários</li>
+          <li>Quando exigido por lei ou para proteger nossos direitos</li>
+        </ul>
+
+        <h3>4. Segurança dos Dados</h3>
+        <p>Implementamos medidas de segurança adequadas para proteger suas informações pessoais contra acesso não autorizado, alteração ou destruição.</p>
+
+        <h3>5. Seus Direitos</h3>
+        <p>Você tem o direito de acessar, corrigir ou excluir suas informações pessoais a qualquer momento através das configurações de sua conta.</p>
+
+        <h3>6. Cookies</h3>
+        <p>Utilizamos cookies e tecnologias similares para melhorar sua experiência, entender como você usa nossa plataforma e personalizar conteúdo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Modal -->
+  <div id="security-modal" class="policy-modal">
+    <div class="policy-modal-content">
+      <div class="policy-modal-header">
+        <h2>Política de Segurança</h2>
+        <button class="policy-modal-close" data-modal="security-modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="policy-modal-body">
+        <h3>1. Compromisso com a Segurança</h3>
+        <p>A segurança dos seus dados é nossa prioridade máxima. Implementamos práticas e tecnologias de segurança líderes do setor para proteger sua informação.</p>
+
+        <h3>2. Criptografia</h3>
+        <p>Todas as informações sensíveis são criptografadas em trânsito usando SSL/TLS e em repouso usando criptografia AES-256. Suas senhas são armazenadas usando hash bcrypt moderno.</p>
+
+        <h3>3. Autenticação</h3>
+        <ul>
+          <li>Senhas devem ter no mínimo 8 caracteres</li>
+          <li>Recomendamos o uso de autenticação de dois fatores (2FA)</li>
+          <li>Sessões expiram automaticamente após inatividade</li>
+          <li>Bloqueio automático após múltiplas tentativas de login falhadas</li>
+        </ul>
+
+        <h3>4. Infraestrutura</h3>
+        <p>Nossa plataforma é hospedada em servidores seguros com:</p>
+        <ul>
+          <li>Firewalls e sistemas de detecção de intrusão</li>
+          <li>Backups regulares e redundância de dados</li>
+          <li>Monitoramento 24/7 de atividades suspeitas</li>
+          <li>Atualizações de segurança regulares</li>
+        </ul>
+
+        <h3>5. Práticas Recomendadas</h3>
+        <p>Recomendamos que você:</p>
+        <ul>
+          <li>Use senhas fortes e únicas para sua conta</li>
+          <li>Nunca compartilhe suas credenciais de login</li>
+          <li>Faça logout após usar dispositivos compartilhados</li>
+          <li>Mantenha seu e-mail de recuperação atualizado</li>
+          <li>Reporte imediatamente qualquer atividade suspeita</li>
+        </ul>
+
+        <h3>6. Relatório de Vulnerabilidades</h3>
+        <p>Se você descobrir uma vulnerabilidade de segurança, por favor nos notifique imediatamente em: security@lykos.eng</p>
+
+        <h3>7. Conformidade</h3>
+        <p>Cumprimos com regulamentações de proteção de dados, incluindo LGPD (Lei Geral de Proteção de Dados) e GDPR quando aplicável.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cart-modal" class="cart-sidebar">
+    <div class="cart-sidebar-header">
+      <h3 class="cart-sidebar-title">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Seu Carrinho
+      </h3>
+      <button id="close-cart-btn" class="btn-icon">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div id="cart-items-list" class="cart-sidebar-content">
+      <!-- Items will be injected here -->
+      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
+    </div>
+
+    <div class="cart-sidebar-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
+      </div>
+      <button id="btn-cart-checkout" class="btn-checkout" disabled>
+        Finalizar Compra
+      </button>
+    </div>
+  </div>
+
+  <!-- Dark/Light Mode Toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
+    <span class="material-symbols-outlined dark-icon">dark_mode</span>
+    <span class="material-symbols-outlined light-icon">light_mode</span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+
 </html>

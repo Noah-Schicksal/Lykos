@@ -41,8 +41,8 @@ export const Home = {
     Home.loadCourses();
     Home.loadCategories();
 
-    // Attach search listener
-    const searchInput = document.getElementById('course-search');
+    // Attach search listener (Now using the top search bar)
+    const searchInput = document.getElementById('main-search-input');
     if (searchInput) {
       searchInput.addEventListener('input', () => Home.applyFilters());
     }
@@ -134,6 +134,12 @@ export const Home = {
 
       console.log(`Loaded ${Home.allCourses.length} courses. Rendering page 1.`);
       Home.renderPage(1, false);
+
+      // Ocultar a legenda de carregamento após sucesso
+      const subtitle = document.getElementById('courses-subtitle');
+      if (subtitle) {
+        subtitle.style.display = 'none';
+      }
 
     } catch (error) {
       console.error('Erro ao carregar cursos:', error);
@@ -450,7 +456,7 @@ export const Home = {
    * Aplica filtros (Busca + Categoria)
    */
   applyFilters: () => {
-    const searchInput = document.getElementById('course-search') as HTMLInputElement;
+    const searchInput = document.getElementById('main-search-input') as HTMLInputElement;
     const categorySelect = document.getElementById('category-filter') as HTMLSelectElement;
 
     const term = searchInput ? searchInput.value.toLowerCase().trim() : '';
