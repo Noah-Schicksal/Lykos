@@ -25,6 +25,24 @@ export class StorageService {
         return name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     }
 
+    // Helper para deletar arquivo antigo se existir
+    private deleteOldFile(fileUrl: string | undefined): void {
+        if (!fileUrl) return;
+
+        // Remove leading slash if present
+        const relativePath = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
+        const fullPath = path.join(process.cwd(), relativePath);
+
+        if (fs.existsSync(fullPath)) {
+            try {
+                fs.unlinkSync(fullPath);
+                console.log(`[StorageService] Deleted old file: ${fullPath}`);
+            } catch (err) {
+                console.error(`[StorageService] Failed to delete old file: ${fullPath}`, err);
+            }
+        }
+    }
+
     private async validateFile(pathOrBuffer: string | Buffer, originalName: string): Promise<void> {
         // Dynamic import for ESM compatibility
         const { fileTypeFromBuffer, fileTypeFromFile } = await import('file-type');
@@ -104,6 +122,9 @@ export class StorageService {
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
+
+        // Deletar material antigo se existir
+        this.deleteOldFile(classEntity.materialUrl);
 
         //Gerar nome de arquivo único
         const fileExtension = path.extname(file.originalname);
@@ -210,6 +231,9 @@ export class StorageService {
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
+
+        // Deletar vídeo antigo se existir
+        this.deleteOldFile(classEntity.videoUrl);
 
         //Gerar nome de arquivo único
         const fileName = `${randomUUID()}.mp4`; // Force .mp4 extension

@@ -172,6 +172,11 @@ export class ClassService {
 
     // Helper para checar acesso (DRY)
     private async checkAccess(classEntity: Class, userId: string, userRole: string): Promise<void> {
+        // ADMIN tem acesso total
+        if (userRole === 'ADMIN') {
+            return;
+        }
+
         const module = this.moduleRepository.findById(classEntity.moduleId);
         if (!module) {
             throw new ApplicationError('Módulo não encontrado');
