@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin - Database Viewer | Lykos.eng</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles-clean.css">
+  <link rel="stylesheet" href="css/superadmin-clean.css">
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+        </div>
+        <div class="brand-info">
+          <h1 class="brand-title">Super Admin</h1>
+          <p class="brand-subtitle">Database Viewer</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="header-btn" id="btn-back" onclick="window.history.back()">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <span class="btn-text">Back</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-container">
+      <!-- Page Info -->
+      <section class="page-info">
+        <div class="info-icon">
+          <span class="material-symbols-outlined">database</span>
+        </div>
+        <div class="info-content">
+          <h2 class="info-title">LevelDB Database Viewer</h2>
+          <p class="info-description">
+            This area displays all keys and values from the LevelDB database.
+            Requires admin authentication to access sensitive data.
+          </p>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section class="controls-section">
+        <div class="search-wrapper-admin">
+          <span class="material-symbols-outlined search-icon-admin">search</span>
+          <input
+            id="filter"
+            type="search"
+            class="search-input-admin"
+            placeholder="Filter by key or value..."
+            autocomplete="off"
+          >
+        </div>
+        <button id="refresh" class="btn-refresh">
+          <span class="material-symbols-outlined">refresh</span>
+          <span class="btn-text">Refresh</span>
+        </button>
+      </section>
+
+      <!-- Status Bar -->
+      <div id="status" class="status-bar"></div>
+
+      <!-- Data Table -->
+      <section class="table-section">
+        <div class="table-wrapper">
+          <table id="tbl" class="data-table">
+            <thead>
+              <tr>
+                <th class="col-key">
+                  <div class="th-content">
+                    <span class="material-symbols-outlined">key</span>
+                    <span>Key</span>
+                  </div>
+                </th>
+                <th class="col-value">
+                  <div class="th-content">
+                    <span class="material-symbols-outlined">data_object</span>
+                    <span>Value (JSON)</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Dark/Light Mode Toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <span class="material-symbols-outlined dark-icon">dark_mode</span>
+    <span class="material-symbols-outlined light-icon">light_mode</span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js"></script>
+  <script src="js/superadmin.js"></script>
+</body>
+
+</html>

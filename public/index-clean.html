@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lykos | Master Programming & Technology</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles-clean.css">
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">code</span>
+        </div>
+        <span class="logo-text">Lykos</span>
+      </div>
+
+      <button class="btn-explore">
+        Explore
+        <span class="material-symbols-outlined">expand_more</span>
+      </button>
+
+      <!-- Search -->
+      <div class="search-bar">
+        <div class="search-icon">
+          <span class="material-symbols-outlined">search</span>
+        </div>
+        <input class="search-input" placeholder="Search courses: Python, React, DevOps..." type="text">
+      </div>
+
+      <!-- Right Actions -->
+      <div class="nav-actions">
+        <div class="nav-links">
+          <a href="#">Solutions</a>
+          <a href="#">Teach</a>
+        </div>
+
+        <div class="cart-wrapper">
+          <button class="btn-icon">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span id="cart-count-badge" class="badge-count">0</span>
+          </button>
+        </div>
+
+        <button class="btn-icon btn-notifications">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+
+        <!-- User Avatar (Triggers Auth Card) -->
+        <div id="user-avatar-btn" class="user-avatar">
+          <img alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ">
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Auth Flip Card -->
+  <div id="auth-card-container" class="auth-container">
+    <div id="auth-card" class="auth-card">
+      <!-- Front: Login -->
+      <div class="auth-face auth-login">
+        <h3 class="auth-title">Welcome Back</h3>
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label">Email / User</label>
+            <input id="login-email" type="text" class="form-input" placeholder="user@company.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrapper">
+              <input id="login-password" type="password" class="form-input" placeholder="••••••••">
+              <button type="button" class="btn-toggle-password" data-target="login-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Log In</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">New Developer?</p>
+          <button id="btn-to-register" class="btn-link">Create Account</button>
+        </div>
+      </div>
+
+      <!-- Back: Register -->
+      <div class="auth-face auth-register">
+        <h3 class="auth-title">Join the Lab</h3>
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label">I am a...</label>
+            <select id="register-role" class="form-input">
+              <option value="student">Student</option>
+              <option value="instructor">Instructor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="register-name" class="form-input" placeholder="Marie Curie" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="register-email" class="form-input" placeholder="marie@science.org" required>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password" class="form-input" placeholder="••••" required>
+                <button type="button" class="btn-toggle-password" data-target="register-password">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-confirm" class="form-input" placeholder="••••" required>
+                <button type="button" class="btn-toggle-password" data-target="register-confirm">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Register</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Already have access?</p>
+          <button id="btn-to-login" class="btn-link">Back to Login</button>
+        </div>
+      </div>
+
+      <!-- Logged In View -->
+      <div id="auth-logged-in" class="auth-face auth-logged-in">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="user-name">User Name</h3>
+        <p id="user-email-display" class="user-email">user@example.com</p>
+        <div id="user-role-badge" class="role-badge">Student</div>
+
+        <div class="dashboard-actions">
+          <button id="btn-my-learning" class="btn-dashboard">
+            <span class="material-symbols-outlined">school</span> My Learning
+          </button>
+          <button id="btn-instructor-dash" class="btn-dashboard">
+            <span class="material-symbols-outlined">dashboard</span> Instructor Dashboard
+          </button>
+          <button id="btn-manage-categories" class="btn-dashboard">
+            <span class="material-symbols-outlined">category</span> Manage Categories
+          </button>
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> View Profile
+          </button>
+          <button id="btn-logout" class="btn-dashboard btn-logout">
+            <span class="material-symbols-outlined">logout</span> Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Management View -->
+      <div id="auth-categories-view" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">Manage Categories</h3>
+          <button id="btn-back-from-categories" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <form id="category-create-form" class="category-form">
+          <div class="form-group">
+            <label class="form-label">New Category Name</label>
+            <div class="category-input-group">
+              <input id="new-category-name" type="text" class="form-input" placeholder="e.g., Web Development" required>
+              <button type="submit" class="btn-add">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div>
+          <label class="form-label">Existing Categories</label>
+          <div id="categories-list" class="categories-list">
+            <p class="loading-text">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="auth-profile-view" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">My Profile</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Name</label>
+            <p id="profile-view-name" class="info-value">User Name</p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-view-email" class="info-value">user@example.com</p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Role</label>
+            <p id="profile-view-role" class="info-value">Student</p>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
+            <span class="material-symbols-outlined">edit</span> Edit Profile
+          </button>
+          <button id="btn-delete-account" class="btn-delete">
+            <span class="material-symbols-outlined">delete</span> Delete Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">Edit Profile</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="your@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password (optional)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="Leave empty to keep current">
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-container">
+        <div class="hero-glow"></div>
+        <h1 class="hero-title">
+          Programming Mastery <span class="text-gradient">Courses</span>
+        </h1>
+        <p class="hero-description">
+          Master the art of coding with expert-led courses. From fundamentals to advanced systems, build your tech career with hands-on projects.
+        </p>
+      </div>
+    </header>
+
+    <!-- Courses Section -->
+    <section id="courses-section" class="courses-section">
+      <div class="section-container">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">terminal</span>
+              All Courses
+            </h2>
+            <p class="section-subtitle">Loading courses...</p>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-container">
+          <div class="search-filter">
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="course-search" placeholder="Buscar cursos...">
+          </div>
+
+          <div class="category-filter">
+            <select id="category-filter">
+              <option value="">Todas Categorias</option>
+              <option disabled>Carregando...</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pagination Top -->
+        <div id="pagination-top" class="pagination"></div>
+
+        <!-- Courses Grid -->
+        <div id="courses-grid" class="courses-grid">
+          <p class="loading-message">Carregando cursos...</p>
+        </div>
+
+        <!-- Pagination Bottom -->
+        <div id="pagination-bottom" class="pagination"></div>
+      </div>
+    </section>
+
+    <!-- Trusted By Section -->
+    <section class="trusted-section">
+      <div class="trusted-container">
+        <h2 class="trusted-title">Trusted by Leading Tech Companies</h2>
+        <div class="trusted-grid">
+          <div class="brand-item">
+            <span class="material-symbols-outlined">cloud</span>
+            GOOGLE CLOUD
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">terminal</span>
+            MICROSOFT
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">code</span>
+            META DEV
+          </div>
+          <div class="brand-item">
+            <span class="material-symbols-outlined">developer_mode</span>
+            AWS EDUCATE
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-icon">
+            <span class="material-symbols-outlined">code</span>
+          </div>
+          <span class="brand-name">Lykos.eng</span>
+        </div>
+        <p class="footer-description">
+          The world's premier digital infrastructure for programming education,
+          software development, and technology training.
+        </p>
+        <div class="social-links">
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
+          <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2024 Lykos.eng Education Platform. Code Your Future.</p>
+      <div class="footer-links">
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Dark/Light Mode Toggle -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+    <span class="material-symbols-outlined dark-icon">dark_mode</span>
+    <span class="material-symbols-outlined light-icon">light_mode</span>
+  </button>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>
