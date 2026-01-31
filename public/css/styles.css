@@ -22,6 +22,7 @@
   --glass: rgba(255, 255, 255, 0.03);
 
   --font-heading: 'Libre Baskerville', serif;
+  --font-body: 'Space Mono', monospace;
   --font-mono: 'Space Mono', monospace;
 }
 
@@ -56,10 +57,10 @@ body {
 
 body {
   margin: 0;
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   background-color: var(--bg-dark);
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
   min-height: 100vh;
 }
 
