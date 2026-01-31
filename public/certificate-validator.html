@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação de Certificado - ChemAcademy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .validator-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-dark);
+            padding: 1rem;
+        }
+
+        .validator-card {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border-light);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .input-hash {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-light);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-family: monospace;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        .result-box.valid {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+        }
+
+        .result-box.invalid {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="validator-container">
+        <div class="validator-card">
+            <span class="material-symbols-outlined"
+                style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;">verified</span>
+            <h1 class="text-xl font-bold mb-2">Validar Certificado</h1>
+            <p class="text-muted text-sm">Insira o código de validação para verificar a autenticidade.</p>
+
+            <input type="text" id="hash-input" class="input-hash" placeholder="Ex: 123e4567-e89b...">
+
+            <button onclick="validate()" class="btn-primary w-full">Verificar</button>
+
+            <div id="result" class="result-box">
+                <h3 id="result-title" class="font-bold"></h3>
+                <p id="result-msg" class="text-sm mt-1"></p>
+                <a id="view-link" href="#" target="_blank"
+                    style="display:none; text-decoration:underline; margin-top:0.5rem; display:block;">Ver
+                    Certificado</a>
+            </div>
+
+            <div class="mt-4">
+                <a href="index.html" class="text-sm text-primary">Voltar para Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function validate() {
+            const hash = document.getElementById('hash-input').value.trim();
+            const resultBox = document.getElementById('result');
+            const resultTitle = document.getElementById('result-title');
+            const resultMsg = document.getElementById('result-msg');
+            const viewLink = document.getElementById('view-link');
+
+            if (!hash) return;
+
+            resultBox.className = 'result-box'; // Reset
+            resultBox.style.display = 'none';
+
+            try {
+                const res = await fetch(`/certificates/${hash}`);
+                const data = await res.json();
+
+                if (res.ok && data.data && data.data.isValid) {
+                    resultBox.className = 'result-box valid';
+                    resultTitle.textContent = 'Certificado Válido';
+                    resultMsg.textContent = `Aluno: ${data.data.studentName} | Curso: ${data.data.courseTitle}`;
+                    viewLink.href = `certificate.html?hash=${hash}`;
+                    viewLink.style.display = 'block';
+                } else {
+                    throw new Error('Invalid');
+                }
+            } catch (error) {
+                resultBox.className = 'result-box invalid';
+                resultTitle.textContent = 'Inválido';
+                resultMsg.textContent = 'Código não encontrado ou certificado inválido.';
+                viewLink.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>

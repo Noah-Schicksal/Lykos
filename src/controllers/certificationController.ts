@@ -24,4 +24,25 @@ export class CertificationController {
             next(error);
         }
     }
+
+    // POST /courses/:id/certificate
+    issueCertificate = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id } = req.params as { id: string }; // Course ID
+            const userId = (req as any).user?.id; // From authMiddleware
+
+            if (!userId) {
+                return ApiResponse.unauthorized(res, 'Usuário não autenticado');
+            }
+
+            const hash = await this.certificationService.generateCertificate(userId, id);
+
+            return ApiResponse.success(res, { hash }, 'Certificado gerado com sucesso');
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                return ApiResponse.error(res, error.message);
+            }
+            next(error);
+        }
+    }
 }
