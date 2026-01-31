@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'studentDashboard.html';
+      window.location.href = 'student.html';
     });
   }
 
