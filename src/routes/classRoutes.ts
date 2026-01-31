@@ -4,7 +4,10 @@ import { authMiddleware } from '../middlewares/authMiddleware';
 import { roleMiddleware } from '../middlewares/roleMiddleware';
 import multer from 'multer';
 
-const upload = multer({ dest: 'storage/temp/' }); // Save to temp first
+const upload = multer({
+    dest: 'storage/temp/',
+    limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit
+}); // Save to temp first
 
 const classRoutes = Router();
 const classController = new ClassController();
@@ -23,9 +26,11 @@ classRoutes.delete('/:id/progress', (req, res, next) => classController.unmarkPr
 classRoutes.put('/:id', roleMiddleware(['INSTRUCTOR']), (req, res, next) => classController.update(req, res, next));
 classRoutes.delete('/:id', roleMiddleware(['INSTRUCTOR']), (req, res, next) => classController.delete(req, res, next));
 classRoutes.post('/:id/upload', roleMiddleware(['INSTRUCTOR']), upload.single('file'), (req, res, next) => classController.uploadMaterial(req, res, next));
+classRoutes.post('/:id/video', roleMiddleware(['INSTRUCTOR']), upload.single('file'), (req, res, next) => classController.uploadVideo(req, res, next));
 
-// Rotas de download de material (acessível por instrutores e alunos matriculados)
+// Rotas de download/stream (acessível por instrutores e alunos matriculados)
 classRoutes.get('/:id/material', authMiddleware, classController.getMaterial);
+classRoutes.get('/:id/video', authMiddleware, classController.getVideo);
 
 // Rotas públicas ou autenticadas para detalhes
 classRoutes.get('/:id', authMiddleware, (req, res, next) => classController.show(req, res, next));

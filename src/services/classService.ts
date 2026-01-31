@@ -42,6 +42,11 @@ export class ClassService {
             data.materialUrl = `/classes/${data.id}/material`;
         }
 
+        // Transforma videoUrl (interno) em URL de API pública
+        if (data.videoUrl) {
+            data.videoUrl = `/classes/${data.id}/video`;
+        }
+
         return data;
     }
 
@@ -134,6 +139,39 @@ export class ClassService {
             throw new ApplicationError('Nenhum material associado a esta aula');
         }
 
+        await this.checkAccess(classEntity, userId, userRole);
+
+        // O materialUrl é salvo como path relativo (ex: /uploads/abc.pdf), queremos o path do sistema
+        // Ajuste conforme como você salva. Se salva com leading slash, remova.
+        const relativePath = classEntity.materialUrl.startsWith('/')
+            ? classEntity.materialUrl.substring(1)
+            : classEntity.materialUrl;
+
+        return relativePath;
+    }
+
+    // recupera o caminho do video se o usuário tiver permissão
+    async getVideo(classId: string, userId: string, userRole: string): Promise<string> {
+        const classEntity = this.classRepository.findById(classId);
+        if (!classEntity) {
+            throw new ApplicationError('Aula não encontrada');
+        }
+
+        if (!classEntity.videoUrl) {
+            throw new ApplicationError('Nenhum vídeo associado a esta aula');
+        }
+
+        await this.checkAccess(classEntity, userId, userRole);
+
+        const relativePath = classEntity.videoUrl.startsWith('/')
+            ? classEntity.videoUrl.substring(1)
+            : classEntity.videoUrl;
+
+        return relativePath;
+    }
+
+    // Helper para checar acesso (DRY)
+    private async checkAccess(classEntity: Class, userId: string, userRole: string): Promise<void> {
         const module = this.moduleRepository.findById(classEntity.moduleId);
         if (!module) {
             throw new ApplicationError('Módulo não encontrado');
@@ -147,25 +185,16 @@ export class ClassService {
         // Verifica permissão baseado no role
         if (userRole === 'INSTRUCTOR') {
             if (course.instructorId !== userId) {
-                throw new ApplicationError('Você não tem permissão para acessar este material');
+                throw new ApplicationError('Você não tem permissão para acessar este conteúdo');
             }
         } else if (userRole === 'STUDENT') {
             const enrollment = this.enrollmentRepository.findEnrollment(userId, course.id);
             if (!enrollment) {
-                throw new ApplicationError('Você precisa estar matriculado no curso para acessar o material');
+                throw new ApplicationError('Você precisa estar matriculado no curso para acessar o conteúdo');
             }
         } else {
-            // Caso existam outros roles (ex: ADMIN), tratar aqui ou negar por padrão
             throw new ApplicationError('Permissão negada');
         }
-
-        // O materialUrl é salvo como path relativo (ex: /uploads/abc.pdf), queremos o path do sistema
-        // Ajuste conforme como você salva. Se salva com leading slash, remova.
-        const relativePath = classEntity.materialUrl.startsWith('/')
-            ? classEntity.materialUrl.substring(1)
-            : classEntity.materialUrl;
-
-        return relativePath;
     }
 
     // marca a aula como concluída pelo aluno
