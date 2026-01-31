@@ -3,10 +3,23 @@
  */
 import { AppUI } from '../utils/ui.js';
 
+// Flag to prevent duplicate session expiration notifications
+let sessionExpiredHandled = false;
+
 export const Auth = {
   init: () => {
     window.addEventListener('session-expired', () => {
+      // Prevent duplicate toast notifications
+      if (sessionExpiredHandled) {
+        console.log(
+          '[Auth] Session expired already handled, ignoring duplicate event',
+        );
+        return;
+      }
+
+      sessionExpiredHandled = true;
       console.log('[Auth] Session expired event received');
+
       // Clear data but don't call backend logout (token is already invalid)
       localStorage.removeItem('auth_user');
 
@@ -24,6 +37,11 @@ export const Auth = {
       }
 
       AppUI.showMessage('Sua sessão expirou. Faça login novamente.', 'info');
+
+      // Reset flag after 2 seconds to allow re-login
+      setTimeout(() => {
+        sessionExpiredHandled = false;
+      }, 2000);
     });
   },
 

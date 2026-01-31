@@ -2,6 +2,9 @@
  * UI Helper Utility
  */
 
+// Track if session expiration event was already dispatched
+let sessionExpirationDispatched = false;
+
 export interface UIHelper {
   apiFetch: (url: string, options?: RequestInit) => Promise<any>;
   showMessage: (msg: string, type: 'success' | 'error' | 'info') => void;
@@ -50,9 +53,16 @@ export const AppUI: UIHelper = {
         if (response.status === 401) {
           // Check if user was logged in (token is in HTTP-only cookie)
           const hadSession = localStorage.getItem('auth_user');
-          if (hadSession) {
-            console.warn('[API] Session expired');
+          if (hadSession && !sessionExpirationDispatched) {
+            console.warn('[API] Session expired - dispatching event');
+            sessionExpirationDispatched = true;
             window.dispatchEvent(new CustomEvent('session-expired'));
+            // Reset flag after 3 seconds to allow future sessions
+            setTimeout(() => {
+              sessionExpirationDispatched = false;
+            }, 3000);
+          } else if (hadSession) {
+            console.log('[API] Session expired event already dispatched');
           } else {
             console.log('[API] Unauthorized (no active session)');
           }
