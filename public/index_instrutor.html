@@ -4,25 +4,32 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lykos | Master Programming & Technology</title>
+  <title>Instructor Dashboard | Lykos.eng</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-  <!-- Stylesheet -->
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/index_instrutor.css">
 </head>
 
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="logo">
-        <div class="logo-icon">
-          <span class="material-symbols-outlined">code</span>
+      <div class="nav-left">
+        <a href="/" class="btn-back">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Back
+        </a>
+        <div class="logo">
+          <div class="logo-icon">
+            <span class="material-symbols-outlined">code</span>
+          </div>
+          <span class="logo-text">Lykos.eng</span>
         </div>
-        <span class="logo-text">Lykos</span>
       </div>
 
       <button class="btn-explore">
@@ -56,7 +63,7 @@
           <span class="material-symbols-outlined">notifications</span>
         </button>
 
-        <!-- User Avatar (Triggers Auth Card) -->
+        <!-- User Avatar -->
         <div id="user-avatar-btn" class="user-avatar">
           <img alt="User avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ">
         </div>
@@ -94,7 +101,7 @@
 
       <!-- Back: Register -->
       <div class="auth-face auth-register">
-        <h3 class="auth-title">Join the Lab</h3>
+        <h3 class="auth-title">Join the Platform</h3>
         <form id="register-form">
           <div class="form-group">
             <label class="form-label">I am a...</label>
@@ -105,11 +112,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Full Name</label>
-            <input type="text" id="register-name" class="form-input" placeholder="Marie Curie" required>
+            <input type="text" id="register-name" class="form-input" placeholder="John Doe" required>
           </div>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input type="email" id="register-email" class="form-input" placeholder="marie@science.org" required>
+            <input type="email" id="register-email" class="form-input" placeholder="john@tech.com" required>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -155,6 +162,9 @@
           <button id="btn-instructor-dash" class="btn-dashboard">
             <span class="material-symbols-outlined">dashboard</span> Instructor Dashboard
           </button>
+          <button id="btn-create-course" class="btn-dashboard">
+            <span class="material-symbols-outlined">add_circle</span> Create Course
+          </button>
           <button id="btn-manage-categories" class="btn-dashboard">
             <span class="material-symbols-outlined">category</span> Manage Categories
           </button>
@@ -179,27 +189,20 @@
         <form id="category-create-form" class="category-form">
           <div class="form-group">
             <label class="form-label">New Category Name</label>
-            <div class="category-input-group">
-              <input id="new-category-name" type="text" class="form-input" placeholder="e.g., Web Development" required>
-              <button type="submit" class="btn-add">
-                <span class="material-symbols-outlined">add</span>
-              </button>
-            </div>
+            <input id="category-name-input" type="text" class="form-input" placeholder="e.g., Web Development">
           </div>
+          <button type="submit" class="btn-submit">Add Category</button>
         </form>
 
-        <div>
-          <label class="form-label">Existing Categories</label>
-          <div id="categories-list" class="categories-list">
-            <p class="loading-text">Loading...</p>
-          </div>
+        <div id="categories-list-container">
+          <p class="loading-text">Loading categories...</p>
         </div>
       </div>
 
       <!-- Profile View -->
       <div id="auth-profile-view" class="auth-face">
         <div class="view-header">
-          <h3 class="auth-title">My Profile</h3>
+          <h3 class="auth-title">Profile</h3>
           <button id="btn-back-from-profile" class="btn-icon">
             <span class="material-symbols-outlined">arrow_back</span>
           </button>
@@ -212,15 +215,15 @@
         <div class="profile-info">
           <div class="info-item">
             <label class="form-label">Name</label>
-            <p id="profile-view-name" class="info-value">User Name</p>
+            <p id="profile-name-display" class="info-value">User Name</p>
           </div>
           <div class="info-item">
             <label class="form-label">Email</label>
-            <p id="profile-view-email" class="info-value">user@example.com</p>
+            <p id="profile-email-display" class="info-value">user@example.com</p>
           </div>
           <div class="info-item">
             <label class="form-label">Role</label>
-            <p id="profile-view-role" class="info-value">Student</p>
+            <p id="profile-role-display" class="info-value">Student</p>
           </div>
         </div>
 
@@ -250,12 +253,12 @@
           </div>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input id="edit-email" type="email" class="form-input" placeholder="your@email.com">
+            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com">
           </div>
           <div class="form-group">
-            <label class="form-label">New Password (optional)</label>
+            <label class="form-label">New Password (leave blank to keep current)</label>
             <div class="password-wrapper">
-              <input id="edit-password" type="password" class="form-input" placeholder="Leave empty to keep current">
+              <input id="edit-password" type="password" class="form-input" placeholder="••••••••">
               <button type="button" class="btn-toggle-password" data-target="edit-password">
                 <span class="material-symbols-outlined">visibility</span>
               </button>
@@ -267,119 +270,142 @@
     </div>
   </div>
 
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Hero Section -->
-    <header class="hero">
-      <div class="hero-container">
-        <div class="hero-glow"></div>
-        <h1 class="hero-title">
-          Programming Mastery <span class="text-gradient">Courses</span>
-        </h1>
-        <p class="hero-description">
-          Master the art of coding with expert-led courses. From fundamentals to advanced systems, build your tech career with hands-on projects.
-        </p>
+  <!-- Main Dashboard -->
+  <main class="dashboard-wrapper">
+    <!-- Left Sidebar: Course List -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">My Courses</h2>
+        <button id="btn-create-new-course" class="btn-primary-dash">
+          <span class="material-symbols-outlined">add_circle</span> Create New Course
+        </button>
       </div>
-    </header>
 
-    <!-- Courses Section -->
-    <section id="courses-section" class="courses-section">
-      <div class="section-container">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">
-              <span class="material-symbols-outlined">terminal</span>
-              All Courses
-            </h2>
-            <p class="section-subtitle">Loading courses...</p>
-          </div>
+      <div id="courses-sidebar-list" class="sidebar-list">
+        <div class="sidebar-loading">
+          <span class="material-symbols-outlined spin">sync</span> Loading...
         </div>
-
-        <!-- Filters -->
-        <div class="filters-container">
-          <div class="search-filter">
-            <span class="material-symbols-outlined">search</span>
-            <input type="text" id="course-search" placeholder="Buscar cursos...">
-          </div>
-
-          <div class="category-filter">
-            <select id="category-filter">
-              <option value="">Todas Categorias</option>
-              <option disabled>Carregando...</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Pagination Top -->
-        <div id="pagination-top" class="pagination"></div>
-
-        <!-- Courses Grid -->
-        <div id="courses-grid" class="courses-grid">
-          <p class="loading-message">Carregando cursos...</p>
-        </div>
-
-        <!-- Pagination Bottom -->
-        <div id="pagination-bottom" class="pagination"></div>
       </div>
-    </section>
+    </aside>
 
-    <!-- Trusted By Section -->
-    <section class="trusted-section">
-      <div class="trusted-container">
-        <h2 class="trusted-title">Trusted by Leading Tech Companies</h2>
-        <div class="trusted-grid">
-          <div class="brand-item">
-            <span class="material-symbols-outlined">cloud</span>
-            GOOGLE CLOUD
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">terminal</span>
-            MICROSOFT
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">code</span>
-            META DEV
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">developer_mode</span>
-            AWS EDUCATE
-          </div>
-        </div>
+    <!-- Right Content: Detail/Form View -->
+    <section id="dashboard-content" class="dashboard-main">
+      <div class="empty-state">
+        <span class="material-symbols-outlined">arrow_back</span>
+        <h3>Select a Course</h3>
+        <p>Choose a course from the sidebar to view details or edit.</p>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <div class="logo-icon">
-            <span class="material-symbols-outlined">code</span>
-          </div>
-          <span class="brand-name">Lykos.eng</span>
+  <!-- Templates -->
+  <template id="template-course-form">
+    <div class="content-header">
+      <h2 id="form-view-title" class="page-title">New Course</h2>
+    </div>
+    <form id="course-inline-form" class="form-panel">
+      <input type="hidden" id="course-id">
+
+      <div class="form-group">
+        <label class="form-label">Course Title *</label>
+        <input id="course-title" type="text" class="form-input" placeholder="e.g., Advanced React Development" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description *</label>
+        <textarea id="course-description" class="form-input" rows="5" placeholder="Describe your course..." required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Price ($) *</label>
+          <input id="course-price" type="text" class="form-input" placeholder="0.00" required>
         </div>
-        <p class="footer-description">
-          The world's premier digital infrastructure for programming education,
-          software development, and technology training.
-        </p>
-        <div class="social-links">
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select id="course-category" class="form-input" required>
+            <option value="">Loading...</option>
+          </select>
         </div>
+        <div class="form-group">
+          <label class="form-label">Max Students</label>
+          <input id="course-max-students" type="number" min="1" class="form-input" placeholder="Unlimited">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cover Image</label>
+        <div class="file-upload">
+          <input id="course-cover" type="file" accept="image/*" class="form-input">
+          <div id="cover-preview-container"></div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="btn-cancel-form" class="btn-secondary-dash">Cancel</button>
+        <button type="submit" class="btn-primary-dash">Save Course</button>
+      </div>
+    </form>
+  </template>
+
+  <!-- Confirm Modal -->
+  <div id="delete-confirm-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Confirm Deletion</h3>
+      <p id="modal-msg" class="modal-message">Are you sure you want to delete? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel" class="btn-secondary-dash">Cancel</button>
+        <button id="btn-modal-confirm" class="btn-danger">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <template id="template-course-detail">
+    <div class="detail-header">
+      <div class="detail-title-wrapper">
+        <h1 id="detail-title" class="detail-title">Course Title</h1>
+        <div class="detail-badges">
+          <span id="detail-category" class="badge-tag">Category</span>
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button id="btn-edit-current" class="btn-secondary-dash">
+          <span class="material-symbols-outlined">edit</span> Edit
+        </button>
+        <button id="btn-delete-current" class="btn-danger-outline">
+          <span class="material-symbols-outlined">delete</span> Delete
+        </button>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <p>© 2024 Lykos.eng Education Platform. Code Your Future.</p>
-      <div class="footer-links">
-        <a href="#">Terms</a>
-        <a href="#">Privacy</a>
-        <a href="#">Security</a>
+    <div class="detail-cover" id="detail-cover"></div>
+
+    <div class="detail-body">
+      <div class="detail-section" id="course-description-section">
+        <h3>About the Course</h3>
+        <p id="detail-description">Course description...</p>
+      </div>
+
+      <div class="detail-section" id="course-content-section">
+        <div class="section-header-inline">
+          <h3>Course Content</h3>
+          <button id="btn-toggle-content" class="btn-secondary-dash btn-small">
+            <span class="material-symbols-outlined">edit_note</span> Edit Content
+          </button>
+        </div>
+
+        <div id="course-content-area" class="hidden">
+          <div class="sidebar-loading">
+            <span class="material-symbols-outlined spin">sync</span> Loading...
+          </div>
+        </div>
+
+        <div id="course-content-summary">
+          <p class="text-muted">Click "Edit Content" to manage modules and lessons.</p>
+        </div>
       </div>
     </div>
-  </footer>
+  </template>
 
   <!-- Dark/Light Mode Toggle -->
   <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
@@ -389,7 +415,7 @@
 
   <!-- Scripts -->
   <script src="js/theme-toggle.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/instructor.js"></script>
 </body>
 
 </html>
