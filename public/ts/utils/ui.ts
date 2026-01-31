@@ -46,10 +46,16 @@ export const AppUI: UIHelper = {
       const data = await response.json();
 
       if (!response.ok) {
-        // Handle Session Expiry
+        // Handle Session Expiry - only if user was actually logged in
         if (response.status === 401) {
-          console.warn('[API] Session expired or unauthorized');
-          window.dispatchEvent(new CustomEvent('session-expired'));
+          // Check if user was logged in (token is in HTTP-only cookie)
+          const hadSession = localStorage.getItem('auth_user');
+          if (hadSession) {
+            console.warn('[API] Session expired');
+            window.dispatchEvent(new CustomEvent('session-expired'));
+          } else {
+            console.log('[API] Unauthorized (no active session)');
+          }
         }
         throw new Error(data.message || data.error || 'Erro na requisição');
       }

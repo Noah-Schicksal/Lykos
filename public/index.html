@@ -1,549 +1,783 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lykos | Master Programming & Technology</title>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lykos | Master Programming & Technology</title>
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/toast.css" />
+  </head>
 
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-
-<body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="logo">
-        <div class="logo-icon">
-          <span class="material-symbols-outlined">code</span>
-        </div>
-        <span class="logo-text">Lykos</span>
-      </div>
-
-      <!-- Explore removed per user request -->
-
-
-      <!-- Right Actions -->
-      <div class="nav-actions">
-        <!-- Solutions and Teach removed per user request -->
-
-        <div class="cart-wrapper">
-          <button id="cart-toggle-btn" class="btn-icon">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            <span id="cart-count-badge" class="badge-count">0</span>
-          </button>
-        </div>
-
-        <!-- User Avatar (Triggers Auth Card) -->
-        <div id="user-avatar-btn" class="user-avatar">
-          <img alt="User avatar"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ">
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Auth Flip Card -->
-  <div id="auth-card-container" class="auth-container">
-    <div id="auth-card" class="auth-card">
-      <!-- Front: Login -->
-      <div class="auth-face auth-login">
-        <h3 class="auth-title">Bem-vindo de Volta</h3>
-        <form id="login-form">
-          <div class="form-group">
-            <label class="form-label">Email / Usuário</label>
-            <input id="login-email" type="text" class="form-input" placeholder="usuario@empresa.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Senha</label>
-            <div class="password-wrapper">
-              <input id="login-password" type="password" class="form-input" placeholder="••••••••">
-              <button type="button" class="btn-toggle-password" data-target="login-password">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="btn-submit">Entrar</button>
-        </form>
-        <div class="auth-footer">
-          <p class="footer-text">Novo Desenvolvedor?</p>
-          <button id="btn-to-register" class="btn-link">Criar Conta</button>
-        </div>
-      </div>
-
-      <!-- Back: Register -->
-      <div class="auth-face auth-register auth-face-back">
-        <h3 class="auth-title">Junte-se ao Lab</h3>
-        <form id="register-form">
-          <div class="form-group">
-            <label class="form-label">Eu sou um...</label>
-            <select id="register-role" class="form-input">
-              <option value="student">Estudante</option>
-              <option value="instructor">Instrutor</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nome Completo</label>
-            <input type="text" id="register-name" class="form-input" placeholder="Maria Silva" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" id="register-email" class="form-input" placeholder="maria@email.com" required>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label class="form-label">Senha</label>
-              <div class="password-wrapper">
-                <input type="password" id="register-password" class="form-input" placeholder="••••" required>
-                <button type="button" class="btn-toggle-password" data-target="register-password">
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Confirmar</label>
-              <div class="password-wrapper">
-                <input type="password" id="register-confirm" class="form-input" placeholder="••••" required>
-                <button type="button" class="btn-toggle-password" data-target="register-confirm">
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          <button type="submit" class="btn-submit">Registrar</button>
-        </form>
-        <div class="auth-footer">
-          <p class="footer-text">Já tem acesso?</p>
-          <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
-        </div>
-      </div>
-
-      <!-- Logged In View -->
-      <div id="auth-logged-in" class="auth-face auth-logged-in hidden">
-        <div class="user-avatar-large">
-          <span class="material-symbols-outlined">account_circle</span>
-        </div>
-        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
-        <p id="user-email-display" class="user-email">usuario@exemplo.com</p>
-        <div id="user-role-badge" class="role-badge">Estudante</div>
-
-        <div class="dashboard-actions">
-          <button id="btn-my-learning" class="btn-dashboard">
-            <span class="material-symbols-outlined">school</span> Meu Aprendizado
-          </button>
-          <button id="btn-instructor-dash" class="btn-dashboard">
-            <span class="material-symbols-outlined">dashboard</span> Painel do Instrutor
-          </button>
-          <button id="btn-manage-categories" class="btn-dashboard">
-            <span class="material-symbols-outlined">category</span> Gerenciar Categorias
-          </button>
-          <button id="btn-view-profile" class="btn-dashboard">
-            <span class="material-symbols-outlined">person</span> Ver Perfil
-          </button>
-          <button id="btn-logout" class="btn-dashboard btn-logout">
-            <span class="material-symbols-outlined">logout</span> Sair
-          </button>
-        </div>
-      </div>
-
-      <!-- Categories Management View -->
-      <div id="auth-categories-view" class="auth-face hidden">
-        <div class="view-header">
-          <h3 class="auth-title">Gerenciar Categorias</h3>
-          <button id="btn-back-from-categories" class="btn-icon">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
-
-        <form id="category-create-form" class="category-form">
-          <div class="form-group">
-            <label class="form-label">Nome da Nova Categoria</label>
-            <div class="category-input-group">
-              <input id="new-category-name" type="text" class="form-input" placeholder="ex: Desenvolvimento Web" required>
-              <button type="submit" class="btn-add">
-                <span class="material-symbols-outlined">add</span>
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <div>
-          <label class="form-label">Categorias Existentes</label>
-          <div id="categories-list" class="categories-list">
-            <p class="loading-text">Carregando...</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Profile View -->
-      <div id="auth-profile-view" class="auth-face hidden">
-        <div class="view-header">
-          <h3 class="auth-title">Meu Perfil</h3>
-          <button id="btn-back-from-profile" class="btn-icon">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
-
-        <div class="user-avatar-large">
-          <span class="material-symbols-outlined">account_circle</span>
-        </div>
-
-        <div class="profile-info">
-          <div class="info-item">
-            <label class="form-label">Nome</label>
-            <p id="profile-view-name" class="info-value">Nome do Usuário</p>
-          </div>
-          <div class="info-item">
-            <label class="form-label">Email</label>
-            <p id="profile-view-email" class="info-value">usuario@exemplo.com</p>
-          </div>
-          <div class="info-item">
-            <label class="form-label">Função</label>
-            <p id="profile-view-role" class="info-value">Estudante</p>
-          </div>
-        </div>
-
-        <div class="profile-actions">
-          <button id="btn-edit-profile" class="btn-submit">
-            <span class="material-symbols-outlined">edit</span> Editar Perfil
-          </button>
-          <button id="btn-delete-account" class="btn-delete">
-            <span class="material-symbols-outlined">delete</span> Excluir Conta
-          </button>
-        </div>
-      </div>
-
-      <!-- Profile Edit -->
-      <div id="auth-profile-edit" class="auth-face hidden">
-        <div class="view-header">
-          <h3 class="auth-title">Editar Perfil</h3>
-          <button id="btn-cancel-edit" class="btn-icon">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <form id="profile-edit-form">
-          <div class="form-group">
-            <label class="form-label">Nome</label>
-            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input id="edit-email" type="email" class="form-input" placeholder="seu@email.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nova Senha (opcional)</label>
-            <div class="password-wrapper">
-              <input id="edit-password" type="password" class="form-input" placeholder="Deixe vazio para manter a atual">
-              <button type="button" class="btn-toggle-password" data-target="edit-password">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="btn-submit">Salvar Alterações</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <!-- Hero Section -->
-    <header class="hero">
-      <div class="hero-container">
-        <div class="hero-glow"></div>
-        <h1 class="hero-title">
-          Maestria em Programação <span class="text-gradient">Cursos</span>
-        </h1>
-        <p class="hero-description">
-          Domine a arte da programação com cursos liderados por especialistas. De fundamentos a sistemas avançados, construa sua
-          carreira em tecnologia com projetos práticos.
-        </p>
-      </div>
-    </header>
-
-    <!-- Courses Section -->
-    <section id="courses-section" class="courses-section">
-      <div class="section-container">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">
-              <span class="material-symbols-outlined">terminal</span>
-              Todos os Cursos
-            </h2>
-            <p id="courses-subtitle" class="section-subtitle">Carregando cursos...</p>
-          </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters-container">
-          <div class="search-filter">
-            <span class="material-symbols-outlined">search</span>
-            <input id="main-search-input" placeholder="Buscar cursos: Python, React, DevOps..." type="text">
-          </div>
-
-          <div class="category-filter">
-            <select id="category-filter">
-              <option value="">Todas Categorias</option>
-              <option disabled>Carregando...</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Pagination Top -->
-        <div id="pagination-top" class="pagination"></div>
-
-        <!-- Courses Grid -->
-        <div id="courses-grid" class="courses-grid">
-          <p class="loading-message">Carregando cursos...</p>
-        </div>
-
-        <!-- Pagination Bottom -->
-        <div id="pagination-bottom" class="pagination"></div>
-      </div>
-    </section>
-
-    <!-- Trusted By Section -->
-    <section class="trusted-section">
-      <div class="trusted-container">
-        <h2 class="trusted-title">Confiado por Empresas Líderes em Tecnologia</h2>
-        <div class="trusted-grid">
-          <div class="brand-item">
-            <span class="material-symbols-outlined">cloud</span>
-            GOOGLE CLOUD
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">terminal</span>
-            MICROSOFT
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">code</span>
-            META DEV
-          </div>
-          <div class="brand-item">
-            <span class="material-symbols-outlined">developer_mode</span>
-            AWS EDUCATE
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="footer-logo">
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">
           <div class="logo-icon">
             <span class="material-symbols-outlined">code</span>
           </div>
-          <span class="brand-name">Lykos.eng</span>
+          <span class="logo-text">Lykos</span>
         </div>
-        <p class="footer-description">
-          A principal infraestrutura digital do mundo para educação em programação,
-          desenvolvimento de software e treinamento em tecnologia.
-        </p>
-        <div class="social-links">
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">public</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">mail</span></a>
-          <a href="#" class="btn-icon"><span class="material-symbols-outlined">forum</span></a>
+
+        <!-- Explore removed per user request -->
+
+        <!-- Right Actions -->
+        <div class="nav-actions">
+          <!-- Solutions and Teach removed per user request -->
+
+          <div class="cart-wrapper">
+            <button id="cart-toggle-btn" class="btn-icon">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              <span id="cart-count-badge" class="badge-count">0</span>
+            </button>
+          </div>
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+            <span class="material-symbols-outlined theme-icon dark-icon"
+              >dark_mode</span
+            >
+            <span class="material-symbols-outlined theme-icon light-icon"
+              >light_mode</span
+            >
+          </button>
+          <!-- User Avatar (Triggers Auth Card) -->
+          <div id="user-avatar-btn" class="user-avatar">
+            <img
+              alt="User avatar"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ"
+            />
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Auth Flip Card -->
+    <div id="auth-card-container" class="auth-container">
+      <div id="auth-card" class="auth-card">
+        <!-- Front: Login -->
+        <div class="auth-face auth-login">
+          <h3 class="auth-title">Bem-vindo de Volta</h3>
+          <form id="login-form">
+            <div class="form-group">
+              <label class="form-label">Email / Usuário</label>
+              <input
+                id="login-email"
+                type="text"
+                class="form-input"
+                placeholder="usuario@empresa.com"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Senha</label>
+              <div class="password-wrapper">
+                <input
+                  id="login-password"
+                  type="password"
+                  class="form-input"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  class="btn-toggle-password"
+                  data-target="login-password"
+                >
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">Entrar</button>
+          </form>
+          <div class="auth-footer">
+            <p class="footer-text">Novo Desenvolvedor?</p>
+            <button id="btn-to-register" class="btn-link">Criar Conta</button>
+          </div>
+        </div>
+
+        <!-- Back: Register -->
+        <div class="auth-face auth-register auth-face-back">
+          <h3 class="auth-title">Junte-se ao Lab</h3>
+          <form id="register-form">
+            <div class="form-group">
+              <label class="form-label">Eu sou um...</label>
+              <select id="register-role" class="form-input">
+                <option value="student">Estudante</option>
+                <option value="instructor">Instrutor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nome Completo</label>
+              <input
+                type="text"
+                id="register-name"
+                class="form-input"
+                placeholder="Maria Silva"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                id="register-email"
+                class="form-input"
+                placeholder="maria@email.com"
+                required
+              />
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Senha</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="register-password"
+                    class="form-input"
+                    placeholder="••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-password"
+                    data-target="register-password"
+                  >
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirmar</label>
+                <div class="password-wrapper">
+                  <input
+                    type="password"
+                    id="register-confirm"
+                    class="form-input"
+                    placeholder="••••"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="btn-toggle-password"
+                    data-target="register-confirm"
+                  >
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">Registrar</button>
+          </form>
+          <div class="auth-footer">
+            <p class="footer-text">Já tem acesso?</p>
+            <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
+          </div>
+        </div>
+
+        <!-- Logged In View -->
+        <div id="auth-logged-in" class="auth-face auth-logged-in hidden">
+          <div class="user-avatar-large">
+            <span class="material-symbols-outlined">account_circle</span>
+          </div>
+          <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
+          <p id="user-email-display" class="user-email">usuario@exemplo.com</p>
+          <div id="user-role-badge" class="role-badge">Estudante</div>
+
+          <div class="dashboard-actions">
+            <button id="btn-my-learning" class="btn-dashboard">
+              <span class="material-symbols-outlined">school</span> Meu
+              Aprendizado
+            </button>
+            <button id="btn-instructor-dash" class="btn-dashboard">
+              <span class="material-symbols-outlined">dashboard</span> Painel do
+              Instrutor
+            </button>
+            <button id="btn-manage-categories" class="btn-dashboard">
+              <span class="material-symbols-outlined">category</span> Gerenciar
+              Categorias
+            </button>
+            <button id="btn-view-profile" class="btn-dashboard">
+              <span class="material-symbols-outlined">person</span> Ver Perfil
+            </button>
+            <button id="btn-logout" class="btn-dashboard btn-logout">
+              <span class="material-symbols-outlined">logout</span> Sair
+            </button>
+          </div>
+        </div>
+
+        <!-- Categories Management View -->
+        <div id="auth-categories-view" class="auth-face hidden">
+          <div class="view-header">
+            <h3 class="auth-title">Gerenciar Categorias</h3>
+            <button id="btn-back-from-categories" class="btn-icon">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+          </div>
+
+          <form id="category-create-form" class="category-form">
+            <div class="form-group">
+              <label class="form-label">Nome da Nova Categoria</label>
+              <div class="category-input-group">
+                <input
+                  id="new-category-name"
+                  type="text"
+                  class="form-input"
+                  placeholder="ex: Desenvolvimento Web"
+                  required
+                />
+                <button type="submit" class="btn-add">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div>
+            <label class="form-label">Categorias Existentes</label>
+            <div id="categories-list" class="categories-list">
+              <p class="loading-text">Carregando...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile View -->
+        <div id="auth-profile-view" class="auth-face hidden">
+          <div class="view-header">
+            <h3 class="auth-title">Meu Perfil</h3>
+            <button id="btn-back-from-profile" class="btn-icon">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+          </div>
+
+          <div class="user-avatar-large">
+            <span class="material-symbols-outlined">account_circle</span>
+          </div>
+
+          <div class="profile-info">
+            <div class="info-item">
+              <label class="form-label">Nome</label>
+              <p id="profile-view-name" class="info-value">Nome do Usuário</p>
+            </div>
+            <div class="info-item">
+              <label class="form-label">Email</label>
+              <p id="profile-view-email" class="info-value">
+                usuario@exemplo.com
+              </p>
+            </div>
+            <div class="info-item">
+              <label class="form-label">Função</label>
+              <p id="profile-view-role" class="info-value">Estudante</p>
+            </div>
+          </div>
+
+          <div class="profile-actions">
+            <button id="btn-edit-profile" class="btn-submit">
+              <span class="material-symbols-outlined">edit</span> Editar Perfil
+            </button>
+            <button id="btn-delete-account" class="btn-delete">
+              <span class="material-symbols-outlined">delete</span> Excluir
+              Conta
+            </button>
+          </div>
+        </div>
+
+        <!-- Profile Edit -->
+        <div id="auth-profile-edit" class="auth-face hidden">
+          <div class="view-header">
+            <h3 class="auth-title">Editar Perfil</h3>
+            <button id="btn-cancel-edit" class="btn-icon">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <form id="profile-edit-form">
+            <div class="form-group">
+              <label class="form-label">Nome</label>
+              <input
+                id="edit-name"
+                type="text"
+                class="form-input"
+                placeholder="Seu nome"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input
+                id="edit-email"
+                type="email"
+                class="form-input"
+                placeholder="seu@email.com"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nova Senha (opcional)</label>
+              <div class="password-wrapper">
+                <input
+                  id="edit-password"
+                  type="password"
+                  class="form-input"
+                  placeholder="Deixe vazio para manter a atual"
+                />
+                <button
+                  type="button"
+                  class="btn-toggle-password"
+                  data-target="edit-password"
+                >
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn-submit">Salvar Alterações</button>
+          </form>
         </div>
       </div>
     </div>
 
-    <div class="footer-bottom">
-      <p>© 2024 Lykos.eng Plataforma de Educação. Programe Seu Futuro.</p>
-      <div class="footer-links">
-        <a href="#" id="btn-terms">Termos</a>
-        <a href="#" id="btn-privacy">Privacidade</a>
-        <a href="#" id="btn-security">Segurança</a>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Section -->
+      <header class="hero">
+        <div class="hero-container">
+          <div class="hero-glow"></div>
+          <h1 class="hero-title">
+            Maestria em Programação <span class="text-gradient">Cursos</span>
+          </h1>
+          <p class="hero-description">
+            Domine a arte da programação com cursos liderados por especialistas.
+            De fundamentos a sistemas avançados, construa sua carreira em
+            tecnologia com projetos práticos.
+          </p>
+        </div>
+      </header>
+
+      <!-- Courses Section -->
+      <section id="courses-section" class="courses-section">
+        <div class="section-container">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">
+                <span class="material-symbols-outlined">terminal</span>
+                Todos os Cursos
+              </h2>
+              <p id="courses-subtitle" class="section-subtitle">
+                Carregando cursos...
+              </p>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filters-container">
+            <div class="search-filter">
+              <span class="material-symbols-outlined">search</span>
+              <input
+                id="main-search-input"
+                placeholder="Buscar cursos: Python, React, DevOps..."
+                type="text"
+              />
+            </div>
+
+            <div class="category-filter">
+              <select id="category-filter">
+                <option value="">Todas Categorias</option>
+                <option disabled>Carregando...</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Pagination Top -->
+          <div id="pagination-top" class="pagination"></div>
+
+          <!-- Courses Grid -->
+          <div id="courses-grid" class="courses-grid">
+            <p class="loading-message">Carregando cursos...</p>
+          </div>
+
+          <!-- Pagination Bottom -->
+          <div id="pagination-bottom" class="pagination"></div>
+        </div>
+      </section>
+
+      <!-- Trusted By Section -->
+      <section class="trusted-section">
+        <div class="trusted-container">
+          <h2 class="trusted-title">
+            Confiado por Empresas Líderes em Tecnologia
+          </h2>
+          <div class="trusted-grid">
+            <div class="brand-item">
+              <span class="material-symbols-outlined">cloud</span>
+              GOOGLE CLOUD
+            </div>
+            <div class="brand-item">
+              <span class="material-symbols-outlined">terminal</span>
+              MICROSOFT
+            </div>
+            <div class="brand-item">
+              <span class="material-symbols-outlined">code</span>
+              META DEV
+            </div>
+            <div class="brand-item">
+              <span class="material-symbols-outlined">developer_mode</span>
+              AWS EDUCATE
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="logo-icon">
+              <span class="material-symbols-outlined">code</span>
+            </div>
+            <span class="brand-name">Lykos.eng</span>
+          </div>
+          <p class="footer-description">
+            A principal infraestrutura digital do mundo para educação em
+            programação, desenvolvimento de software e treinamento em
+            tecnologia.
+          </p>
+          <div class="social-links">
+            <a href="#" class="btn-icon"
+              ><span class="material-symbols-outlined">public</span></a
+            >
+            <a href="#" class="btn-icon"
+              ><span class="material-symbols-outlined">mail</span></a
+            >
+            <a href="#" class="btn-icon"
+              ><span class="material-symbols-outlined">forum</span></a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2024 Lykos.eng Plataforma de Educação. Programe Seu Futuro.</p>
+        <div class="footer-links">
+          <a href="#" id="btn-terms">Termos</a>
+          <a href="#" id="btn-privacy">Privacidade</a>
+          <a href="#" id="btn-security">Segurança</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Terms Modal -->
+    <div id="terms-modal" class="policy-modal">
+      <div class="policy-modal-content">
+        <div class="policy-modal-header">
+          <h2>Termos de Uso</h2>
+          <button class="policy-modal-close" data-modal="terms-modal">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="policy-modal-body">
+          <h3>1. Aceitação dos Termos</h3>
+          <p>
+            Ao acessar e usar a plataforma Lykos.eng, você concorda com estes
+            Termos de Uso. Se você não concordar com qualquer parte destes
+            termos, não poderá usar nossos serviços.
+          </p>
+
+          <h3>2. Uso da Plataforma</h3>
+          <p>
+            Você concorda em usar a plataforma apenas para fins legais e de
+            acordo com estes Termos. É proibido:
+          </p>
+          <ul>
+            <li>
+              Usar a plataforma de qualquer forma que viole leis locais,
+              nacionais ou internacionais
+            </li>
+            <li>
+              Transmitir material que seja difamatório, obsceno ou ofensivo
+            </li>
+            <li>
+              Tentar obter acesso não autorizado a qualquer parte da plataforma
+            </li>
+            <li>Compartilhar suas credenciais de acesso com terceiros</li>
+          </ul>
+
+          <h3>3. Propriedade Intelectual</h3>
+          <p>
+            Todo o conteúdo da plataforma, incluindo textos, gráficos, logos,
+            vídeos e software, é propriedade da Lykos.eng e protegido por leis
+            de direitos autorais.
+          </p>
+
+          <h3>4. Contas de Usuário</h3>
+          <p>
+            Você é responsável por manter a confidencialidade de sua conta e
+            senha. Notifique-nos imediatamente sobre qualquer uso não autorizado
+            de sua conta.
+          </p>
+
+          <h3>5. Modificações</h3>
+          <p>
+            Reservamo-nos o direito de modificar estes termos a qualquer
+            momento. Continuando a usar a plataforma após as alterações, você
+            aceita os novos termos.
+          </p>
+
+          <h3>6. Rescisão</h3>
+          <p>
+            Podemos encerrar ou suspender seu acesso à plataforma imediatamente,
+            sem aviso prévio, por qualquer violação destes Termos de Uso.
+          </p>
+        </div>
       </div>
     </div>
-  </footer>
 
-  <!-- Terms Modal -->
-  <div id="terms-modal" class="policy-modal">
-    <div class="policy-modal-content">
-      <div class="policy-modal-header">
-        <h2>Termos de Uso</h2>
-        <button class="policy-modal-close" data-modal="terms-modal">
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="policy-modal">
+      <div class="policy-modal-content">
+        <div class="policy-modal-header">
+          <h2>Política de Privacidade</h2>
+          <button class="policy-modal-close" data-modal="privacy-modal">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="policy-modal-body">
+          <h3>1. Informações que Coletamos</h3>
+          <p>
+            Coletamos informações que você nos fornece diretamente, incluindo:
+          </p>
+          <ul>
+            <li>Nome completo e endereço de e-mail</li>
+            <li>Informações de perfil e preferências</li>
+            <li>Histórico de cursos e progresso de aprendizado</li>
+            <li>
+              Informações de pagamento (processadas por terceiros seguros)
+            </li>
+          </ul>
+
+          <h3>2. Como Usamos suas Informações</h3>
+          <p>Utilizamos suas informações para:</p>
+          <ul>
+            <li>Fornecer, manter e melhorar nossos serviços</li>
+            <li>Processar transações e enviar informações relacionadas</li>
+            <li>Enviar comunicações técnicas, atualizações e suporte</li>
+            <li>Personalizar sua experiência de aprendizado</li>
+            <li>Monitorar e analisar tendências e uso da plataforma</li>
+          </ul>
+
+          <h3>3. Compartilhamento de Informações</h3>
+          <p>
+            Não vendemos suas informações pessoais. Podemos compartilhar
+            informações apenas:
+          </p>
+          <ul>
+            <li>Com instrutores dos cursos que você está matriculado</li>
+            <li>Com provedores de serviços terceirizados necessários</li>
+            <li>Quando exigido por lei ou para proteger nossos direitos</li>
+          </ul>
+
+          <h3>4. Segurança dos Dados</h3>
+          <p>
+            Implementamos medidas de segurança adequadas para proteger suas
+            informações pessoais contra acesso não autorizado, alteração ou
+            destruição.
+          </p>
+
+          <h3>5. Seus Direitos</h3>
+          <p>
+            Você tem o direito de acessar, corrigir ou excluir suas informações
+            pessoais a qualquer momento através das configurações de sua conta.
+          </p>
+
+          <h3>6. Cookies</h3>
+          <p>
+            Utilizamos cookies e tecnologias similares para melhorar sua
+            experiência, entender como você usa nossa plataforma e personalizar
+            conteúdo.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Modal -->
+    <div id="security-modal" class="policy-modal">
+      <div class="policy-modal-content">
+        <div class="policy-modal-header">
+          <h2>Política de Segurança</h2>
+          <button class="policy-modal-close" data-modal="security-modal">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="policy-modal-body">
+          <h3>1. Compromisso com a Segurança</h3>
+          <p>
+            A segurança dos seus dados é nossa prioridade máxima. Implementamos
+            práticas e tecnologias de segurança líderes do setor para proteger
+            sua informação.
+          </p>
+
+          <h3>2. Criptografia</h3>
+          <p>
+            Todas as informações sensíveis são criptografadas em trânsito usando
+            SSL/TLS e em repouso usando criptografia AES-256. Suas senhas são
+            armazenadas usando hash bcrypt moderno.
+          </p>
+
+          <h3>3. Autenticação</h3>
+          <ul>
+            <li>Senhas devem ter no mínimo 8 caracteres</li>
+            <li>Recomendamos o uso de autenticação de dois fatores (2FA)</li>
+            <li>Sessões expiram automaticamente após inatividade</li>
+            <li>
+              Bloqueio automático após múltiplas tentativas de login falhadas
+            </li>
+          </ul>
+
+          <h3>4. Infraestrutura</h3>
+          <p>Nossa plataforma é hospedada em servidores seguros com:</p>
+          <ul>
+            <li>Firewalls e sistemas de detecção de intrusão</li>
+            <li>Backups regulares e redundância de dados</li>
+            <li>Monitoramento 24/7 de atividades suspeitas</li>
+            <li>Atualizações de segurança regulares</li>
+          </ul>
+
+          <h3>5. Práticas Recomendadas</h3>
+          <p>Recomendamos que você:</p>
+          <ul>
+            <li>Use senhas fortes e únicas para sua conta</li>
+            <li>Nunca compartilhe suas credenciais de login</li>
+            <li>Faça logout após usar dispositivos compartilhados</li>
+            <li>Mantenha seu e-mail de recuperação atualizado</li>
+            <li>Reporte imediatamente qualquer atividade suspeita</li>
+          </ul>
+
+          <h3>6. Relatório de Vulnerabilidades</h3>
+          <p>
+            Se você descobrir uma vulnerabilidade de segurança, por favor nos
+            notifique imediatamente em: security@lykos.eng
+          </p>
+
+          <h3>7. Conformidade</h3>
+          <p>
+            Cumprimos com regulamentações de proteção de dados, incluindo LGPD
+            (Lei Geral de Proteção de Dados) e GDPR quando aplicável.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-modal" class="cart-sidebar">
+      <div class="cart-sidebar-header">
+        <h3 class="cart-sidebar-title">
+          <span class="material-symbols-outlined">shopping_cart</span>
+          Seu Carrinho
+        </h3>
+        <button id="close-cart-btn" class="btn-icon">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div class="policy-modal-body">
-        <h3>1. Aceitação dos Termos</h3>
-        <p>Ao acessar e usar a plataforma Lykos.eng, você concorda com estes Termos de Uso. Se você não concordar com qualquer parte destes termos, não poderá usar nossos serviços.</p>
 
-        <h3>2. Uso da Plataforma</h3>
-        <p>Você concorda em usar a plataforma apenas para fins legais e de acordo com estes Termos. É proibido:</p>
-        <ul>
-          <li>Usar a plataforma de qualquer forma que viole leis locais, nacionais ou internacionais</li>
-          <li>Transmitir material que seja difamatório, obsceno ou ofensivo</li>
-          <li>Tentar obter acesso não autorizado a qualquer parte da plataforma</li>
-          <li>Compartilhar suas credenciais de acesso com terceiros</li>
-        </ul>
-
-        <h3>3. Propriedade Intelectual</h3>
-        <p>Todo o conteúdo da plataforma, incluindo textos, gráficos, logos, vídeos e software, é propriedade da Lykos.eng e protegido por leis de direitos autorais.</p>
-
-        <h3>4. Contas de Usuário</h3>
-        <p>Você é responsável por manter a confidencialidade de sua conta e senha. Notifique-nos imediatamente sobre qualquer uso não autorizado de sua conta.</p>
-
-        <h3>5. Modificações</h3>
-        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento. Continuando a usar a plataforma após as alterações, você aceita os novos termos.</p>
-
-        <h3>6. Rescisão</h3>
-        <p>Podemos encerrar ou suspender seu acesso à plataforma imediatamente, sem aviso prévio, por qualquer violação destes Termos de Uso.</p>
+      <div id="cart-items-list" class="cart-sidebar-content">
+        <!-- Items will be injected here -->
+        <div class="cart-empty-msg">Seu carrinho está vazio.</div>
       </div>
-    </div>
-  </div>
 
-  <!-- Privacy Modal -->
-  <div id="privacy-modal" class="policy-modal">
-    <div class="policy-modal-content">
-      <div class="policy-modal-header">
-        <h2>Política de Privacidade</h2>
-        <button class="policy-modal-close" data-modal="privacy-modal">
-          <span class="material-symbols-outlined">close</span>
+      <div class="cart-sidebar-footer">
+        <div class="cart-total-row">
+          <span>Total:</span>
+          <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
+        </div>
+        <button id="btn-cart-checkout" class="btn-checkout" disabled>
+          Finalizar Compra
         </button>
       </div>
-      <div class="policy-modal-body">
-        <h3>1. Informações que Coletamos</h3>
-        <p>Coletamos informações que você nos fornece diretamente, incluindo:</p>
-        <ul>
-          <li>Nome completo e endereço de e-mail</li>
-          <li>Informações de perfil e preferências</li>
-          <li>Histórico de cursos e progresso de aprendizado</li>
-          <li>Informações de pagamento (processadas por terceiros seguros)</li>
-        </ul>
-
-        <h3>2. Como Usamos suas Informações</h3>
-        <p>Utilizamos suas informações para:</p>
-        <ul>
-          <li>Fornecer, manter e melhorar nossos serviços</li>
-          <li>Processar transações e enviar informações relacionadas</li>
-          <li>Enviar comunicações técnicas, atualizações e suporte</li>
-          <li>Personalizar sua experiência de aprendizado</li>
-          <li>Monitorar e analisar tendências e uso da plataforma</li>
-        </ul>
-
-        <h3>3. Compartilhamento de Informações</h3>
-        <p>Não vendemos suas informações pessoais. Podemos compartilhar informações apenas:</p>
-        <ul>
-          <li>Com instrutores dos cursos que você está matriculado</li>
-          <li>Com provedores de serviços terceirizados necessários</li>
-          <li>Quando exigido por lei ou para proteger nossos direitos</li>
-        </ul>
-
-        <h3>4. Segurança dos Dados</h3>
-        <p>Implementamos medidas de segurança adequadas para proteger suas informações pessoais contra acesso não autorizado, alteração ou destruição.</p>
-
-        <h3>5. Seus Direitos</h3>
-        <p>Você tem o direito de acessar, corrigir ou excluir suas informações pessoais a qualquer momento através das configurações de sua conta.</p>
-
-        <h3>6. Cookies</h3>
-        <p>Utilizamos cookies e tecnologias similares para melhorar sua experiência, entender como você usa nossa plataforma e personalizar conteúdo.</p>
-      </div>
     </div>
-  </div>
 
-  <!-- Security Modal -->
-  <div id="security-modal" class="policy-modal">
-    <div class="policy-modal-content">
-      <div class="policy-modal-header">
-        <h2>Política de Segurança</h2>
-        <button class="policy-modal-close" data-modal="security-modal">
+    <!-- Course Details Modal -->
+    <div id="course-modal" class="course-modal hidden">
+      <div class="course-modal-overlay"></div>
+      <div class="course-modal-content">
+        <button id="close-modal" class="course-modal-close">
           <span class="material-symbols-outlined">close</span>
         </button>
+
+        <div class="course-modal-body">
+          <!-- Course Image -->
+          <div class="course-modal-image-container">
+            <img
+              id="modal-course-img"
+              src=""
+              alt="Course"
+              class="course-modal-image"
+            />
+            <div class="course-modal-badge" id="modal-course-category">
+              Categoria
+            </div>
+          </div>
+
+          <!-- Course Info -->
+          <div class="course-modal-info">
+            <h2 id="modal-course-title" class="course-modal-title">
+              Título do Curso
+            </h2>
+
+            <div class="course-modal-meta">
+              <div class="course-modal-meta-item">
+                <span class="material-symbols-outlined">person</span>
+                <span id="modal-course-instructor">Instrutor</span>
+              </div>
+              <div class="course-modal-meta-item">
+                <span class="material-symbols-outlined">calendar_today</span>
+                <span id="modal-course-date">Data</span>
+              </div>
+              <div class="course-modal-meta-item">
+                <span class="material-symbols-outlined">groups</span>
+                <span id="modal-course-slots">Vagas</span>
+              </div>
+            </div>
+
+            <p id="modal-course-desc" class="course-modal-description">
+              Descrição do curso...
+            </p>
+
+            <!-- Modules List -->
+            <div class="course-modal-modules">
+              <h3 class="course-modal-modules-title">
+                <span class="material-symbols-outlined">list</span>
+                Módulos do Curso
+              </h3>
+              <div id="modal-modules-list" class="modules-list">
+                <p class="loading-msg">Carregando módulos...</p>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="course-modal-actions">
+              <div class="course-modal-price">
+                <span class="price-label">Preço:</span>
+                <span id="modal-course-price" class="price-value">R$ 0,00</span>
+              </div>
+              <button id="modal-add-cart-btn" class="btn-modal-cart">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                Adicionar ao Carrinho
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="policy-modal-body">
-        <h3>1. Compromisso com a Segurança</h3>
-        <p>A segurança dos seus dados é nossa prioridade máxima. Implementamos práticas e tecnologias de segurança líderes do setor para proteger sua informação.</p>
-
-        <h3>2. Criptografia</h3>
-        <p>Todas as informações sensíveis são criptografadas em trânsito usando SSL/TLS e em repouso usando criptografia AES-256. Suas senhas são armazenadas usando hash bcrypt moderno.</p>
-
-        <h3>3. Autenticação</h3>
-        <ul>
-          <li>Senhas devem ter no mínimo 8 caracteres</li>
-          <li>Recomendamos o uso de autenticação de dois fatores (2FA)</li>
-          <li>Sessões expiram automaticamente após inatividade</li>
-          <li>Bloqueio automático após múltiplas tentativas de login falhadas</li>
-        </ul>
-
-        <h3>4. Infraestrutura</h3>
-        <p>Nossa plataforma é hospedada em servidores seguros com:</p>
-        <ul>
-          <li>Firewalls e sistemas de detecção de intrusão</li>
-          <li>Backups regulares e redundância de dados</li>
-          <li>Monitoramento 24/7 de atividades suspeitas</li>
-          <li>Atualizações de segurança regulares</li>
-        </ul>
-
-        <h3>5. Práticas Recomendadas</h3>
-        <p>Recomendamos que você:</p>
-        <ul>
-          <li>Use senhas fortes e únicas para sua conta</li>
-          <li>Nunca compartilhe suas credenciais de login</li>
-          <li>Faça logout após usar dispositivos compartilhados</li>
-          <li>Mantenha seu e-mail de recuperação atualizado</li>
-          <li>Reporte imediatamente qualquer atividade suspeita</li>
-        </ul>
-
-        <h3>6. Relatório de Vulnerabilidades</h3>
-        <p>Se você descobrir uma vulnerabilidade de segurança, por favor nos notifique imediatamente em: security@lykos.eng</p>
-
-        <h3>7. Conformidade</h3>
-        <p>Cumprimos com regulamentações de proteção de dados, incluindo LGPD (Lei Geral de Proteção de Dados) e GDPR quando aplicável.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Shopping Cart Sidebar -->
-  <div id="cart-modal" class="cart-sidebar">
-    <div class="cart-sidebar-header">
-      <h3 class="cart-sidebar-title">
-        <span class="material-symbols-outlined">shopping_cart</span>
-        Seu Carrinho
-      </h3>
-      <button id="close-cart-btn" class="btn-icon">
-        <span class="material-symbols-outlined">close</span>
-      </button>
     </div>
 
-    <div id="cart-items-list" class="cart-sidebar-content">
-      <!-- Items will be injected here -->
-      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
-    </div>
-
-    <div class="cart-sidebar-footer">
-      <div class="cart-total-row">
-        <span>Total:</span>
-        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
-      </div>
-      <button id="btn-cart-checkout" class="btn-checkout" disabled>
-        Finalizar Compra
-      </button>
-    </div>
-  </div>
-
-  <!-- Dark/Light Mode Toggle -->
-  <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema">
-    <span class="material-symbols-outlined dark-icon">dark_mode</span>
-    <span class="material-symbols-outlined light-icon">light_mode</span>
-  </button>
-
-  <!-- Scripts -->
-  <script src="js/theme-toggle.js"></script>
-  <script type="module" src="js/main.js"></script>
-</body>
-
+    <!-- Scripts -->
+    <script type="module" src="js/main.js"></script>
+  </body>
 </html>

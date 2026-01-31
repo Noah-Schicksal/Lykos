@@ -8,20 +8,18 @@ export const Auth = {
     window.addEventListener('session-expired', () => {
       console.log('[Auth] Session expired event received');
       // Clear data but don't call backend logout (token is already invalid)
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
 
       Auth.updateAuthUI();
 
-      // Ensure auth card is shown effectively asking for login
+      // Show auth card and show message
       const authContainer = document.getElementById('auth-card-container');
       if (authContainer) {
         authContainer.classList.add('show');
-        // Reset to login face if needed
+        // Reset to login face
         const cardInner = document.getElementById('auth-card');
         if (cardInner) {
           cardInner.classList.remove('flipped');
-          const loginFace = document.getElementById('auth-login'); // Assuming ID or class logic in updateAuthUI handles this
         }
       }
 
@@ -38,12 +36,10 @@ export const Auth = {
 
       if (response.data) {
         // Backend now returns { user, token }
-        const { user, token } = response.data;
+        // Token is sent via HTTP-only cookie, no need to store in localStorage
+        const { user } = response.data;
 
         localStorage.setItem('auth_user', JSON.stringify(user));
-        if (token) {
-          localStorage.setItem('auth_token', token);
-        }
 
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
@@ -68,7 +64,6 @@ export const Auth = {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
       Auth.updateAuthUI();
       AppUI.showMessage('Você saiu da conta.', 'info');
@@ -146,7 +141,6 @@ export const Auth = {
       });
 
       // Clear user data and logout
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
 
       // Close auth card
@@ -263,8 +257,7 @@ export const Auth = {
       if (nameEl) nameEl.textContent = user.name;
       if (emailEl) emailEl.textContent = user.email;
       if (roleEl)
-        roleEl.textContent =
-          user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
+        roleEl.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
     }
   },
 

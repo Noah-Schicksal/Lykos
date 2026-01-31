@@ -23,13 +23,17 @@ export const Home = {
     if (!gridContainer) return;
 
     // Attach pagination listeners to containers
-    ['pagination-top', 'pagination-bottom'].forEach(id => {
+    ['pagination-top', 'pagination-bottom'].forEach((id) => {
       const container = document.getElementById(id);
       if (container) {
         container.addEventListener('click', (e) => {
           const target = e.target as HTMLElement;
           const btn = target.closest('button');
-          if (btn && !btn.classList.contains('disabled') && !btn.hasAttribute('disabled')) {
+          if (
+            btn &&
+            !btn.classList.contains('disabled') &&
+            !btn.hasAttribute('disabled')
+          ) {
             const page = parseInt(btn.getAttribute('data-page') || '1');
             console.log(`Pagination click: going to page ${page}`);
             Home.renderPage(page, true);
@@ -55,13 +59,20 @@ export const Home = {
 
     // Modal Close listeners
     const closeModalBtn = document.getElementById('close-modal');
-    const modalOverlay = document.getElementById('course-modal');
+    const modal = document.getElementById('course-modal');
     if (closeModalBtn) {
       closeModalBtn.addEventListener('click', () => Home.closeCourseModal());
     }
-    if (modalOverlay) {
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) Home.closeCourseModal();
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        // Close if clicking on the modal itself (overlay) or the overlay div
+        const target = e.target as HTMLElement;
+        if (
+          target.id === 'course-modal' ||
+          target.classList.contains('course-modal-overlay')
+        ) {
+          Home.closeCourseModal();
+        }
       });
     }
 
@@ -73,7 +84,9 @@ export const Home = {
         console.log(`[Home] Modal cart button clicked for course ${courseId}`);
         if (courseId) {
           if (Home.cartItems.includes(courseId)) {
-            console.log(`[Home] Course ${courseId} is already in cart. Opening sidebar...`);
+            console.log(
+              `[Home] Course ${courseId} is already in cart. Opening sidebar...`,
+            );
             const cartToggle = document.getElementById('cart-toggle-btn');
             if (cartToggle) {
               Home.closeCourseModal();
@@ -100,7 +113,7 @@ export const Home = {
   syncCart: async () => {
     try {
       const items = await Cart.getCart();
-      Home.cartItems = items.map(item => item.courseId);
+      Home.cartItems = items.map((item) => item.courseId);
 
       // Update badge
       const badge = document.getElementById('cart-count-badge');
@@ -132,7 +145,9 @@ export const Home = {
       Home.filteredCourses = Home.allCourses;
       Home.currentPage = 1;
 
-      console.log(`Loaded ${Home.allCourses.length} courses. Rendering page 1.`);
+      console.log(
+        `Loaded ${Home.allCourses.length} courses. Rendering page 1.`,
+      );
       Home.renderPage(1, false);
 
       // Ocultar a legenda de carregamento após sucesso
@@ -140,7 +155,6 @@ export const Home = {
       if (subtitle) {
         subtitle.style.display = 'none';
       }
-
     } catch (error) {
       console.error('Erro ao carregar cursos:', error);
       const gridContainer = document.getElementById('courses-grid');
@@ -194,7 +208,7 @@ export const Home = {
 
     gridContainer.innerHTML = '';
 
-    courses.forEach(course => {
+    courses.forEach((course) => {
       const card = document.createElement('div');
       card.className = 'card-base group cursor-pointer';
       card.setAttribute('data-course-id', course.id);
@@ -208,7 +222,11 @@ export const Home = {
 
       // Handle Image URL
       let imageUrl = course.coverImageUrl;
-      if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+      if (
+        imageUrl &&
+        !imageUrl.startsWith('http') &&
+        !imageUrl.startsWith('/')
+      ) {
         imageUrl = '/' + imageUrl;
       }
       // If no image provided, fallback
@@ -219,7 +237,7 @@ export const Home = {
       // Format price
       const priceFormatted = new Intl.NumberFormat('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
       }).format(course.price);
 
       const categoryName = course.category?.name || 'Sem Categoria';
@@ -314,10 +332,11 @@ export const Home = {
           </div>
 
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-             ${isEnrolled ?
-          `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>` :
-          `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${(course.maxStudents === undefined || course.maxStudents === null) ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
-        }
+             ${
+               isEnrolled
+                 ? `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>`
+                 : `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
+             }
           </div>
           
           <div class="price-row" style="margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
@@ -333,7 +352,7 @@ export const Home = {
 
     // Add event listeners for cart buttons
     const cartBtns = gridContainer.querySelectorAll('.btn-add-cart');
-    cartBtns.forEach(btn => {
+    cartBtns.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const courseId = btn.getAttribute('data-course-id');
@@ -403,7 +422,10 @@ export const Home = {
   addToCart: async (courseId: string) => {
     // Check if logged in
     if (!localStorage.getItem('auth_user')) {
-      AppUI.showMessage('Por favor, faça login para adicionar cursos ao carrinho.', 'info');
+      AppUI.showMessage(
+        'Por favor, faça login para adicionar cursos ao carrinho.',
+        'info',
+      );
       const authContainer = document.getElementById('auth-card-container');
       if (authContainer) authContainer.classList.add('show');
       return;
@@ -418,7 +440,10 @@ export const Home = {
 
       // Update modal button if open
       const modalCartBtn = document.getElementById('modal-add-cart-btn');
-      if (modalCartBtn && modalCartBtn.getAttribute('data-course-id') === courseId) {
+      if (
+        modalCartBtn &&
+        modalCartBtn.getAttribute('data-course-id') === courseId
+      ) {
         modalCartBtn.innerHTML = `
           <span class="material-symbols-outlined">shopping_cart_checkout</span>
           Ir para Carrinho
@@ -433,11 +458,13 @@ export const Home = {
   loadCategories: async () => {
     try {
       const categories = await Categories.getAll();
-      const select = document.getElementById('category-filter') as HTMLSelectElement;
+      const select = document.getElementById(
+        'category-filter',
+      ) as HTMLSelectElement;
 
       if (select) {
         select.innerHTML = '<option value="">Todas Categorias</option>';
-        categories.forEach(cat => {
+        categories.forEach((cat) => {
           const option = document.createElement('option');
           option.value = cat.id;
           option.textContent = cat.name;
@@ -456,26 +483,34 @@ export const Home = {
    * Aplica filtros (Busca + Categoria)
    */
   applyFilters: () => {
-    const searchInput = document.getElementById('main-search-input') as HTMLInputElement;
-    const categorySelect = document.getElementById('category-filter') as HTMLSelectElement;
+    const searchInput = document.getElementById(
+      'main-search-input',
+    ) as HTMLInputElement;
+    const categorySelect = document.getElementById(
+      'category-filter',
+    ) as HTMLSelectElement;
 
     const term = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const categoryId = categorySelect ? categorySelect.value : '';
 
-    Home.filteredCourses = Home.allCourses.filter(course => {
-      const matchesTerm = !term || (
+    Home.filteredCourses = Home.allCourses.filter((course) => {
+      const matchesTerm =
+        !term ||
         course.title.toLowerCase().includes(term) ||
-        (course.category?.name && course.category.name.toLowerCase().includes(term))
-      );
+        (course.category?.name &&
+          course.category.name.toLowerCase().includes(term));
 
       // Check if course has a category object and if its ID matches
       // Some backends might return category as an ID or object, assuming object based on previous code
-      const matchesCategory = !categoryId || (course.category && course.category.id === categoryId);
+      const matchesCategory =
+        !categoryId || (course.category && course.category.id === categoryId);
 
       return matchesTerm && matchesCategory;
     });
 
-    console.log(`Filter: term="${term}", cat="${categoryId}" found ${Home.filteredCourses.length}`);
+    console.log(
+      `Filter: term="${term}", cat="${categoryId}" found ${Home.filteredCourses.length}`,
+    );
     Home.renderPage(1, false);
   },
 
@@ -493,12 +528,14 @@ export const Home = {
 
       // Reset modal content to loading or empty
       const modulesList = document.getElementById('modal-modules-list');
-      if (modulesList) modulesList.innerHTML = '<p class="loading-msg">Carregando módulos...</p>';
+      if (modulesList)
+        modulesList.innerHTML =
+          '<p class="loading-msg">Carregando módulos...</p>';
 
       // Fetch data in parallel
       const [course, modules] = await Promise.all([
         Courses.getById(courseId),
-        Modules.getByCourse(courseId)
+        Modules.getByCourse(courseId),
       ]);
 
       // Populate Modal
@@ -507,43 +544,59 @@ export const Home = {
       const instructor = document.getElementById('modal-course-instructor');
       const date = document.getElementById('modal-course-date');
       const price = document.getElementById('modal-course-price');
-      const img = document.getElementById('modal-course-img') as HTMLImageElement;
+      const img = document.getElementById(
+        'modal-course-img',
+      ) as HTMLImageElement;
       const category = document.getElementById('modal-course-category');
       const slots = document.getElementById('modal-course-slots');
       const cartBtn = document.getElementById('modal-add-cart-btn');
 
       if (title) title.textContent = course.title;
-      if (desc) desc.textContent = course.description || 'Sem descrição disponível.';
-      if (instructor) instructor.textContent = course.instructor?.name || 'Instrutor Desconhecido';
+      if (desc)
+        desc.textContent = course.description || 'Sem descrição disponível.';
+      if (instructor)
+        instructor.textContent =
+          course.instructor?.name || 'Instrutor Desconhecido';
 
       // Format Date
       if (date) {
         const d = new Date(course.createdAt);
-        date.textContent = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+        date.textContent = d.toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        });
       }
 
       // Format Price
       if (price) {
         price.textContent = new Intl.NumberFormat('pt-BR', {
           style: 'currency',
-          currency: 'BRL'
+          currency: 'BRL',
         }).format(course.price);
       }
 
       if (img) {
         let imageUrl = course.coverImageUrl;
-        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+        if (
+          imageUrl &&
+          !imageUrl.startsWith('http') &&
+          !imageUrl.startsWith('/')
+        ) {
           imageUrl = '/' + imageUrl;
         }
-        img.src = imageUrl || 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+        img.src =
+          imageUrl || 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
       }
 
-      if (category) category.textContent = course.category?.name || 'Sem Categoria';
+      if (category)
+        category.textContent = course.category?.name || 'Sem Categoria';
 
       if (slots) {
-        slots.textContent = (course.maxStudents === undefined || course.maxStudents === null)
-          ? '∞ ilimitadas'
-          : `${course.maxStudents} total`;
+        slots.textContent =
+          course.maxStudents === undefined || course.maxStudents === null
+            ? '∞ ilimitadas'
+            : `${course.maxStudents} total`;
       }
 
       if (cartBtn) {
@@ -565,7 +618,8 @@ export const Home = {
       // Render Modules
       if (modulesList) {
         if (modules.length === 0) {
-          modulesList.innerHTML = '<p class="loading-msg">Nenhum módulo cadastrado ainda.</p>';
+          modulesList.innerHTML =
+            '<p class="loading-msg">Nenhum módulo cadastrado ainda.</p>';
         } else {
           modulesList.innerHTML = '';
           modules.forEach((mod, index) => {
@@ -579,7 +633,6 @@ export const Home = {
           });
         }
       }
-
     } catch (error) {
       console.error('Error opening course modal:', error);
       AppUI.showMessage('Erro ao carregar detalhes do curso.', 'error');
@@ -596,5 +649,5 @@ export const Home = {
       modal.classList.add('hidden');
       document.body.style.overflow = ''; // Restore scroll
     }
-  }
+  },
 };
