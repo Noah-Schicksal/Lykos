@@ -253,11 +253,16 @@ function setupNavigation() {
     const cardInner = document.getElementById('auth-card');
 
     if (avatarBtn && authContainer) {
+        console.log('Avatar button and auth container found');
         avatarBtn.addEventListener('click', (e) => {
+            console.log('Avatar button clicked');
             e.stopPropagation();
             authContainer.classList.toggle('show');
+            const isShown = authContainer.classList.contains('show');
+            console.log('Auth container "show" class:', isShown);
+
             // Refresh content when showing
-            if (authContainer.classList.contains('show')) {
+            if (isShown) {
                 Auth.updateAuthUI();
             }
         });
