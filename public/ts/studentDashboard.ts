@@ -7,7 +7,6 @@ import { Auth } from './modules/auth.js';
 import { Categories } from './modules/categories.js';
 
 let allCourses: any[] = [];
-let currentView: 'courses' | 'certificates' = 'courses';
 
 document.addEventListener('DOMContentLoaded', async () => {
     // Check if user is logged in
@@ -35,12 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load dynamic courses
     await loadStudentCourses();
-
-    // Setup Category Filter
-    setupCategoryFilter();
-
-    // Setup Create Course Toggle
-    setupCreateCourse();
 });
 
 /**
@@ -50,26 +43,10 @@ function updateUserInfo(user: any) {
     const headerName = document.getElementById('header-user-name');
     const roleText = document.getElementById('header-user-role');
     const welcomeTitle = document.getElementById('welcome-title');
-    const userDisplayName = document.getElementById('user-display-name');
     const coursesStatus = document.getElementById('courses-status');
-    const sidebarUserName = document.getElementById('sidebar-user-name');
-    const sidebarUserRole = document.getElementById('sidebar-user-role');
 
     if (headerName) {
         headerName.textContent = user.name || 'Aluno';
-    }
-
-    if (userDisplayName) {
-        userDisplayName.textContent = user.name ? user.name.split(' ')[0] : 'Antonio';
-    }
-
-    if (sidebarUserName) {
-        sidebarUserName.textContent = user.name || 'Aluno';
-    }
-
-    if (sidebarUserRole) {
-        const userRole = (user.role || 'STUDENT').toLowerCase();
-        sidebarUserRole.textContent = userRole === 'instructor' ? 'Instrutor' : 'Estudante';
     }
 
     if (roleText) {
@@ -78,7 +55,8 @@ function updateUserInfo(user: any) {
     }
 
     if (welcomeTitle) {
-        // Welcome title now has a span for the name
+        const firstName = user.name ? user.name.split(' ')[0] : 'Aluno';
+        welcomeTitle.innerHTML = `Olá, <span class="text-primary">${firstName}</span>!`;
     }
 
     if (coursesStatus) {
@@ -99,17 +77,13 @@ async function loadStudentCourses() {
             status.innerHTML = `Você tem <span class="text-primary font-bold">${allCourses.length} cursos</span> ativos em andamento.`;
         }
 
-        if (allCourses.length > 0) {
-            renderFeaturedCourse(allCourses[0]);
-        } else {
-            document.getElementById('featured-course-container')?.classList.add('hidden');
+        // Feature the course with most progress that isn't finished, or the first one
+        const featured = allCourses.slice().sort((a, b) => (b.progress || 0) - (a.progress || 0)).filter(c => c.progress < 100)[0] || allCourses[0];
+        if (featured) {
+            renderFeaturedCourse(featured);
         }
 
-        if (currentView === 'courses') {
-            renderCourses(allCourses);
-        } else {
-            renderCertificates(allCourses);
-        }
+        renderCourses(allCourses);
     } catch (error) {
         console.error('Erro ao carregar cursos:', error);
         const grid = document.getElementById('courses-grid');
@@ -194,92 +168,7 @@ function renderCourses(courses: any[]) {
 }
 
 /**
- * Renders the featured course (Continue Learning)
- */
-function renderFeaturedCourse(course: any) {
-    const container = document.getElementById('featured-course-container');
-    const title = document.getElementById('featured-title');
-    const cover = document.getElementById('featured-course-image') as HTMLImageElement;
-    const progressText = document.getElementById('featured-progress-text');
-    const progressBar = document.getElementById('featured-progress-bar');
-    const link = document.getElementById('featured-link') as HTMLAnchorElement;
-
-    if (!container || !course) return;
-
-    container.classList.remove('hidden');
-
-    if (title) title.textContent = course.title;
-    if (cover) cover.src = course.coverImageUrl || 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80';
-
-    const progress = course.progress || 0;
-    if (progressText) progressText.textContent = `${progress}%`;
-    if (progressBar) progressBar.style.width = `${progress}%`;
-    if (link) {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = `player.html?courseId=${course.id}`;
-        });
-    }
-}
-
-/**
- * Renders only courses with certificates
- */
-function renderCertificates(courses: any[]) {
-    const grid = document.getElementById('courses-grid');
-    const status = document.getElementById('courses-status');
-    if (!grid) return;
-
-    const certificates = courses.filter(c => c.certificateHash || c.progress === 100);
-
-    if (status) {
-        status.innerHTML = `Você conquistou <span class="text-primary font-bold">${certificates.length} certificados</span> até agora.`;
-    }
-
-    if (certificates.length === 0) {
-        grid.innerHTML = `
-            <div class="col-span-full py-20 text-center bg-surface-dark border border-white/5 rounded-xl">
-                <span class="material-symbols-outlined text-6xl text-slate-700 mb-4">workspace_premium</span>
-                <p class="text-slate-500 text-lg">Nenhum certificado disponível.</p>
-                <p class="text-sm text-slate-600">Conclua 100% de um curso para gerar seu certificado.</p>
-            </div>
-        `;
-        return;
-    }
-
-    grid.innerHTML = certificates.map((course: any) => {
-        return `
-            <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/40 transition-all flex flex-col">
-                <div class="relative h-48 overflow-hidden">
-                    <div class="absolute inset-0 bg-center bg-cover transform group-hover:scale-105 transition-transform duration-700"
-                        style="background-image: url('${course.coverImageUrl || 'https://images.unsplash.com/photo-1523240715632-d040850239f6?auto=format&fit=crop&q=80&w=800'}')">
-                    </div>
-                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-6xl text-primary opacity-50">workspace_premium</span>
-                    </div>
-                    <div class="absolute top-4 left-4">
-                        <span class="px-3 py-1 bg-black/80 backdrop-blur-md text-primary text-xs font-bold rounded-full border border-primary/30">CONCLUÍDO</span>
-                    </div>
-                </div>
-                <div class="p-6 flex-1 flex flex-col">
-                    <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">
-                        ${course.title}</h3>
-                    <p class="text-sm text-slate-500 mb-6">Certificado de conclusão disponível para download.</p>
-                    <div class="mt-auto">
-                        <a href="${course.certificateHash ? `certificate.html?hash=${course.certificateHash}` : `player.html?courseId=${course.id}`}" 
-                           class="w-full bg-primary text-black py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 glow-hover transition-all" style="text-decoration: none;">
-                            <span>${course.certificateHash ? 'Ver Certificado' : 'Gerar Certificado'}</span>
-                            <span class="material-symbols-outlined text-sm">workspace_premium</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-/**
- * Sets up Search functionality
+ * Sets up Search and Category filtering
  */
 function setupSearch() {
     const searchInput = document.getElementById('course-search-input') as HTMLInputElement;
@@ -378,7 +267,7 @@ function setupNavigation() {
 
     document.getElementById('btn-my-learning')?.addEventListener('click', () => {
         authContainer?.classList.remove('show');
-        // Already here, but just in case
+        // Redireciona para a página correta do dashboard do aluno
         window.location.href = 'student.html';
     });
 
@@ -415,11 +304,10 @@ function setupNavigation() {
         }
     });
 
-    // Logout logic for sidebar
-    const btnLogoutSidebar = document.getElementById('btn-logout-sidebar');
-    if (btnLogoutSidebar) {
-        btnLogoutSidebar.addEventListener('click', async (e) => {
-            e.stopPropagation();
+    // Logout handling
+    const btnLogout = document.getElementById('btn-logout-sidebar');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
             const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
             if (confirmed) {
                 await Auth.logout();
@@ -428,141 +316,15 @@ function setupNavigation() {
         });
     }
 
-    const sidebarProfileCard = document.getElementById('sidebar-profile-card');
-    if (sidebarProfileCard) {
-        sidebarProfileCard.addEventListener('click', () => {
-            authContainer?.classList.add('show');
-            Auth.showProfileView();
-        });
-    }
-
-    const headerAvatar = document.getElementById('header-avatar-btn');
-    if (headerAvatar) {
-        headerAvatar.addEventListener('click', (e) => {
-            e.stopPropagation();
-            authContainer?.classList.toggle('show');
-            if (authContainer?.classList.contains('show')) {
-                Auth.updateAuthUI();
-            }
-        });
-    }
-
     // Profile link or other navigation items
     const navLinks = document.querySelectorAll('nav a');
     navLinks.forEach(link => {
         const a = link as HTMLAnchorElement;
-        const text = a.textContent?.trim() || '';
-
-        if (text.includes('Dashboard') || text.includes('Meus Cursos')) {
+        if (a.textContent?.includes('Profile') || a.textContent?.includes('Perfil')) {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
-                currentView = 'courses';
-                updateActiveLink(a);
-                document.getElementById('welcome-title')!.innerHTML = `Meus <span class="text-primary">Cursos</span>`;
-                renderCourses(allCourses);
-            });
-        } else if (text.includes('Certificados')) {
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentView = 'certificates';
-                updateActiveLink(a);
-                document.getElementById('welcome-title')!.innerHTML = `Meus <span class="text-primary">Certificados</span>`;
-                renderCertificates(allCourses);
-            });
-        } else if (text.includes('Perfil')) {
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Open auth card and show profile
-                authContainer?.classList.add('show');
-                Auth.showProfileView();
+                window.location.href = 'index.html';
             });
         }
     });
-}
-
-/**
- * Updates active class on sidebar links
- */
-function updateActiveLink(activeLink: HTMLAnchorElement) {
-    document.querySelectorAll('nav a').forEach(link => {
-        link.classList.remove('sidebar-item-active', 'border-l-2', 'border-primary', 'text-primary');
-        link.classList.add('nav-link-default');
-        link.querySelector('.material-symbols-outlined')?.classList.remove('fill-1');
-    });
-
-    activeLink.classList.add('sidebar-item-active', 'border-l-2', 'border-primary', 'text-primary');
-    activeLink.classList.remove('nav-link-default');
-    activeLink.querySelector('.material-symbols-outlined')?.classList.add('fill-1');
-}
-
-/**
- * Sets up category filter logic
- */
-async function setupCategoryFilter() {
-    const filter = document.getElementById('category-filter') as HTMLSelectElement;
-    if (!filter) return;
-
-    try {
-        const categories = await Categories.getAll();
-        filter.innerHTML = `<option value="">Todas Categorias</option>` +
-            categories.map((c: any) => `<option value="${c.id}">${c.name}</option>`).join('');
-
-        filter.addEventListener('change', () => {
-            const categoryId = filter.value;
-            if (!categoryId) {
-                renderCourses(allCourses);
-            } else {
-                const filtered = allCourses.filter(c => c.categoryId === categoryId);
-                renderCourses(filtered);
-            }
-        });
-    } catch (error) {
-        console.error('Error loading categories:', error);
-    }
-}
-
-/**
- * Sets up create course form toggle and logic
- */
-function setupCreateCourse() {
-    const btnToggle = document.getElementById('create-course-toggle');
-    const form = document.getElementById('create-course-form');
-
-    if (btnToggle && form) {
-        btnToggle.addEventListener('click', () => {
-            form.classList.toggle('show');
-            btnToggle.textContent = form.classList.contains('show') ? 'Cancelar' : 'Create Course';
-        });
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const titleInput = document.getElementById('course-title') as HTMLInputElement;
-            const descInput = document.getElementById('course-desc') as HTMLInputElement;
-
-            if (!titleInput.value.trim()) {
-                AppUI.showMessage('Por favor, informe o título do curso.', 'error');
-                return;
-            }
-
-            try {
-                await AppUI.apiFetch('/courses', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        title: titleInput.value.trim(),
-                        description: descInput.value.trim(),
-                        categoryId: '', // Default or first category
-                        price: 0
-                    })
-                });
-                AppUI.showMessage('Curso criado com sucesso!', 'success');
-                titleInput.value = '';
-                descInput.value = '';
-                form.classList.remove('show');
-                btnToggle.textContent = 'Create Course';
-                await loadStudentCourses(); // Refresh
-            } catch (error) {
-                console.error('Error creating course:', error);
-            }
-        });
-    }
 }
