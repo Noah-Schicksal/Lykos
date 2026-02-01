@@ -80,6 +80,11 @@ export const Home = {
     const modalCartBtn = document.getElementById('modal-add-cart-btn');
     if (modalCartBtn) {
       modalCartBtn.addEventListener('click', () => {
+        // Check if button is disabled (owner case)
+        if (modalCartBtn.hasAttribute('disabled')) {
+          return;
+        }
+
         const courseId = modalCartBtn.getAttribute('data-course-id');
         console.log(`[Home] Modal cart button clicked for course ${courseId}`);
         if (courseId) {
@@ -222,16 +227,16 @@ export const Home = {
 
       // Handle Image URL
       let imageUrl = course.coverImageUrl;
+      let hasImage = false;
       if (
         imageUrl &&
         !imageUrl.startsWith('http') &&
         !imageUrl.startsWith('/')
       ) {
         imageUrl = '/' + imageUrl;
-      }
-      // If no image provided, fallback
-      if (!imageUrl) {
-        imageUrl = 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+        hasImage = true;
+      } else if (imageUrl) {
+        hasImage = true;
       }
 
       // Format price
@@ -247,8 +252,40 @@ export const Home = {
       const isEnrolled = (course as any).isEnrolled;
       const progress = (course as any).progress || 0;
 
+      // Check if logged user is the course owner
+      const userStr = localStorage.getItem('auth_user');
+      const currentUser = userStr ? JSON.parse(userStr) : null;
+      const isOwner = currentUser && (course.instructorId === currentUser.id || course.instructor?.id === currentUser.id);
+
       let actionButtonHTML = '';
-      if (isEnrolled) {
+      if (isOwner) {
+        // Owner cannot add their own course to cart - show CRIADOR badge
+        actionButtonHTML = `
+            <div 
+              class="owner-badge"
+              style="
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                color: white;
+                border-radius: 0.5rem; 
+                height: 2rem; 
+                padding: 0 0.6rem;
+                display: flex; 
+                align-items: center; 
+                justify-content: center;
+                gap: 0.3rem;
+                margin-left: auto;
+                font-weight: 600;
+                font-size: 0.7rem;
+                box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+                cursor: default;
+              "
+              title="Você é o criador deste curso"
+            >
+              <span class="material-symbols-outlined" style="font-size: 0.9rem;">verified</span>
+              <span>CRIADOR</span>
+            </div>
+          `;
+      } else if (isEnrolled) {
         actionButtonHTML = `
             <a 
               class="btn-icon btn-play-course" 
@@ -269,11 +306,11 @@ export const Home = {
                 font-size: 0.8rem;
                 text-decoration: none;
               "
-              title="Continuar Estudo"
+              title="Você já possui este curso - Clique para assistir"
               onclick="event.stopPropagation();"
             >
-              <span class="material-symbols-outlined" style="font-size: 1.25rem;">play_circle</span>
-              <span>Assistir</span>
+              <span class="material-symbols-outlined" style="font-size: 1.25rem;">check_circle</span>
+              <span>Obtido</span>
             </a>
           `;
       } else {
@@ -312,37 +349,47 @@ export const Home = {
 
       card.innerHTML = `
         <div class="card-img-container">
-          <img
-            alt="${course.title}"
-            class="card-img"
-            src="${imageUrl}"
-            onerror="this.onerror=null;this.src='https://placehold.co/600x400/1e293b/cbd5e1?text=Erro+Imagem';"
-          />
+          ${
+            hasImage
+              ? `
+            <img
+              alt="${course.title}"
+              class="card-img"
+              src="${imageUrl}"
+              onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<div class=\'card-img-placeholder\'><span class=\'material-symbols-outlined\'>image</span><span style=\'font-size: 0.75rem; opacity: 0.7;\'>Sem imagem</span></div>' + this.parentElement.querySelector('.badge-tag').outerHTML + (this.parentElement.querySelector('[style*=\'MATRICULADO\']') ? this.parentElement.querySelector('[style*=\'MATRICULADO\']').outerHTML : '');"
+            />
+          `
+              : `
+            <div class="card-img-placeholder">
+              <span class="material-symbols-outlined">image</span>
+              <span style="font-size: 0.75rem; opacity: 0.7;">Sem imagem</span>
+            </div>
+          `
+          }
           <div class="badge-tag bg-tag-primary">${categoryName}</div>
-          ${isEnrolled ? '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">MATRICULADO</div>' : ''}
+          ${isEnrolled && !isOwner ? '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">MATRICULADO</div>' : ''}
         </div>
         <div class="card-body">
           <h3 class="card-title" title="${course.title}">
             ${course.title}
           </h3>
           
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">person</span>
-            ${course.instructor?.name || 'Instrutor Desconhecido'}
+          <div class="card-instructor">
+            <span>Criado por: ${course.instructor?.name || 'Instrutor Desconhecido'}</span>
           </div>
 
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-             ${
-               isEnrolled
-                 ? `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>`
-                 : `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
-             }
+             ${isEnrolled
+          ? `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>`
+          : `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
+        }
           </div>
           
-          <div class="price-row" style="margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
-             ${!isEnrolled ? `<span class="price-main" style="font-size: 1rem;">${priceFormatted}</span>` : ''}
+          ${progressHTML}
+          
+          <div class="card-footer">
+             ${!isEnrolled ? `<span class="card-price">${priceFormatted}</span>` : '<div></div>'}
              ${actionButtonHTML}
-             ${progressHTML}
           </div>
         </div>
       `;
@@ -468,9 +515,6 @@ export const Home = {
           const option = document.createElement('option');
           option.value = cat.id;
           option.textContent = cat.name;
-          // Apply dark mode styles explicitly to options
-          option.style.backgroundColor = '#0d1117';
-          option.style.color = 'white';
           select.appendChild(option);
         });
       }
@@ -578,15 +622,72 @@ export const Home = {
 
       if (img) {
         let imageUrl = course.coverImageUrl;
+        let hasImage = false;
+
+        // First, clean up any existing placeholder from previous modal opens
+        const container = img.parentElement;
+        if (container) {
+          const existingPlaceholder = container.querySelector(
+            '.card-img-placeholder',
+          );
+          if (existingPlaceholder) {
+            existingPlaceholder.remove();
+          }
+        }
+
         if (
           imageUrl &&
           !imageUrl.startsWith('http') &&
           !imageUrl.startsWith('/')
         ) {
           imageUrl = '/' + imageUrl;
+          hasImage = true;
+        } else if (imageUrl) {
+          hasImage = true;
         }
-        img.src =
-          imageUrl || 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+
+        // Use the same fallback approach as in course cards
+        if (hasImage && imageUrl) {
+          img.src = imageUrl;
+          img.style.display = 'block';
+          // Handle error by using the same placeholder as cards
+          img.onerror = function (this: HTMLImageElement) {
+            this.onerror = null;
+            this.style.display = 'none';
+            const container = this.parentElement;
+            if (container) {
+              const placeholder = document.createElement('div');
+              placeholder.className = 'card-img-placeholder';
+              placeholder.style.cssText =
+                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
+              placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
+                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
+              `;
+              container.insertBefore(placeholder, this);
+            }
+          };
+        } else {
+          // No image URL - hide img and show placeholder
+          img.style.display = 'none';
+          if (container) {
+            // Check if placeholder already exists
+            let placeholder = container.querySelector(
+              '.card-img-placeholder',
+            ) as HTMLElement | null;
+            if (!placeholder) {
+              placeholder = document.createElement('div');
+              placeholder.className = 'card-img-placeholder';
+              placeholder.style.cssText =
+                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
+              placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
+                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
+              `;
+              container.insertBefore(placeholder, img);
+            }
+          }
+        }
       }
 
       if (category)
@@ -602,16 +703,50 @@ export const Home = {
       if (cartBtn) {
         cartBtn.setAttribute('data-course-id', course.id);
 
-        if (Home.cartItems.includes(courseId)) {
+        // Check if logged user is the course owner
+        const userStr = localStorage.getItem('auth_user');
+        const currentUser = userStr ? JSON.parse(userStr) : null;
+        const isOwner = currentUser && (course.instructorId === currentUser.id || course.instructor?.id === currentUser.id);
+        const isEnrolled = (course as any).isEnrolled;
+
+        if (isOwner) {
+          // Owner cannot add their own course to cart
+          cartBtn.innerHTML = `
+            <span class="material-symbols-outlined">verified</span>
+            Você é o criador deste curso
+          `;
+          cartBtn.setAttribute('disabled', 'true');
+          (cartBtn as HTMLElement).style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+          (cartBtn as HTMLElement).style.cursor = 'not-allowed';
+          (cartBtn as HTMLElement).style.opacity = '0.9';
+        } else if (isEnrolled) {
+          // User already has this course
+          cartBtn.innerHTML = `
+            <span class="material-symbols-outlined">check_circle</span>
+            Você já possui este curso
+          `;
+          cartBtn.setAttribute('disabled', 'true');
+          (cartBtn as HTMLElement).style.background = '#8b5cf6';
+          (cartBtn as HTMLElement).style.cursor = 'not-allowed';
+          (cartBtn as HTMLElement).style.opacity = '0.9';
+        } else if (Home.cartItems.includes(courseId)) {
           cartBtn.innerHTML = `
             <span class="material-symbols-outlined">shopping_cart_checkout</span>
             Ir para Carrinho
           `;
+          cartBtn.removeAttribute('disabled');
+          (cartBtn as HTMLElement).style.background = '';
+          (cartBtn as HTMLElement).style.cursor = '';
+          (cartBtn as HTMLElement).style.opacity = '';
         } else {
           cartBtn.innerHTML = `
             <span class="material-symbols-outlined">shopping_cart</span>
             Adicionar ao Carrinho
           `;
+          cartBtn.removeAttribute('disabled');
+          (cartBtn as HTMLElement).style.background = '';
+          (cartBtn as HTMLElement).style.cursor = '';
+          (cartBtn as HTMLElement).style.opacity = '';
         }
       }
 

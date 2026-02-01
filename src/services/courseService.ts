@@ -23,8 +23,8 @@ export class CourseService {
     }
 
     // lista os cursos com paginação e busca
-    async list(page: number, limit: number, search?: string): Promise<FindAllResponse> {
-        return this.courseRepository.findAll({ page, limit, search });
+    async list(page: number, limit: number, search?: string, userId?: string): Promise<FindAllResponse> {
+        return this.courseRepository.findAll({ page, limit, search, userId });
     }
 
     // lista cursos por categoria

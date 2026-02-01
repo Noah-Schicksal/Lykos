@@ -3,69 +3,99 @@ import { CertificateValidationDTO } from '../dtos/certificateDTOs';
 import crypto from 'crypto';
 
 export class ApplicationError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = 'ApplicationError';
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'ApplicationError';
+  }
 }
 
 export class CertificationService {
-    private enrollmentRepository: EnrollmentRepository;
+  private enrollmentRepository: EnrollmentRepository;
 
-    constructor(
-        enrollmentRepository: EnrollmentRepository = new EnrollmentRepository()
-    ) {
-        this.enrollmentRepository = enrollmentRepository;
+  constructor(
+    enrollmentRepository: EnrollmentRepository = new EnrollmentRepository(),
+  ) {
+    this.enrollmentRepository = enrollmentRepository;
+  }
+
+  async validateCertificate(hash: string): Promise<CertificateValidationDTO> {
+    const enrollment = this.enrollmentRepository.findByCertificateHash(hash);
+
+    if (!enrollment) {
+      throw new ApplicationError('Certificado inválido ou não encontrado.');
     }
 
-    async validateCertificate(hash: string): Promise<CertificateValidationDTO> {
-        const enrollment = this.enrollmentRepository.findByCertificateHash(hash);
+    // Estimando carga horária baseada no número de aulas (1 aula = 1 hora)
+    const totalClasses = this.enrollmentRepository.countCourseClasses(
+      enrollment.course_id,
+    );
+    const estimatedWorkload = totalClasses > 0 ? totalClasses : 20;
 
-        if (!enrollment) {
-            throw new ApplicationError('Certificado inválido ou não encontrado.');
-        }
+    return {
+      certificateHash: enrollment.certificate_hash,
+      isValid: true,
+      studentName: enrollment.student_name,
+      courseTitle: enrollment.course_title,
+      workloadHours: estimatedWorkload,
+      instructorName: enrollment.instructor_name,
+      issuedAt: new Date(enrollment.enrolled_at),
+    };
+  }
 
-        // Estimando carga horária baseada no número de aulas (1 aula = 1 hora)
-        const totalClasses = this.enrollmentRepository.countCourseClasses(enrollment.course_id);
-        const estimatedWorkload = totalClasses > 0 ? totalClasses : 20;
-
-        return {
-            certificateHash: enrollment.certificate_hash,
-            isValid: true,
-            studentName: enrollment.student_name,
-            courseTitle: enrollment.course_title,
-            workloadHours: estimatedWorkload,
-            instructorName: enrollment.instructor_name,
-            issuedAt: new Date(enrollment.enrolled_at)
-        };
+  async generateCertificate(userId: string, courseId: string): Promise<string> {
+    // 1. Verify Enrollment
+    const enrollment = this.enrollmentRepository.findEnrollment(
+      userId,
+      courseId,
+    );
+    if (!enrollment) {
+      throw new ApplicationError('Matrícula não encontrada.');
     }
 
-    async generateCertificate(userId: string, courseId: string): Promise<string> {
-        // 1. Verify Enrollment
-        const enrollment = this.enrollmentRepository.findEnrollment(userId, courseId);
-        if (!enrollment) {
-            throw new ApplicationError('Matrícula não encontrada.');
-        }
-
-        // 2. Return existing hash if already issued
-        if (enrollment.certificateHash) {
-            return enrollment.certificateHash;
-        }
-
-        // 3. Verify Completion (100%)
-        const totalClasses = this.enrollmentRepository.countCourseClasses(courseId);
-        const completedClasses = this.enrollmentRepository.countCompletedClasses(userId, courseId);
-
-        if (totalClasses === 0 || completedClasses < totalClasses) {
-            throw new ApplicationError('O curso não foi concluído 100%. Complete todas as aulas antes de gerar o certificado.');
-        }
-
-        // 4. Generate Hash (UUID)
-        const hash = crypto.randomUUID();
-
-        // 5. Save Hash
-        this.enrollmentRepository.updateCertificateHash(enrollment.id!, hash);
-
-        return hash;
+    // 2. Return existing hash if already issued
+    if (enrollment.certificateHash) {
+      return enrollment.certificateHash;
     }
+
+    // 3. Verify Completion (100%)
+    const totalClasses = this.enrollmentRepository.countCourseClasses(courseId);
+    const completedClasses = this.enrollmentRepository.countCompletedClasses(
+      userId,
+      courseId,
+    );
+
+    if (totalClasses === 0 || completedClasses < totalClasses) {
+      throw new ApplicationError(
+        'O curso não foi concluído 100%. Complete todas as aulas antes de gerar o certificado.',
+      );
+    }
+
+    // 4. Generate Hash (UUID)
+    const hash = crypto.randomUUID();
+
+    // 5. Save Hash
+    this.enrollmentRepository.updateCertificateHash(enrollment.id!, hash);
+
+    return hash;
+  }
+
+  async getUserCertificates(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ certificates: any[]; total: number }> {
+    const { certificates, total } =
+      this.enrollmentRepository.findUserCertificates(userId, page, limit);
+
+    const mappedCertificates = certificates.map((cert) => ({
+      certificateHash: cert.certificate_hash,
+      courseTitle: cert.course_title,
+      studentName: cert.student_name,
+      instructorName: cert.instructor_name,
+      issuedAt: new Date(cert.enrolled_at),
+      isValid: true, // Se está no banco com hash, é válido
+    }));
+
+    return { certificates: mappedCertificates, total };
+  }
 }

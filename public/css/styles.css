@@ -1006,9 +1006,8 @@ body {
   align-items: center;
   max-width: 80rem;
   margin: 0 auto 3rem;
-  gap: 2rem;
+  gap: 1rem;
   flex-wrap: wrap;
-  padding: 0 1rem;
 }
 
 .search-filter {
@@ -1031,7 +1030,7 @@ body {
   background-color: var(--card-dark);
   border: 1px solid var(--border-light);
   border-radius: 1rem;
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
   outline: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -1045,9 +1044,21 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 
+/* Light mode input styles */
 :root.light .search-filter input {
   color: var(--text-primary);
-  background-color: rgba(94, 23, 235, 0.03);
+  background-color: white;
+  border-color: var(--border-med);
+  box-shadow: 0 4px 16px rgba(94, 23, 235, 0.08);
+  backdrop-filter: none;
+}
+
+:root.light .search-filter input::placeholder {
+  color: var(--text-muted);
+}
+
+:root.light .search-filter .material-symbols-outlined {
+  color: var(--text-muted);
 }
 
 .category-filter {
@@ -1061,7 +1072,7 @@ body {
   background-color: var(--card-dark);
   border: 1px solid var(--border-light);
   border-radius: 1rem;
-  color: white;
+  color: var(--text-primary);
   font-size: 1rem;
   outline: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -1081,9 +1092,26 @@ body {
   box-shadow: 0 0 0 1px var(--primary);
 }
 
+/* Light mode select styles */
 :root.light .category-filter select {
   color: var(--text-primary);
-  background-color: rgba(94, 23, 235, 0.03);
+  background-color: white;
+  border-color: var(--border-med);
+  box-shadow: 0 4px 16px rgba(94, 23, 235, 0.08);
+  backdrop-filter: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%235e17eb%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+}
+
+/* Select options styles */
+.category-filter select option {
+  background-color: var(--card-dark);
+  color: var(--text-primary);
+  padding: 0.5rem;
+}
+
+:root.light .category-filter select option {
+  background-color: white;
+  color: var(--text-primary);
 }
 
 /* Pagination */
@@ -1099,7 +1127,7 @@ body {
 .courses-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
+  gap: 0.5rem;
   margin-bottom: 2.5rem;
 }
 
@@ -1125,7 +1153,7 @@ body {
 .card-base {
   background-color: var(--card-dark);
   border: 1px solid var(--border-light);
-  border-radius: 1rem;
+  border-radius: 5px;
   overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
@@ -1153,14 +1181,46 @@ body {
   width: 100%;
   height: 200px;
   overflow: hidden;
-  background-color: var(--glass);
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.1),
+    rgba(0, 73, 83, 0.1)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:root.light .card-img-container {
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.05),
+    rgba(0, 73, 83, 0.05)
+  );
 }
 
 .card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transition: transform 0.3s ease;
+}
+
+.card-img-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--text-muted);
+  gap: 0.5rem;
+}
+
+.card-img-placeholder .material-symbols-outlined {
+  font-size: 4rem;
+  opacity: 0.5;
 }
 
 .card-base:hover .card-img {
@@ -1185,7 +1245,7 @@ body {
 }
 
 .card-body {
-  padding: 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -1193,19 +1253,72 @@ body {
 }
 
 .card-title {
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0;
+  margin: 0 0 0.5rem 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
-  min-height: 2.8rem;
+  min-height: 3.15rem;
 }
 
+.card-instructor {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  opacity: 0.85;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-height: 1.25rem;
+  margin-top: 0.25rem;
+}
+
+.card-slots {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.card-slots .material-symbols-outlined {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.card-status-enrolled {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(94, 23, 235, 0.08);
+  gap: 0.75rem;
+}
+
+.card-price {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+}
+
+/* Legacy support - can be removed later */
 .price-row {
   display: flex;
   align-items: center;
@@ -1938,7 +2051,43 @@ body {
   width: 5rem;
   height: 3rem;
   object-fit: cover;
+  object-position: center;
   border-radius: 0.25rem;
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.1),
+    rgba(0, 73, 83, 0.1)
+  );
+}
+
+.cart-item-img-placeholder {
+  width: 5rem;
+  height: 3rem;
+  border-radius: 0.25rem;
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.1),
+    rgba(0, 73, 83, 0.1)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.cart-item-img-placeholder .material-symbols-outlined {
+  font-size: 1.5rem;
+  opacity: 0.5;
+}
+
+:root.light .cart-item-img,
+:root.light .cart-item-img-placeholder {
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.05),
+    rgba(0, 73, 83, 0.05)
+  );
 }
 
 .cart-item-info {
