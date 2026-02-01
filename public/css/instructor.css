@@ -47,6 +47,7 @@
 .dashboard-wrapper {
   display: flex;
   height: calc(100vh - 4rem);
+  max-height: calc(100vh - 4rem);
   overflow: hidden;
   background-color: var(--bg-dark);
   color: var(--text-primary);
@@ -59,10 +60,12 @@
 .dashboard-sidebar {
   width: 300px;
   min-width: 300px;
+  max-height: 100%;
   background-color: var(--card-dark);
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 :root.light .dashboard-sidebar {
@@ -72,6 +75,7 @@
 .sidebar-header {
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
 }
 
 .sidebar-title {
@@ -89,7 +93,9 @@
 .sidebar-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
+  min-height: 0;
 }
 
 .sidebar-loading {
@@ -197,8 +203,11 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--bg-dark);
   position: relative;
+  max-height: 100%;
+  min-height: 0;
 }
 
 .empty-state {
@@ -427,6 +436,10 @@
 .detail-section p {
   color: var(--text-muted);
   line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .section-header-inline {
@@ -770,6 +783,108 @@
    =========================== */
 .text-muted {
   color: var(--text-muted);
+}
+
+/* ===========================
+   Select Dark/Light Mode
+   =========================== */
+select.form-input {
+  background-color: var(--card-dark);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+:root.light select.form-input {
+  background-color: white;
+  color: var(--text-primary);
+  border-color: var(--border-med);
+}
+
+select.form-input option {
+  background-color: var(--card-dark);
+  color: var(--text-primary);
+}
+
+:root.light select.form-input option {
+  background-color: white;
+  color: var(--text-primary);
+}
+
+/* ===========================
+   Custom Scrollbar
+   =========================== */
+.sidebar-list::-webkit-scrollbar,
+.dashboard-main::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar-list::-webkit-scrollbar-track,
+.dashboard-main::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+  border-radius: 4px;
+}
+
+.sidebar-list::-webkit-scrollbar-thumb,
+.dashboard-main::-webkit-scrollbar-thumb {
+  background: rgba(94, 23, 235, 0.3);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.sidebar-list::-webkit-scrollbar-thumb:hover,
+.dashboard-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(94, 23, 235, 0.5);
+}
+
+:root.light .sidebar-list::-webkit-scrollbar-track,
+:root.light .dashboard-main::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+:root.light .sidebar-list::-webkit-scrollbar-thumb,
+:root.light .dashboard-main::-webkit-scrollbar-thumb {
+  background: rgba(94, 23, 235, 0.2);
+}
+
+:root.light .sidebar-list::-webkit-scrollbar-thumb:hover,
+:root.light .dashboard-main::-webkit-scrollbar-thumb:hover {
+  background: rgba(94, 23, 235, 0.4);
+}
+
+/* Firefox scrollbar */
+.sidebar-list,
+.dashboard-main {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(94, 23, 235, 0.3) var(--bg-dark);
+}
+
+:root.light .sidebar-list,
+:root.light .dashboard-main {
+  scrollbar-color: rgba(94, 23, 235, 0.2) #f5f5f5;
+}
+
+/* ===========================
+   Theme Toggle
+   =========================== */
+#theme-toggle .theme-icon {
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+#theme-toggle .dark-icon {
+  display: block;
+}
+
+#theme-toggle .light-icon {
+  display: none;
+}
+
+:root.light #theme-toggle .dark-icon {
+  display: none;
+}
+
+:root.light #theme-toggle .light-icon {
+  display: block;
 }
 
 /* ===========================

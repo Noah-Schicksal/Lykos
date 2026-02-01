@@ -145,9 +145,16 @@ document.addEventListener('DOMContentLoaded', () => {
             currency: 'BRL',
           }).format(item.price);
 
+          // Verificar se tem imagem
+          const hasImage =
+            item.coverImageUrl && item.coverImageUrl.trim() !== '';
+          const imageHTML = hasImage
+            ? `<img src="${item.coverImageUrl}" class="cart-item-img" alt="${item.title}" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div class=\'cart-item-img-placeholder\'><span class=\'material-symbols-outlined\'>image</span></div>');">`
+            : `<div class="cart-item-img-placeholder"><span class="material-symbols-outlined">image</span></div>`;
+
           return `
           <div class="cart-item">
-            <img src="${item.coverImageUrl || 'https://placehold.co/100x60'}" class="cart-item-img" alt="${item.title}">
+            ${imageHTML}
             <div class="cart-item-info">
               <h4 class="cart-item-title">${item.title}</h4>
               <div class="cart-item-price">${price}</div>
@@ -497,7 +504,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Password strength validation
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passwordRegex.test(password)) {
         AppUI.showMessage(
           'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais',
