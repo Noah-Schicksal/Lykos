@@ -337,23 +337,23 @@ export const Home = {
             ${course.title}
           </h3>
           
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">person</span>
-            ${course.instructor?.name || 'Instrutor Desconhecido'}
+          <div class="card-instructor">
+            <span>Criado por: ${course.instructor?.name || 'Instrutor Desconhecido'}</span>
           </div>
 
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          <div class="card-meta">
              ${
                isEnrolled
-                 ? `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>`
-                 : `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
+                 ? `<span class="card-status-enrolled">Curso em andamento</span>`
+                 : `<div class="card-slots"><span class="material-symbols-outlined">group</span><span>${course.maxStudents === undefined || course.maxStudents === null ? 'Vagas ilimitadas' : `${course.enrolledCount || 0}/${course.maxStudents} vagas`}</span></div>`
              }
           </div>
           
-          <div class="price-row" style="margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
-             ${!isEnrolled ? `<span class="price-main" style="font-size: 1rem;">${priceFormatted}</span>` : ''}
+          ${progressHTML}
+          
+          <div class="card-footer">
+             ${!isEnrolled ? `<span class="card-price">${priceFormatted}</span>` : '<div></div>'}
              ${actionButtonHTML}
-             ${progressHTML}
           </div>
         </div>
       `;
@@ -589,15 +589,72 @@ export const Home = {
 
       if (img) {
         let imageUrl = course.coverImageUrl;
+        let hasImage = false;
+
+        // First, clean up any existing placeholder from previous modal opens
+        const container = img.parentElement;
+        if (container) {
+          const existingPlaceholder = container.querySelector(
+            '.card-img-placeholder',
+          );
+          if (existingPlaceholder) {
+            existingPlaceholder.remove();
+          }
+        }
+
         if (
           imageUrl &&
           !imageUrl.startsWith('http') &&
           !imageUrl.startsWith('/')
         ) {
           imageUrl = '/' + imageUrl;
+          hasImage = true;
+        } else if (imageUrl) {
+          hasImage = true;
         }
-        img.src =
-          imageUrl || 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+
+        // Use the same fallback approach as in course cards
+        if (hasImage && imageUrl) {
+          img.src = imageUrl;
+          img.style.display = 'block';
+          // Handle error by using the same placeholder as cards
+          img.onerror = function (this: HTMLImageElement) {
+            this.onerror = null;
+            this.style.display = 'none';
+            const container = this.parentElement;
+            if (container) {
+              const placeholder = document.createElement('div');
+              placeholder.className = 'card-img-placeholder';
+              placeholder.style.cssText =
+                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
+              placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
+                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
+              `;
+              container.insertBefore(placeholder, this);
+            }
+          };
+        } else {
+          // No image URL - hide img and show placeholder
+          img.style.display = 'none';
+          if (container) {
+            // Check if placeholder already exists
+            let placeholder = container.querySelector(
+              '.card-img-placeholder',
+            ) as HTMLElement | null;
+            if (!placeholder) {
+              placeholder = document.createElement('div');
+              placeholder.className = 'card-img-placeholder';
+              placeholder.style.cssText =
+                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
+              placeholder.innerHTML = `
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
+                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
+              `;
+              container.insertBefore(placeholder, img);
+            }
+          }
+        }
       }
 
       if (category)
