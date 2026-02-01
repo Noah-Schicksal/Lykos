@@ -3,6 +3,7 @@ export interface MyCourseDTO {
     title: string;
     description: string;
     coverImageUrl?: string;
+    categoryId?: string;
     enrolledAt: Date;
     progress: number;
     totalClasses: number;

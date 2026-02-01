@@ -357,6 +357,17 @@
   background-color: rgba(94, 23, 235, 0.05);
 }
 
+.filter-select option {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 0.5rem;
+}
+
+:root.light .filter-select option {
+  background-color: #ffffff;
+  color: #0d1b2a;
+}
+
 .filter-search {
   flex: 1;
   min-width: 250px;

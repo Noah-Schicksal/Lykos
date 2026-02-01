@@ -197,7 +197,7 @@ function setupSearch() {
         const filtered = allCourses.filter(course => {
             const matchesQuery = course.title.toLowerCase().includes(query) ||
                 (course.description && course.description.toLowerCase().includes(query));
-            const matchesCategory = !category || course.categoryId?.toString() === category;
+            const matchesCategory = !category || course.categoryId === category;
 
             return matchesQuery && matchesCategory;
         });
