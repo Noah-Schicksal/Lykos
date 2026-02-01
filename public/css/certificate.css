@@ -1,0 +1,320 @@
+/* ===========================
+   Certificate Styling
+   Based on ChemAcademy/Alpha-Cursos Design System
+   =========================== */
+
+/* Import Project Variables - Assuming they are available via styles.css import in HTML */
+/* If not, we redefine essential ones for portability or assume usage with styles.css */
+
+:root {
+    --cert-bg: #ffffff;
+    --cert-border: #5e17eb;
+    /* Primary */
+    --cert-border-secondary: #004953;
+    /* Secondary */
+    --cert-text: #0f172a;
+    --cert-text-muted: #64748b;
+    --cert-accent: #5e17eb;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    /* Use the dark background on screen for "Preview" mode */
+    background-color: var(--bg-dark, #000000);
+    font-family: var(--font-body, 'Space Mono', monospace);
+}
+
+.cert-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    /* Overlay Molecular Pattern from Body if transparent */
+}
+
+/* Loading & Error States */
+#loading,
+#error-msg {
+    color: var(--text-primary, white);
+    text-align: center;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+#error-msg h2 {
+    color: #ef4444;
+}
+
+/* ===========================
+   The Certificate Card (A4 Landscape Ratio approx)
+   =========================== */
+.certificate {
+    width: 100%;
+    max-width: 1123px;
+    /* A4 width at 96dpi landscape approx */
+    aspect-ratio: 297/210;
+    /* A4 Standard */
+    background: #ffffff;
+    color: var(--cert-text);
+    position: relative;
+    padding: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    /* Centering frame */
+    font-family: var(--font-heading, 'Libre Baskerville', serif);
+}
+
+/* Ornamental Border Frame */
+.cert-frame {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--cert-border);
+    position: relative;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-image:
+        radial-gradient(circle at top left, rgba(94, 23, 235, 0.05), transparent 40%),
+        radial-gradient(circle at bottom right, rgba(0, 73, 83, 0.1), transparent 40%);
+}
+
+/* Corner Decorations */
+.cert-frame::before,
+.cert-frame::after {
+    content: '';
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border: 4px double var(--cert-border);
+    transition: all 0.3s;
+}
+
+.cert-frame::before {
+    top: 1rem;
+    left: 1rem;
+    border-right: none;
+    border-bottom: none;
+}
+
+.cert-frame::after {
+    bottom: 1rem;
+    right: 1rem;
+    border-left: none;
+    border-top: none;
+}
+
+/* Header */
+.cert-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.org-logo {
+    font-family: var(--font-body, 'Space Mono', monospace);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--cert-border-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.cert-title {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--cert-border);
+    margin: 0;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.cert-subtitle {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--cert-text-muted);
+    margin-top: 0.5rem;
+    font-weight: 400;
+}
+
+/* Body Content */
+.cert-body {
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 1.25rem;
+    line-height: 1.6;
+}
+
+.student-name {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--cert-text);
+    margin: 1rem 0;
+    display: block;
+    border-bottom: 2px solid var(--cert-border-secondary);
+    padding-bottom: 0.5rem;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.course-name {
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--cert-accent);
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.workload-info {
+    font-size: 1rem;
+    color: var(--cert-text-muted);
+    font-family: var(--font-body, 'Space Mono', monospace);
+    margin-top: 2rem;
+}
+
+/* Footer */
+.cert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    position: relative;
+}
+
+.signature-block {
+    text-align: center;
+    width: 250px;
+}
+
+.sign-line {
+    border-top: 1px solid var(--cert-text-muted);
+    margin-top: 3rem;
+    padding-top: 0.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.sign-role {
+    font-size: 0.85rem;
+    color: var(--cert-text-muted);
+    font-family: var(--font-body, monospace);
+}
+
+.verification-block {
+    text-align: right;
+    font-family: var(--font-body, monospace);
+    font-size: 0.75rem;
+    color: var(--cert-text-muted);
+    opacity: 0.8;
+}
+
+.cert-hash {
+    font-weight: 700;
+    color: var(--cert-text);
+    display: block;
+    margin: 0.25rem 0;
+    letter-spacing: 0.05em;
+}
+
+/* Watermark */
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.03;
+    font-size: 25rem;
+    color: var(--cert-border);
+    z-index: 0;
+    pointer-events: none;
+    font-family: var(--font-body);
+}
+
+/* Floating Actions (Screen Only) */
+.cert-actions {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 0.75rem 1.5rem;
+    border-radius: 99px;
+    border: 1px solid var(--border-med, #333);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.btn-download {
+    background: var(--primary, #5e17eb);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 99px;
+    font-family: var(--font-body, monospace);
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-download:hover {
+    background: #4c11c0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(94, 23, 235, 0.4);
+}
+
+/* ===========================
+   Print Optimization
+   =========================== */
+@media print {
+    @page {
+        size: landscape;
+        margin: 0;
+    }
+
+    body {
+        margin: 0;
+        background: white;
+    }
+
+    .cert-container {
+        padding: 0;
+        min-height: auto;
+        display: block;
+    }
+
+    .certificate {
+        box-shadow: none;
+        max-width: 100%;
+        page-break-inside: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .cert-actions,
+    #loading,
+    #error-msg {
+        display: none !important;
+    }
+}
