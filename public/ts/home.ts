@@ -222,16 +222,16 @@ export const Home = {
 
       // Handle Image URL
       let imageUrl = course.coverImageUrl;
+      let hasImage = false;
       if (
         imageUrl &&
         !imageUrl.startsWith('http') &&
         !imageUrl.startsWith('/')
       ) {
         imageUrl = '/' + imageUrl;
-      }
-      // If no image provided, fallback
-      if (!imageUrl) {
-        imageUrl = 'https://placehold.co/600x400/1e293b/cbd5e1?text=Curso';
+        hasImage = true;
+      } else if (imageUrl) {
+        hasImage = true;
       }
 
       // Format price
@@ -312,12 +312,23 @@ export const Home = {
 
       card.innerHTML = `
         <div class="card-img-container">
-          <img
-            alt="${course.title}"
-            class="card-img"
-            src="${imageUrl}"
-            onerror="this.onerror=null;this.src='https://placehold.co/600x400/1e293b/cbd5e1?text=Erro+Imagem';"
-          />
+          ${
+            hasImage
+              ? `
+            <img
+              alt="${course.title}"
+              class="card-img"
+              src="${imageUrl}"
+              onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<div class=\'card-img-placeholder\'><span class=\'material-symbols-outlined\'>image</span><span style=\'font-size: 0.75rem; opacity: 0.7;\'>Sem imagem</span></div>' + this.parentElement.querySelector('.badge-tag').outerHTML + (this.parentElement.querySelector('[style*=\'MATRICULADO\']') ? this.parentElement.querySelector('[style*=\'MATRICULADO\']').outerHTML : '');"
+            />
+          `
+              : `
+            <div class="card-img-placeholder">
+              <span class="material-symbols-outlined">image</span>
+              <span style="font-size: 0.75rem; opacity: 0.7;">Sem imagem</span>
+            </div>
+          `
+          }
           <div class="badge-tag bg-tag-primary">${categoryName}</div>
           ${isEnrolled ? '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">MATRICULADO</div>' : ''}
         </div>
