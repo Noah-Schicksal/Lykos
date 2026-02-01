@@ -67,20 +67,20 @@
           </nav>
         </div>
         <div class="header-actions">
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+            <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+            <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+          </button>
+
           <div class="user-avatar-header">
-            <div id="header-user-info" class="text-right hidden sm:block mr-3">
-              <p id="header-user-name" class="text-sm font-bold leading-none text-white">
-                Aluno
-              </p>
-              <p id="header-user-role" class="text-xs text-primary">
-                Estudante
-              </p>
+            <div id="header-user-info" class="user-info">
+              <p id="header-user-name" class="user-name-small">Aluno</p>
+              <p id="header-user-role" class="user-role-small">Estudante</p>
             </div>
-            <button id="user-avatar-btn"
-              class="w-10 h-10 rounded-full bg-center bg-cover border-2 border-primary/30 overflow-hidden cursor-pointer">
+            <button id="user-avatar-btn" class="user-avatar">
               <img id="user-avatar-img" alt="Student profile picture"
-                src="https://lh3.googleusercontent.com/a/default-user"
-                onerror="this.src = 'https://placehold.co/100x100?text=A'" />
+                src="https://lh3.googleusercontent.com/a/default-user" />
             </button>
           </div>
         </div>
@@ -167,11 +167,6 @@
     </main>
   </div>
 
-  <!-- Dark/Light Mode Toggle -->
-  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-    <span class="material-symbols-outlined dark-icon">dark_mode</span>
-    <span class="material-symbols-outlined light-icon">light_mode</span>
-  </button>
 
   <!-- Auth Card Container -->
   <div id="auth-card-container" class="auth-container perspective-1000">

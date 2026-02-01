@@ -5,6 +5,7 @@
 import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
 import { Categories } from './modules/categories.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 let allCourses: any[] = [];
 
@@ -20,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    initThemeToggle();
     console.log('Student session detected:', user.name);
 
     // Update user info in the header
