@@ -77,13 +77,8 @@ async function loadStudentCourses() {
             status.innerHTML = `Você tem <span class="text-primary font-bold">${allCourses.length} cursos</span> ativos em andamento.`;
         }
 
-        // Feature the course with most progress that isn't finished, or the first one
-        const featured = allCourses.slice().sort((a, b) => (b.progress || 0) - (a.progress || 0)).filter(c => c.progress < 100)[0] || allCourses[0];
-        if (featured) {
-            renderFeaturedCourse(featured);
-        }
-
         renderCourses(allCourses);
+        setupCourseCardListeners();
     } catch (error) {
         console.error('Erro ao carregar cursos:', error);
         const grid = document.getElementById('courses-grid');
@@ -101,24 +96,6 @@ async function loadStudentCourses() {
 /**
  * Renders the featured course at the top
  */
-function renderFeaturedCourse(course: any) {
-    const title = document.getElementById('featured-course-title');
-    const module = document.getElementById('featured-module-name');
-    const percent = document.getElementById('featured-progress-percent');
-    const fill = document.getElementById('featured-progress-fill') as HTMLElement;
-    const img = document.getElementById('featured-course-image') as HTMLImageElement;
-    const btn = document.getElementById('btn-resume-featured');
-
-    if (title) title.textContent = course.title;
-    if (module) module.textContent = course.currentModule || 'Em andamento';
-    if (percent) percent.textContent = `${course.progress || 0}%`;
-    if (fill) fill.style.width = `${course.progress || 0}%`;
-    if (img && course.coverImageUrl) img.src = course.coverImageUrl;
-    if (btn) {
-        btn.onclick = () => window.location.href = `player.html?courseId=${course.id}`;
-    }
-}
-
 /**
  * Renders course cards to the grid
  */
@@ -139,32 +116,69 @@ function renderCourses(courses: any[]) {
 
     grid.innerHTML = courses.map((course: any) => {
         const progress = course.progress || 0;
-        const icon = course.category && course.category.toLowerCase().includes('code') ? 'code' : 'terminal';
+        const icon = course.category && course.category.toLowerCase().includes('code') ? 'code' : 'school';
+        const hasCoverImage = course.coverImageUrl && course.coverImageUrl.trim() !== '';
 
         return `
-            <div class="course-card" onclick="window.location.href='player.html?courseId=${course.id}'">
-                <div class="course-header">
-                    <div class="course-icon">
-                        <span class="material-symbols-outlined">${icon}</span>
-                    </div>
+            <div class="course-card" data-course-id="${course.id}">
+                <div class="course-cover ${!hasCoverImage ? 'no-image' : ''}">
+                    ${hasCoverImage
+                ? `<img src="${course.coverImageUrl}" alt="${course.title}" class="course-cover-img" />`
+                : `<div class="course-cover-placeholder">
+                             <span class="material-symbols-outlined">${icon}</span>
+                           </div>`
+            }
                     <span class="course-badge ${progress === 100 ? 'completed' : ''}">
                         ${progress === 100 ? 'Concluído' : 'Em Andamento'}
                     </span>
                 </div>
-                <h3 class="course-title">${course.title}</h3>
-                <p class="course-meta">${course.instructorName || 'Lykos Instructor'}</p>
-                <div class="course-progress">
-                    <div class="progress-bar-small">
-                        <div class="progress-fill-small ${progress === 100 ? 'completed' : ''}" style="width: ${progress}%"></div>
+                <div class="course-body">
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-meta">${course.instructorName || 'Lykos Instructor'}</p>
+                    <div class="course-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small ${progress === 100 ? 'completed' : ''}" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="progress-info ${progress === 100 ? 'completed' : ''}">
+                            <span>PROGRESSO</span>
+                            <span class="progress-value">${progress}%</span>
+                        </div>
                     </div>
-                    <div class="progress-info ${progress === 100 ? 'completed' : ''}">
-                        <span>PROGRESSO</span>
-                        <span class="progress-value">${progress}%</span>
+                    <div class="course-footer">
+                        <button class="btn-resume-course small" data-course-id="${course.id}">Continuar Estudando</button>
                     </div>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+// Setup event listeners for course cards
+function setupCourseCardListeners() {
+    const grid = document.getElementById('courses-grid');
+    if (!grid) return;
+
+    // Handle card clicks (excluding button clicks)
+    const cards = grid.querySelectorAll('.course-card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.btn-resume-course')) {
+                const courseId = (card as HTMLElement).dataset.courseId;
+                if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+            }
+        });
+    });
+
+    // Handle button clicks
+    const buttons = grid.querySelectorAll('.btn-resume-course');
+    buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const courseId = (button as HTMLElement).dataset.courseId;
+            if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+        });
+    });
 }
 
 /**
@@ -188,6 +202,7 @@ function setupSearch() {
             return matchesQuery && matchesCategory;
         });
         renderCourses(filtered);
+        setupCourseCardListeners();
     };
 
     searchInput.addEventListener('input', filterFunction);
