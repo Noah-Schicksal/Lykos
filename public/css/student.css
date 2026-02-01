@@ -275,6 +275,99 @@
   margin: 0;
 }
 
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: rgba(94, 23, 235, 0.05);
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  margin-top: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.user-info-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+
+.user-avatar-mini {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.user-avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-details-mini {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-name-mini {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+:root.light .user-name-mini {
+  color: var(--text-primary);
+}
+
+.user-role-mini {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.btn-logout-mini {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-logout-mini:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.sidebar.collapsed .sidebar-user {
+  padding: 0.75rem;
+  justify-content: center;
+  border: none;
+  background: transparent;
+}
+
+.sidebar.collapsed .user-info-mini,
+.sidebar.collapsed .user-details-mini {
+  width: 0;
+  opacity: 0;
+  display: none;
+}
+
+.sidebar.collapsed .btn-logout-mini {
+  color: var(--primary);
+  background-color: rgba(94, 23, 235, 0.1);
 .btn-resume {
   width: 100%;
   padding: 0.75rem 1rem;
@@ -312,6 +405,42 @@
   color: var(--text-muted);
 }
 
+/* Create Course Form */
+.create-course-form {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  border: 1px dashed var(--border-light);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.create-course-form.show {
+  display: flex !important;
+}
+
+.form-input-inline {
+  flex: 1;
+  min-width: 200px;
+  background: var(--bg-dark);
+  border: 1px solid var(--border-light);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  color: white;
+  outline: none;
+}
+
+.btn-submit-inline {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  font-weight: 700;
+}
 /* ... (previous breadcrumb styles remain) ... */
 
 /* Courses Filters */
