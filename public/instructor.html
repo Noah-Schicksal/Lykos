@@ -345,12 +345,17 @@
     <!-- Main Dashboard -->
     <main class="dashboard-wrapper">
       <!-- Left Sidebar: Course List -->
-      <aside class="dashboard-sidebar">
+      <aside id="instructor-sidebar" class="dashboard-sidebar">
         <div class="sidebar-header">
-          <h2 class="sidebar-title">Meus Cursos</h2>
+          <div class="sidebar-header-top">
+            <h2 class="sidebar-title">Meus Cursos</h2>
+            <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
+              <span class="material-symbols-outlined">menu</span>
+            </button>
+          </div>
           <button id="btn-create-new-course" class="btn-primary-dash">
-            <span class="material-symbols-outlined">add_circle</span> Criar Novo
-            Curso
+            <span class="material-symbols-outlined">add_circle</span>
+            <span class="btn-text">Criar Novo Curso</span>
           </button>
         </div>
 
@@ -503,9 +508,6 @@
       <div class="detail-header">
         <div class="detail-title-wrapper">
           <h1 id="detail-title" class="detail-title">Título do Curso</h1>
-          <div class="detail-badges">
-            <span id="detail-category" class="badge-tag">Categoria</span>
-          </div>
         </div>
         <div class="detail-actions">
           <button id="btn-edit-current" class="btn-secondary-dash">

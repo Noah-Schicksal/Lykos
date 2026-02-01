@@ -167,6 +167,15 @@ async function loadCoursesSidebar() {
 
 // Setup Global Listeners
 function setupGlobalEventListeners() {
+  // Sidebar Toggle
+  const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+  const sidebar = document.getElementById('instructor-sidebar');
+  if (btnToggleSidebar && sidebar) {
+    btnToggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  }
+
   // Create New Course Button
   document
     .getElementById('btn-create-new-course')
@@ -298,12 +307,9 @@ function showCategoriesView() {
 async function selectCourse(courseId: string) {
   currentCourseId = courseId;
 
-  // Update sidebar active state & Manage Badges
+  // Update sidebar active state
   document.querySelectorAll('.course-list-item').forEach((el) => {
     el.classList.remove('active');
-    // Remove existing badges if any
-    const badge = el.querySelector('.editing-badge');
-    if (badge) badge.remove();
   });
 
   const activeItem = document.querySelector(
@@ -311,12 +317,6 @@ async function selectCourse(courseId: string) {
   );
   if (activeItem) {
     activeItem.classList.add('active');
-
-    // Add "Em Edição" badge
-    const badge = document.createElement('span');
-    badge.className = 'editing-badge';
-    badge.textContent = 'Em Edição';
-    activeItem.appendChild(badge);
   }
 
   await renderCourseDetails(courseId);
@@ -357,7 +357,6 @@ async function renderCourseDetails(courseId: string) {
 
     // Fill data
     setText(clone, 'detail-title', course.title);
-    setText(clone, 'detail-category', course.category?.name || 'Sem Categoria');
     setText(clone, 'detail-students', `${course.enrolledCount || 0} alunos`);
     setText(
       clone,
