@@ -121,11 +121,13 @@ export class CourseRepository {
                 enrolledCount: row.enrolled_count,
                 isEnrolled: !!row.is_enrolled,
                 progress: row.is_enrolled ? progress : undefined, // Only send progress if enrolled
+                instructorId: row.instructor_id, // Added for owner check
                 category: row.category_id ? {
                     id: row.category_id,
                     name: row.category_name
                 } : null,
                 instructor: {
+                    id: row.instructor_id, // Added for owner check
                     name: row.instructor_name
                 }
             };
@@ -143,7 +145,7 @@ export class CourseRepository {
 
         const query = `
             SELECT 
-                c.id, c.title, c.description, c.price, c.cover_image_url, c.max_students,
+                c.id, c.title, c.description, c.price, c.cover_image_url, c.max_students, c.instructor_id,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count,
                 u.name as instructor_name
             FROM courses c
@@ -162,7 +164,9 @@ export class CourseRepository {
             coverImageUrl: row.cover_image_url,
             maxStudents: row.max_students,
             enrolledCount: row.enrolled_count,
+            instructorId: row.instructor_id,
             instructor: {
+                id: row.instructor_id,
                 name: row.instructor_name
             }
         }));

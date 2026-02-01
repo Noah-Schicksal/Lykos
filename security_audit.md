@@ -1,85 +1,172 @@
-# Relatório de Auditoria de Segurança e Confiabilidade da API
+# Auditoria de Segurança da API Lykos
 
-**Data:** 26/01/2026
-**Status:** Concluído
-**Versão do Código:** 1.0.0 (Baseado na implementação atual)
+## Resumo Executivo
 
-## 1. Visão Geral
-Este relatório apresenta uma análise rigorosa da segurança, confiabilidade e potenciais vulnerabilidades da API do projeto "Desafio 2". A análise abrangeu autenticação, autorização, validação de dados, manipulação de arquivos e configuração do servidor.
-
-## 2. Pontos Positivos (Fortalezas)
-Identificamos diversas práticas robustas de segurança já implementadas:
-
-*   **Autenticação Robusta**: Utilização de **JWT (JSON Web Tokens)** para gestão de sessões stateless. Suporte a tokens via HttpOnly Cookies (embora a prioridade atual seja Header).
-*   **Proteção de Senhas**: Uso de **Bcrypt** com fator de custo (salts) 10 para hash de senhas. Senhas nunca são salvas em texto plano.
-*   **Proteção contra SQL Injection**: Uso consistente de *prepared statements* via `better-sqlite3` em todos os repositórios (`CourseRepository`, `UserRepository`, etc.), sanitizando inputs automaticamente.
-*   **Controle de Acesso (RBAC)**: Middleware `roleMiddleware` implementado corretamente para segregar ações de ALUNOS e INSTRUTORES.
-*   **Segurança de Arquivos (Storage)**:
-    *   Uso de `randomUUID` para renomear arquivos, prevenindo sobrescrita e previsibilidade de nomes.
-    *   Caminhos sanitizados via `path.join` e regex para evitar ataques de *Path Traversal*.
-    *   Acesso público estático bloqueado; arquivos sensíveis servidos apenas via endpoint protegido com validação de matrícula/propriedade (`ClassController.getMaterial`).
-*   **Tratamento de Erros**: Middleware centralizado (`errorHandler`) evita vazamento de *stack traces* em produção e padroniza as respostas de erro.
-
-## 3. Vulnerabilidades e Pontos de Atenção
-Abaixo listamos as áreas que necessitam de melhorias, classificadas por prioridade.
-
-### 🔴 Prioridade ALTA (Crítico)
-
-1.  **Ausência de Rate Limiting (Limitação de Taxa)** (SOLVED)
-    *   **Risco**: A API está vulnerável a ataques de força bruta (brute-force) nas rotas de login e ataques de negação de serviço (DoS) por exaustão de recursos.
-    *   **Local**: Todas as rotas, especialmente `/auth/login`.
-    *   **Recomendação**: Implementar `express-rate-limit` para limitar requisições por IP.
-
-2.  **Validação de Input Manual e Frágil** (SOLVED)
-    *   **Risco**: Os controladores (`CourseController`, `UserController`) extraem e validam dados manualmente (`req.body`). Isso é propenso a erros, não trata tipos inesperados (ex: array onde se espera string) e permitiu bugs recentes (ex: erro de parsing de preço no multipart).
-    *   **Recomendação**: Adotar uma biblioteca de validação de schema como **Zod** ou **Joi** para garantir que todos os dados de entrada sigam um contrato estrito antes de chegar ao controller.
-
-3.  **Logs de Debug em Produção (Vazamento de Dados)** (SOLVED)
-    *   **Risco**: Foi identificado código (`CourseController.ts`, `AuthMiddleware`) com logs que podem vazar dados sensíveis (PII, tokens) nos logs do servidor.
-    *   **Recomendação**: Todos os `console.log` de debug foram removidos.
-
-
-### 🟠 Prioridade MÉDIA (Importante)
-
-4.  **Falta de Headers de Segurança (Helmet)** (SOLVED)
-    *   **Risco**: A aplicação não define headers HTTP de segurança (HSTS, X-Frame-Options, X-XSS-Protection), deixando clientes vulneráveis a ataques como Clickjacking e XSS.
-    *   **Recomendação**: Instalar e configurar o middleware `helmet`.
-
-5.  **Configuração de CORS Ausente** (SOLVED)
-    *   **Risco**: Bloqueio de frontends legítimos ou permissividade excessiva.
-    *   **Recomendação**: `cors` instalado e configurado com whitelist via `.env`.
-
-
-6.  **Validação de Arquivos Limitada** (SOLVED)
-    *   **Risco**: O upload verifica apenas a extensão do arquivo. Um atacante pode renomear um `.exe` malicioso para `.jpg` e enviá-lo. Embora o servidor não execute o arquivo, isso é má prática.
-    *   **Recomendação**: Validar o *MIME Type* real do arquivo usando "Magic Numbers" (bibliotecas como `file-type` ou `mmmagic`).
-
-### 🟡 Prioridade BAIXA (Melhoria Contínua)
-
-7.  **Gerenciamento de Segredos (.env)**
-    *   **Observação**: O projeto usa `dotenv`, o que é bom. Certifique-se de que o arquivo `.env` está no `.gitignore`.
-    *   **Recomendação**: Validar a presença de todas as variáveis de ambiente críticas no startup da aplicação (fail-fast).
-
-8.  **Estrutura de *Dependency Injection***
-    *   **Observação**: Os controladores instanciam serviços diretamente (`new Service()`). Isso dificulta testes unitários isolados (mocking).
-    *   **Recomendação**: Usar injeção de dependência via construtor de forma mais rigorosa ou um container de DI.
-
-## 4. Plano de Ação Recomendado
-
-Sugiro a seguinte ordem de implementação para blindar a API:
-
-### Fase 1: Correções Imediatas
-1.  **Limpar Logs**: Remover `console.log` residuais dos controladores (`CourseController`).
-2.  **Rate Limiting**: Adicionar middleware de limite de fluxo global e específico para login.
-3.  **Helmet**: Ativar headers de segurança básicos.
-
-### Fase 2: Robustez
-4.  **Validação com Zod**: Criar schemas para as rotas principais (`createUser`, `createCourse`, `login`).
-5.  **CORS**: Configurar política de origens cruzadas.
-
-### Fase 3: Refinamento
-6.  **Validação de Upload**: Melhorar checagem de tipos de arquivos.
-7.  **Testes**: Adicionar testes de carga simples para validar o Rate Limiting.
+Esta auditoria analisa a segurança da API Lykos, identificando **pontos fortes** e **vulnerabilidades potenciais**.
 
 ---
-**Conclusão**: A base do projeto é sólida e segue bons padrões de arquitetura (Repository Pattern, Services). As vulnerabilidades encontradas são comuns em estágios iniciais de desenvolvimento e podem ser mitigadas com esforço moderado, elevando significantemente o nível de segurança da aplicação.
+
+## ✅ O Que Já Temos (Pontos Fortes)
+
+### 1. Autenticação & Autorização
+
+| Arquivo | Recurso | Descrição |
+|---------|---------|-----------|
+| `authMiddleware.ts` | JWT | Validação de token via cookie ou header `Authorization` |
+| `roleMiddleware.ts` | RBAC | Controle de acesso por role (`STUDENT`, `INSTRUCTOR`, `ADMIN`) |
+| `adminMiddleware.ts` | Admin Check | Middleware dedicado para rotas administrativas |
+| `authService.ts` | bcrypt | Hash de senha com `bcrypt` (salt rounds: 10) |
+| `cookie.ts` | HttpOnly Cookies | Cookies com `httpOnly: true`, `secure` em produção, `sameSite` |
+
+### 2. Validação de Dados
+
+| Arquivo | Recurso | Descrição |
+|---------|---------|-----------|
+| `validationMiddleware.ts` | Input Validation | Validação de campos obrigatórios (register, login, course) |
+| `User.ts` | Password Policy | Senha mínima de 8 caracteres, maiúsculas, minúsculas, números e caracteres especiais |
+| `storageService.ts` | Magic Number Validation | Validação de tipo de arquivo por bytes (não extensão) |
+
+### 3. Headers de Segurança
+
+| Arquivo | Recurso | Descrição |
+|---------|---------|-----------|
+| `app.ts` | Helmet | CSP configurado, proteção contra XSS, clickjacking, etc. |
+| `cors.ts` | CORS Whitelist | Apenas origens em whitelist são permitidas |
+
+### 4. Banco de Dados
+
+| Arquivo | Recurso | Descrição |
+|---------|---------|-----------|
+| `init.ts` | Role Constraint | `CHECK(role IN ('INSTRUCTOR', 'STUDENT', 'ADMIN'))` |
+| `init.ts` | Foreign Keys | `ON DELETE CASCADE` para integridade referencial |
+| Repositories | Prepared Statements | Uso de `better-sqlite3` com statements parametrizados (proteção contra SQL Injection) |
+
+### 5. Controle de Acesso a Conteúdo
+
+| Arquivo | Recurso | Descrição |
+|---------|---------|-----------|
+| `classService.ts` | `checkAccess()` | Verifica ownership (INSTRUCTOR) ou enrollment (STUDENT) ou ADMIN |
+| `courseService.ts` | Ownership Check | Apenas o instrutor dono pode editar/deletar |
+
+---
+
+## ⚠️ Vulnerabilidades e Pontos de Atenção
+
+### 1. 🔴 Rate Limiting Muito Alto (CRÍTICO)
+
+**Arquivo:** `rateLimitMiddleware.ts`
+
+```typescript
+max: 100000 // Limite global
+max: 100000 // Limite de login
+```
+
+**Problema:** Limites de 100.000 requisições por minuto são ineficazes. Permite ataques de força bruta em login.
+
+**Recomendação:**
+```typescript
+// Global
+max: 100  // 100 req/min por IP
+
+// Login
+max: 5    // 5 tentativas de login por minuto
+windowMs: 15 * 60 * 1000 // 15 minutos
+```
+
+---
+
+### 2. 🟠 Diretório `/storage` Exposto Publicamente
+
+**Arquivo:** `app.ts`
+
+```typescript
+app.use('/storage', express.static(path.join(process.cwd(), 'storage')));
+```
+
+**Problema:** Qualquer pessoa pode acessar arquivos em `/storage` diretamente se souber o caminho.
+
+**Recomendação:** Remover esta linha e servir arquivos apenas através de rotas autenticadas (`/classes/:id/material`, `/classes/:id/video`).
+
+---
+
+### 3. 🟠 Registro de Instrutor Público
+
+**Arquivo:** `authRoutes.ts`
+
+```typescript
+router.post('/register/instructor', ...);
+```
+
+**Problema:** Qualquer pessoa pode se registrar como instrutor.
+
+**Recomendação:** Restringir esta rota a ADMINs ou implementar um fluxo de aprovação.
+
+---
+
+### 4. 🟡 JWT_SECRET Não Validado em Runtime
+
+**Arquivo:** `authService.ts`
+
+```typescript
+const secret = process.env.JWT_SECRET!; // Non-null assertion
+```
+
+**Problema:** Se `JWT_SECRET` não estiver definido, o servidor inicia mas falha em runtime.
+
+**Status:** Parcialmente mitigado por `env.ts` que valida variáveis no startup.
+
+---
+
+### 5. 🟡 Falta de Auditoria/Logging
+
+**Problema:** Não há sistema de logging para:
+- Tentativas de login falhas
+- Acessos não autorizados
+- Operações sensíveis (delete de curso, etc.)
+
+**Recomendação:** Implementar logging com Winston ou similar.
+
+---
+
+### 6. 🟡 Não Há Expiração de Refresh Token
+
+**Problema:** Apenas access token com expiração. Se comprometido, permanece válido até expirar.
+
+**Recomendação:** Implementar refresh tokens e lista de revogação.
+
+---
+
+### 7. 🟢 Sem Proteção CSRF Explícita
+
+**Status:** Mitigado por:
+- `sameSite: 'strict'` em produção
+- Cookies `httpOnly`
+- CORS restritivo
+
+---
+
+## 📋 Tabela Resumo
+
+| Item | Severidade | Status |
+|------|------------|--------|
+| Rate Limiting | 🔴 Crítico | Precisa ajuste |
+| /storage exposto | 🟠 Médio | Precisa ajuste |
+| Registro de Instrutor | 🟠 Médio | Avaliar regra de negócio |
+| Logging/Auditoria | 🟡 Baixo | Recomendado |
+| Refresh Tokens | 🟡 Baixo | Recomendado |
+| JWT Auth | ✅ OK | Implementado |
+| Password Policy | ✅ OK | Implementado |
+| RBAC | ✅ OK | Implementado |
+| Helmet/CSP | ✅ OK | Implementado |
+| CORS | ✅ OK | Implementado |
+| SQL Injection | ✅ OK | Prepared Statements |
+| File Upload Validation | ✅ OK | Magic Numbers |
+
+---
+
+## Recomendações Prioritárias
+
+1. **URGENTE:** Reduzir `max` em `rateLimitMiddleware.ts` para valores realistas (100 global, 5 login).
+2. **IMPORTANTE:** Remover ou proteger a rota estática `/storage`.
+3. **RECOMENDADO:** Adicionar logging de segurança.
+4. **OPCIONAL:** Avaliar restrição de registro de instrutor.
