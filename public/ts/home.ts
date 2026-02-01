@@ -479,9 +479,6 @@ export const Home = {
           const option = document.createElement('option');
           option.value = cat.id;
           option.textContent = cat.name;
-          // Apply dark mode styles explicitly to options
-          option.style.backgroundColor = '#0d1117';
-          option.style.color = 'white';
           select.appendChild(option);
         });
       }
