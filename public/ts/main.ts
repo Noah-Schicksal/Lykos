@@ -238,8 +238,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (emailInput && passInput) {
         // Basic client-side validation
-        if (!emailInput.value || !passInput.value) {
-          AppUI.showMessage('Por favor, preencha todos os campos.', 'error');
+        if (!emailInput.value.trim()) {
+          AppUI.showMessage('O campo email é obrigatório', 'error');
+          emailInput.focus();
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+          AppUI.showMessage('Formato de e-mail inválido', 'error');
+          emailInput.focus();
+          return;
+        }
+
+        if (!passInput.value) {
+          AppUI.showMessage('Campo senha é obrigatório', 'error');
+          passInput.focus();
           return;
         }
         await Auth.login(emailInput.value, passInput.value);
@@ -320,7 +334,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const updateData: any = {};
       if (nameInput.value.trim()) updateData.name = nameInput.value.trim();
-      if (emailInput.value.trim()) updateData.email = emailInput.value.trim();
+      if (emailInput.value.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+          AppUI.showMessage('Formato de e-mail inválido', 'error');
+          emailInput.focus();
+          return;
+        }
+        updateData.email = emailInput.value.trim();
+      } else {
+        AppUI.showMessage('O campo email é obrigatório', 'error');
+        emailInput.focus();
+        return;
+      }
       if (passwordInput.value.trim())
         updateData.password = passwordInput.value.trim();
 
@@ -450,6 +476,36 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = passInput.value;
       const confirmPass = confirmInput.value;
       const role = roleSelect.value; // 'student' or 'instructor'
+
+      if (!name.trim()) {
+        AppUI.showMessage('O campo nome é obrigatório', 'error');
+        nameInput.focus();
+        return;
+      }
+
+      if (!email.trim()) {
+        AppUI.showMessage('O campo email é obrigatório', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        AppUI.showMessage('Formato de e-mail inválido', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      // Password strength validation
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        AppUI.showMessage(
+          'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais',
+          'error',
+        );
+        passInput.focus();
+        return;
+      }
 
       if (password !== confirmPass) {
         AppUI.showMessage('Senhas não conferem!', 'error');
