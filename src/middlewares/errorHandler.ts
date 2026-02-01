@@ -46,6 +46,14 @@ export const errorHandler = (
     return ApiResponse.error(res, error.message, 400);
   }
 
+  // Erro de Upload (Multer)
+  if (error.name === 'MulterError') {
+    if (error.message === 'File too large') {
+      return ApiResponse.error(res, 'O arquivo excede o limite de tamanho permitido de 100MB.', 413);
+    }
+    return ApiResponse.error(res, `Erro no upload: ${error.message}`, 400);
+  }
+
   // Erro de JWT
   if (
     error.name === 'JsonWebTokenError' ||

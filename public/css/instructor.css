@@ -1,78 +1,77 @@
-/* Dashboard Theme Variables */
-:root {
-  --dash-bg: #000000;
-  /* Pure Black */
-  --dash-sidebar: #0a0a0a;
-  /* Slightly lighter sidebar */
-  --dash-border: rgba(94, 23, 235, 0.2);
-  /* Subtle border */
-  --dash-primary: #5e17eb;
-  /* Vibrant Purple */
-  --dash-primary-hover: #004953;
-  /* Deep Teal */
-  --dash-text-main: #f1f5f9;
-  --dash-text-muted: #64748b;
-  --dash-card: #0a0a0a;
-  --dash-card-hover: rgba(94, 23, 235, 0.1);
+/* ===========================
+   Instructor Dashboard Styles
+   =========================== */
+
+/* Additional navbar styles for back button */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-/* Dashboard Split Layout */
-/* Dashboard Split Layout */
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(94, 23, 235, 0.1);
+  border: 1px solid var(--border-med);
+  border-radius: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+
+.btn-back:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+@media (max-width: 768px) {
+  .btn-back span {
+    font-size: 1.2rem;
+  }
+
+  .btn-back {
+    padding: 0.5rem;
+  }
+}
+
+/* ===========================
+   Dashboard Layout
+   =========================== */
 .dashboard-wrapper {
   display: flex;
-  height: calc(100vh - 3.5rem);
-  /* Adjust based on navbar height */
+  height: calc(100vh - 4rem);
   overflow: hidden;
-  margin-top: 0;
-  /* Navbar is sticky in styles.css but flow might require no margin if handled there. 
-       However, styles.css .navbar is sticky top:0. 
-       If dashboard-wrapper follows immediately, it might be behind it if we don't margin.
-       Let's check instructor.html structure. 
-       Nav is before main.
-       Nav is sticky.
-       So main flows under it if not pushed? 
-       Sticky elements take space in flow unless position:fixed.
-       .navbar is position:sticky. So it takes space.
-       So margin-top on next element isn't needed to avoid overlap, but if we want it flush...
-       Wait, sticky keeps its space.
-       So if I have margin-top: 70px, that adds 70px of space between nav and main. 
-       If I remove margin-top, they should touch.
-       The user said "empty bar below". That implies too much space.
-       If .navbar is sticky, it stays in flow.
-       So margin-top: 70px creates a 70px gap.
-       I should probably remove margin-top entirely or reduce it to 0 if I want them flush.
-       But if the background is different...
-       Let's try removing it for now.
-    */
-  /* Actually, sticky relative to viewport...
-       If index.html sets it to sticky, it occupies space.
-       So margin-top should be 0.
-       But let's look at previous CSS. It had margin-top: 70px. That seems intentional for fixed nav.
-       But styles.css says sticky.
-       If it was fixed, margin-top is needed.
-       If it is sticky, margin-top adds extra space.
-       Let's assume sticky behaves as block in flow.
-       So margin-top should be 0.
-    */
-  background-color: var(--dash-bg);
-  color: var(--dash-text-main);
-  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: var(--font-body);
 }
 
-/* Sidebar (30%) */
+/* ===========================
+   Sidebar
+   =========================== */
 .dashboard-sidebar {
   width: 300px;
-  /* Fixed width like the reference image */
   min-width: 300px;
-  background-color: var(--dash-sidebar);
-  border-right: 1px solid var(--dash-border);
+  background-color: var(--card-dark);
+  border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
 }
 
+:root.light .dashboard-sidebar {
+  background-color: #f8f9fa;
+}
+
 .sidebar-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--dash-border);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .sidebar-title {
@@ -80,6 +79,11 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: white;
+  font-family: var(--font-heading);
+}
+
+:root.light .sidebar-title {
+  color: #0d1b2a;
 }
 
 .sidebar-list {
@@ -91,7 +95,7 @@
 .sidebar-loading {
   text-align: center;
   padding: 2rem;
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -108,35 +112,35 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
-  /* default transparent border */
   border-left-width: 3px;
-  /* Active indicator width */
   margin-bottom: 0.5rem;
   background-color: transparent;
 }
 
 .course-list-item:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: rgba(94, 23, 235, 0.05);
+}
+
+:root.light .course-list-item:hover {
+  background-color: rgba(94, 23, 235, 0.08);
 }
 
 .course-list-item.active {
-  background-color: rgba(0, 229, 255, 0.05);
-  /* Very subtle tint */
-  border-left-color: var(--dash-primary);
-  /* Left accent */
+  background-color: rgba(94, 23, 235, 0.1);
+  border-left-color: var(--primary);
 }
 
 .course-item-thumb {
   width: 48px;
   height: 48px;
   border-radius: 0.375rem;
-  background-color: #21262d;
+  background-color: rgba(94, 23, 235, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
 }
 
 .course-item-thumb img {
@@ -157,132 +161,143 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--dash-text-main);
+  color: var(--text-primary);
 }
 
 .course-list-item.active .course-item-title {
   color: white;
 }
 
+:root.light .course-list-item.active .course-item-title {
+  color: #0d1b2a;
+}
+
 .course-item-meta {
   font-size: 0.75rem;
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
   margin-top: 0.25rem;
 }
 
 .editing-badge {
   font-size: 0.65rem;
   padding: 1px 6px;
-  background-color: var(--dash-primary);
-  color: #000;
+  background-color: var(--primary);
+  color: white;
   border-radius: 4px;
   margin-left: auto;
-  /* Push to the right */
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Main Content (70%) */
-.dashboard-main-view {
+/* ===========================
+   Main Dashboard Content
+   =========================== */
+.dashboard-main {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background-color: var(--dash-bg);
+  background-color: var(--bg-dark);
   position: relative;
 }
 
-.empty-state-view {
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
   text-align: center;
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
 }
 
-/* Typography Overrides for Dark Mode */
-h1,
-h2,
-h3,
-h4,
-h5 {
-  color: white;
+.empty-state .material-symbols-outlined {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
 }
 
-.text-muted {
-  color: var(--dash-text-muted);
+.empty-state h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
-/* Form Styles */
+.empty-state p {
+  color: var(--text-muted);
+}
+
+/* ===========================
+   Form Styles
+   =========================== */
 .form-panel {
   max-width: 800px;
   margin: 0 auto;
-  background: var(--dash-sidebar);
-  /* Dark card */
+  background: var(--card-dark);
   padding: 2rem;
   border-radius: 1rem;
-  border: 1px solid var(--dash-border);
+  border: 1px solid var(--border-light);
+}
+
+:root.light .form-panel {
+  background-color: #f8f9fa;
+}
+
+.content-header {
+  margin-bottom: 2rem;
 }
 
 .page-title {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 2rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-label {
-  display: block;
   margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--dash-text-main);
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: var(--dash-bg);
-  /* Input darkest bg */
-  border: 1px solid var(--dash-border);
-  border-radius: 0.375rem;
   color: white;
-  font-size: 0.9rem;
-  transition: all 0.2s;
+  font-family: var(--font-heading);
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: var(--dash-primary);
-  box-shadow: 0 0 0 2px rgba(94, 23, 235, 0.1);
+:root.light .page-title {
+  color: #0d1b2a;
 }
 
-.form-actions-bar {
+.form-group textarea.form-input {
+  resize: vertical;
+  min-height: 100px;
+  font-family: var(--font-body);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid var(--dash-border);
+  border-top: 1px solid var(--border-light);
 }
 
-.file-upload-wrapper {
-  border: 2px dashed var(--dash-border);
+.file-upload {
+  border: 2px dashed var(--border-light);
   border-radius: 0.5rem;
   padding: 1.5rem;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.01);
+  background-color: rgba(94, 23, 235, 0.02);
   transition: all 0.2s;
 }
 
-.file-upload-wrapper:hover {
-  border-color: var(--dash-text-muted);
-  background-color: rgba(255, 255, 255, 0.03);
+.file-upload:hover {
+  border-color: var(--text-muted);
+  background-color: rgba(94, 23, 235, 0.05);
 }
 
 #cover-preview-container img {
@@ -290,23 +305,18 @@ h5 {
   height: auto;
   margin-top: 1rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--dash-border);
+  border: 1px solid var(--border-light);
 }
 
-.form-row.three-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1.5rem;
-}
-
-/* Detail View Styles */
+/* ===========================
+   Detail View
+   =========================== */
 .detail-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
   gap: 1rem;
-  /* Prevent overlap by adding gap */
 }
 
 .detail-title-wrapper {
@@ -314,7 +324,6 @@ h5 {
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
-  /* Allow to take available space */
 }
 
 .detail-title {
@@ -322,15 +331,18 @@ h5 {
   margin: 0;
   color: white;
   line-height: 1.2;
+  font-family: var(--font-heading);
+}
+
+:root.light .detail-title {
+  color: #0d1b2a;
 }
 
 .detail-badges {
   display: flex;
   gap: 0.5rem;
-  /* Space between badges */
   align-items: center;
   flex-wrap: wrap;
-  /* Allow wrapping if needed */
 }
 
 .badge-tag {
@@ -338,17 +350,10 @@ h5 {
   padding: 2px 8px;
   border-radius: 12px;
   background-color: rgba(94, 23, 235, 0.1);
-  color: var(--dash-primary);
+  color: var(--primary);
   border: 1px solid rgba(94, 23, 235, 0.2);
   font-weight: 600;
   white-space: nowrap;
-  /* Prevent breaking inside badge */
-}
-
-.badge-tag.outline {
-  background-color: transparent;
-  border-color: var(--dash-border);
-  color: var(--dash-text-muted);
 }
 
 .detail-actions {
@@ -356,25 +361,28 @@ h5 {
   gap: 0.75rem;
   align-items: center;
   flex-shrink: 0;
-  /* Prevent shrinking */
 }
 
-.detail-cover-banner {
+.detail-cover {
   width: 100%;
   height: 200px;
   border-radius: 1rem;
-  background-color: var(--dash-sidebar);
+  background-color: var(--card-dark);
   margin-bottom: 2rem;
   overflow: hidden;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--dash-text-muted);
-  border: 1px solid var(--dash-border);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
 }
 
-.detail-cover-banner img {
+:root.light .detail-cover {
+  background-color: #f8f9fa;
+}
+
+.detail-cover img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -390,28 +398,56 @@ h5 {
   grid-template-columns: 1fr;
 }
 
+@media (max-width: 1024px) {
+  .detail-body {
+    grid-template-columns: 1fr;
+  }
+}
+
 .detail-section {
-  background: var(--dash-sidebar);
+  background: var(--card-dark);
   padding: 1.5rem;
   border-radius: 1rem;
-  border: 1px solid var(--dash-border);
+  border: 1px solid var(--border-light);
+}
+
+:root.light .detail-section {
+  background-color: #f8f9fa;
 }
 
 .detail-section h3 {
   font-size: 1.1rem;
   margin: 0 0 1rem 0;
-  border-bottom: 1px solid var(--dash-border);
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 0.5rem;
-  color: var(--dash-text-main);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
 }
 
 .detail-section p {
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
   line-height: 1.6;
 }
 
-/* Modal Implementation */
-.custom-modal-overlay {
+.section-header-inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.5rem;
+}
+
+.section-header-inline h3 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+/* ===========================
+   Modal
+   =========================== */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -428,24 +464,28 @@ h5 {
   transition: opacity 0.2s;
 }
 
-.custom-modal-overlay.active {
+.modal-overlay.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.custom-modal-box {
-  background-color: var(--dash-card);
-  border: 1px solid var(--dash-border);
+.modal-box {
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-light);
   border-radius: 1rem;
   width: 90%;
   max-width: 400px;
   padding: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(94, 23, 235, 0.5);
   transform: scale(0.95);
   transition: transform 0.2s;
 }
 
-.custom-modal-overlay.active .custom-modal-box {
+:root.light .modal-box {
+  background-color: #f8f9fa;
+}
+
+.modal-overlay.active .modal-box {
   transform: scale(1);
 }
 
@@ -454,10 +494,15 @@ h5 {
   font-weight: 700;
   margin: 0 0 0.5rem 0;
   color: white;
+  font-family: var(--font-heading);
+}
+
+:root.light .modal-title {
+  color: #0d1b2a;
 }
 
 .modal-message {
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
   margin-bottom: 1.5rem;
   line-height: 1.5;
 }
@@ -468,14 +513,16 @@ h5 {
   justify-content: flex-end;
 }
 
-/* Buttons */
-.btn-primary {
-  background-color: var(--dash-primary);
-  color: #000;
-  /* Black text on cyan for contrast */
+/* ===========================
+   Dashboard Buttons
+   =========================== */
+.btn-primary-dash {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
   border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.375rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -484,19 +531,20 @@ h5 {
   gap: 0.5rem;
   transition: all 0.2s;
   font-size: 0.9rem;
+  font-family: var(--font-body);
 }
 
-.btn-primary:hover {
-  background-color: var(--dash-primary-hover);
+.btn-primary-dash:hover {
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
 }
 
-.btn-secondary {
-  background-color: #21262d;
-  color: var(--dash-text-main);
-  border: 1px solid var(--dash-border);
+.btn-secondary-dash {
+  background-color: rgba(94, 23, 235, 0.1);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
   padding: 0.6rem 1.2rem;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   font-weight: 500;
   cursor: pointer;
   display: inline-flex;
@@ -505,48 +553,59 @@ h5 {
   gap: 0.5rem;
   transition: all 0.2s;
   font-size: 0.9rem;
+  font-family: var(--font-body);
 }
 
-.btn-secondary:hover {
-  background-color: rgba(94, 23, 235, 0.1);
-  border-color: var(--dash-primary);
+.btn-secondary-dash:hover {
+  background-color: rgba(94, 23, 235, 0.15);
+  border-color: var(--primary);
+}
+
+.btn-secondary-dash.btn-small {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
 }
 
 .btn-danger-outline {
   background-color: transparent;
-  color: #f85149;
-  border: 1px solid rgba(248, 81, 73, 0.4);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
   padding: 0.6rem 1rem;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   transition: all 0.2s;
   font-weight: 600;
+  font-family: var(--font-body);
 }
 
 .btn-danger-outline:hover {
-  background-color: rgba(248, 81, 73, 0.1);
-  border-color: #f85149;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: #ef4444;
 }
 
-.btn-danger-fill {
+.btn-danger {
   background-color: #da3633;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: var(--font-body);
 }
 
-.btn-danger-fill:hover {
+.btn-danger:hover {
   background-color: #b62324;
 }
 
-/* Animations */
+/* ===========================
+   Animations
+   =========================== */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -557,65 +616,28 @@ h5 {
   animation: spin 1s linear infinite;
 }
 
-/* Generic Helpers */
-.full-width {
-  width: 100%;
-}
-
-.mt-3 {
-  margin-top: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .dashboard-wrapper {
-    flex-direction: column;
-    height: auto;
-    overflow: visible;
-  }
-
-  .dashboard-sidebar {
-    width: 100%;
-    height: 300px;
-    border-right: none;
-    border-bottom: 1px solid var(--dash-border);
-  }
-
-  .detail-body {
-    grid-template-columns: 1fr;
-  }
-
-  .form-row.three-col {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-header {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .detail-actions {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-
-/* Tree Content Editor Styles */
+/* ===========================
+   Tree Content Editor
+   =========================== */
 .tree-module-node {
-  background-color: var(--dash-sidebar);
-  border: 1px solid var(--dash-border);
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-light);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   overflow: hidden;
 }
 
+:root.light .tree-module-node {
+  background-color: #f8f9fa;
+}
+
 .tree-module-header {
-  background-color: #21262d;
+  background-color: rgba(94, 23, 235, 0.05);
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--dash-border);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .tree-module-title {
@@ -624,24 +646,30 @@ h5 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+:root.light .tree-module-title {
+  color: #0d1b2a;
 }
 
 .tree-class-list {
   padding: 0.5rem 0.5rem 0.5rem 1.5rem;
-  /* Indent for tree effect */
-  border-left: 2px solid var(--dash-border);
-  /* The "Tree Branch" line */
+  border-left: 2px solid var(--border-light);
   margin-left: 1.5rem;
 }
 
 .tree-class-item {
-  background-color: var(--dash-bg);
-  border: 1px solid var(--dash-border);
+  background-color: var(--bg-dark);
+  border: 1px solid var(--border-light);
   border-radius: 0.375rem;
   margin-bottom: 0.5rem;
   padding: 0.75rem;
   position: relative;
-  /* Connector line to the main branch */
+}
+
+:root.light .tree-class-item {
+  background-color: white;
 }
 
 .tree-class-item::before {
@@ -651,7 +679,7 @@ h5 {
   left: -1rem;
   width: 0.8rem;
   height: 2px;
-  background-color: var(--dash-border);
+  background-color: var(--border-light);
 }
 
 .tree-class-header {
@@ -663,7 +691,7 @@ h5 {
 
 .tree-class-title {
   font-weight: 500;
-  color: var(--dash-text-main);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -676,24 +704,30 @@ h5 {
 }
 
 .tree-input {
-  background-color: var(--dash-sidebar);
-  border: 1px solid var(--dash-border);
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-light);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.8rem;
   width: 100%;
+  font-family: var(--font-body);
+}
+
+:root.light .tree-input {
+  background-color: white;
+  color: var(--text-primary);
 }
 
 .tree-input:focus {
   outline: none;
-  border-color: var(--dash-primary);
+  border-color: var(--primary);
 }
 
 .tree-btn-icon {
   background: none;
   border: none;
-  color: var(--dash-text-muted);
+  color: var(--text-muted);
   cursor: pointer;
   padding: 2px;
   border-radius: 4px;
@@ -704,28 +738,64 @@ h5 {
 
 .tree-btn-icon:hover {
   color: white;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(94, 23, 235, 0.1);
+}
+
+:root.light .tree-btn-icon:hover {
+  color: var(--primary);
 }
 
 .btn-add-inline {
   width: 100%;
   padding: 0.5rem;
   background: transparent;
-  border: 1px dashed var(--dash-border);
-  color: var(--dash-text-muted);
+  border: 1px dashed var(--border-light);
+  color: var(--text-muted);
   border-radius: 0.375rem;
   cursor: pointer;
   font-size: 0.85rem;
   margin-top: 0.5rem;
   transition: all 0.2s;
+  font-family: var(--font-body);
 }
 
 .btn-add-inline:hover {
-  border-color: var(--dash-primary);
-  color: var(--dash-primary);
-  background-color: rgba(0, 229, 255, 0.05);
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: rgba(94, 23, 235, 0.05);
 }
 
-.hidden {
-  display: none !important;
+/* ===========================
+   Helpers
+   =========================== */
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* ===========================
+   Responsive Design
+   =========================== */
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dashboard-sidebar {
+    width: 100%;
+    height: 300px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .detail-header {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .detail-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
 }

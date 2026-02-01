@@ -23,6 +23,9 @@ router.use('/modules', moduleRoutes);
 router.use('/classes', classRoutes);
 router.use('/certificates', certificateRoutes);
 
+import adminRoutes from './adminRoutes';
+router.use('/admin', adminRoutes);
+
 // Register root catch-all or generic routes last
 router.use('/', studentRoutes);
 router.use('/', cartRoutes);

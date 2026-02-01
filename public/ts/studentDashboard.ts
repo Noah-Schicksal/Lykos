@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Setup sidebar navigation
     setupNavigation();
 
-    // Setup Search
+    // Setup Search and Categories
+    loadCategories();
     setupSearch();
 
     // Load dynamic courses
@@ -124,6 +125,27 @@ async function loadStudentCourses() {
 }
 
 /**
+ * Renders the featured course at the top
+ */
+function renderFeaturedCourse(course: any) {
+    const title = document.getElementById('featured-course-title');
+    const module = document.getElementById('featured-module-name');
+    const percent = document.getElementById('featured-progress-percent');
+    const fill = document.getElementById('featured-progress-fill') as HTMLElement;
+    const img = document.getElementById('featured-course-image') as HTMLImageElement;
+    const btn = document.getElementById('btn-resume-featured');
+
+    if (title) title.textContent = course.title;
+    if (module) module.textContent = course.currentModule || 'Em andamento';
+    if (percent) percent.textContent = `${course.progress || 0}%`;
+    if (fill) fill.style.width = `${course.progress || 0}%`;
+    if (img && course.coverImageUrl) img.src = course.coverImageUrl;
+    if (btn) {
+        btn.onclick = () => window.location.href = `player.html?courseId=${course.id}`;
+    }
+}
+
+/**
  * Renders course cards to the grid
  */
 function renderCourses(courses: any[]) {
@@ -143,33 +165,27 @@ function renderCourses(courses: any[]) {
 
     grid.innerHTML = courses.map((course: any) => {
         const progress = course.progress || 0;
+        const icon = course.category && course.category.toLowerCase().includes('code') ? 'code' : 'terminal';
+
         return `
-            <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/40 transition-all flex flex-col">
-                <div class="relative h-48 overflow-hidden">
-                    <div class="absolute inset-0 bg-center bg-cover transform group-hover:scale-105 transition-transform duration-700"
-                        style="background-image: url('${course.coverImageUrl || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'}')">
+            <div class="course-card" onclick="window.location.href='player.html?courseId=${course.id}'">
+                <div class="course-header">
+                    <div class="course-icon">
+                        <span class="material-symbols-outlined">${icon}</span>
                     </div>
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
-                    <div class="absolute top-4 left-4">
-                        <span class="px-3 py-1 bg-black/80 backdrop-blur-md text-primary text-xs font-bold rounded-full border border-primary/30">CURSO</span>
-                    </div>
+                    <span class="course-badge ${progress === 100 ? 'completed' : ''}">
+                        ${progress === 100 ? 'Concluído' : 'Em Andamento'}
+                    </span>
                 </div>
-                <div class="p-6 flex-1 flex flex-col">
-                    <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">
-                        ${course.title}</h3>
-                    <p class="text-sm text-slate-500 mb-6 line-clamp-2">${course.description || 'Inicie seus estudos neste treinamento completo.'}</p>
-                    <div class="mt-auto">
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="text-xs font-bold text-slate-500">PROGRESSO</span>
-                            <span class="text-sm font-bold text-primary">${progress}%</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-white/5 rounded-full mb-6 overflow-hidden">
-                            <div class="h-full bg-primary shadow-primary-md transition-all duration-1000" style="width: ${progress}%"></div>
-                        </div>
-                        <a href="player.html?courseId=${course.id}" class="w-full bg-white/5 text-primary py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-black transition-all" style="text-decoration: none;">
-                            <span>${progress === 100 ? 'Revisar Conteúdo' : 'Continuar Estudo'}</span>
-                            <span class="material-symbols-outlined text-sm">${progress === 100 ? 'verified' : 'play_circle'}</span>
-                        </a>
+                <h3 class="course-title">${course.title}</h3>
+                <p class="course-meta">${course.instructorName || 'Lykos Instructor'}</p>
+                <div class="course-progress">
+                    <div class="progress-bar-small">
+                        <div class="progress-fill-small ${progress === 100 ? 'completed' : ''}" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="progress-info ${progress === 100 ? 'completed' : ''}">
+                        <span>PROGRESSO</span>
+                        <span class="progress-value">${progress}%</span>
                     </div>
                 </div>
             </div>
@@ -267,16 +283,49 @@ function renderCertificates(courses: any[]) {
  */
 function setupSearch() {
     const searchInput = document.getElementById('course-search-input') as HTMLInputElement;
-    if (!searchInput) return;
+    const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
 
-    searchInput.addEventListener('input', (e) => {
-        const query = (e.target as HTMLInputElement).value.toLowerCase();
-        const filtered = allCourses.filter(course =>
-            course.title.toLowerCase().includes(query) ||
-            (course.description && course.description.toLowerCase().includes(query))
-        );
+    if (!searchInput || !categoryFilter) return;
+
+    const filterFunction = () => {
+        const query = searchInput.value.toLowerCase();
+        const category = categoryFilter.value;
+
+        const filtered = allCourses.filter(course => {
+            const matchesQuery = course.title.toLowerCase().includes(query) ||
+                (course.description && course.description.toLowerCase().includes(query));
+            const matchesCategory = !category || course.categoryId?.toString() === category;
+
+            return matchesQuery && matchesCategory;
+        });
         renderCourses(filtered);
-    });
+    };
+
+    searchInput.addEventListener('input', filterFunction);
+    categoryFilter.addEventListener('change', filterFunction);
+}
+
+/**
+ * Loads categories for the filter
+ */
+async function loadCategories() {
+    const categoryFilter = document.getElementById('category-filter');
+    if (!categoryFilter) return;
+
+    try {
+        const response = await AppUI.apiFetch('/categories');
+        const categories = response?.data || [];
+
+        categoryFilter.innerHTML = '<option value="">Todas Categorias</option>';
+        categories.forEach((cat: any) => {
+            const option = document.createElement('option');
+            option.value = cat.id.toString();
+            option.textContent = cat.name;
+            categoryFilter.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+    }
 }
 
 /**

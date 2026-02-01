@@ -3,29 +3,45 @@
  */
 import { AppUI } from '../utils/ui.js';
 
+// Flag to prevent duplicate session expiration notifications
+let sessionExpiredHandled = false;
+
 export const Auth = {
   init: () => {
     window.addEventListener('session-expired', () => {
+      // Prevent duplicate toast notifications
+      if (sessionExpiredHandled) {
+        console.log(
+          '[Auth] Session expired already handled, ignoring duplicate event',
+        );
+        return;
+      }
+
+      sessionExpiredHandled = true;
       console.log('[Auth] Session expired event received');
+
       // Clear data but don't call backend logout (token is already invalid)
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
 
       Auth.updateAuthUI();
 
-      // Ensure auth card is shown effectively asking for login
+      // Show auth card and show message
       const authContainer = document.getElementById('auth-card-container');
       if (authContainer) {
         authContainer.classList.add('show');
-        // Reset to login face if needed
+        // Reset to login face
         const cardInner = document.getElementById('auth-card');
         if (cardInner) {
           cardInner.classList.remove('flipped');
-          const loginFace = document.getElementById('auth-login'); // Assuming ID or class logic in updateAuthUI handles this
         }
       }
 
       AppUI.showMessage('Sua sessão expirou. Faça login novamente.', 'info');
+
+      // Reset flag after 2 seconds to allow re-login
+      setTimeout(() => {
+        sessionExpiredHandled = false;
+      }, 2000);
     });
   },
 
@@ -38,18 +54,19 @@ export const Auth = {
 
       if (response.data) {
         // Backend now returns { user, token }
-        const { user, token } = response.data;
+        // Token is sent via HTTP-only cookie, no need to store in localStorage
+        const { user } = response.data;
 
         localStorage.setItem('auth_user', JSON.stringify(user));
-        if (token) {
-          localStorage.setItem('auth_token', token);
-        }
 
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
 
-        const authContainer = document.getElementById('auth-card-container');
-        if (authContainer) authContainer.classList.remove('show');
+        // Close auth card after successful login
+        setTimeout(() => {
+          const authContainer = document.getElementById('auth-card-container');
+          if (authContainer) authContainer.classList.remove('show');
+        }, 800);
       } else {
         throw new Error('Resposta de login inválida');
       }
@@ -67,7 +84,6 @@ export const Auth = {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
       Auth.updateAuthUI();
       AppUI.showMessage('Você saiu da conta.', 'info');
@@ -145,7 +161,6 @@ export const Auth = {
       });
 
       // Clear user data and logout
-      localStorage.removeItem('auth_token');
       localStorage.removeItem('auth_user');
 
       // Close auth card
@@ -182,10 +197,11 @@ export const Auth = {
     ) as HTMLElement;
     const userAvatarBtn = document.getElementById('user-avatar-btn');
 
-    if (user && loggedInFace && loginFace && registerFace) {
+    if (user && loggedInFace && loginFace) {
       // LOGGED IN STATE
+      console.log('[Auth] Updating UI to Logged In state');
       loginFace.classList.add('hidden');
-      registerFace.classList.add('hidden');
+      if (registerFace) registerFace.classList.add('hidden');
       loggedInFace.classList.remove('hidden');
       if (profileViewFace) profileViewFace.classList.add('hidden');
       if (profileEditFace) profileEditFace.classList.add('hidden');
@@ -261,8 +277,7 @@ export const Auth = {
       if (nameEl) nameEl.textContent = user.name;
       if (emailEl) emailEl.textContent = user.email;
       if (roleEl)
-        roleEl.textContent =
-          user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
+        roleEl.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
     }
   },
 

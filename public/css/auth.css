@@ -3,13 +3,13 @@
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
-  background-color: rgba(94, 23, 235, 0.1);
+  background-color: rgba(0, 245, 212, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
   border: 2px solid var(--primary);
-  box-shadow: 0 0 20px rgba(94, 23, 235, 0.2);
+  box-shadow: 0 0 20px rgba(0, 245, 212, 0.2);
 }
 
 /* PASSWORD TOGGLE */
@@ -41,7 +41,7 @@
 
 .btn-toggle-password:hover {
   color: var(--primary);
-  background-color: rgba(94, 23, 235, 0.1);
+  background-color: rgba(0, 245, 212, 0.1);
 }
 
 .btn-toggle-password .material-symbols-outlined {
@@ -92,7 +92,7 @@
 
 .btn-category-edit:hover {
   color: var(--primary);
-  background-color: rgba(94, 23, 235, 0.1);
+  background-color: rgba(0, 245, 212, 0.1);
 }
 
 .btn-category-delete:hover {

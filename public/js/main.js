@@ -1,100 +1,146 @@
 /**
- * Main Application Script - Monolithic Structure
+ * Main Application Script - Modular Structure
  */
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-// Implement UI Helper locally
-const AppUI = {
-    renderCartCount: () => {
-        const badge = document.getElementById('cart-count-badge');
-        if (!badge)
-            return;
-        const count = 0;
-        badge.textContent = count.toString();
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    },
-    apiFetch: (url_1, ...args_1) => __awaiter(this, [url_1, ...args_1], void 0, function* (url, options = {}) {
-        console.log(`[API] ${url}`, options);
-        const headers = Object.assign({ 'Content-Type': 'application/json' }, (options.headers || {}));
-        try {
-            const response = yield fetch(url, Object.assign(Object.assign({}, options), { headers }));
-            const data = yield response.json();
-            if (!response.ok) {
-                throw new Error(data.message || data.error || 'Erro na requisição');
+import { AppUI } from './utils/ui.js';
+import { Auth } from './modules/auth.js';
+import { Home } from './home.js';
+import { Categories } from './modules/categories.js';
+import { Cart } from './modules/cart.js';
+// Expose to window for debugging or legacy scripts if needed
+window.ui = AppUI;
+window.auth = Auth;
+window.categories = Categories;
+window.cart = Cart;
+document.addEventListener('DOMContentLoaded', () => {
+    Auth.init();
+    // Check Auth Status immediately
+    Auth.updateAuthUI();
+    Home.init();
+    console.log('Lykos App Initialized');
+    // 1. Initialize Cart
+    Cart.updateBadge();
+    // 2. Setup Password Toggle Buttons
+    const passwordToggleBtns = document.querySelectorAll('.btn-toggle-password');
+    passwordToggleBtns.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.getAttribute('data-target');
+            if (!targetId)
+                return;
+            const input = document.getElementById(targetId);
+            const icon = btn.querySelector('.material-symbols-outlined');
+            if (!input || !icon)
+                return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
             }
-            return data;
+            else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        });
+    });
+    // 3. Setup Cart Modal Toggle
+    const cartToggleBtn = document.getElementById('cart-toggle-btn');
+    const cartModal = document.getElementById('cart-modal');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+    if (cartToggleBtn && cartModal) {
+        cartToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Check if logged in before showing cart
+            if (!localStorage.getItem('auth_user')) {
+                AppUI.showMessage('Por favor, faça login para ver seu carrinho.', 'info');
+                const authContainer = document.getElementById('auth-card-container');
+                if (authContainer)
+                    authContainer.classList.add('show');
+                return;
+            }
+            cartModal.classList.toggle('show');
+            if (cartModal.classList.contains('show')) {
+                renderCartItems();
+            }
+        });
+        if (closeCartBtn) {
+            closeCartBtn.addEventListener('click', () => {
+                cartModal.classList.remove('show');
+            });
+        }
+        document.addEventListener('click', (e) => {
+            if (cartModal.classList.contains('show') &&
+                !cartModal.contains(e.target) &&
+                !cartToggleBtn.contains(e.target)) {
+                cartModal.classList.remove('show');
+            }
+        });
+    }
+    // Handle Checkout Button
+    const checkoutBtn = document.getElementById('btn-cart-checkout');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', async () => {
+            const confirm = await AppUI.promptModal('Finalizar Compra', 'Deseja confirmar a compra dos itens no carrinho?');
+            if (confirm) {
+                const success = await Cart.checkout();
+                if (success) {
+                    cartModal?.classList.remove('show');
+                }
+            }
+        });
+    }
+    /**
+     * Renderiza os itens do carrinho no modal
+     */
+    async function renderCartItems() {
+        const listContainer = document.getElementById('cart-items-list');
+        const totalPriceEl = document.getElementById('cart-total-price');
+        const checkoutBtn = document.getElementById('btn-cart-checkout');
+        if (!listContainer || !totalPriceEl)
+            return;
+        listContainer.innerHTML = '<div class="cart-empty-msg">Carregando itens...</div>';
+        try {
+            const items = await Cart.getCart();
+            if (items.length === 0) {
+                listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
+                totalPriceEl.textContent = 'R$ 0,00';
+                if (checkoutBtn)
+                    checkoutBtn.disabled = true;
+                return;
+            }
+            let total = 0;
+            listContainer.innerHTML = items.map(item => {
+                total += item.price;
+                const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price);
+                return `
+          <div class="cart-item">
+            <img src="${item.coverImageUrl || 'https://placehold.co/100x60'}" class="cart-item-img" alt="${item.title}">
+            <div class="cart-item-info">
+              <h4 class="cart-item-title">${item.title}</h4>
+              <div class="cart-item-price">${price}</div>
+            </div>
+            <button class="btn-remove-cart" data-id="${item.courseId}" title="Remover">
+              <span class="material-symbols-outlined" style="font-size: 1.25rem">delete</span>
+            </button>
+          </div>
+        `;
+            }).join('');
+            totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
+            if (checkoutBtn)
+                checkoutBtn.disabled = false;
+            // Add remove listeners
+            const removeBtns = listContainer.querySelectorAll('.btn-remove-cart');
+            removeBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const courseId = btn.dataset.id;
+                    const success = await Cart.remove(courseId);
+                    if (success) {
+                        renderCartItems(); // Refresh
+                    }
+                });
+            });
         }
         catch (error) {
-            console.error('API Error:', error);
-            throw error;
+            listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
         }
-    }),
-    showMessage: (msg, type) => {
-        // 1. Get or Create Container
-        let container = document.querySelector('.toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'toast-container';
-            document.body.appendChild(container);
-        }
-        // 2. Create Toast
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        // Icon map
-        const icons = {
-            success: 'check_circle',
-            error: 'error',
-            info: 'info'
-        };
-        toast.innerHTML = `
-            <span class="material-symbols-outlined toast-icon">${icons[type] || 'info'}</span>
-            <span>${msg}</span>
-        `;
-        // 3. Append
-        container.appendChild(toast);
-        // 4. Auto Remove
-        setTimeout(() => {
-            toast.style.animation = 'fadeOut 0.3s forwards';
-            toast.addEventListener('animationend', () => {
-                toast.remove();
-            });
-        }, 3000); // 3 seconds
-    },
-    promptModal: (title, msg) => __awaiter(this, void 0, void 0, function* () {
-        return confirm(`${title}\n\n${msg}`);
-    })
-};
-window.ui = AppUI;
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('ChemAcademy App Initialized');
-    // 1. Initialize Cart Badge
-    if (AppUI.renderCartCount)
-        AppUI.renderCartCount();
-    // 2. Setup "Enroll" Button
-    const enrollBtn = document.getElementById('enroll-featured');
-    if (enrollBtn) {
-        enrollBtn.addEventListener('click', (e) => __awaiter(this, void 0, void 0, function* () {
-            e.preventDefault();
-            const courseId = enrollBtn.getAttribute('data-course-id');
-            if (!courseId)
-                return;
-            AppUI.showMessage('Feature de matrícula em breve!', 'info');
-        }));
-    }
-    // 3. Setup "Wishlist" Button
-    const wishBtn = document.getElementById('wishlist-featured');
-    if (wishBtn) {
-        wishBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            AppUI.showMessage('Adicionado à lista de desejos (simulado)', 'success');
-        });
     }
     // 4. Auth Card Logic
     const avatarBtn = document.getElementById('user-avatar-btn');
@@ -107,14 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         avatarBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             authContainer.classList.toggle('show');
-            // Check session state when opening
-            const data = localStorage.getItem('userData');
-            if (data) {
-                updateAuthUI(JSON.parse(data));
-            }
-            else {
-                updateAuthUI(null);
-            }
         });
         document.addEventListener('click', (e) => {
             if (authContainer.classList.contains('show') &&
@@ -137,107 +175,177 @@ document.addEventListener('DOMContentLoaded', () => {
             cardInner.classList.remove('flipped');
         });
     }
-    // --- AUTH STATE MANAGEMENT ---
-    const updateAuthUI = (user) => {
-        const authCard = document.getElementById('auth-card');
-        const authLoggedIn = document.getElementById('auth-logged-in');
-
-        // Face of the card that shows login/register
-        const loginFace = authCard?.querySelector('.auth-face:not(.auth-face-back):not(#auth-logged-in)');
-
-        if (!authCard || !authLoggedIn) return;
-
-        if (user) {
-            // SHOW LOGGED IN STATE
-            if (loginFace) loginFace.classList.add('hidden');
-            authLoggedIn.classList.remove('hidden');
-
-            // Populate Data
-            const nameEl = document.getElementById('user-name-display');
-            const emailEl = document.getElementById('user-email-display');
-            const roleEl = document.getElementById('user-role-badge');
-
-            if (nameEl) nameEl.textContent = user.name;
-            if (emailEl) emailEl.textContent = user.email;
-
-            const userRole = (user.role || 'STUDENT').toUpperCase();
-            if (roleEl) {
-                roleEl.textContent = userRole === 'INSTRUCTOR' ? 'Instructor' : 'Student';
-                roleEl.className = `badge-tag ${userRole === 'INSTRUCTOR' ? 'bg-tag-primary' : 'bg-tag-secondary'}`;
-                roleEl.style.display = 'inline-block';
-            }
-
-            // Toggle role-specific buttons
-            const btnInstructor = document.getElementById('btn-instructor-dash');
-            const btnManageCats = document.getElementById('btn-manage-categories');
-
-            if (userRole === 'INSTRUCTOR') {
-                if (btnInstructor) btnInstructor.classList.remove('hidden');
-                if (btnManageCats) btnManageCats.classList.remove('hidden');
-            } else {
-                if (btnInstructor) btnInstructor.classList.add('hidden');
-                if (btnManageCats) btnManageCats.classList.add('hidden');
-            }
-        }
-        else {
-            // SHOW GUEST STATE
-            if (loginFace) loginFace.classList.remove('hidden');
-            authLoggedIn.classList.add('hidden');
-        }
-    };
-    // Check Session on Load
-    const storedUser = localStorage.getItem('userData');
-    if (storedUser) {
-        try {
-            const user = JSON.parse(storedUser);
-            updateAuthUI(user);
-        }
-        catch (e) {
-            localStorage.removeItem('userData');
-        }
-    }
     // Handle Login
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => __awaiter(this, void 0, void 0, function* () {
-            var _a, _b;
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Simple selector for fields
+            // Use specific IDs we added to index.html
             const emailInput = document.getElementById('login-email');
             const passInput = document.getElementById('login-password');
-            const email = (_a = emailInput === null || emailInput === void 0 ? void 0 : emailInput.value) === null || _a === void 0 ? void 0 : _a.trim();
-            const password = (_b = passInput === null || passInput === void 0 ? void 0 : passInput.value) === null || _b === void 0 ? void 0 : _b.trim();
-            console.log('Attempting login with:', email, 'Checking password length:', password === null || password === void 0 ? void 0 : password.length);
-            if (!email || !password) {
-                AppUI.showMessage('Por favor, preencha todos os campos.', 'error');
+            if (emailInput && passInput) {
+                // Basic client-side validation
+                if (!emailInput.value || !passInput.value) {
+                    AppUI.showMessage('Por favor, preencha todos os campos.', 'error');
+                    return;
+                }
+                await Auth.login(emailInput.value, passInput.value);
+                // After successful login, update cart badge
+                Cart.updateBadge();
+            }
+            else {
+                AppUI.showMessage('Erro interno: Campos de login não encontrados.', 'error');
+                console.error('Login inputs not found');
+            }
+        });
+    }
+    // Handle Logout
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.logout();
+            // Update badge on logout (will clear it)
+            Cart.updateBadge();
+        });
+    }
+    // Handle View Profile
+    const btnViewProfile = document.getElementById('btn-view-profile');
+    if (btnViewProfile) {
+        btnViewProfile.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.showProfileView();
+        });
+    }
+    // Handle Back from Profile View
+    const btnBackFromProfile = document.getElementById('btn-back-from-profile');
+    if (btnBackFromProfile) {
+        btnBackFromProfile.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.updateAuthUI();
+        });
+    }
+    // Handle Edit Profile Button
+    const btnEditProfile = document.getElementById('btn-edit-profile');
+    if (btnEditProfile) {
+        btnEditProfile.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.showProfileEdit();
+        });
+    }
+    // Handle Cancel Edit
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    if (btnCancelEdit) {
+        btnCancelEdit.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.showProfileView();
+        });
+    }
+    // Handle Profile Edit Form
+    const profileEditForm = document.getElementById('profile-edit-form');
+    if (profileEditForm) {
+        profileEditForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('edit-name');
+            const emailInput = document.getElementById('edit-email');
+            const passwordInput = document.getElementById('edit-password');
+            const updateData = {};
+            if (nameInput.value.trim())
+                updateData.name = nameInput.value.trim();
+            if (emailInput.value.trim())
+                updateData.email = emailInput.value.trim();
+            if (passwordInput.value.trim())
+                updateData.password = passwordInput.value.trim();
+            try {
+                await Auth.updateUserProfile(updateData);
+                Auth.showProfileView();
+            }
+            catch (error) {
+                console.error('Error updating profile:', error);
+            }
+        });
+    }
+    // Handle Delete Account
+    const btnDeleteAccount = document.getElementById('btn-delete-account');
+    if (btnDeleteAccount) {
+        btnDeleteAccount.addEventListener('click', async (e) => {
+            e.preventDefault();
+            await Auth.deleteUserAccount();
+        });
+    }
+    // Handle My Learning (Student Dashboard)
+    const btnMyLearning = document.getElementById('btn-my-learning');
+    if (btnMyLearning) {
+        btnMyLearning.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'student.html';
+        });
+    }
+    const btnManageCategories = document.getElementById('btn-manage-categories');
+    if (btnManageCategories) {
+        btnManageCategories.addEventListener('click', (e) => {
+            e.preventDefault();
+            showCategoriesView();
+        });
+    }
+    // Handle Instructor Dashboard
+    const btnInstructorDash = document.getElementById('btn-instructor-dash');
+    if (btnInstructorDash) {
+        btnInstructorDash.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'instructor.html';
+        });
+    }
+    // Handle Back from Categories
+    const btnBackFromCategories = document.getElementById('btn-back-from-categories');
+    if (btnBackFromCategories) {
+        btnBackFromCategories.addEventListener('click', (e) => {
+            e.preventDefault();
+            Auth.updateAuthUI();
+        });
+    }
+    // Handle Category Create Form
+    const categoryCreateForm = document.getElementById('category-create-form');
+    if (categoryCreateForm) {
+        categoryCreateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nameInput = document.getElementById('new-category-name');
+            if (!nameInput.value.trim()) {
+                AppUI.showMessage('Por favor, digite um nome para a categoria.', 'error');
                 return;
             }
             try {
-                const response = yield AppUI.apiFetch('/auth/login', {
-                    method: 'POST',
-                    body: JSON.stringify({ email, password })
-                });
-                if (response.data && response.data.token) {
-                    const { user, token } = response.data;
-                    localStorage.setItem('authToken', token);
-                    localStorage.setItem('userData', JSON.stringify(user));
-                    AppUI.showMessage(`Welcome back, ${user.name}!`, 'success');
-                    updateAuthUI(user);
-                    loginForm.reset();
-                    const authContainer = document.getElementById('auth-card-container');
-                    if (authContainer)
-                        authContainer.classList.remove('show');
-                }
+                await Categories.create(nameInput.value.trim());
+                nameInput.value = '';
+                Categories.renderCategoriesList('categories-list');
             }
             catch (error) {
-                AppUI.showMessage(error.message || 'Login failed', 'error');
+                console.error('Error creating category:', error);
             }
-        }));
+        });
+    }
+    // Function to show categories view
+    function showCategoriesView() {
+        const loggedInFace = document.getElementById('auth-logged-in');
+        const profileViewFace = document.getElementById('auth-profile-view');
+        const profileEditFace = document.getElementById('auth-profile-edit');
+        const categoriesViewFace = document.getElementById('auth-categories-view');
+        if (loggedInFace)
+            loggedInFace.classList.add('hidden');
+        if (profileViewFace)
+            profileViewFace.classList.add('hidden');
+        if (profileEditFace)
+            profileEditFace.classList.add('hidden');
+        if (categoriesViewFace) {
+            categoriesViewFace.classList.remove('hidden');
+            // Load categories when view is shown
+            Categories.renderCategoriesList('categories-list');
+        }
     }
     // Handle Register
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
-        registerForm.addEventListener('submit', (e) => __awaiter(this, void 0, void 0, function* () {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nameInput = document.getElementById('register-name');
             const emailInput = document.getElementById('register-email');
@@ -248,54 +356,84 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = emailInput.value;
             const password = passInput.value;
             const confirmPass = confirmInput.value;
-            const role = roleSelect.value;
+            const role = roleSelect.value; // 'student' or 'instructor'
             if (password !== confirmPass) {
                 AppUI.showMessage('Senhas não conferem!', 'error');
                 return;
             }
             try {
-                const endpoint = role === 'instructor' ? '/auth/register/instructor' : '/auth/register/student';
-                yield AppUI.apiFetch(endpoint, {
+                // Determine endpoint based on role
+                const endpoint = role === 'instructor'
+                    ? '/auth/register/instructor'
+                    : '/auth/register/student';
+                await AppUI.apiFetch(endpoint, {
                     method: 'POST',
-                    body: JSON.stringify({ name, email, password })
+                    body: JSON.stringify({ name, email, password }),
                 });
-                AppUI.showMessage('Account created! Please log in.', 'success');
+                AppUI.showMessage('Conta criada com sucesso! Faça login.', 'success');
+                // Reset form
                 registerForm.reset();
+                // Flip back to login
                 if (cardInner)
                     cardInner.classList.remove('flipped');
             }
             catch (error) {
-                AppUI.showMessage(error.message || 'Error creating account', 'error');
+                AppUI.showMessage(error.message || 'Erro ao criar conta', 'error');
             }
-        }));
-    }
-    // Handle My Learning (Student Dashboard)
-    const btnMyLearning = document.getElementById('btn-my-learning');
-    if (btnMyLearning) {
-        btnMyLearning.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Navigating to Student Dashboard...');
-            window.location.href = 'studentDashboard.html';
         });
     }
-
-    // Handle Instructor Dashboard
-    const btnInstructorDash = document.getElementById('btn-instructor-dash');
-    if (btnInstructorDash) {
-        btnInstructorDash.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.location.href = 'instructor.html';
-        });
-    }
-
-    // Handle Logout
-    const btnLogout = document.getElementById('btn-logout');
-    if (btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('userData');
-            updateAuthUI(null);
-            AppUI.showMessage('You have logged out.', 'info');
-        });
-    }
+    // 10. Setup Policy Modals
+    const policyModals = {
+        'terms-modal': document.getElementById('terms-modal'),
+        'privacy-modal': document.getElementById('privacy-modal'),
+        'security-modal': document.getElementById('security-modal')
+    };
+    const policyButtons = {
+        'btn-terms': 'terms-modal',
+        'btn-privacy': 'privacy-modal',
+        'btn-security': 'security-modal'
+    };
+    // Open modal handlers
+    Object.entries(policyButtons).forEach(([btnId, modalId]) => {
+        const btn = document.getElementById(btnId);
+        const modal = policyModals[modalId];
+        if (btn && modal) {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+    });
+    // Close modal handlers
+    Object.values(policyModals).forEach(modal => {
+        if (modal) {
+            // Close button
+            const closeBtn = modal.querySelector('.policy-modal-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+            // Click outside to close
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+    });
+    // ESC key to close modals
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            Object.values(policyModals).forEach(modal => {
+                if (modal && modal.classList.contains('active')) {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+    });
 });

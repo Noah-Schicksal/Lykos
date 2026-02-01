@@ -148,7 +148,6 @@ export class ClassController {
             const path = require('path');
             const fullPath = path.resolve(process.cwd(), materialPath);
 
-            // Verifica se o arquivo existe antes de enviar
             const fs = require('fs');
             if (!fs.existsSync(fullPath)) {
                 return ApiResponse.notFound(res, 'Arquivo físico não encontrado');
@@ -161,6 +160,83 @@ export class ClassController {
                     }
                 }
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // POST /classes/:id/video
+    uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id } = req.params as { id: string };
+            const instructorId = req.user.id;
+            const file = (req as any).file;
+
+            if (!file) {
+                return ApiResponse.error(res, 'Nenhum arquivo enviado');
+            }
+
+            const { StorageService } = require('../services/storageService');
+            const storageService = new StorageService();
+
+            const fileUrl = await storageService.uploadClassVideo(id, file, instructorId);
+
+            return ApiResponse.success(res, { videoUrl: fileUrl }, 'Vídeo enviado com sucesso');
+        } catch (error) {
+            if ((req as any).file && (req as any).file.path) {
+                const fs = require('fs');
+                if (fs.existsSync((req as any).file.path)) {
+                    fs.unlinkSync((req as any).file.path);
+                }
+            }
+            next(error);
+        }
+    }
+
+    // GET /classes/:id/video
+    getVideo = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { id } = req.params as { id: string };
+            const userId = req.user.id;
+            const userRole = req.user.role;
+
+            const videoPath = await this.classService.getVideo(id, userId, userRole);
+
+            const path = require('path');
+            const fullPath = path.resolve(process.cwd(), videoPath);
+
+            const fs = require('fs');
+            if (!fs.existsSync(fullPath)) {
+                return ApiResponse.notFound(res, 'Vídeo não encontrado');
+            }
+
+            // Streaming simples
+            const stat = fs.statSync(fullPath);
+            const fileSize = stat.size;
+            const range = req.headers.range;
+
+            if (range) {
+                const parts = range.replace(/bytes=/, "").split("-");
+                const start = parseInt(parts[0], 10);
+                const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+                const chunksize = (end - start) + 1;
+                const file = fs.createReadStream(fullPath, { start, end });
+                const head = {
+                    'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                    'Accept-Ranges': 'bytes',
+                    'Content-Length': chunksize,
+                    'Content-Type': 'video/mp4',
+                };
+                res.writeHead(206, head);
+                file.pipe(res);
+            } else {
+                const head = {
+                    'Content-Length': fileSize,
+                    'Content-Type': 'video/mp4',
+                };
+                res.writeHead(200, head);
+                fs.createReadStream(fullPath).pipe(res);
+            }
         } catch (error) {
             next(error);
         }
