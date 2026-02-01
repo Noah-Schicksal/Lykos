@@ -51,6 +51,7 @@ export class StudentService {
                 title: course.title,
                 description: course.description,
                 coverImageUrl: course.coverImageUrl,
+                categoryId: course.category?.id,
                 enrolledAt: enrollment.enrolledAt,
                 progress,
                 totalClasses,

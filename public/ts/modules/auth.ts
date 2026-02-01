@@ -197,10 +197,10 @@ export const Auth = {
     ) as HTMLElement;
     const userAvatarBtn = document.getElementById('user-avatar-btn');
 
-    if (user && loggedInFace && loginFace) {
+    if (user && loggedInFace) {
       // LOGGED IN STATE
       console.log('[Auth] Updating UI to Logged In state');
-      loginFace.classList.add('hidden');
+      if (loginFace) loginFace.classList.add('hidden');
       if (registerFace) registerFace.classList.add('hidden');
       loggedInFace.classList.remove('hidden');
       if (profileViewFace) profileViewFace.classList.add('hidden');
@@ -242,9 +242,9 @@ export const Auth = {
       }
 
       if (userAvatarBtn) userAvatarBtn.style.borderColor = 'var(--primary)';
-    } else if (loggedInFace && loginFace) {
+    } else if (loggedInFace) {
       // GUEST STATE
-      loginFace.classList.remove('hidden');
+      if (loginFace) loginFace.classList.remove('hidden');
       loggedInFace.classList.add('hidden');
       if (profileViewFace) profileViewFace.classList.add('hidden');
       if (profileEditFace) profileEditFace.classList.add('hidden');
@@ -270,9 +270,9 @@ export const Auth = {
     const user = userStr ? JSON.parse(userStr) : null;
 
     if (user) {
-      const nameEl = document.getElementById('profile-view-name');
-      const emailEl = document.getElementById('profile-view-email');
-      const roleEl = document.getElementById('profile-view-role');
+      const nameEl = document.getElementById('profile-name-display');
+      const emailEl = document.getElementById('profile-email-display');
+      const roleEl = document.getElementById('profile-role-display');
 
       if (nameEl) nameEl.textContent = user.name;
       if (emailEl) emailEl.textContent = user.email;

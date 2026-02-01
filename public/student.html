@@ -1,512 +1,275 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Dashboard | Lykos.eng</title>
 
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard do Aluno | Lykos.eng</title>
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/toast.css" />
-    <link rel="stylesheet" href="css/student.css" />
-  </head>
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
 
-  <body>
-    <div class="student-dashboard">
-      <!-- Sidebar Navigation -->
-      <aside id="sidebar" class="sidebar">
-        <div class="sidebar-content">
-          <!-- Branding -->
-          <div class="brand">
-            <div class="brand-icon">
-              <span class="material-symbols-outlined">code</span>
-            </div>
-            <div class="brand-info">
-              <h1 class="brand-title">Student Area</h1>
-              <p class="brand-subtitle">Tech Scholar</p>
-            </div>
-            <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
-              <span class="material-symbols-outlined">menu</span>
-            </button>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+  <link rel="stylesheet" href="css/student.css" />
+</head>
+
+<body>
+  <div class="student-dashboard">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-content">
+        <!-- Branding -->
+        <div class="brand">
+          <div class="brand-icon">
+            <span class="material-symbols-outlined">code</span>
           </div>
-
-          <!-- Nav Menu -->
-          <nav class="nav-menu">
-            <a href="#" class="nav-item active">
-              <span class="material-symbols-outlined">school</span>
-              <span class="nav-text">My Courses</span>
-            </a>
-            <a href="#" class="nav-item">
-              <span class="material-symbols-outlined">analytics</span>
-              <span class="nav-text">Progress</span>
-            </a>
-            <a href="#" class="nav-item">
-              <span class="material-symbols-outlined">verified</span>
-              <span class="nav-text">Certificates</span>
-            </a>
-            <a href="#" class="nav-item">
-              <span class="material-symbols-outlined">groups</span>
-              <span class="nav-text">Community</span>
-            </a>
-            <a href="#" class="nav-item">
-              <span class="material-symbols-outlined">help_center</span>
-              <span class="nav-text">Support</span>
-            </a>
-          </nav>
-        </div>
-
-        <!-- Sidebar Footer -->
-        <div class="sidebar-footer">
-          <div class="storage-info">
-            <p class="storage-label">Storage</p>
-            <div class="storage-bar">
-              <div class="storage-fill"></div>
-            </div>
-            <p class="storage-text">6.5 GB of 10 GB used</p>
+          <div class="brand-info">
+            <h1 class="brand-title">Área do Aluno</h1>
           </div>
-          <button class="btn-resume">
-            <span class="material-symbols-outlined">play_circle</span>
-            Resume Lesson
+          <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
+            <span class="material-symbols-outlined">menu</span>
           </button>
         </div>
-      </aside>
 
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Top Nav -->
-        <header class="top-header">
-          <div class="breadcrumb-header">
-            <nav class="breadcrumb">
-              <a href="index.html">Início</a>
-              <span class="separator">></span>
-              <span class="current">Meus Cursos</span>
-            </nav>
+        <!-- Nav Menu -->
+        <nav class="nav-menu">
+          <a href="#" class="nav-item active">
+            <span class="material-symbols-outlined">school</span>
+            <span class="nav-text">Meus Cursos</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="material-symbols-outlined">verified</span>
+            <span class="nav-text">Certificados</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Nav -->
+      <header class="top-header">
+        <div class="breadcrumb-header">
+          <nav class="breadcrumb">
+            <a href="index.html">Início</a>
+            <span class="separator">></span>
+            <span class="current">Meus Cursos</span>
+          </nav>
+        </div>
+        <div class="header-actions">
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+            <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+            <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+          </button>
+
+          <!-- User Avatar -->
+          <div id="user-avatar-btn" class="user-avatar">
+            <img id="user-avatar-img" alt="User" src="https://lh3.googleusercontent.com/a/default-user" />
           </div>
-          <div class="header-actions">
-            <button class="header-btn">
-              <span class="material-symbols-outlined">notifications</span>
-            </button>
-            <button class="header-btn">
-              <span class="material-symbols-outlined">settings</span>
-            </button>
-            <div class="user-avatar-header">
-              <div
-                id="header-user-info"
-                class="text-right hidden sm:block mr-3"
-              >
-                <p
-                  id="header-user-name"
-                  class="text-sm font-bold leading-none text-white"
-                >
-                  Aluno
-                </p>
-                <p id="header-user-role" class="text-xs text-primary">
-                  Estudante
-                </p>
-              </div>
-              <button
-                id="user-avatar-btn"
-                class="w-10 h-10 rounded-full bg-center bg-cover border-2 border-primary/30 overflow-hidden cursor-pointer"
-              >
-                <img
-                  id="user-avatar-img"
-                  alt="Student profile picture"
-                  src="https://lh3.googleusercontent.com/a/default-user"
-                  onerror="this.src = 'https://placehold.co/100x100?text=A'"
-                />
-              </button>
-            </div>
+        </div>
+      </header>
+
+      <!-- Page Heading -->
+      <section class="page-heading">
+        <h1 id="welcome-title" class="page-title">
+          Bem-vindo de volta, Aluno!
+        </h1>
+        <p id="courses-status" class="page-subtitle">
+          Continue sua jornada no mundo do código.
+        </p>
+      </section>
+
+      <!-- My Courses Section -->
+      <div class="courses-achievements">
+        <div class="my-courses">
+          <div class="section-header">
+            <h2 class="section-title">Meus Cursos</h2>
           </div>
-        </header>
 
-        <!-- Page Heading -->
-        <section class="page-heading">
-          <h1 id="welcome-title" class="page-title">
-            Bem-vindo de volta, Aluno!
-          </h1>
-          <p id="courses-status" class="page-subtitle">
-            Continue sua jornada no mundo do código.
-          </p>
-        </section>
-
-        <!-- Featured Continue Learning Card -->
-        <section class="featured-course">
-          <div class="featured-card">
-            <div class="featured-image">
-              <div class="image-overlay"></div>
-              <img
-                id="featured-course-image"
-                alt="Programming code structure"
-                src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&q=80"
-              />
-              <span class="badge-ongoing">Ongoing</span>
+          <!-- Filters and Search -->
+          <div class="courses-filters">
+            <div class="filter-group">
+              <label class="filter-label">Filtrar por</label>
+              <select id="category-filter" class="filter-select">
+                <option value="">Todas Categorias</option>
+                <option disabled>Carregando...</option>
+              </select>
             </div>
-            <div class="featured-content">
-              <p class="featured-label">CONTINUE LEARNING</p>
-              <h2 id="featured-course-title" class="featured-title">
-                Carregando curso em destaque...
-              </h2>
-              <div class="featured-info">
-                <div class="info-item">
-                  <p class="info-label">Current Module</p>
-                  <p id="featured-module-name" class="info-value">
-                    Carregando módulo...
-                  </p>
-                </div>
-                <div class="info-item">
-                  <p class="info-label">Next Challenge</p>
-                  <p class="info-value">
-                    <span class="material-symbols-outlined">quiz</span>
-                    API Integration Quiz
-                  </p>
-                </div>
-              </div>
-              <div class="progress-section">
-                <div class="progress-wrapper">
-                  <div class="progress-header">
-                    <span class="progress-label"
-                      >Overall Course Completion</span
-                    >
-                    <span
-                      id="featured-progress-percent"
-                      class="progress-percent"
-                      >0%</span
-                    >
-                  </div>
-                  <div class="progress-bar">
-                    <div
-                      id="featured-progress-fill"
-                      class="progress-fill"
-                      style="width: 0%"
-                    ></div>
-                  </div>
-                </div>
-                <button id="btn-resume-featured" class="btn-resume-course">
-                  Continuar Estudando
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- My Courses Section -->
-        <div class="courses-achievements">
-          <div class="my-courses">
-            <div class="section-header">
-              <h2 class="section-title">My Courses</h2>
-              <div class="section-actions">
-                <button id="create-course-toggle" class="btn-create-course">
-                  Create Course
-                </button>
-                <button class="btn-view-all">View All</button>
-              </div>
-            </div>
-
-            <!-- Filters and Search -->
-            <div class="courses-filters">
-              <div class="filter-group">
-                <label class="filter-label">Filtrar por</label>
-                <select id="category-filter" class="filter-select">
-                  <option value="">Todas Categorias</option>
-                  <option disabled>Carregando...</option>
-                </select>
-              </div>
-              <div class="filter-search">
-                <span class="material-symbols-outlined search-icon"
-                  >search</span
-                >
-                <input
-                  id="course-search-input"
-                  class="search-input"
-                  placeholder="Pesquisar meus cursos..."
-                  type="text"
-                />
-              </div>
-            </div>
-
-            <!-- Create Course Form -->
-            <form id="create-course-form" class="create-course-form">
-              <input
-                id="course-title"
-                placeholder="Course Title"
-                class="form-input-inline"
-                type="text"
-              />
-              <input
-                id="course-desc"
-                placeholder="Short Description"
-                class="form-input-inline"
-                type="text"
-              />
-              <button type="submit" class="btn-submit-inline">Create</button>
-            </form>
-
-            <!-- Courses Grid -->
-            <div id="courses-grid" class="courses-grid">
-              <!-- Course Card 1 -->
-              <div class="course-card">
-                <div class="course-header">
-                  <div class="course-icon">
-                    <span class="material-symbols-outlined">terminal</span>
-                  </div>
-                  <span class="course-badge">12 Lessons Left</span>
-                </div>
-                <h3 class="course-title">Backend Development</h3>
-                <p class="course-meta">Last accessed: 2 days ago</p>
-                <div class="course-progress">
-                  <div class="progress-bar-small">
-                    <div class="progress-fill-small" style="width: 45%"></div>
-                  </div>
-                  <div class="progress-info">
-                    <span>PROGRESS</span>
-                    <span class="progress-value">45%</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Course Card 2 -->
-              <div class="course-card">
-                <div class="course-header">
-                  <div class="course-icon">
-                    <span class="material-symbols-outlined">code</span>
-                  </div>
-                  <span class="course-badge completed">Completed</span>
-                </div>
-                <h3 class="course-title">JavaScript Fundamentals</h3>
-                <p class="course-meta">Finished: Oct 12, 2023</p>
-                <div class="course-progress">
-                  <div class="progress-bar-small">
-                    <div
-                      class="progress-fill-small completed"
-                      style="width: 100%"
-                    ></div>
-                  </div>
-                  <div class="progress-info completed">
-                    <span>CERTIFIED</span>
-                    <span class="progress-value">100%</span>
-                  </div>
-                </div>
-              </div>
+            <div class="filter-search">
+              <span class="material-symbols-outlined search-icon">search</span>
+              <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..." type="text" />
             </div>
           </div>
 
-          <!-- Achievements Sidebar -->
-          <div class="achievements">
-            <h2 class="section-title">Tech Achievements</h2>
-            <div class="achievements-card">
-              <div class="achievement-item">
-                <div class="achievement-icon primary">
+          <!-- Courses Grid -->
+          <div id="courses-grid" class="courses-grid">
+            <!-- Course Card 1 -->
+            <div class="course-card">
+              <div class="course-header">
+                <div class="course-icon">
+                  <span class="material-symbols-outlined">terminal</span>
+                </div>
+                <span class="course-badge">12 Aulas Restantes</span>
+              </div>
+              <h3 class="course-title">Backend Development</h3>
+              <p class="course-meta">Último acesso: 2 dias atrás</p>
+              <div class="course-progress">
+                <div class="progress-bar-small">
+                  <div class="progress-fill-small" style="width: 45%"></div>
+                </div>
+                <div class="progress-info">
+                  <span>PROGRESSO</span>
+                  <span class="progress-value">45%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Course Card 2 -->
+            <div class="course-card">
+              <div class="course-header">
+                <div class="course-icon">
                   <span class="material-symbols-outlined">code</span>
                 </div>
-                <div class="achievement-info">
-                  <h4 class="achievement-title">Code Master</h4>
-                  <p class="achievement-desc">Completed 50 coding challenges</p>
+                <span class="course-badge completed">Finalizado</span>
+              </div>
+              <h3 class="course-title">JavaScript Fundamentals</h3>
+              <p class="course-meta">Finalizado: 12 Out 2023</p>
+              <div class="course-progress">
+                <div class="progress-bar-small">
+                  <div class="progress-fill-small completed" style="width: 100%"></div>
+                </div>
+                <div class="progress-info completed">
+                  <span>CERTIFICADO</span>
+                  <span class="progress-value">100%</span>
                 </div>
               </div>
-
-              <div class="achievement-item">
-                <div class="achievement-icon purple">
-                  <span class="material-symbols-outlined">bolt</span>
-                </div>
-                <div class="achievement-info">
-                  <h4 class="achievement-title">Algorithm Pro</h4>
-                  <p class="achievement-desc">Solved 20 complex algorithms</p>
-                </div>
-              </div>
-
-              <div class="achievement-item locked">
-                <div class="achievement-icon">
-                  <span class="material-symbols-outlined"
-                    >workspace_premium</span
-                  >
-                </div>
-                <div class="achievement-info">
-                  <h4 class="achievement-title">Project Builder</h4>
-                  <p class="achievement-desc">
-                    Locked • 5 more projects needed
-                  </p>
-                </div>
-              </div>
-
-              <button class="btn-view-badges">View All Badges</button>
             </div>
-          </div>
-        </div>
-
-        <!-- Community Feed -->
-        <section class="community-feed">
-          <h2 class="section-title-small">Recent Community Activity</h2>
-          <div class="activity-grid">
-            <div class="activity-item">
-              <img
-                class="activity-avatar"
-                alt="User avatar for Maria"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU_SZOMM8QGNMbBN8kQY0qpyeoOyRfHXZaBg4uKrRNWxEnoV7xmVAgHVI9f9-60zSp2cNveFqfInd99I4G7PuQaZmh6iK1bMnFOwIsccqXB9PwmSawXdMFvdWxkwJYxt9XcGNOry6YQllg7Oo0QwR--WYmHKhM5CO_3M_fwEkrJwWobZdvUuttBoJHxsO6JQsNwuPh0_fcx7OMXWxRukEhG-pWXFJZ7_so-eRMndN4vVCnQVBuGL_Qz9bLvwVnhYOPtlLfqVbv6VpY"
-              />
-              <div class="activity-content">
-                <p class="activity-text">
-                  <span class="activity-user">Maria S.</span> shared a new React
-                  Hooks tutorial
-                </p>
-                <p class="activity-meta">24 mins ago • Frontend Group</p>
-              </div>
-              <button class="activity-btn">
-                <span class="material-symbols-outlined">forum</span>
-              </button>
-            </div>
-
-            <div class="activity-item">
-              <img
-                class="activity-avatar"
-                alt="User avatar for Professor"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsxd2ied4VJRTqtbdn18oToGUBC5RGvAudPjmdZadbaXCCiDVAGver1l24ZjjsBeSuqDx50wt_sI9__yLrZdU4khZ9UdhF5hHadQqYyOvGlDc600iKVlRvpzUrcH4sHSWPMbmxU1UbeG3RMGuz2WzQXZuaxqx4ypJsZu0-RjNrcuYByWXYfW9RRnBxjgHuQ_phk_t8Xbmtvpf93uGvAg4IMqNZlnYfTR55Dwu9F_Eo3RA9WzY7gEvKYtZQM8JVLr5APAYMf1g0AuLI"
-              />
-              <div class="activity-content">
-                <p class="activity-text">
-                  <span class="activity-user">Prof. Anderson</span> posted a
-                  quiz announcement
-                </p>
-                <p class="activity-meta">1 hour ago • Full Stack Development</p>
-              </div>
-              <button class="activity-btn">
-                <span class="material-symbols-outlined">forum</span>
-              </button>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <!-- Dark/Light Mode Toggle -->
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-      <span class="material-symbols-outlined dark-icon">dark_mode</span>
-      <span class="material-symbols-outlined light-icon">light_mode</span>
-    </button>
-
-    <!-- Auth Card Container -->
-    <div id="auth-card-container" class="auth-container perspective-1000">
-      <div id="auth-card" class="flip-card-inner">
-        <!-- Logged In View -->
-        <div id="auth-logged-in" class="auth-face">
-          <div class="user-avatar-large" style="margin: 0 auto 1.5rem auto">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-          <h3
-            id="user-name-display"
-            class="auth-title"
-            style="margin-bottom: 0.25rem"
-          >
-            Nome do Usuário
-          </h3>
-          <p
-            id="user-email-display"
-            style="
-              font-size: 0.875rem;
-              color: var(--text-muted);
-              margin-bottom: 0.5rem;
-            "
-          >
-            user@example.com
-          </p>
-          <div
-            id="user-role-badge"
-            class="badge-tag bg-tag-secondary"
-            style="display: inline-block; margin-bottom: 1.5rem"
-          >
-            Aluno
-          </div>
-
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-my-learning" class="btn-dashboard">
-              <span class="material-symbols-outlined">school</span> Meus Cursos
-            </button>
-            <button id="btn-instructor-dash" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">dashboard</span> Painel do
-              Instrutor
-            </button>
-            <button id="btn-view-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">person</span> Ver Perfil
-            </button>
-            <button id="btn-logout" class="btn-dashboard outline">
-              <span class="material-symbols-outlined">logout</span> Sair
-            </button>
-          </div>
-        </div>
-
-        <!-- Profile View -->
-        <div id="auth-profile-view" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Perfil</h3>
-            <button id="btn-back-from-profile" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-          <div class="user-avatar-large" style="margin-bottom: 1rem">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-          <div style="margin-bottom: 1.5rem">
-            <label class="auth-label">Nome</label>
-            <p
-              id="profile-name-display"
-              style="color: var(--text-primary); margin-bottom: 0.75rem"
-            >
-              Nome do Usuário
-            </p>
-            <label class="auth-label">Email</label>
-            <p
-              id="profile-email-display"
-              style="color: var(--text-primary); margin-bottom: 0.75rem"
-            >
-              user@example.com
-            </p>
-            <label class="auth-label">Cargo/Função</label>
-            <p id="profile-role-display" style="color: var(--text-primary)">
-              Aluno
-            </p>
-          </div>
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-edit-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">edit</span> Editar Perfil
-            </button>
-            <button
-              id="btn-delete-account"
-              class="btn-dashboard outline danger"
-            >
-              <span class="material-symbols-outlined">delete</span> Excluir
-              Conta
-            </button>
           </div>
         </div>
       </div>
-    </div>
+    </main>
+  </div>
 
-    <!-- Scripts -->
-    <script src="js/theme-toggle.js"></script>
-    <script type="module" src="js/studentDashboard.js"></script>
-  </body>
+
+  <!-- Auth Card Container -->
+  <div id="auth-card-container" class="auth-container perspective-1000">
+    <div id="auth-card" class="auth-card">
+      <!-- Logged In View -->
+      <div id="auth-logged-in" class="auth-face auth-logged-in">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
+        <p id="user-email-display" class="user-email">user@example.com</p>
+        <div id="user-role-badge" class="role-badge">Aluno</div>
+
+        <div class="dashboard-actions">
+          <button id="btn-my-learning" class="btn-dashboard">
+            <span class="material-symbols-outlined">school</span> Meus Cursos
+          </button>
+          <button id="btn-instructor-dash" class="btn-dashboard hidden">
+            <span class="material-symbols-outlined">dashboard</span> Painel do
+            Instrutor
+          </button>
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> Ver Perfil
+          </button>
+          <button id="btn-logout" class="btn-dashboard btn-logout">
+            <span class="material-symbols-outlined">logout</span> Sair
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="auth-profile-view" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Perfil</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Nome</label>
+            <p id="profile-name-display" class="info-value">
+              Nome do Usuário
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-email-display" class="info-value">
+              user@example.com
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Função</label>
+            <p id="profile-role-display" class="info-value">Aluno</p>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
+            <span class="material-symbols-outlined">edit</span> Editar Perfil
+          </button>
+          <button id="btn-delete-account" class="btn-delete">
+            <span class="material-symbols-outlined">delete</span> Excluir
+            Conta
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Editar Perfil</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="••••••••" />
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js"></script>
+  <script type="module" src="js/studentDashboard.js"></script>
+</body>
+
 </html>
