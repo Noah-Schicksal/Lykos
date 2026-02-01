@@ -39,11 +39,11 @@
 
         <!-- Nav Menu -->
         <nav class="nav-menu">
-          <a href="#" class="nav-item active">
+          <a href="#" id="nav-courses" class="nav-item active">
             <span class="material-symbols-outlined">school</span>
             <span class="nav-text">Meus Cursos</span>
           </a>
-          <a href="#" class="nav-item">
+          <a href="#" id="nav-certificates" class="nav-item">
             <span class="material-symbols-outlined">verified</span>
             <span class="nav-text">Certificados</span>
           </a>
@@ -75,7 +75,7 @@
           <nav class="breadcrumb">
             <a href="index.html">Início</a>
             <span class="separator">></span>
-            <span class="current">Meus Cursos</span>
+            <span id="breadcrumb-current" class="current">Meus Cursos</span>
           </nav>
         </div>
         <div class="header-actions">
@@ -103,69 +103,52 @@
       </section>
 
       <!-- My Courses Section -->
-      <div class="courses-achievements">
-        <div class="my-courses">
-          <div class="section-header">
-            <h2 class="section-title">Meus Cursos</h2>
+      <div id="courses-view" class="view-section">
+        <div class="courses-achievements">
+          <div class="my-courses">
+            <div class="section-header">
+              <h2 class="section-title">Meus Cursos</h2>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="courses-filters">
+              <div class="filter-group">
+                <label class="filter-label">Filtrar por</label>
+                <select id="category-filter" class="filter-select">
+                  <option value="">Todas Categorias</option>
+                  <option disabled>Carregando...</option>
+                </select>
+              </div>
+              <div class="filter-search">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..."
+                  type="text" />
+              </div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div id="courses-grid" class="courses-grid">
+              <!-- Courses are rendered here dynamically -->
+              <div class="col-span-full py-20 text-center">
+                <p class="text-slate-500">Carregando seus cursos...</p>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Filters and Search -->
-          <div class="courses-filters">
-            <div class="filter-group">
-              <label class="filter-label">Filtrar por</label>
-              <select id="category-filter" class="filter-select">
-                <option value="">Todas Categorias</option>
-                <option disabled>Carregando...</option>
-              </select>
+      <!-- Certificates View -->
+      <div id="certificates-view" class="view-section hidden">
+        <div class="courses-achievements">
+          <div class="my-courses" style="flex: 1">
+            <div class="section-header">
+              <h2 class="section-title">Certificados</h2>
             </div>
-            <div class="filter-search">
-              <span class="material-symbols-outlined search-icon">search</span>
-              <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..." type="text" />
+            <div class="section-intro mb-6">
+              <p class="text-muted">Aqui estão as conquistas que você alcançou. Parabéns pela dedicação!</p>
             </div>
-          </div>
-
-          <!-- Courses Grid -->
-          <div id="courses-grid" class="courses-grid">
-            <!-- Course Card 1 -->
-            <div class="course-card">
-              <div class="course-header">
-                <div class="course-icon">
-                  <span class="material-symbols-outlined">terminal</span>
-                </div>
-                <span class="course-badge">12 Aulas Restantes</span>
-              </div>
-              <h3 class="course-title">Backend Development</h3>
-              <p class="course-meta">Último acesso: 2 dias atrás</p>
-              <div class="course-progress">
-                <div class="progress-bar-small">
-                  <div class="progress-fill-small" style="width: 45%"></div>
-                </div>
-                <div class="progress-info">
-                  <span>PROGRESSO</span>
-                  <span class="progress-value">45%</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Course Card 2 -->
-            <div class="course-card">
-              <div class="course-header">
-                <div class="course-icon">
-                  <span class="material-symbols-outlined">code</span>
-                </div>
-                <span class="course-badge completed">Finalizado</span>
-              </div>
-              <h3 class="course-title">JavaScript Fundamentals</h3>
-              <p class="course-meta">Finalizado: 12 Out 2023</p>
-              <div class="course-progress">
-                <div class="progress-bar-small">
-                  <div class="progress-fill-small completed" style="width: 100%"></div>
-                </div>
-                <div class="progress-info completed">
-                  <span>CERTIFICADO</span>
-                  <span class="progress-value">100%</span>
-                </div>
-              </div>
+            <div id="certificates-grid" class="certificates-grid">
+              <!-- Certificates are rendered here dynamically -->
             </div>
           </div>
         </div>
@@ -275,6 +258,61 @@
           </div>
           <button type="submit" class="btn-submit">Salvar Alterações</button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Certificate Modal -->
+  <div id="certificate-modal" class="modal-overlay hidden">
+    <div class="certificate-modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Visualizar Certificado</h3>
+        <button id="close-cert-modal" class="btn-icon" aria-label="Fechar modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="certificate-preview" class="certificate-preview">
+          <!-- O certificado será renderizado aqui para visualização e impressão -->
+          <div class="certificate-document" id="printable-certificate">
+            <div class="cert-background"></div>
+            <div class="cert-content">
+              <div class="cert-header">
+                <span class="cert-logo material-symbols-outlined">school</span>
+                <span class="cert-company">Lykos.eng</span>
+              </div>
+              <div class="cert-main">
+                <h1 class="cert-title">CERTIFICADO</h1>
+                <p class="cert-subtitle">DE CONCLUSÃO DE CURSO</p>
+                <div class="cert-body">
+                  Certificamos que o aluno(a)
+                  <h2 id="modal-cert-user-name" class="cert-user-name">Carregando...</h2>
+                  concluiu com êxito o treinamento
+                  <h2 id="modal-cert-course-name" class="cert-course-name">Carregando...</h2>
+                  com carga horária técnica e aproveitamento de 100%.
+                </div>
+              </div>
+              <div class="cert-footer">
+                <div class="cert-date">
+                  <span class="label">DATA DE EMISSÃO</span>
+                  <span id="modal-cert-date" class="value">--/--/----</span>
+                </div>
+                <div class="cert-hash">
+                  <span class="label">CÓDIGO DE AUTENTICIDADE</span>
+                  <span id="modal-cert-hash" class="value">XXXX-XXXX-XXXX</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-print-cert" class="btn-auth-submit secondary">
+          <span class="material-symbols-outlined">print</span> Imprimir / PDF
+        </button>
+        <button id="btn-download-cert" class="btn-auth-submit">
+          <span class="material-symbols-outlined">download</span> Download
+        </button>
       </div>
     </div>
   </div>

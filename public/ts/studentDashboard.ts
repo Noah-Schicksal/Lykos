@@ -262,6 +262,22 @@ function setupNavigation() {
         });
     }
 
+    // --- Dashboard Navigation ---
+    const navCourses = document.getElementById('nav-courses');
+    const navCertificates = document.getElementById('nav-certificates');
+
+    if (navCourses && navCertificates) {
+        navCourses.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('courses');
+        });
+
+        navCertificates.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('certificates');
+        });
+    }
+
     // --- Auth Card UI Listeners ---
     const avatarBtn = document.getElementById('user-avatar-btn');
     const authContainer = document.getElementById('auth-card-container');
@@ -387,5 +403,166 @@ function setupNavigation() {
                 window.location.href = 'index.html';
             });
         }
+    });
+
+    // --- Certificate Modal Listeners ---
+    setupCertificateModalListeners();
+}
+
+/**
+ * Switches between dashboard views
+ */
+function switchView(view: 'courses' | 'certificates') {
+    const coursesView = document.getElementById('courses-view');
+    const certificatesView = document.getElementById('certificates-view');
+    const navCourses = document.getElementById('nav-courses');
+    const navCertificates = document.getElementById('nav-certificates');
+    const welcomeTitle = document.getElementById('welcome-title');
+    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+
+    const userStr = localStorage.getItem('auth_user');
+    const user = userStr ? JSON.parse(userStr) : { name: 'Aluno' };
+    const firstName = user.name ? user.name.split(' ')[0] : 'Aluno';
+
+    if (view === 'courses') {
+        coursesView?.classList.remove('hidden');
+        certificatesView?.classList.add('hidden');
+        navCourses?.classList.add('active');
+        navCertificates?.classList.remove('active');
+
+        if (welcomeTitle) {
+            welcomeTitle.innerHTML = `Bem-vindo de volta, <span class="text-primary">${firstName}</span>!`;
+        }
+        if (breadcrumbCurrent) breadcrumbCurrent.textContent = 'Meus Cursos';
+
+        loadStudentCourses();
+    } else {
+        coursesView?.classList.add('hidden');
+        certificatesView?.classList.remove('hidden');
+        navCourses?.classList.remove('active');
+        navCertificates?.classList.add('active');
+
+        if (welcomeTitle) {
+            welcomeTitle.innerHTML = `Suas <span class="text-primary">Conquistas</span>`;
+        }
+        if (breadcrumbCurrent) breadcrumbCurrent.textContent = 'Certificados';
+
+        renderCertificates(allCourses);
+    }
+}
+
+/**
+ * Renders certificates in the grid
+ */
+function renderCertificates(courses: any[]) {
+    const grid = document.getElementById('certificates-grid');
+    if (!grid) return;
+
+    const completedWithCert = courses.filter(c => c.progress === 100 && c.certificateHash);
+
+    if (completedWithCert.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full py-20 text-center bg-surface-dark border border-white/5 rounded-xl">
+                <span class="material-symbols-outlined text-6xl text-slate-700 mb-4">workspace_premium</span>
+                <p class="text-slate-500 text-lg">Você ainda não possui certificados disponíveis.</p>
+                <p class="text-slate-600 text-sm">Conclua 100% de um curso para desbloquear seu certificado.</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = completedWithCert.map((course: any) => {
+        const date = new Date(course.enrolledAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        return `
+            <div class="certificate-card" data-hash="${course.certificateHash}" data-title="${course.title}" data-date="${date}">
+                <div class="cert-card-header">
+                    <div class="cert-card-icon">
+                        <span class="material-symbols-outlined">workspace_premium</span>
+                    </div>
+                    <span class="cert-card-badge">QUALIFICADO</span>
+                </div>
+                <div class="cert-card-info">
+                    <h3 class="cert-card-title">${course.title}</h3>
+                    <span class="cert-card-date">Emitido em ${date}</span>
+                </div>
+                <div class="cert-card-footer">
+                    <span class="btn-view-cert">
+                        <span class="material-symbols-outlined">visibility</span>
+                        Ver Certificado
+                    </span>
+                    <span class="text-slate-500 text-xs font-mono">${course.certificateHash.substring(0, 8)}...</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setupCertificateCardListeners();
+}
+
+/**
+ * Listeners for certificate card clicks
+ */
+function setupCertificateCardListeners() {
+    const cards = document.querySelectorAll('.certificate-card');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const hash = (card as HTMLElement).dataset.hash;
+            const title = (card as HTMLElement).dataset.title;
+            const date = (card as HTMLElement).dataset.date;
+
+            if (hash && title && date) {
+                openCertificateModal(hash, title, date);
+            }
+        });
+    });
+}
+
+/**
+ * Opens the certificate modal with data
+ */
+function openCertificateModal(hash: string, title: string, date: string) {
+    const modal = document.getElementById('certificate-modal');
+    const userStr = localStorage.getItem('auth_user');
+    const user = userStr ? JSON.parse(userStr) : { name: 'Aluno' };
+
+    const nameEl = document.getElementById('modal-cert-user-name');
+    const courseEl = document.getElementById('modal-cert-course-name');
+    const dateEl = document.getElementById('modal-cert-date');
+    const hashEl = document.getElementById('modal-cert-hash');
+
+    if (nameEl) nameEl.textContent = user.name;
+    if (courseEl) courseEl.textContent = title;
+    if (dateEl) dateEl.textContent = date;
+    if (hashEl) hashEl.textContent = hash;
+
+    modal?.classList.remove('hidden');
+}
+
+/**
+ * Modal action listeners
+ */
+function setupCertificateModalListeners() {
+    const modal = document.getElementById('certificate-modal');
+    const closeBtn = document.getElementById('close-cert-modal');
+    const printBtn = document.getElementById('btn-print-cert');
+    const downloadBtn = document.getElementById('btn-download-cert');
+
+    closeBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+    });
+
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal?.classList.add('hidden');
+        }
+    });
+
+    printBtn?.addEventListener('click', () => {
+        window.print();
+    });
+
+    downloadBtn?.addEventListener('click', () => {
+        window.print();
     });
 }
