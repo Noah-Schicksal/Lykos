@@ -234,6 +234,105 @@
   padding: 0;
 }
 
+/* Sidebar User Card */
+.sidebar-user-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s;
+}
+
+:root.light .sidebar-user-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-user-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(94, 23, 235, 0.3);
+}
+
+:root.light .sidebar-user-card:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.sidebar-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar-user-avatar .material-symbols-outlined {
+  font-size: 1.75rem;
+  color: white;
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  margin-bottom: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:root.light .sidebar-user-name {
+  color: #0d1b2a;
+}
+
+.sidebar-user-role {
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.sidebar-user-menu-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.sidebar-user-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--primary);
+}
+
+:root.light .sidebar-user-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-user-menu-btn .material-symbols-outlined {
+  font-size: 1.25rem;
+}
+
 .storage-info {
   padding: 1rem;
   border-radius: 0.75rem;

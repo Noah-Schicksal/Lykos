@@ -46,6 +46,7 @@ function updateUserInfo(user: any) {
     const roleText = document.getElementById('header-user-role');
     const welcomeTitle = document.getElementById('welcome-title');
     const coursesStatus = document.getElementById('courses-status');
+    const sidebarUserName = document.getElementById('sidebar-user-name');
 
     if (headerName) {
         headerName.textContent = user.name || 'Aluno';
@@ -63,6 +64,11 @@ function updateUserInfo(user: any) {
 
     if (coursesStatus) {
         coursesStatus.innerHTML = `Carregando seus cursos...`;
+    }
+
+    // Update sidebar user card
+    if (sidebarUserName) {
+        sidebarUserName.textContent = user.name || 'Aluno';
     }
 }
 
@@ -244,6 +250,15 @@ function setupNavigation() {
     if (btnToggle && sidebar) {
         btnToggle.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
+        });
+    }
+
+    // Sidebar Avatar Button (Logout)
+    const sidebarAvatarBtn = document.getElementById('sidebar-avatar-btn');
+    if (sidebarAvatarBtn) {
+        sidebarAvatarBtn.addEventListener('click', () => {
+            Auth.logout();
+            window.location.href = 'index.html';
         });
     }
 
