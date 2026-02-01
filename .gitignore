@@ -6,7 +6,7 @@ data/
 # Banco de Dados
 *.sqlite
 *.sqlite-journal
-
+src/database/seedDemoData.ts
 # Variáveis de ambiente
 .env
 
