@@ -308,6 +308,30 @@ function setupNavigation() {
         Auth.updateAuthUI();
     });
 
+    document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
+        Auth.showProfileEdit();
+    });
+
+    document.getElementById('btn-cancel-edit')?.addEventListener('click', () => {
+        Auth.showProfileView();
+    });
+
+    document.getElementById('profile-edit-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = (document.getElementById('edit-name') as HTMLInputElement).value;
+        const email = (document.getElementById('edit-email') as HTMLInputElement).value;
+        const password = (document.getElementById('edit-password') as HTMLInputElement).value;
+
+        await Auth.updateUserProfile({ name, email, password });
+    });
+
+    document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
+        const deleted = await Auth.deleteUserAccount();
+        if (deleted) {
+            window.location.href = 'index.html';
+        }
+    });
+
     // Mirroring instructor's initial update
     Auth.updateAuthUI();
 

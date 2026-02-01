@@ -175,28 +175,17 @@
 
   <!-- Auth Card Container -->
   <div id="auth-card-container" class="auth-container perspective-1000">
-    <div id="auth-card" class="flip-card-inner">
+    <div id="auth-card" class="auth-card">
       <!-- Logged In View -->
-      <div id="auth-logged-in" class="auth-face">
-        <div class="user-avatar-large" style="margin: 0 auto 1.5rem auto">
-          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
+      <div id="auth-logged-in" class="auth-face auth-logged-in">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
         </div>
-        <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem">
-          Nome do Usuário
-        </h3>
-        <p id="user-email-display" style="
-              font-size: 0.875rem;
-              color: var(--text-muted);
-              margin-bottom: 0.5rem;
-            ">
-          user@example.com
-        </p>
-        <div id="user-role-badge" class="badge-tag bg-tag-secondary"
-          style="display: inline-block; margin-bottom: 1.5rem">
-          Aluno
-        </div>
+        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
+        <p id="user-email-display" class="user-email">user@example.com</p>
+        <div id="user-role-badge" class="role-badge">Aluno</div>
 
-        <div class="flex-col gap-2" style="width: 100%">
+        <div class="dashboard-actions">
           <button id="btn-my-learning" class="btn-dashboard">
             <span class="material-symbols-outlined">school</span> Meus Cursos
           </button>
@@ -207,7 +196,7 @@
           <button id="btn-view-profile" class="btn-dashboard">
             <span class="material-symbols-outlined">person</span> Ver Perfil
           </button>
-          <button id="btn-logout" class="btn-dashboard outline">
+          <button id="btn-logout" class="btn-dashboard btn-logout">
             <span class="material-symbols-outlined">logout</span> Sair
           </button>
         </div>
@@ -215,43 +204,76 @@
 
       <!-- Profile View -->
       <div id="auth-profile-view" class="auth-face hidden">
-        <div style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            ">
-          <h3 class="auth-title" style="margin: 0">Perfil</h3>
+        <div class="view-header">
+          <h3 class="auth-title">Perfil</h3>
           <button id="btn-back-from-profile" class="btn-icon">
             <span class="material-symbols-outlined">arrow_back</span>
           </button>
         </div>
-        <div class="user-avatar-large" style="margin-bottom: 1rem">
-          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
         </div>
-        <div style="margin-bottom: 1.5rem">
-          <label class="auth-label">Nome</label>
-          <p id="profile-name-display" style="color: var(--text-primary); margin-bottom: 0.75rem">
-            Nome do Usuário
-          </p>
-          <label class="auth-label">Email</label>
-          <p id="profile-email-display" style="color: var(--text-primary); margin-bottom: 0.75rem">
-            user@example.com
-          </p>
-          <label class="auth-label">Cargo/Função</label>
-          <p id="profile-role-display" style="color: var(--text-primary)">
-            Aluno
-          </p>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Nome</label>
+            <p id="profile-name-display" class="info-value">
+              Nome do Usuário
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-email-display" class="info-value">
+              user@example.com
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Função</label>
+            <p id="profile-role-display" class="info-value">Aluno</p>
+          </div>
         </div>
-        <div class="flex-col gap-2" style="width: 100%">
-          <button id="btn-edit-profile" class="btn-dashboard">
+
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
             <span class="material-symbols-outlined">edit</span> Editar Perfil
           </button>
-          <button id="btn-delete-account" class="btn-dashboard outline danger">
+          <button id="btn-delete-account" class="btn-delete">
             <span class="material-symbols-outlined">delete</span> Excluir
             Conta
           </button>
         </div>
+      </div>
+
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Editar Perfil</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="••••••••" />
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Alterações</button>
+        </form>
       </div>
     </div>
   </div>

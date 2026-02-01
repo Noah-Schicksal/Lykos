@@ -270,9 +270,9 @@ export const Auth = {
     const user = userStr ? JSON.parse(userStr) : null;
 
     if (user) {
-      const nameEl = document.getElementById('profile-view-name');
-      const emailEl = document.getElementById('profile-view-email');
-      const roleEl = document.getElementById('profile-view-role');
+      const nameEl = document.getElementById('profile-name-display');
+      const emailEl = document.getElementById('profile-email-display');
+      const roleEl = document.getElementById('profile-role-display');
 
       if (nameEl) nameEl.textContent = user.name;
       if (emailEl) emailEl.textContent = user.email;

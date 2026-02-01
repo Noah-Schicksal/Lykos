@@ -370,7 +370,7 @@ select {
   top: 5rem;
   right: 1rem;
   z-index: 1000;
-  width: 20rem;
+  width: 22rem;
   perspective: 1000px;
 }
 
@@ -2044,7 +2044,8 @@ select {
   color: white;
   margin-bottom: 0.25rem;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
