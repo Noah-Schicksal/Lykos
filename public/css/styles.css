@@ -2620,6 +2620,12 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 /* ========================================
    User Drawer Sidebar (Left Side)
    ======================================== */
+
+/* Prevent body scroll when drawer is open */
+body.drawer-open {
+  overflow: hidden;
+}
+
 .user-drawer {
   position: fixed;
   top: 0;
@@ -2635,6 +2641,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
 
 :root.light .user-drawer {
@@ -3135,6 +3142,12 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 .user-drawer-footer {
   padding: 1rem;
   border-top: 1px solid var(--border-light);
+  flex-shrink: 0;
+  background: #000;
+}
+
+:root.light .user-drawer-footer {
+  background: #ffffff;
 }
 
 /* Drawer Overlay */

@@ -1,32 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificado de Conclusão - Lykos</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
     <style>
-      .cert-container {
-        width: 100%;
-        min-height: 100vh;
-        background-color: #f0fdf4;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-      }
         :root {
             --primary: #5e17eb;
             --primary-light: #7c3aed;
@@ -96,18 +80,6 @@
             padding: 2rem;
         }
 
-      .certificate {
-        width: 100%;
-        max-width: 900px;
-        background: white;
-        padding: 4rem;
-        border: 10px double #14532d;
-        text-align: center;
-        position: relative;
-        box-shadow:
-          0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 10px 10px -5px rgba(0, 0, 0, 0.04);
-      }
         .certificate {
             width: 100%;
             max-width: 900px;
@@ -162,22 +134,10 @@
             margin-bottom: 0.5rem;
         }
 
-      .cert-header {
-        font-family: 'Playfair Display', serif;
-        color: #14532d;
-        margin-bottom: 2rem;
-      }
         .cert-header {
             margin-bottom: 2rem;
         }
 
-      .cert-title {
-        font-size: 3rem;
-        font-weight: 700;
-        margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-      }
         .cert-title {
             font-family: 'Playfair Display', serif;
             font-size: 4rem;
@@ -191,12 +151,6 @@
             letter-spacing: 0.15em;
         }
 
-      .cert-subtitle {
-        font-size: 1.25rem;
-        font-style: italic;
-        color: #166534;
-        margin-top: 0.5rem;
-      }
         .cert-subtitle {
             font-family: 'Playfair Display', serif;
             font-size: 1.25rem;
@@ -205,13 +159,6 @@
             margin-top: 0.5rem;
         }
 
-      .cert-body {
-        margin: 3rem 0;
-        font-family: 'Playfair Display', serif;
-        font-size: 1.5rem;
-        line-height: 1.8;
-        color: #374151;
-      }
         .cert-body {
             margin: 3rem 0;
             font-size: 1.25rem;
@@ -221,20 +168,11 @@
             position: relative;
         }
 
-      .student-name {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #15803d;
-        border-bottom: 2px solid #bbf7d0;
-        display: block;
-        margin: 1rem 0;
-        padding-bottom: 0.5rem;
-      }
         .student-name {
             font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -244,27 +182,12 @@
             border-bottom: 2px solid var(--border-color);
         }
 
-      .course-name {
-        font-weight: 700;
-        color: #14532d;
-      }
         .course-name {
-            font-family: 'Playfair Display', serif;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 1.7rem;
+            color: var(--text-primary);
+            font-size: 1.5rem;
         }
 
-      .cert-footer {
-        margin-top: 4rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        font-family: 'Inter', sans-serif;
-      }
         .cert-footer {
             margin-top: 4rem;
             display: flex;
@@ -275,12 +198,6 @@
             position: relative;
         }
 
-      .signature {
-        text-align: center;
-        border-top: 1px solid #9ca3af;
-        padding-top: 0.5rem;
-        width: 250px;
-      }
         .signature {
             text-align: center;
             border-top: 2px solid var(--border-color);
@@ -299,11 +216,6 @@
             font-size: 0.75rem;
         }
 
-      .hash-info {
-        font-size: 0.75rem;
-        color: #6b7280;
-        text-align: right;
-      }
         .hash-info {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -321,17 +233,6 @@
             font-size: 0.7rem;
         }
 
-      .watermark {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        opacity: 0.05;
-        font-size: 20rem;
-        z-index: 0;
-        pointer-events: none;
-        color: #14532d;
-      }
         .watermark {
             position: absolute;
             top: 50%;
@@ -387,10 +288,6 @@
             margin: 0;
         }
 
-      @media print {
-        .no-print {
-          display: none;
-        }
         @media print {
             .no-print {
                 display: none !important;
@@ -405,10 +302,6 @@
                 overflow: hidden !important;
             }
 
-        .cert-container {
-          padding: 0;
-          background: white;
-        }
             .cert-container {
                 min-height: 100vh !important;
                 height: 100vh !important;
@@ -483,9 +376,10 @@
             }
         }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
+
     <div class="cert-container">
 
         <div id="loading" class="loading">Validando certificado...</div>
@@ -539,91 +433,99 @@
             </button>
         </div>
 
+        <!-- Floating Actions -->
+        <div class="cert-actions" id="cert-actions-container">
+            <button id="btn-download" class="btn-download">
+                <span class="material-symbols-outlined">print</span>
+                Imprimir / Salvar PDF
+            </button>
+        </div>
+
     </div>
 
+    <!-- PDF Library -->
+    <script src="js/libs/html2pdf.bundle.min.js"></script>
+
+    <script src="js/certificate.js"></script>
+
     <script>
-      function printCertificate() {
-        window.focus();
-        setTimeout(() => {
-          window.print();
-        }, 250);
-      }
-
-      // Attach listener for the internal button
-      document
-        .getElementById('btn-internal-print')
-        ?.addEventListener('click', printCertificate);
-
-      async function loadCertificate() {
-        const params = new URLSearchParams(window.location.search);
-        const hash = params.get('hash');
-        const isEmbedded = params.get('embed') === 'true';
-
-        if (isEmbedded) {
-          document.body.classList.add('embedded');
+        function printCertificate() {
+            window.focus();
+            setTimeout(() => {
+                window.print();
+            }, 250);
         }
 
-        if (!hash) {
-          document.getElementById('loading').classList.add('hidden');
-          document.getElementById('error-msg').classList.remove('hidden');
-          document.getElementById('cert-actions').style.display = 'none';
-          return;
-        }
+        // Attach listener for the internal button
+        document.getElementById('btn-internal-print')?.addEventListener('click', printCertificate);
 
-        try {
-          // Fetch Certificate Data
-          const res = await fetch(`/certificates/${hash}`);
-          const data = await res.json();
-
-          if (res.ok && data.data) {
-            const cert = data.data;
-
-            // Safely update elements
-            const updateText = (id, text) => {
-              const el = document.getElementById(id);
-              if (el) el.textContent = text;
-            };
-
-            updateText('student-name', cert.studentName);
-            updateText('course-title', cert.courseTitle);
-            updateText('instructor-name', cert.instructorName);
-            updateText('cert-hash', cert.certificateHash);
-            updateText(
-              'issue-date',
-              new Date(cert.issuedAt).toLocaleDateString('pt-BR'),
-            );
-
-            // Show content
-            document.getElementById('loading').classList.add('hidden');
-            const certEl = document.getElementById('certificate');
-            certEl.classList.remove('hidden');
+        async function loadCertificate() {
+            const params = new URLSearchParams(window.location.search);
+            const hash = params.get('hash');
+            const isEmbedded = params.get('embed') === 'true';
 
             if (isEmbedded) {
-              // Small delay to ensure content is rendered before scaling
-              setTimeout(() => {
-                const container = document.querySelector('.cert-container');
-                const certificate = document.getElementById('certificate');
-                const scale =
-                  Math.min(
-                    container.offsetWidth / certificate.offsetWidth,
-                    container.offsetHeight / certificate.offsetHeight,
-                  ) * 0.95;
-
-                certificate.style.transform = `scale(${scale})`;
-              }, 100);
+                document.body.classList.add('embedded');
             }
-          } else {
-            throw new Error('Not found');
-          }
-        } catch (error) {
-          console.error('Error loading certificate:', error);
-          document.getElementById('loading').classList.add('hidden');
-          document.getElementById('error-msg').classList.remove('hidden');
-          document.getElementById('cert-actions').style.display = 'none';
-        }
-      }
 
-      loadCertificate();
+            if (!hash) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error-msg').classList.remove('hidden');
+                document.getElementById('cert-actions').style.display = 'none';
+                return;
+            }
+
+            try {
+                // Fetch Certificate Data
+                const res = await fetch(`/certificates/${hash}`);
+                const data = await res.json();
+
+                if (res.ok && data.data) {
+                    const cert = data.data;
+
+                    // Safely update elements
+                    const updateText = (id, text) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = text;
+                    };
+
+                    updateText('student-name', cert.studentName);
+                    updateText('course-title', cert.courseTitle);
+                    updateText('instructor-name', cert.instructorName);
+                    updateText('cert-hash', cert.certificateHash);
+                    updateText('issue-date', new Date(cert.issuedAt).toLocaleDateString('pt-BR'));
+
+                    // Show content
+                    document.getElementById('loading').classList.add('hidden');
+                    const certEl = document.getElementById('certificate');
+                    certEl.classList.remove('hidden');
+
+                    if (isEmbedded) {
+                        // Small delay to ensure content is rendered before scaling
+                        setTimeout(() => {
+                            const container = document.querySelector('.cert-container');
+                            const certificate = document.getElementById('certificate');
+                            const scale = Math.min(
+                                container.offsetWidth / certificate.offsetWidth,
+                                container.offsetHeight / certificate.offsetHeight
+                            ) * 0.95;
+
+                            certificate.style.transform = `scale(${scale})`;
+                        }, 100);
+                    }
+                } else {
+                    throw new Error('Not found');
+                }
+            } catch (error) {
+                console.error('Error loading certificate:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error-msg').classList.remove('hidden');
+                document.getElementById('cert-actions').style.display = 'none';
+            }
+        }
+
+        loadCertificate();
     </script>
-  </body>
+</body>
+
 </html>
