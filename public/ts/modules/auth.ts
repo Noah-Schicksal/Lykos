@@ -59,6 +59,11 @@ export const Auth = {
 
         localStorage.setItem('auth_user', JSON.stringify(user));
 
+        if (user.role === 'ADMIN') {
+          window.location.href = '/admin.html';
+          return;
+        }
+
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
 
