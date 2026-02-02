@@ -1617,9 +1617,10 @@
 /* Certificate Modal */
 .certificate-modal-container {
   background-color: var(--card-dark);
-  width: 90%;
-  max-width: 900px;
-  max-height: 90vh;
+  width: 95%;
+  max-width: 1000px;
+  height: 90vh;
+  max-height: 850px;
   border-radius: 1.5rem;
   border: 1px solid var(--border-light);
   display: flex;
@@ -2700,8 +2701,10 @@
     font-size: 1.25rem;
   }
 }
+
 /* DEBUG: Force sidebar visibility on all mobile sizes */
 @media (max-width: 1023px) {
+
   /* Ensure sidebar has proper base styles */
   .student-dashboard .sidebar {
     position: fixed !important;
@@ -2739,6 +2742,7 @@
 
 /* Remove all previous mobile sidebar attempts and use simple icon-only approach */
 @media (max-width: 1023px) {
+
   /* Hide mobile menu button - not needed anymore */
   .mobile-menu-btn {
     display: none !important;

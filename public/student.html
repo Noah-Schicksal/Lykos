@@ -277,47 +277,14 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-      <div class="modal-body">
-        <div id="certificate-preview" class="certificate-preview">
-          <!-- O certificado será renderizado aqui para visualização e impressão -->
-          <div class="certificate-document" id="printable-certificate">
-            <div class="cert-background"></div>
-            <div class="cert-content">
-              <div class="cert-header">
-                <span class="cert-logo material-symbols-outlined">school</span>
-                <span class="cert-company">Lykos.eng</span>
-              </div>
-              <div class="cert-main">
-                <h1 class="cert-title">CERTIFICADO</h1>
-                <p class="cert-subtitle">DE CONCLUSÃO DE CURSO</p>
-                <div class="cert-body">
-                  Certificamos que o aluno(a)
-                  <h2 id="modal-cert-user-name" class="cert-user-name">Carregando...</h2>
-                  concluiu com êxito o treinamento
-                  <h2 id="modal-cert-course-name" class="cert-course-name">Carregando...</h2>
-                  com carga horária técnica e aproveitamento de 100%.
-                </div>
-              </div>
-              <div class="cert-footer">
-                <div class="cert-date">
-                  <span class="label">DATA DE EMISSÃO</span>
-                  <span id="modal-cert-date" class="value">--/--/----</span>
-                </div>
-                <div class="cert-hash">
-                  <span class="label">CÓDIGO DE AUTENTICIDADE</span>
-                  <span id="modal-cert-hash" class="value">XXXX-XXXX-XXXX</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="modal-body" style="padding: 0; overflow: hidden; height: 75vh;">
+        <iframe id="certificate-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
       </div>
-      <div class="modal-footer">
-        <button id="btn-print-cert" class="btn-auth-submit secondary">
-          <span class="material-symbols-outlined">print</span> Imprimir / PDF
-        </button>
-        <button id="btn-download-cert" class="btn-auth-submit">
-          <span class="material-symbols-outlined">download</span> Download
+      <div class="modal-footer" style="justify-content: center; align-items: center;">
+        <button id="btn-modal-print" class="btn-auth-submit" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">
+          <span class="material-symbols-outlined"
+            style="font-size: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">print</span>
+          Imprimir / Salvar PDF
         </button>
       </div>
     </div>

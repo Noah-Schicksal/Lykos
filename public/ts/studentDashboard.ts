@@ -548,18 +548,11 @@ function setupCertificateCardListeners() {
  */
 function openCertificateModal(hash: string, title: string, date: string) {
     const modal = document.getElementById('certificate-modal');
-    const userStr = localStorage.getItem('auth_user');
-    const user = userStr ? JSON.parse(userStr) : { name: 'Aluno' };
+    const iframe = document.getElementById('certificate-iframe') as HTMLIFrameElement;
 
-    const nameEl = document.getElementById('modal-cert-user-name');
-    const courseEl = document.getElementById('modal-cert-course-name');
-    const dateEl = document.getElementById('modal-cert-date');
-    const hashEl = document.getElementById('modal-cert-hash');
-
-    if (nameEl) nameEl.textContent = user.name;
-    if (courseEl) courseEl.textContent = title;
-    if (dateEl) dateEl.textContent = date;
-    if (hashEl) hashEl.textContent = hash;
+    if (iframe) {
+        iframe.src = `certificate.html?hash=${hash}&embed=true`;
+    }
 
     modal?.classList.remove('hidden');
 }
@@ -570,8 +563,7 @@ function openCertificateModal(hash: string, title: string, date: string) {
 function setupCertificateModalListeners() {
     const modal = document.getElementById('certificate-modal');
     const closeBtn = document.getElementById('close-cert-modal');
-    const printBtn = document.getElementById('btn-print-cert');
-    const downloadBtn = document.getElementById('btn-download-cert');
+    const printBtn = document.getElementById('btn-modal-print');
 
     closeBtn?.addEventListener('click', () => {
         modal?.classList.add('hidden');
@@ -584,10 +576,10 @@ function setupCertificateModalListeners() {
     });
 
     printBtn?.addEventListener('click', () => {
-        window.print();
-    });
-
-    downloadBtn?.addEventListener('click', () => {
-        window.print();
+        const iframe = document.getElementById('certificate-iframe') as HTMLIFrameElement;
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        }
     });
 }
