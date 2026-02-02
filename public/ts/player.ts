@@ -36,12 +36,20 @@ const Player = {
 
     init: async () => {
         // Get courseId from URL
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('courseId');
+        // Get courseId from URL (Path or Query)
+        let id = new URLSearchParams(window.location.search).get('courseId');
+
+        if (!id) {
+            // Try extracting from path /aula/:id
+            const match = window.location.pathname.match(/\/aula\/([^\/]+)/);
+            if (match && match[1]) {
+                id = match[1];
+            }
+        }
 
         if (!id) {
             AppUI.showMessage('Curso não especificado.', 'error');
-            setTimeout(() => (window.location.href = 'index.html'), 2000);
+            setTimeout(() => (window.location.href = '/inicio'), 2000);
             return;
         }
 
@@ -50,7 +58,7 @@ const Player = {
         // Auth Check
         const user = localStorage.getItem('auth_user');
         if (!user) {
-            window.location.href = 'index.html'; // Redirect if not logged in
+            window.location.href = '/inicio'; // Redirect if not logged in
             return;
         }
         Player.setupAuthUI(JSON.parse(user));
@@ -426,7 +434,7 @@ const Player = {
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('auth_user');
-                window.location.href = 'index.html';
+                window.location.href = '/inicio';
             });
         }
     },

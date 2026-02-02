@@ -67,7 +67,7 @@ async function checkAuth() {
         'error',
       );
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -75,7 +75,7 @@ async function checkAuth() {
     if (user.role !== 'INSTRUCTOR') {
       AppUI.showMessage('Acesso negado. É necessário ser instrutor.', 'error');
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -85,7 +85,7 @@ async function checkAuth() {
       'error',
     );
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/inicio';
     }, 2000);
   }
 }
@@ -133,11 +133,10 @@ async function loadCoursesSidebar() {
         (course: any) => `
       <div class="course-list-item ${currentCourseId === course.id ? 'active' : ''}" data-course-id="${course.id}">
         <div class="course-item-thumb">
-           ${
-             course.coverImageUrl
-               ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
-               : '<span class="material-symbols-outlined">school</span>'
-           }
+           ${course.coverImageUrl
+            ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
+            : '<span class="material-symbols-outlined">school</span>'
+          }
         </div>
         <div class="course-item-info">
           <p class="course-item-title">${course.title}</p>
@@ -167,6 +166,15 @@ async function loadCoursesSidebar() {
 
 // Setup Global Listeners
 function setupGlobalEventListeners() {
+  // Sidebar Toggle
+  const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+  const sidebar = document.getElementById('instructor-sidebar');
+  if (btnToggleSidebar && sidebar) {
+    btnToggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  }
+
   // Create New Course Button
   document
     .getElementById('btn-create-new-course')
@@ -185,6 +193,8 @@ function setupGlobalEventListeners() {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       authContainer.classList.toggle('show');
+      // Toggle 'open' class for icon rotation
+      avatarBtn.classList.toggle('open');
     });
 
     document.addEventListener('click', (e) => {
@@ -194,6 +204,7 @@ function setupGlobalEventListeners() {
         !avatarBtn.contains(e.target as Node)
       ) {
         authContainer.classList.remove('show');
+        avatarBtn.classList.remove('open');
       }
     });
   }
@@ -298,12 +309,9 @@ function showCategoriesView() {
 async function selectCourse(courseId: string) {
   currentCourseId = courseId;
 
-  // Update sidebar active state & Manage Badges
+  // Update sidebar active state
   document.querySelectorAll('.course-list-item').forEach((el) => {
     el.classList.remove('active');
-    // Remove existing badges if any
-    const badge = el.querySelector('.editing-badge');
-    if (badge) badge.remove();
   });
 
   const activeItem = document.querySelector(
@@ -311,12 +319,6 @@ async function selectCourse(courseId: string) {
   );
   if (activeItem) {
     activeItem.classList.add('active');
-
-    // Add "Em Edição" badge
-    const badge = document.createElement('span');
-    badge.className = 'editing-badge';
-    badge.textContent = 'Em Edição';
-    activeItem.appendChild(badge);
   }
 
   await renderCourseDetails(courseId);
@@ -357,7 +359,6 @@ async function renderCourseDetails(courseId: string) {
 
     // Fill data
     setText(clone, 'detail-title', course.title);
-    setText(clone, 'detail-category', course.category?.name || 'Sem Categoria');
     setText(clone, 'detail-students', `${course.enrolledCount || 0} alunos`);
     setText(
       clone,
@@ -911,7 +912,8 @@ async function renderContentTree(courseId: string) {
                     <div class="tree-module-header">
                         <div class="tree-module-title">
                             <span class="material-symbols-outlined">folder</span>
-                            <span contenteditable="true" class="editable-title" data-module-id="${module.id}">${module.title}</span>
+                            <span contenteditable="true" class="editable-title" data-module-id="${module.id}" title="Clique para editar">${module.title}</span>
+                            <span class="material-symbols-outlined" style="font-size: 1rem; opacity: 0.5; cursor: help;" title="Clique no título para editar">edit</span>
                         </div>
                         <button class="tree-btn-icon" data-action="delete-module" data-id="${module.id}" title="Excluir Módulo">
                             <span class="material-symbols-outlined">delete</span>
@@ -920,13 +922,14 @@ async function renderContentTree(courseId: string) {
                     
                     <div class="tree-class-list">
                         ${classes
-                          .map(
-                            (cls: any) => `
+            .map(
+              (cls: any) => `
                         <div class="tree-class-item">
                             <div class="tree-class-header">
                                 <div class="tree-class-title">
                                     <span class="material-symbols-outlined" style="font-size: 1rem;">article</span>
-                                    <span contenteditable="true" class="editable-title" data-class-id="${cls.id}">${cls.title}</span>
+                                    <span contenteditable="true" class="editable-title" data-class-id="${cls.id}" title="Clique para editar">${cls.title}</span>
+                                    <span class="material-symbols-outlined" style="font-size: 0.875rem; opacity: 0.5; cursor: help;" title="Clique no título para editar">edit</span>
                                 </div>
                                 <button class="tree-btn-icon" data-action="delete-class" data-id="${cls.id}" title="Excluir Aula">
                                     <span class="material-symbols-outlined" style="font-size: 1rem;">close</span>
@@ -953,8 +956,8 @@ async function renderContentTree(courseId: string) {
                             </div>
                         </div>
                         `,
-                          )
-                          .join('')}
+            )
+            .join('')}
 
                         <button class="btn-add-inline" data-action="create-class" data-module-id="${module.id}">
                             <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1rem;">add</span> Adicionar Aula
@@ -965,13 +968,19 @@ async function renderContentTree(courseId: string) {
       }
     }
 
-    // Inline "New Module" Form
+    // Prominent "Add Module" Section
     html += `
-        <div class="new-module-form" style="margin-top: 1rem; padding: 1rem; border: 1px dashed var(--dash-border); border-radius: 0.5rem;">
-            <div style="display: flex; gap: 0.5rem;">
-                <input type="text" id="new-module-title" class="tree-input" placeholder="Nome do novo módulo..." style="margin-bottom: 0;">
-                <button class="btn-primary" data-action="create-module" style="width: auto; padding: 0 1rem;">
+        <div class="add-module-section">
+            <div class="add-module-header">
+                <span class="material-symbols-outlined">add_circle</span>
+                <h3>Adicionar Novo Módulo</h3>
+            </div>
+            <p class="add-module-hint">Crie um módulo para organizar as aulas do seu curso</p>
+            <div class="add-module-form">
+                <input type="text" id="new-module-title" class="tree-input" placeholder="Ex: Introdução ao JavaScript, Módulo 1, etc..." style="margin-bottom: 0; flex: 1;">
+                <button class="btn-primary-dash" data-action="create-module" style="width: auto; padding: 0.75rem 1.5rem; white-space: nowrap;">
                     <span class="material-symbols-outlined">add</span>
+                    <span>Criar Módulo</span>
                 </button>
             </div>
         </div>

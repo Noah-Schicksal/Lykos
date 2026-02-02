@@ -121,6 +121,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const success = await Cart.checkout();
         if (success) {
           cartModal?.classList.remove('show');
+          // Recarregar os cursos para atualizar o status dos cards
+          Home.loadCourses();
         }
       }
     });
@@ -213,23 +215,239 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnToRegister = document.getElementById('btn-to-register');
   const btnToLogin = document.getElementById('btn-to-login');
 
-  // Toggle Auth Card
+  // User Drawer Elements
+  const userDrawer = document.getElementById('user-drawer');
+  const openDrawerBtn = document.getElementById('open-drawer-btn'); // In navbar - opens drawer
+  const menuDrawerBtn = document.getElementById('menu-drawer-btn'); // In drawer - closes drawer
+  const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
+  const drawerProfilePanel = document.getElementById('drawer-profile-panel');
+  const drawerManagementSection = document.getElementById('drawer-management-section');
+  const drawerLogoutBtn = document.getElementById('drawer-logout');
+  const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
+  const drawerDeleteAccountBtn = document.getElementById('drawer-delete-account');
+  const drawerCategoriesToggle = document.getElementById('drawer-categories-toggle');
+  const drawerCategoriesPanel = document.getElementById('drawer-categories-panel');
+
+  // Avatar always opens Auth Card (for login/register or profile view if logged in)
   if (avatarBtn && authContainer) {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       authContainer.classList.toggle('show');
+      closeDrawer();
     });
+  }
 
-    document.addEventListener('click', (e) => {
-      if (
-        authContainer.classList.contains('show') &&
-        !authContainer.contains(e.target as Node) &&
-        !avatarBtn.contains(e.target as Node)
-      ) {
-        authContainer.classList.remove('show');
+  // Open Drawer Button (in navbar) - opens the drawer
+  if (openDrawerBtn && userDrawer) {
+    openDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDrawer();
+      authContainer?.classList.remove('show');
+    });
+  }
+
+  // Menu Button inside drawer - closes the drawer
+  if (menuDrawerBtn && userDrawer) {
+    menuDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeDrawer();
+    });
+  }
+
+  // Get overlay element
+  const drawerOverlay = document.querySelector('.drawer-overlay');
+
+  // Helper functions
+  function openDrawer() {
+    updateDrawerUserInfo();
+    userDrawer?.classList.add('show');
+    document.body.classList.add('drawer-open');
+    openDrawerBtn?.classList.add('hidden');
+    drawerOverlay?.classList.add('show');
+  }
+
+  function closeDrawer() {
+    userDrawer?.classList.remove('show');
+    document.body.classList.remove('drawer-open');
+    drawerOverlay?.classList.remove('show');
+    // Show open button if logged in
+    const user = localStorage.getItem('auth_user');
+    if (user && openDrawerBtn) {
+      openDrawerBtn.classList.remove('hidden');
+    }
+  }
+
+  // Close elements when clicking outside
+  document.addEventListener('click', (e) => {
+    // Close auth container
+    if (
+      authContainer?.classList.contains('show') &&
+      !authContainer.contains(e.target as Node) &&
+      !avatarBtn?.contains(e.target as Node)
+    ) {
+      authContainer.classList.remove('show');
+    }
+
+    // Close user drawer
+    if (
+      userDrawer?.classList.contains('show') &&
+      !userDrawer.contains(e.target as Node) &&
+      !openDrawerBtn?.contains(e.target as Node)
+    ) {
+      closeDrawer();
+    }
+  });
+
+  // Show/hide open drawer button based on login status
+  function updateMenuButtonVisibility() {
+    const user = localStorage.getItem('auth_user');
+    if (openDrawerBtn) {
+      if (user && !userDrawer?.classList.contains('show')) {
+        openDrawerBtn.classList.remove('hidden');
+      } else {
+        openDrawerBtn.classList.add('hidden');
+      }
+    }
+  }
+
+  // Initial check
+  updateMenuButtonVisibility();
+
+  // Listen for auth changes
+  window.addEventListener('auth-login', updateMenuButtonVisibility);
+  window.addEventListener('auth-logout', updateMenuButtonVisibility);
+
+  // Profile accordion toggle
+  if (drawerProfileToggle && drawerProfilePanel) {
+    drawerProfileToggle.addEventListener('click', () => {
+      drawerProfileToggle.classList.toggle('expanded');
+      drawerProfilePanel.classList.toggle('expanded');
+    });
+  }
+
+  // Drawer logout button
+  if (drawerLogoutBtn) {
+    drawerLogoutBtn.addEventListener('click', async () => {
+      await Auth.logout();
+      closeDrawer();
+    });
+  }
+
+  // Drawer edit profile button
+  // Drawer edit profile button
+  if (drawerEditProfileBtn) {
+    drawerEditProfileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+
+        // Pre-fill form
+        const userStr = localStorage.getItem('auth_user');
+        if (userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+            const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+
+            if (nameInput) nameInput.value = user.name || '';
+            if (emailInput) emailInput.value = user.email || '';
+          } catch (e) { console.error('Error parsing user', e); }
+        }
       }
     });
   }
+
+  const drawerCancelEditBtn = document.getElementById('drawer-cancel-edit');
+  if (drawerCancelEditBtn) {
+    drawerCancelEditBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Drawer delete account button
+  if (drawerDeleteAccountBtn) {
+    drawerDeleteAccountBtn.addEventListener('click', async () => {
+      const confirm = await AppUI.promptModal(
+        'Excluir Conta',
+        'Tem certeza que deseja excluir sua conta? Esta ação é irreversível.',
+      );
+      if (confirm) {
+        await Auth.deleteUserAccount();
+        userDrawer?.classList.remove('show');
+      }
+    });
+  }
+
+  // Drawer manage categories accordion
+  if (drawerCategoriesToggle && drawerCategoriesPanel) {
+    drawerCategoriesToggle.addEventListener('click', () => {
+      drawerCategoriesToggle.classList.toggle('expanded');
+      drawerCategoriesPanel.classList.toggle('expanded');
+
+      if (drawerCategoriesPanel.classList.contains('expanded')) {
+        Categories.renderCategoriesList('categories-list');
+      }
+    });
+  }
+
+  /**
+   * Update drawer user info from localStorage
+   */
+  function updateDrawerUserInfo() {
+    const userStr = localStorage.getItem('auth_user');
+    if (!userStr) return;
+
+    try {
+      const user = JSON.parse(userStr);
+      const drawerName = document.getElementById('drawer-user-name');
+      const drawerEmail = document.getElementById('drawer-user-email');
+      const drawerRole = document.getElementById('drawer-user-role');
+
+      // Normalize role for comparison
+      const userRole = (user.role || '').toLowerCase();
+
+      if (drawerName) drawerName.textContent = user.name || 'Usuário';
+      if (drawerEmail) drawerEmail.textContent = user.email || '';
+      if (drawerRole) drawerRole.textContent = userRole === 'instructor' ? 'Professor' : 'Aluno';
+
+      // Show management section for instructors
+      if (drawerManagementSection) {
+        if (userRole === 'instructor' || userRole === 'admin') {
+          drawerManagementSection.classList.remove('hidden');
+        } else {
+          drawerManagementSection.classList.add('hidden');
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing user data for drawer:', e);
+    }
+  }
+
+  // Update drawer when auth changes
+  window.addEventListener('auth-login', () => {
+    updateDrawerUserInfo();
+  });
+
+  window.addEventListener('auth-logout', () => {
+    userDrawer?.classList.remove('show');
+    // Reset accordion
+    drawerProfileToggle?.classList.remove('expanded');
+    drawerProfilePanel?.classList.remove('expanded');
+  });
 
   // Flip Logic
   if (btnToRegister && cardInner) {
@@ -396,37 +614,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'student.html';
+      window.location.href = '/estudante';
     });
   }
 
-  const btnManageCategories = document.getElementById('btn-manage-categories');
-  if (btnManageCategories) {
-    btnManageCategories.addEventListener('click', (e) => {
-      e.preventDefault();
-      showCategoriesView();
-    });
-  }
 
-  // Handle Instructor Dashboard
-  const btnInstructorDash = document.getElementById('btn-instructor-dash');
-  if (btnInstructorDash) {
-    btnInstructorDash.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'instructor.html';
-    });
-  }
-
-  // Handle Back from Categories
-  const btnBackFromCategories = document.getElementById(
-    'btn-back-from-categories',
-  );
-  if (btnBackFromCategories) {
-    btnBackFromCategories.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.updateAuthUI();
-    });
-  }
 
   // Handle Category Create Form
   const categoryCreateForm = document.getElementById('category-create-form');
@@ -453,23 +645,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error creating category:', error);
       }
     });
-  }
-
-  // Function to show categories view
-  function showCategoriesView() {
-    const loggedInFace = document.getElementById('auth-logged-in');
-    const profileViewFace = document.getElementById('auth-profile-view');
-    const profileEditFace = document.getElementById('auth-profile-edit');
-    const categoriesViewFace = document.getElementById('auth-categories-view');
-
-    if (loggedInFace) loggedInFace.classList.add('hidden');
-    if (profileViewFace) profileViewFace.classList.add('hidden');
-    if (profileEditFace) profileEditFace.classList.add('hidden');
-    if (categoriesViewFace) {
-      categoriesViewFace.classList.remove('hidden');
-      // Load categories when view is shown
-      Categories.renderCategoriesList('categories-list');
-    }
   }
 
   // Handle Register
