@@ -83,6 +83,33 @@ export const Classes = {
       throw error;
     }
   },
+  
+  /**
+   * Upload Video (MP4)
+   */
+  uploadVideo: async (classId: string, file: File): Promise<{ videoUrl: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('auth_token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    try {
+      const response = await fetch(`/classes/${classId}/video`, {
+        method: 'POST',
+        body: formData,
+        headers: headers,
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Erro no upload do vídeo');
+      return data.data || data;
+    } catch (error: any) {
+      AppUI.showMessage(error.message || 'Erro ao enviar vídeo', 'error');
+      throw error;
+    }
+  },
 
   /**
    * Deletar aula

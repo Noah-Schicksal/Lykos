@@ -46,9 +46,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let isLoading = false;
 
     // --- Init ---
+    // --- Init ---
     checkAdminAccess(); // Ensure only admin
     loadSidebarCourses(true);
     renderUserProfile();
+
+    // Mobile Sidebar Initialization
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('admin-sidebar');
+        if (sidebar) sidebar.classList.add('closed');
+    }
 
     // --- Event Listeners ---
     if (btnToggleSidebar) {
@@ -238,6 +245,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeCard = document.querySelector(`.course-card-nav[data-id="${id}"]`);
         if (activeCard) activeCard.classList.add('active');
 
+        // Close sidebar on mobile
+        if (window.innerWidth <= 768) {
+            const sidebar = document.getElementById('admin-sidebar');
+            if (sidebar) sidebar.classList.add('closed');
+        }
+
         // Show loading state potentially? For now just switch view
         emptyState.classList.add('hidden');
         detailsView.classList.remove('hidden');
@@ -305,18 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `
             <div class="module-header">
                 <div class="module-info">
-                    <span class="material-symbols-outlined chevron">expand_more</span>
                     <span class="module-title">${module.title}</span>
+                    <span class="module-meta">${classesCount} Aulas • ${module.duration || '0m'}</span>
                 </div>
-                <div class="module-meta">
-                    <span>${classesCount} Lessons</span>
+                <div class="module-actions">
+                    <span class="material-symbols-outlined chevron">expand_more</span>
                 </div>
             </div>
             <div class="module-content">
                 <ul class="lesson-list">
                     ${module.classes && module.classes.length > 0
                 ? module.classes.map((lesson: any) => createLessonItem(lesson)).join('')
-                : '<li style="padding:1rem; color:#64748b; font-size:0.8rem;">No lessons</li>'}
+                : '<li style="padding:1.5rem; text-align:center; color:var(--text-muted); font-size:0.875rem;">Nenhuma aula cadastrada neste módulo</li>'}
                 </ul>
             </div>
         `;
