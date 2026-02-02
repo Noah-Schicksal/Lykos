@@ -62,6 +62,9 @@ export const Auth = {
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
 
+        // Dispatch event to notify components of login
+        window.dispatchEvent(new CustomEvent('auth-login'));
+
         // Close auth card after successful login
         setTimeout(() => {
           const authContainer = document.getElementById('auth-card-container');
@@ -87,6 +90,9 @@ export const Auth = {
       localStorage.removeItem('auth_user');
       Auth.updateAuthUI();
       AppUI.showMessage('Você saiu da conta.', 'info');
+
+      // Dispatch event to notify components of logout
+      window.dispatchEvent(new CustomEvent('auth-logout'));
 
       const authContainer = document.getElementById('auth-card-container');
       if (authContainer) authContainer.classList.remove('show');
@@ -309,5 +315,20 @@ export const Auth = {
       if (emailInput) emailInput.value = user.email || '';
       if (passwordInput) passwordInput.value = '';
     }
+  },
+
+  showCategoriesView: () => {
+    const loggedInFace = document.getElementById('auth-logged-in');
+    const profileViewFace = document.getElementById('auth-profile-view');
+    const profileEditFace = document.getElementById('auth-profile-edit');
+    const categoriesViewFace = document.getElementById('auth-categories-view');
+
+    if (loggedInFace) loggedInFace.classList.add('hidden');
+    if (profileViewFace) profileViewFace.classList.add('hidden');
+    if (profileEditFace) profileEditFace.classList.add('hidden');
+    if (categoriesViewFace) categoriesViewFace.classList.remove('hidden');
+
+    // Trigger categories load
+    window.dispatchEvent(new CustomEvent('load-categories'));
   },
 };
