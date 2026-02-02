@@ -97,7 +97,7 @@ export class ModuleService {
     }
 
     // lista módulos de um curso (exibe também as aulas para facilitar o frontend)
-    async listByCourseId(courseId: string): Promise<any[]> {
+    async listByCourseId(courseId: string, userId?: string): Promise<any[]> {
         const course = this.courseRepository.findById(courseId);
         if (!course) {
             throw new ApplicationError('Curso não encontrado');
@@ -109,10 +109,13 @@ export class ModuleService {
         // Note: Isso pode gerar N+1 queries. Em produção idealmente faríamos um join ou batch fetch.
         // Para SQLite local e escopo do desafio, está ok.
         const result = modules.map(module => {
-            const classes = this.classRepository.findByModule(module.id as string);
+            const classes = this.classRepository.findByModule(module.id as string, userId);
             return {
                 ...module.toJSON(),
-                classes: classes.map(c => c.toJSON())
+                classes: classes.map(c => ({
+                    ...c.toJSON(),
+                    isCompleted: (c as any).isCompleted
+                }))
             };
         });
 

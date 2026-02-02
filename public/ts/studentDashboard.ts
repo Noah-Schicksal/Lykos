@@ -5,6 +5,7 @@
 import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
 import { Categories } from './modules/categories.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 let allCourses: any[] = [];
 
@@ -16,10 +17,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!user) {
         // Redirect to home page if not logged in
         console.warn('No user session found, redirecting to home.');
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
         return;
     }
 
+    initThemeToggle();
     console.log('Student session detected:', user.name);
 
     // Update user info in the header
@@ -28,7 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Setup sidebar navigation
     setupNavigation();
 
-    // Setup Search
+    // Setup Search and Categories
+    loadCategories();
     setupSearch();
 
     // Load dynamic courses
@@ -43,6 +46,7 @@ function updateUserInfo(user: any) {
     const roleText = document.getElementById('header-user-role');
     const welcomeTitle = document.getElementById('welcome-title');
     const coursesStatus = document.getElementById('courses-status');
+    const sidebarUserName = document.getElementById('sidebar-user-name');
 
     if (headerName) {
         headerName.textContent = user.name || 'Aluno';
@@ -61,6 +65,11 @@ function updateUserInfo(user: any) {
     if (coursesStatus) {
         coursesStatus.innerHTML = `Carregando seus cursos...`;
     }
+
+    // Update sidebar user card
+    if (sidebarUserName) {
+        sidebarUserName.textContent = user.name || 'Aluno';
+    }
 }
 
 /**
@@ -77,6 +86,7 @@ async function loadStudentCourses() {
         }
 
         renderCourses(allCourses);
+        setupCourseCardListeners();
     } catch (error) {
         console.error('Erro ao carregar cursos:', error);
         const grid = document.getElementById('courses-grid');
@@ -92,6 +102,9 @@ async function loadStudentCourses() {
 }
 
 /**
+ * Renders the featured course at the top
+ */
+/**
  * Renders course cards to the grid
  */
 function renderCourses(courses: any[]) {
@@ -103,7 +116,7 @@ function renderCourses(courses: any[]) {
             <div class="col-span-full py-20 text-center bg-surface-dark border border-white/5 rounded-xl">
                 <span class="material-symbols-outlined text-6xl text-slate-700 mb-4">school</span>
                 <p class="text-slate-500 text-lg">Nenhum curso encontrado.</p>
-                <a href="index.html" class="text-primary hover:underline mt-4 inline-block font-bold">Explorar Catálogo de Cursos</a>
+                <a href="/inicio" class="text-primary hover:underline mt-4 inline-block font-bold">Explorar Catálogo de Cursos</a>
             </div>
         `;
         return;
@@ -111,33 +124,36 @@ function renderCourses(courses: any[]) {
 
     grid.innerHTML = courses.map((course: any) => {
         const progress = course.progress || 0;
+        const icon = course.category && course.category.toLowerCase().includes('code') ? 'code' : 'school';
+        const hasCoverImage = course.coverImageUrl && course.coverImageUrl.trim() !== '';
+
         return `
-            <div class="bg-surface-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/40 transition-all flex flex-col">
-                <div class="relative h-48 overflow-hidden">
-                    <div class="absolute inset-0 bg-center bg-cover transform group-hover:scale-105 transition-transform duration-700"
-                        style="background-image: url('${course.coverImageUrl || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800'}')">
-                    </div>
-                    <div class="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
-                    <div class="absolute top-4 left-4">
-                        <span class="px-3 py-1 bg-black/80 backdrop-blur-md text-primary text-xs font-bold rounded-full border border-primary/30">CURSO</span>
-                    </div>
+            <div class="course-card" data-course-id="${course.id}">
+                <div class="course-cover ${!hasCoverImage ? 'no-image' : ''}">
+                    ${hasCoverImage
+                ? `<img src="${course.coverImageUrl}" alt="${course.title}" class="course-cover-img" />`
+                : `<div class="course-cover-placeholder">
+                             <span class="material-symbols-outlined">${icon}</span>
+                           </div>`
+            }
+                    <span class="course-badge ${progress === 100 ? 'completed' : ''}">
+                        ${progress === 100 ? 'Concluído' : 'Em Andamento'}
+                    </span>
                 </div>
-                <div class="p-6 flex-1 flex flex-col">
-                    <h3 class="text-xl font-bold mb-1 text-white group-hover:text-primary transition-colors">
-                        ${course.title}</h3>
-                    <p class="text-sm text-slate-500 mb-6 line-clamp-2">${course.description || 'Inicie seus estudos neste treinamento completo.'}</p>
-                    <div class="mt-auto">
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="text-xs font-bold text-slate-500">PROGRESSO</span>
-                            <span class="text-sm font-bold text-primary">${progress}%</span>
+                <div class="course-body">
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-meta">${course.instructorName || 'Lykos Instructor'}</p>
+                    <div class="course-progress">
+                        <div class="progress-bar-small">
+                            <div class="progress-fill-small ${progress === 100 ? 'completed' : ''}" style="width: ${progress}%"></div>
                         </div>
-                        <div class="w-full h-1.5 bg-white/5 rounded-full mb-6 overflow-hidden">
-                            <div class="h-full bg-primary shadow-primary-md transition-all duration-1000" style="width: ${progress}%"></div>
+                        <div class="progress-info ${progress === 100 ? 'completed' : ''}">
+                            <span>PROGRESSO</span>
+                            <span class="progress-value">${progress}%</span>
                         </div>
-                        <button onclick="window.location.href='coursePlayer.html?id=${course.id}'" class="w-full bg-white/5 text-primary py-3 rounded-lg text-sm font-bold flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-black transition-all">
-                            <span>${progress === 100 ? 'Revisar' : 'Continuar Estudando'}</span>
-                            <span class="material-symbols-outlined text-sm">${progress === 100 ? 'verified' : 'play_circle'}</span>
-                        </button>
+                    </div>
+                    <div class="course-footer">
+                        <button class="btn-resume-course small" data-course-id="${course.id}">Continuar Estudando</button>
                     </div>
                 </div>
             </div>
@@ -145,33 +161,146 @@ function renderCourses(courses: any[]) {
     }).join('');
 }
 
+// Setup event listeners for course cards
+function setupCourseCardListeners() {
+    const grid = document.getElementById('courses-grid');
+    if (!grid) return;
+
+    // Handle card clicks (excluding button clicks)
+    const cards = grid.querySelectorAll('.course-card');
+    cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.btn-resume-course')) {
+                const courseId = (card as HTMLElement).dataset.courseId;
+                if (courseId) window.location.href = `/aula/${courseId}`;
+            }
+        });
+    });
+
+    // Handle button clicks
+    const buttons = grid.querySelectorAll('.btn-resume-course');
+    buttons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const courseId = (button as HTMLElement).dataset.courseId;
+            if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+        });
+    });
+}
+
 /**
- * Sets up Search functionality
+ * Sets up Search and Category filtering
  */
 function setupSearch() {
     const searchInput = document.getElementById('course-search-input') as HTMLInputElement;
-    if (!searchInput) return;
+    const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement;
 
-    searchInput.addEventListener('input', (e) => {
-        const query = (e.target as HTMLInputElement).value.toLowerCase();
-        const filtered = allCourses.filter(course =>
-            course.title.toLowerCase().includes(query) ||
-            (course.description && course.description.toLowerCase().includes(query))
-        );
+    if (!searchInput || !categoryFilter) return;
+
+    const filterFunction = () => {
+        const query = searchInput.value.toLowerCase();
+        const category = categoryFilter.value;
+
+        const filtered = allCourses.filter(course => {
+            const matchesQuery = course.title.toLowerCase().includes(query) ||
+                (course.description && course.description.toLowerCase().includes(query));
+            const matchesCategory = !category || course.categoryId === category;
+
+            return matchesQuery && matchesCategory;
+        });
         renderCourses(filtered);
-    });
+        setupCourseCardListeners();
+    };
+
+    searchInput.addEventListener('input', filterFunction);
+    categoryFilter.addEventListener('change', filterFunction);
+}
+
+/**
+ * Loads categories for the filter
+ */
+async function loadCategories() {
+    const categoryFilter = document.getElementById('category-filter');
+    if (!categoryFilter) return;
+
+    try {
+        const response = await AppUI.apiFetch('/categories');
+        const categories = response?.data || [];
+
+        categoryFilter.innerHTML = '<option value="">Todas Categorias</option>';
+        categories.forEach((cat: any) => {
+            const option = document.createElement('option');
+            option.value = cat.id.toString();
+            option.textContent = cat.name;
+            categoryFilter.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+    }
 }
 
 /**
  * Sets up sidebar navigation and UI toggles
  */
 function setupNavigation() {
-    // Sidebar Toggle
+    // Sidebar Toggle (inside sidebar)
     const btnToggle = document.getElementById('btn-toggle-sidebar');
     const sidebar = document.getElementById('sidebar');
-    if (btnToggle && sidebar) {
-        btnToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
+
+    // Mobile Menu Toggle (in header)
+    const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+
+    if (sidebar) {
+        // Toggle from sidebar button
+        if (btnToggle) {
+            btnToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Toggle from mobile menu button in header
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(target) &&
+                (!btnToggle || !btnToggle.contains(target)) &&
+                (!mobileMenuBtn || !mobileMenuBtn.contains(target))) {
+                sidebar.classList.remove('active');
+            }
+        });
+    }
+
+    // Sidebar Avatar Button (Redirect to Home)
+    const sidebarAvatarBtn = document.getElementById('sidebar-avatar-btn');
+    if (sidebarAvatarBtn) {
+        sidebarAvatarBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+
+    // --- Dashboard Navigation ---
+    const navCourses = document.getElementById('nav-courses');
+    const navCertificates = document.getElementById('nav-certificates');
+
+    if (navCourses && navCertificates) {
+        navCourses.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('courses');
+        });
+
+        navCertificates.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('certificates');
         });
     }
 
@@ -181,11 +310,16 @@ function setupNavigation() {
     const cardInner = document.getElementById('auth-card');
 
     if (avatarBtn && authContainer) {
+        console.log('Avatar button and auth container found');
         avatarBtn.addEventListener('click', (e) => {
+            console.log('Avatar button clicked');
             e.stopPropagation();
             authContainer.classList.toggle('show');
+            const isShown = authContainer.classList.contains('show');
+            console.log('Auth container "show" class:', isShown);
+
             // Refresh content when showing
-            if (authContainer.classList.contains('show')) {
+            if (isShown) {
                 Auth.updateAuthUI();
             }
         });
@@ -206,14 +340,14 @@ function setupNavigation() {
         const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
         if (confirmed) {
             await Auth.logout();
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         }
     });
 
     document.getElementById('btn-my-learning')?.addEventListener('click', () => {
         authContainer?.classList.remove('show');
-        // Already here, but just in case
-        window.location.href = 'studentDashboard.html';
+        // Redireciona para a página correta do dashboard do aluno
+        window.location.href = 'student.html';
     });
 
     document.getElementById('btn-instructor-dash')?.addEventListener('click', () => {
@@ -238,6 +372,30 @@ function setupNavigation() {
         Auth.updateAuthUI();
     });
 
+    document.getElementById('btn-edit-profile')?.addEventListener('click', () => {
+        Auth.showProfileEdit();
+    });
+
+    document.getElementById('btn-cancel-edit')?.addEventListener('click', () => {
+        Auth.showProfileView();
+    });
+
+    document.getElementById('profile-edit-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = (document.getElementById('edit-name') as HTMLInputElement).value;
+        const email = (document.getElementById('edit-email') as HTMLInputElement).value;
+        const password = (document.getElementById('edit-password') as HTMLInputElement).value;
+
+        await Auth.updateUserProfile({ name, email, password });
+    });
+
+    document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
+        const deleted = await Auth.deleteUserAccount();
+        if (deleted) {
+            window.location.href = '/inicio';
+        }
+    });
+
     // Mirroring instructor's initial update
     Auth.updateAuthUI();
 
@@ -245,19 +403,15 @@ function setupNavigation() {
     const homeLinks = document.querySelectorAll('a');
     homeLinks.forEach(link => {
         if (link.textContent?.trim() === 'Início') {
-            link.href = 'index.html';
+            link.href = '/inicio';
         }
     });
 
-    // Logout handling
+    // Home navigation handling
     const btnLogout = document.getElementById('btn-logout-sidebar');
     if (btnLogout) {
-        btnLogout.addEventListener('click', async () => {
-            const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
-            if (confirmed) {
-                await Auth.logout();
-                window.location.href = 'index.html';
-            }
+        btnLogout.addEventListener('click', () => {
+            window.location.href = 'index.html';
         });
     }
 
@@ -268,8 +422,159 @@ function setupNavigation() {
         if (a.textContent?.includes('Profile') || a.textContent?.includes('Perfil')) {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'index.html';
+                window.location.href = '/inicio';
             });
+        }
+    });
+
+    // --- Certificate Modal Listeners ---
+    setupCertificateModalListeners();
+}
+
+/**
+ * Switches between dashboard views
+ */
+function switchView(view: 'courses' | 'certificates') {
+    const coursesView = document.getElementById('courses-view');
+    const certificatesView = document.getElementById('certificates-view');
+    const navCourses = document.getElementById('nav-courses');
+    const navCertificates = document.getElementById('nav-certificates');
+    const welcomeTitle = document.getElementById('welcome-title');
+    const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+
+    const userStr = localStorage.getItem('auth_user');
+    const user = userStr ? JSON.parse(userStr) : { name: 'Aluno' };
+    const firstName = user.name ? user.name.split(' ')[0] : 'Aluno';
+
+    if (view === 'courses') {
+        coursesView?.classList.remove('hidden');
+        certificatesView?.classList.add('hidden');
+        navCourses?.classList.add('active');
+        navCertificates?.classList.remove('active');
+
+        if (welcomeTitle) {
+            welcomeTitle.innerHTML = `Bem-vindo de volta, <span class="text-primary">${firstName}</span>!`;
+        }
+        if (breadcrumbCurrent) breadcrumbCurrent.textContent = 'Meus Cursos';
+
+        loadStudentCourses();
+    } else {
+        coursesView?.classList.add('hidden');
+        certificatesView?.classList.remove('hidden');
+        navCourses?.classList.remove('active');
+        navCertificates?.classList.add('active');
+
+        if (welcomeTitle) {
+            welcomeTitle.innerHTML = `Suas <span class="text-primary">Conquistas</span>`;
+        }
+        if (breadcrumbCurrent) breadcrumbCurrent.textContent = 'Certificados';
+
+        renderCertificates(allCourses);
+    }
+}
+
+/**
+ * Renders certificates in the grid
+ */
+function renderCertificates(courses: any[]) {
+    const grid = document.getElementById('certificates-grid');
+    if (!grid) return;
+
+    const completedWithCert = courses.filter(c => c.progress === 100 && c.certificateHash);
+
+    if (completedWithCert.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full py-20 text-center bg-surface-dark border border-white/5 rounded-xl">
+                <span class="material-symbols-outlined text-6xl text-slate-700 mb-4">workspace_premium</span>
+                <p class="text-slate-500 text-lg">Você ainda não possui certificados disponíveis.</p>
+                <p class="text-slate-600 text-sm">Conclua 100% de um curso para desbloquear seu certificado.</p>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = completedWithCert.map((course: any) => {
+        const date = new Date(course.enrolledAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        return `
+            <div class="certificate-card" data-hash="${course.certificateHash}" data-title="${course.title}" data-date="${date}">
+                <div class="cert-card-header">
+                    <div class="cert-card-icon">
+                        <span class="material-symbols-outlined">workspace_premium</span>
+                    </div>
+                </div>
+                <div class="cert-card-info">
+                    <h3 class="cert-card-title">${course.title}</h3>
+                    <span class="cert-card-date">Emitido em ${date}</span>
+                </div>
+                <div class="cert-card-footer">
+                    <span class="cert-card-hash">${course.certificateHash.substring(0, 8)}...</span>
+                    <span class="btn-view-cert">
+                        download
+                    </span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    setupCertificateCardListeners();
+}
+
+/**
+ * Listeners for certificate card clicks
+ */
+function setupCertificateCardListeners() {
+    const cards = document.querySelectorAll('.certificate-card');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const hash = (card as HTMLElement).dataset.hash;
+            const title = (card as HTMLElement).dataset.title;
+            const date = (card as HTMLElement).dataset.date;
+
+            if (hash && title && date) {
+                openCertificateModal(hash, title, date);
+            }
+        });
+    });
+}
+
+/**
+ * Opens the certificate modal with data
+ */
+function openCertificateModal(hash: string, title: string, date: string) {
+    const modal = document.getElementById('certificate-modal');
+    const iframe = document.getElementById('certificate-iframe') as HTMLIFrameElement;
+
+    if (iframe) {
+        iframe.src = `certificate.html?hash=${hash}&embed=true`;
+    }
+
+    modal?.classList.remove('hidden');
+}
+
+/**
+ * Modal action listeners
+ */
+function setupCertificateModalListeners() {
+    const modal = document.getElementById('certificate-modal');
+    const closeBtn = document.getElementById('close-cert-modal');
+    const printBtn = document.getElementById('btn-modal-print');
+
+    closeBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+    });
+
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal?.classList.add('hidden');
+        }
+    });
+
+    printBtn?.addEventListener('click', () => {
+        const iframe = document.getElementById('certificate-iframe') as HTMLIFrameElement;
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
         }
     });
 }

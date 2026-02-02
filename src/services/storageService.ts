@@ -25,6 +25,24 @@ export class StorageService {
         return name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     }
 
+    // Helper para deletar arquivo antigo se existir
+    private deleteOldFile(fileUrl: string | undefined): void {
+        if (!fileUrl) return;
+
+        // Remove leading slash if present
+        const relativePath = fileUrl.startsWith('/') ? fileUrl.substring(1) : fileUrl;
+        const fullPath = path.join(process.cwd(), relativePath);
+
+        if (fs.existsSync(fullPath)) {
+            try {
+                fs.unlinkSync(fullPath);
+                console.log(`[StorageService] Deleted old file: ${fullPath}`);
+            } catch (err) {
+                console.error(`[StorageService] Failed to delete old file: ${fullPath}`, err);
+            }
+        }
+    }
+
     private async validateFile(pathOrBuffer: string | Buffer, originalName: string): Promise<void> {
         // Dynamic import for ESM compatibility
         const { fileTypeFromBuffer, fileTypeFromFile } = await import('file-type');
@@ -105,6 +123,9 @@ export class StorageService {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
 
+        // Deletar material antigo se existir
+        this.deleteOldFile(classEntity.materialUrl);
+
         //Gerar nome de arquivo único
         const fileExtension = path.extname(file.originalname);
         const fileName = `${randomUUID()}${fileExtension}`;
@@ -146,6 +167,98 @@ export class StorageService {
             description: classEntity.description,
             videoUrl: classEntity.videoUrl,
             materialUrl: webUrl,
+            moduleId: classEntity.moduleId,
+            createdAt: classEntity.createdAt
+        });
+
+        this.classRepository.update(updatedClass);
+
+        return webUrl;
+    }
+
+    async uploadClassVideo(classId: string, file: Express.Multer.File, instructorId: string): Promise<string> {
+        //Buscar hierarquia
+        const classEntity = this.classRepository.findById(classId);
+        if (!classEntity) throw new ApplicationError('Aula não encontrada');
+
+        const moduleEntity = this.moduleRepository.findById(classEntity.moduleId);
+        if (!moduleEntity) throw new ApplicationError('Módulo não encontrado');
+
+        const courseEntity = this.courseRepository.findById(moduleEntity.courseId);
+        if (!courseEntity) throw new ApplicationError('Curso não encontrado');
+
+        // Check ownership
+        if (courseEntity.instructorId !== instructorId) {
+            throw new ApplicationError('Você não tem permissão para adicionar vídeos a esta aula');
+        }
+
+        // Validate File Type (Magic Numbers) - Only MP4
+        // We reuse validateFile but ensure it's mp4 specifically if needed, 
+        // or just trust validateFile encompasses it and we refine check here.
+        let type;
+        if (file.path) {
+            await this.validateFile(file.path, file.originalname);
+            // Re-check mime specifically for mp4 if validateFile is too broad
+            // But validateFile allows mp4/webm. The requirement says "somente MP4".
+            // So we need to enforce strictly mp4.
+            const { fileTypeFromFile } = await import('file-type');
+            type = await fileTypeFromFile(file.path);
+        } else if (file.buffer) {
+            await this.validateFile(file.buffer, file.originalname);
+            const { fileTypeFromBuffer } = await import('file-type');
+            type = await fileTypeFromBuffer(file.buffer);
+        }
+
+        if (!type || type.mime !== 'video/mp4') {
+            throw new ApplicationError('Apenas arquivos MP4 são permitidos para vídeos de aula.');
+        }
+
+        //Construir caminhos
+        const courseFolder = this.sanitizeName(courseEntity.title);
+        const moduleFolder = this.sanitizeName(moduleEntity.title);
+        const classFolder = `${moduleEntity.orderIndex}_${this.sanitizeName(classEntity.title)}`;
+
+        const uploadPath = path.join(
+            'storage',
+            'courses',
+            courseFolder,
+            moduleFolder,
+            classFolder,
+            'videos'
+        );
+
+        //Criar diretórios recursivamente
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        // Deletar vídeo antigo se existir
+        this.deleteOldFile(classEntity.videoUrl);
+
+        //Gerar nome de arquivo único
+        const fileName = `${randomUUID()}.mp4`; // Force .mp4 extension
+        const finalPath = path.join(uploadPath, fileName);
+
+        // Mover arquivo
+        if (file.buffer) {
+            fs.writeFileSync(finalPath, file.buffer);
+        } else if (file.path) {
+            fs.renameSync(file.path, finalPath);
+        } else {
+            throw new Error('Arquivo inválido');
+        }
+
+        // Retornar caminho relativo
+        const relativeUrl = path.relative(process.cwd(), finalPath).split(path.sep).join('/');
+        const webUrl = `/${relativeUrl}`;
+
+        // Atualizar entidade
+        const updatedClass = new Class({
+            id: classEntity.id,
+            title: classEntity.title,
+            description: classEntity.description,
+            videoUrl: webUrl,
+            materialUrl: classEntity.materialUrl,
             moduleId: classEntity.moduleId,
             createdAt: classEntity.createdAt
         });

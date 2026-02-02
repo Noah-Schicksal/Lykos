@@ -1,704 +1,462 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Painel do Instrutor | Lykos</title>
+<html lang="pt-BR">
 
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instructor Dashboard | Lykos.eng</title>
 
-    <!-- Local Styles -->
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/instructor.css" />
-  </head>
+  <!-- Apply theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
 
-  <body class="molecular-bg">
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="nav-inner" style="padding: 0 1.5rem">
-        <div style="display: flex; align-items: center; gap: 0.75rem">
-          <a
-            href="/"
-            class="btn-secondary"
-            style="
-              padding: 0.5rem 1rem;
-              text-decoration: none;
-              display: flex;
-              align-items: center;
-              gap: 0.5rem;
-            "
-          >
-            <span class="material-symbols-outlined" style="font-size: 1.2rem"
-              >arrow_back</span
-            >
-            Voltar
-          </a>
-          <div class="logo-container">
-            <div class="logo-icon">
-              <span class="material-symbols-outlined">school</span>
-            </div>
-            <span class="logo-text hidden lg:block">Lykos</span>
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+  <link rel="stylesheet" href="css/instructor.css" />
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-left">
+        <a href="/" class="btn-back">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Voltar
+        </a>
+        <div class="logo">
+          <div class="logo-icon">
+            <span class="material-symbols-outlined">code</span>
           </div>
-        </div>
-
-        <button class="btn-nav hidden md:flex">
-          Explore
-          <span class="material-symbols-outlined" style="font-size: 1.25rem"
-            >expand_more</span
-          >
-        </button>
-
-        <!-- Search -->
-        <div class="search-bar-container hidden md:block">
-          <div class="search-icon-wrapper">
-            <span class="material-symbols-outlined" style="font-size: 1.25rem"
-              >search</span
-            >
-          </div>
-          <input
-            class="search-input"
-            placeholder="Buscar cursos, tópicos..."
-            type="text"
-          />
-        </div>
-
-        <!-- Right Actions -->
-        <div class="nav-right-actions">
-          <div class="nav-links-xl">
-            <a href="#">Soluções</a>
-            <a href="#">Ensinar</a>
-          </div>
-
-          <div class="relative">
-            <button class="btn-icon">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span
-                id="cart-count-badge"
-                class="badge-count"
-                style="display: none"
-                >0</span
-              >
-            </button>
-          </div>
-
-          <button class="btn-icon hidden sm:block">
-            <span class="material-symbols-outlined">notifications</span>
-          </button>
-
-          <!-- User Avatar (Triggers Auth Card) -->
-          <div id="user-avatar-btn">
-            <img
-              alt="User avatar"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ"
-            />
-          </div>
+          <span class="logo-text">Lykos</span>
         </div>
       </div>
-    </nav>
 
-    <!-- Auth Flip Card -->
-    <div id="auth-card-container" class="auth-container perspective-1000">
-      <div id="auth-card" class="flip-card-inner">
-        <!-- Front: Login -->
-        <div class="auth-face">
-          <h3 class="auth-title">Bem-vindo de Volta</h3>
-          <form id="login-form">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Email / Usuário</label>
-              <input
-                id="login-email"
-                type="text"
-                class="auth-input"
-                placeholder="usuario@lab.edu"
-              />
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Senha</label>
-              <div class="password-input-wrapper">
-                <input
-                  id="login-password"
-                  type="password"
-                  class="auth-input"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  data-target="login-password"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">Entrar</button>
-          </form>
-          <div class="auth-footer">
-            <p
-              style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              "
-            >
-              Novo Pesquisador?
-            </p>
-            <button id="btn-to-register" class="btn-link">Criar Conta</button>
-          </div>
-        </div>
-
-        <!-- Back: Register -->
-        <div class="auth-face auth-face-back">
-          <h3 class="auth-title">Junte-se ao Laboratório</h3>
-          <form id="register-form">
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Eu sou um...</label>
-              <select id="register-role" class="auth-input">
-                <option value="student">Aluno</option>
-                <option value="instructor">Instrutor</option>
-              </select>
-            </div>
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Nome Completo</label>
-              <input
-                type="text"
-                id="register-name"
-                class="auth-input"
-                placeholder="Marie Curie"
-                required
-              />
-            </div>
-            <div style="margin-bottom: 0.5rem">
-              <label class="auth-label">Email</label>
-              <input
-                type="email"
-                id="register-email"
-                class="auth-input"
-                placeholder="usuario@exemplo.com"
-                required
-              />
-            </div>
-            <div class="grid grid-2" style="gap: 0.5rem; margin-bottom: 0.5rem">
-              <div>
-                <label class="auth-label">Senha</label>
-                <div class="password-input-wrapper">
-                  <input
-                    type="password"
-                    id="register-password"
-                    class="auth-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-password"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-              <div>
-                <label class="auth-label">Confirmar</label>
-                <div class="password-input-wrapper">
-                  <input
-                    type="password"
-                    id="register-confirm"
-                    class="auth-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-confirm"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">Registrar</button>
-          </form>
-          <div class="auth-footer">
-            <p
-              style="
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                margin-bottom: 0.5rem;
-              "
-            >
-              Já tem acesso?
-            </p>
-            <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
-          </div>
-        </div>
-
-        <!-- Logged In View (Hidden by default) -->
-        <div
-          id="auth-logged-in"
-          class="auth-face hidden"
-          style="text-align: center"
-        >
-          <div class="user-avatar-large" style="margin: 0 auto 1.5rem auto">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-          <h3
-            id="user-name-display"
-            class="auth-title"
-            style="margin-bottom: 0.25rem"
-          >
-            Nome do Usuário
-          </h3>
-          <p
-            id="user-email-display"
-            style="
-              font-size: 0.875rem;
-              color: var(--text-muted);
-              margin-bottom: 0.5rem;
-            "
-          >
-            user@example.com
-          </p>
-          <div
-            id="user-role-badge"
-            class="badge-tag bg-tag-secondary"
-            style="
-              position: relative;
-              top: auto;
-              left: auto;
-              display: inline-block;
-              margin-bottom: 2rem;
-            "
-          >
-            Aluno
-          </div>
-
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-my-learning" class="btn-dashboard">
-              <span class="material-symbols-outlined">school</span> Meus Cursos
-            </button>
-            <button id="btn-instructor-dash" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">dashboard</span>
-              Painel do Instrutor
-            </button>
-            <button id="btn-create-course" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">add_circle</span> Criar
-              Curso
-            </button>
-            <button id="btn-manage-categories" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">category</span> Gerenciar
-              Categorias
-            </button>
-            <button id="btn-view-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">person</span> Ver Perfil
-            </button>
-            <button id="btn-logout" class="btn-dashboard outline">
-              <span class="material-symbols-outlined">logout</span> Sair
-            </button>
-          </div>
-        </div>
-
-        <!-- Categories Management View (Instructors Only) -->
-        <div id="auth-categories-view" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Gerenciar Categorias</h3>
-            <button id="btn-back-from-categories" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-
-          <form id="category-create-form" style="margin-bottom: 1.5rem">
-            <div style="margin-bottom: 0.75rem">
-              <label class="auth-label">Nome da Nova Categoria</label>
-              <input
-                id="category-name-input"
-                type="text"
-                class="auth-input"
-                placeholder="ex: Programação"
-              />
-            </div>
-            <button type="submit" class="btn-auth-submit">
-              Adicionar Categoria
-            </button>
-          </form>
-
-          <div id="categories-list-container">
-            <p style="color: var(--text-muted); font-size: 0.875rem">
-              Carregando categorias...
-            </p>
-          </div>
-        </div>
-
-        <!-- Profile View (View Mode) -->
-        <div id="auth-profile-view" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Perfil</h3>
-            <button id="btn-back-from-profile" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-
-          <div class="user-avatar-large" style="margin-bottom: 1rem">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-
-          <div style="margin-bottom: 1.5rem">
-            <label class="auth-label">Nome</label>
-            <p
-              id="profile-name-display"
-              style="color: var(--text-primary); margin-bottom: 0.75rem"
-            >
-              Nome do Usuário
-            </p>
-
-            <label class="auth-label">Email</label>
-            <p
-              id="profile-email-display"
-              style="color: var(--text-primary); margin-bottom: 0.75rem"
-            >
-              user@example.com
-            </p>
-
-            <label class="auth-label">Cargo/Função</label>
-            <p id="profile-role-display" style="color: var(--text-primary)">
-              Aluno
-            </p>
-          </div>
-
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-edit-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">edit</span> Editar Perfil
-            </button>
-            <button
-              id="btn-delete-account"
-              class="btn-dashboard outline danger"
-            >
-              <span class="material-symbols-outlined">delete</span> Excluir
-              Conta
-            </button>
-          </div>
-        </div>
-
-        <!-- Profile Edit (Edit Mode) -->
-        <div id="auth-profile-edit" class="auth-face hidden">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">Editar Perfil</h3>
-            <button id="btn-cancel-edit" class="btn-icon">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-
-          <form id="profile-edit-form">
-            <div style="margin-bottom: 0.75rem">
-              <label class="auth-label">Nome</label>
-              <input
-                id="edit-name"
-                type="text"
-                class="auth-input"
-                placeholder="Seu nome"
-              />
-            </div>
-            <div style="margin-bottom: 0.75rem">
-              <label class="auth-label">Email</label>
-              <input
-                id="edit-email"
-                type="email"
-                class="auth-input"
-                placeholder="your.email@example.com"
-              />
-            </div>
-            <div style="margin-bottom: 0.75rem">
-              <label class="auth-label"
-                >Nova Senha (deixe em branco para manter a atual)</label
-              >
-              <div class="password-input-wrapper">
-                <input
-                  id="edit-password"
-                  type="password"
-                  class="auth-input"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  data-target="edit-password"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="btn-auth-submit">
-              Salvar Alterações
-            </button>
-          </form>
+      <!-- Right Actions -->
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+          <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+          <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+        </button>
+        <!-- User Menu Dropdown -->
+        <div id="user-avatar-btn" class="user-menu-btn">
+          <span class="menu-text">Menu</span>
+          <span class="material-symbols-outlined">expand_more</span>
         </div>
       </div>
     </div>
+  </nav>
 
-    <!-- Main Container -->
-    <main class="dashboard-wrapper">
-      <!-- Left Sidebar: Course List -->
-      <aside class="dashboard-sidebar">
-        <div class="sidebar-header">
-          <h2 class="sidebar-title">Meus Cursos</h2>
-          <button id="btn-create-new-course" class="btn-primary full-width">
-            <span class="material-symbols-outlined">add_circle</span> Criar Novo
+  <!-- Auth Flip Card -->
+  <div id="auth-card-container" class="auth-container">
+    <div id="auth-card" class="auth-card">
+      <!-- Front: Login -->
+      <div class="auth-face auth-login">
+        <h3 class="auth-title">Bem-vindo de Volta</h3>
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label">Email / Usuário</label>
+            <input id="login-email" type="text" class="form-input" placeholder="user@company.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Senha</label>
+            <div class="password-wrapper">
+              <input id="login-password" type="password" class="form-input" placeholder="••••••••" />
+              <button type="button" class="btn-toggle-password" data-target="login-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Entrar</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Novo Desenvolvedor?</p>
+          <button id="btn-to-register" class="btn-link">Criar Conta</button>
+        </div>
+      </div>
+
+      <!-- Back: Register -->
+      <div class="auth-face auth-register">
+        <h3 class="auth-title">Junte-se à Plataforma</h3>
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label">Eu sou...</label>
+            <select id="register-role" class="form-input">
+              <option value="student">Aluno</option>
+              <option value="instructor">Instrutor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="register-name" class="form-input" placeholder="John Doe" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="register-email" class="form-input" placeholder="john@tech.com" required />
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Senha</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password" class="form-input" placeholder="••••" required />
+                <button type="button" class="btn-toggle-password" data-target="register-password">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-confirm" class="form-input" placeholder="••••" required />
+                <button type="button" class="btn-toggle-password" data-target="register-confirm">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Registrar</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Já tem acesso?</p>
+          <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
+        </div>
+      </div>
+
+      <!-- Logged In View -->
+      <div id="auth-logged-in" class="auth-face auth-logged-in">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="user-name">User Name</h3>
+        <p id="user-email-display" class="user-email">user@example.com</p>
+        <div id="user-role-badge" class="role-badge">Aluno</div>
+
+        <div class="dashboard-actions">
+          <button id="btn-my-learning" class="btn-dashboard">
+            <span class="material-symbols-outlined">school</span> Meu
+            Aprendizado
+          </button>
+          <button id="btn-instructor-dash" class="btn-dashboard">
+            <span class="material-symbols-outlined">dashboard</span>
+            Dashboard do Instrutor
+          </button>
+          <button id="btn-create-course" class="btn-dashboard">
+            <span class="material-symbols-outlined">add_circle</span> Criar
             Curso
+          </button>
+          <button id="btn-manage-categories" class="btn-dashboard">
+            <span class="material-symbols-outlined">category</span> Gerenciar
+            Categorias
+          </button>
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> Ver Perfil
+          </button>
+          <button id="btn-logout" class="btn-dashboard btn-logout">
+            <span class="material-symbols-outlined">logout</span> Sair
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories Management View -->
+      <div id="auth-categories-view" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">Gerenciar Categorias</h3>
+          <button id="btn-back-from-categories" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
           </button>
         </div>
 
-        <div id="courses-sidebar-list" class="sidebar-list">
-          <!-- List items will be injected here -->
+        <form id="category-create-form" class="category-form">
+          <div class="form-group">
+            <label class="form-label">Nome da Nova Categoria</label>
+            <input id="category-name-input" type="text" class="form-input" placeholder="ex: Desenvolvimento Web" />
+          </div>
+          <button type="submit" class="btn-submit">
+            Adicionar Categoria
+          </button>
+        </form>
+
+        <div id="categories-list-container">
+          <p class="loading-text">Carregando categorias...</p>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="auth-profile-view" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">Perfil</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Nome</label>
+            <p id="profile-name-display" class="info-value">
+              Nome do Usuário
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-email-display" class="info-value">
+              user@example.com
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Função</label>
+            <p id="profile-role-display" class="info-value">Aluno</p>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
+            <span class="material-symbols-outlined">edit</span> Editar Perfil
+          </button>
+          <button id="btn-delete-account" class="btn-delete">
+            <span class="material-symbols-outlined">delete</span> Excluir
+            Conta
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face">
+        <div class="view-header">
+          <h3 class="auth-title">Editar Perfil</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="••••••••" />
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Alterações</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard -->
+  <main class="dashboard-wrapper">
+    <!-- Left Sidebar: Course List -->
+    <aside id="instructor-sidebar" class="dashboard-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-header-top">
+          <h2 class="sidebar-title">Meus Cursos</h2>
+          <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+        </div>
+        <button id="btn-create-new-course" class="btn-primary-dash">
+          <span class="material-symbols-outlined">add_circle</span>
+          <span class="btn-text">Criar Novo Curso</span>
+        </button>
+      </div>
+
+      <div id="courses-sidebar-list" class="sidebar-list">
+        <div class="sidebar-loading">
+          <span class="material-symbols-outlined spin">sync</span>
+          Carregando...
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Content: Detail/Form View -->
+    <section id="dashboard-content" class="dashboard-main">
+      <div class="empty-state">
+        <h3>Selecione um Curso</h3>
+        <p>Escolha um curso da lista para visualizar detalhes ou editar.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Templates -->
+  <template id="template-course-form">
+    <div class="content-header">
+      <h2 id="form-view-title" class="page-title">Novo Curso</h2>
+    </div>
+    <form id="course-inline-form" class="form-panel">
+      <input type="hidden" id="course-id" />
+
+      <div class="form-group">
+        <label class="form-label">Título do Curso *</label>
+        <input id="course-title" type="text" class="form-input" placeholder="ex: Desenvolvimento Avançado em React"
+          required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Descrição *</label>
+        <textarea id="course-description" class="form-input" rows="5" placeholder="Descreva seu curso..."
+          required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Preço (R$) *</label>
+          <input id="course-price" type="text" class="form-input" placeholder="0,00" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoria *</label>
+          <select id="course-category" class="form-input" required>
+            <option value="">Carregando...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Máximo de Alunos</label>
+          <input id="course-max-students" type="number" min="1" class="form-input" placeholder="Ilimitado" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Imagem de Capa</label>
+        <div class="file-upload">
+          <input id="course-cover" type="file" accept="image/*" class="form-input" />
+          <div id="cover-preview-container"></div>
+        </div>
+      </div>
+
+      <div class="form-group file-upload-wrapper">
+        <label class="form-label">Vídeo de Introdução (Opcional)</label>
+        <div class="file-upload">
+          <input id="course-video-intro" type="file" accept="video/mp4" class="form-input" />
+          <p class="text-muted" style="font-size: 0.8rem; margin-top: 0.5rem;">
+            Se selecionado, uma aula de introdução será criada automaticamente com este vídeo.
+          </p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="btn-cancel-form" class="btn-secondary-dash">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary-dash">Salvar Curso</button>
+      </div>
+    </form>
+  </template>
+
+  <!-- Confirm Modal -->
+  <div id="delete-confirm-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Confirmar Exclusão</h3>
+      <p id="modal-msg" class="modal-message">
+        Tem certeza que deseja excluir? Esta ação não pode ser desfeita.
+      </p>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel" class="btn-secondary-dash">
+          Cancelar
+        </button>
+        <button id="btn-modal-confirm" class="btn-danger">
+          Sim, Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Creation Modal -->
+  <div id="category-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">Nova Categoria</h3>
+      <p class="modal-message">Digite o nome da nova categoria:</p>
+      <div class="form-group">
+        <input type="text" id="modal-category-name" class="form-input" placeholder="Nome da categoria" maxlength="50" />
+      </div>
+      <div class="modal-actions">
+        <button id="btn-cat-modal-cancel" class="btn-secondary-dash">
+          Cancelar
+        </button>
+        <button id="btn-cat-modal-save" class="btn-primary-dash">
+          Criar Categoria
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <template id="template-course-detail">
+    <div class="detail-header">
+      <div class="detail-title-wrapper">
+        <h1 id="detail-title" class="detail-title">Título do Curso</h1>
+      </div>
+      <div class="detail-actions">
+        <button id="btn-edit-current" class="btn-secondary-dash">
+          <span class="material-symbols-outlined">edit</span> Editar
+        </button>
+        <button id="btn-delete-current" class="btn-danger-outline">
+          <span class="material-symbols-outlined">delete</span> Excluir
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-cover" id="detail-cover"></div>
+
+    <div class="detail-body">
+      <div class="detail-section" id="course-description-section">
+        <h3>Sobre o Curso</h3>
+        <p id="detail-description">Descrição do curso...</p>
+      </div>
+
+      <div class="detail-section" id="course-content-section">
+        <div class="section-header-inline">
+          <h3>Conteúdo do Curso</h3>
+          <button id="btn-toggle-content" class="btn-secondary-dash btn-small">
+            <span class="material-symbols-outlined">edit_note</span> Editar
+            Conteúdo
+          </button>
+        </div>
+
+        <div id="course-content-area" class="hidden">
           <div class="sidebar-loading">
             <span class="material-symbols-outlined spin">sync</span>
             Carregando...
           </div>
         </div>
-      </aside>
 
-      <!-- Right Content: Detail/Form View -->
-      <section id="dashboard-content" class="dashboard-main-view">
-        <div class="empty-state-view">
-          <span
-            class="material-symbols-outlined"
-            style="font-size: 4rem; color: var(--text-muted)"
-            >arrow_back</span
-          >
-          <h3>Selecione um curso</h3>
-          <p>Escolha um curso na lista lateral para ver detalhes ou editar.</p>
-        </div>
-      </section>
-    </main>
-
-    <!-- Templates (Hidden) -->
-    <template id="template-course-form">
-      <div class="content-header">
-        <h2 id="form-view-title" class="page-title">Novo Curso</h2>
-      </div>
-      <form id="course-inline-form" class="form-panel">
-        <input type="hidden" id="course-id" />
-
-        <div class="form-group">
-          <label class="form-label">Título do Curso *</label>
-          <input
-            id="course-title"
-            type="text"
-            class="form-input"
-            placeholder="ex: Desenvolvimento Web Avançado"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Descrição *</label>
-          <textarea
-            id="course-description"
-            class="form-input"
-            rows="5"
-            placeholder="Descreva seu curso..."
-            required
-          ></textarea>
-        </div>
-
-        <div class="form-row three-col">
-          <div class="form-group">
-            <label class="form-label">Preço (R$) *</label>
-            <input
-              id="course-price"
-              type="text"
-              class="form-input"
-              placeholder="0,00"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Categoria *</label>
-            <select id="course-category" class="form-input" required>
-              <option value="">Carregando...</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Máx. Alunos</label>
-            <input
-              id="course-max-students"
-              type="number"
-              min="1"
-              class="form-input"
-              placeholder="Ilimitado"
-            />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Imagem de Capa</label>
-          <div class="file-upload-wrapper">
-            <input
-              id="course-cover"
-              type="file"
-              accept="image/*"
-              class="form-input"
-            />
-            <div id="cover-preview-container"></div>
-          </div>
-        </div>
-
-        <div class="form-actions-bar">
-          <button type="button" id="btn-cancel-form" class="btn-secondary">
-            Cancelar
-          </button>
-          <button type="submit" class="btn-primary">Salvar Curso</button>
-        </div>
-      </form>
-    </template>
-
-    <!-- Custom Confirm Modal -->
-    <div id="delete-confirm-modal" class="custom-modal-overlay">
-      <div class="custom-modal-box">
-        <h3 class="modal-title">Confirmar Exclusão</h3>
-        <p id="modal-msg" class="modal-message">
-          Tem certeza que deseja excluir? Esta ação não pode ser desfeita.
-        </p>
-        <div class="modal-actions">
-          <button id="btn-modal-cancel" class="btn-secondary">Cancelar</button>
-          <button id="btn-modal-confirm" class="btn-danger-fill">
-            Sim, Excluir
-          </button>
+        <div id="course-content-summary">
+          <span class="text-muted">
+            Clique em "Editar Conteúdo" para gerenciar módulos e aulas.
+          </span>
         </div>
       </div>
     </div>
+  </template>
 
-    <!-- Category Creation Modal -->
-    <div id="category-modal" class="custom-modal-overlay">
-      <div class="custom-modal-box">
-        <h3 class="modal-title">Nova Categoria</h3>
-        <div class="form-group" style="margin-top: 1rem">
-          <label class="form-label">Nome da Categoria</label>
-          <input
-            id="modal-category-name"
-            type="text"
-            class="form-input"
-            placeholder="Ex: Desenvolvimento Web"
-          />
-        </div>
-        <div class="modal-actions">
-          <button id="btn-cat-modal-cancel" class="btn-secondary">
-            Cancelar
-          </button>
-          <button id="btn-cat-modal-save" class="btn-primary">
-            Salvar Categoria
-          </button>
-        </div>
-      </div>
-    </div>
+  <!-- Scripts -->
+  <script type="module" src="js/instructor.js"></script>
+</body>
 
-    <template id="template-course-detail">
-      <div class="detail-header">
-        <div class="detail-title-wrapper">
-          <h1 id="detail-title" class="detail-title">Título do Curso</h1>
-          <div class="detail-badges">
-            <span id="detail-category" class="badge-tag">Categoria</span>
-          </div>
-        </div>
-        <div class="detail-actions">
-          <button id="btn-edit-current" class="btn-secondary">
-            <span class="material-symbols-outlined">edit</span> Editar
-          </button>
-          <button id="btn-delete-current" class="btn-danger-outline">
-            <span class="material-symbols-outlined">delete</span> Excluir
-          </button>
-        </div>
-      </div>
-
-      <!-- Rest of template remains same -->
-      <div class="detail-cover-banner" id="detail-cover">
-        <!-- Cover image goes here -->
-      </div>
-
-      <div class="detail-body">
-        <div class="detail-section" id="course-description-section">
-          <h3>Sobre o Curso</h3>
-          <p id="detail-description">Descrição do curso...</p>
-        </div>
-
-        <div class="detail-section" id="course-content-section">
-          <div
-            style="
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-bottom: 1rem;
-              border-bottom: 1px solid var(--dash-border);
-              padding-bottom: 0.5rem;
-            "
-          >
-            <h3 style="margin: 0; border: none">Conteúdo do Curso</h3>
-            <button
-              id="btn-toggle-content"
-              class="btn-secondary"
-              style="font-size: 0.8rem; padding: 0.4rem 0.8rem"
-            >
-              <span class="material-symbols-outlined" style="font-size: 1rem"
-                >edit_note</span
-              >
-              Editar Conteúdo
-            </button>
-          </div>
-
-          <div id="course-content-area" class="hidden">
-            <!-- Tree Content Will Be Injected Here -->
-            <div class="sidebar-loading">
-              <span class="material-symbols-outlined spin">sync</span>
-              Carregando...
-            </div>
-          </div>
-
-          <!-- Summary View (when collapsed) -->
-          <div id="course-content-summary">
-            <p class="text-muted">
-              Clique em "Editar Conteúdo" para gerenciar módulos e aulas.
-            </p>
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <script type="module" src="js/instructor.js"></script>
-  </body>
 </html>

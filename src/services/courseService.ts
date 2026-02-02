@@ -23,8 +23,8 @@ export class CourseService {
     }
 
     // lista os cursos com paginação e busca
-    async list(page: number, limit: number, search?: string): Promise<FindAllResponse> {
-        return this.courseRepository.findAll({ page, limit, search });
+    async list(page: number, limit: number, search?: string, userId?: string, includeInactive = false): Promise<FindAllResponse> {
+        return this.courseRepository.findAll({ page, limit, search, userId, includeInactive });
     }
 
     // lista cursos por categoria
@@ -38,8 +38,8 @@ export class CourseService {
     }
 
     // busca detalhes de um curso pelo id
-    async getById(id: string): Promise<any> {
-        const course = this.courseRepository.findById(id);
+    async getById(id: string, userId?: string): Promise<any> {
+        const course = this.courseRepository.findById(id, userId);
         if (!course) {
             throw new ApplicationError('Curso não encontrado');
         }

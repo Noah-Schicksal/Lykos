@@ -6,6 +6,7 @@ import { Courses } from './modules/courses.js';
 import { Modules } from './modules/modules.js';
 import { Classes } from './modules/classes.js';
 import { Categories } from './modules/categories.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 // Expose modules to window for debugging
 declare global {
@@ -32,6 +33,7 @@ let allCategories: any[] = [];
 
 // Initialize app
 async function init() {
+  initThemeToggle();
   await checkAuth();
   await loadCategories();
   await loadCoursesSidebar();
@@ -43,9 +45,10 @@ function setupCategoryChangeListener() {
   window.addEventListener('categories-changed', async () => {
     await loadCategories();
     // Refresh any category selects currently in the DOM
-    document.querySelectorAll('#course-category').forEach(el => {
+    document.querySelectorAll('#course-category').forEach((el) => {
       const select = el as HTMLSelectElement;
-      const currentSelectedId = (select as any)._pendingSelectedId || select.value;
+      const currentSelectedId =
+        (select as any)._pendingSelectedId || select.value;
       populateCategories(select, currentSelectedId);
       // Clear pending
       delete (select as any)._pendingSelectedId;
@@ -64,7 +67,7 @@ async function checkAuth() {
         'error',
       );
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -72,7 +75,7 @@ async function checkAuth() {
     if (user.role !== 'INSTRUCTOR') {
       AppUI.showMessage('Acesso negado. É necessário ser instrutor.', 'error');
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -82,7 +85,7 @@ async function checkAuth() {
       'error',
     );
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/inicio';
     }, 2000);
   }
 }
@@ -125,28 +128,32 @@ async function loadCoursesSidebar() {
     }
 
     // Render list
-    listContainer.innerHTML = courses.map((course: any) => `
+    listContainer.innerHTML = courses
+      .map(
+        (course: any) => `
       <div class="course-list-item ${currentCourseId === course.id ? 'active' : ''}" data-course-id="${course.id}">
         <div class="course-item-thumb">
            ${course.coverImageUrl
-        ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
-        : '<span class="material-symbols-outlined">school</span>'}
+            ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
+            : '<span class="material-symbols-outlined">school</span>'
+          }
         </div>
         <div class="course-item-info">
           <p class="course-item-title">${course.title}</p>
           <p class="course-item-meta">${course.category?.name || 'Sem categoria'}</p>
         </div>
       </div>
-    `).join('');
+    `,
+      )
+      .join('');
 
     // Attach click listeners
-    document.querySelectorAll('.course-list-item').forEach(item => {
+    document.querySelectorAll('.course-list-item').forEach((item) => {
       item.addEventListener('click', (e) => {
         const id = (e.currentTarget as HTMLElement).dataset.courseId;
         if (id) selectCourse(id);
       });
     });
-
   } catch (error) {
     console.error('Falha ao carregar cursos:', error);
     listContainer.innerHTML = `
@@ -159,10 +166,21 @@ async function loadCoursesSidebar() {
 
 // Setup Global Listeners
 function setupGlobalEventListeners() {
+  // Sidebar Toggle
+  const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+  const sidebar = document.getElementById('instructor-sidebar');
+  if (btnToggleSidebar && sidebar) {
+    btnToggleSidebar.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  }
+
   // Create New Course Button
-  document.getElementById('btn-create-new-course')?.addEventListener('click', () => {
-    showCreateCourseView();
-  });
+  document
+    .getElementById('btn-create-new-course')
+    ?.addEventListener('click', () => {
+      showCreateCourseView();
+    });
 
   // --- Auth Card UI Listeners ---
   const avatarBtn = document.getElementById('user-avatar-btn');
@@ -175,6 +193,8 @@ function setupGlobalEventListeners() {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       authContainer.classList.toggle('show');
+      // Toggle 'open' class for icon rotation
+      avatarBtn.classList.toggle('open');
     });
 
     document.addEventListener('click', (e) => {
@@ -184,6 +204,7 @@ function setupGlobalEventListeners() {
         !avatarBtn.contains(e.target as Node)
       ) {
         authContainer.classList.remove('show');
+        avatarBtn.classList.remove('open');
       }
     });
   }
@@ -211,30 +232,43 @@ function setupGlobalEventListeners() {
     Auth.showProfileView();
   });
 
-  document.getElementById('btn-back-from-profile')?.addEventListener('click', () => {
-    Auth.updateAuthUI();
-  });
+  document
+    .getElementById('btn-back-from-profile')
+    ?.addEventListener('click', () => {
+      Auth.updateAuthUI();
+    });
 
-  document.getElementById('btn-manage-categories')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showCategoriesView();
-  });
+  document
+    .getElementById('btn-manage-categories')
+    ?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showCategoriesView();
+    });
 
-  document.getElementById('btn-back-from-categories')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    Auth.updateAuthUI();
-  });
+  document
+    .getElementById('btn-back-from-categories')
+    ?.addEventListener('click', (e) => {
+      e.preventDefault();
+      Auth.updateAuthUI();
+    });
 
   // Category Create Form
-  const categoryCreateForm = document.getElementById('category-create-form') as HTMLFormElement;
+  const categoryCreateForm = document.getElementById(
+    'category-create-form',
+  ) as HTMLFormElement;
   if (categoryCreateForm) {
     categoryCreateForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const nameInput = document.getElementById('category-name-input') as HTMLInputElement;
+      const nameInput = document.getElementById(
+        'category-name-input',
+      ) as HTMLInputElement;
       const name = nameInput.value.trim();
 
       if (!name) {
-        AppUI.showMessage('Por favor, digite um nome para a categoria.', 'error');
+        AppUI.showMessage(
+          'Por favor, digite um nome para a categoria.',
+          'error',
+        );
         return;
       }
 
@@ -275,23 +309,16 @@ function showCategoriesView() {
 async function selectCourse(courseId: string) {
   currentCourseId = courseId;
 
-  // Update sidebar active state & Manage Badges
-  document.querySelectorAll('.course-list-item').forEach(el => {
+  // Update sidebar active state
+  document.querySelectorAll('.course-list-item').forEach((el) => {
     el.classList.remove('active');
-    // Remove existing badges if any
-    const badge = el.querySelector('.editing-badge');
-    if (badge) badge.remove();
   });
 
-  const activeItem = document.querySelector(`.course-list-item[data-course-id="${courseId}"]`);
+  const activeItem = document.querySelector(
+    `.course-list-item[data-course-id="${courseId}"]`,
+  );
   if (activeItem) {
     activeItem.classList.add('active');
-
-    // Add "Em Edição" badge
-    const badge = document.createElement('span');
-    badge.className = 'editing-badge';
-    badge.textContent = 'Em Edição';
-    activeItem.appendChild(badge);
   }
 
   await renderCourseDetails(courseId);
@@ -315,11 +342,14 @@ function showEmptyState() {
 // Render Course Details View
 async function renderCourseDetails(courseId: string) {
   const contentArea = document.getElementById('dashboard-content');
-  const template = document.getElementById('template-course-detail') as HTMLTemplateElement;
+  const template = document.getElementById(
+    'template-course-detail',
+  ) as HTMLTemplateElement;
   if (!contentArea || !template) return;
 
   // Show loading in main area
-  contentArea.innerHTML = '<div class="sidebar-loading"><span class="material-symbols-outlined spin">sync</span> Carregando detalhes...</div>';
+  contentArea.innerHTML =
+    '<div class="sidebar-loading"><span class="material-symbols-outlined spin">sync</span> Carregando detalhes...</div>';
 
   try {
     const course = await Courses.getById(courseId);
@@ -329,9 +359,12 @@ async function renderCourseDetails(courseId: string) {
 
     // Fill data
     setText(clone, 'detail-title', course.title);
-    setText(clone, 'detail-category', course.category?.name || 'Sem Categoria');
     setText(clone, 'detail-students', `${course.enrolledCount || 0} alunos`);
-    setText(clone, 'detail-description', course.description || 'Sem descrição.');
+    setText(
+      clone,
+      'detail-description',
+      course.description || 'Sem descrição.',
+    );
 
     // Cover
     const coverContainer = clone.getElementById('detail-cover');
@@ -340,7 +373,8 @@ async function renderCourseDetails(courseId: string) {
       if (course.coverImageUrl) {
         coverContainer.innerHTML = `<img src="/courses/${course.id}/cover" alt="${course.title}" />`;
       } else {
-        coverContainer.innerHTML = '<span class="material-symbols-outlined" style="font-size: 4rem;">school</span>';
+        coverContainer.innerHTML =
+          '<span class="material-symbols-outlined" style="font-size: 4rem;">school</span>';
       }
     }
 
@@ -349,16 +383,17 @@ async function renderCourseDetails(courseId: string) {
       showEditCourseView(course);
     });
 
-    clone.getElementById('btn-delete-current')?.addEventListener('click', () => {
-      deleteCourse(course.id);
-    });
+    clone
+      .getElementById('btn-delete-current')
+      ?.addEventListener('click', () => {
+        deleteCourse(course.id);
+      });
 
     contentArea.innerHTML = '';
     contentArea.appendChild(clone);
 
     // Setup Content Editor Listeners (Must be after appending to DOM)
     setupContentListeners(courseId);
-
   } catch (error) {
     contentArea.innerHTML = `<div class="empty-state-view">Erro ao carregar detalhes do curso.</div>`;
     console.error(error);
@@ -368,10 +403,14 @@ async function renderCourseDetails(courseId: string) {
 // Show Create Course Form
 function showCreateCourseView() {
   currentCourseId = null; // No course selected
-  document.querySelectorAll('.course-list-item').forEach(el => el.classList.remove('active'));
+  document
+    .querySelectorAll('.course-list-item')
+    .forEach((el) => el.classList.remove('active'));
 
   const contentArea = document.getElementById('dashboard-content');
-  const template = document.getElementById('template-course-form') as HTMLTemplateElement;
+  const template = document.getElementById(
+    'template-course-form',
+  ) as HTMLTemplateElement;
   if (!contentArea || !template) return;
 
   contentArea.innerHTML = '';
@@ -381,7 +420,9 @@ function showCreateCourseView() {
   setText(clone, 'form-view-title', 'Criar Novo Curso');
 
   // Populate Categories
-  const selectInfo = clone.getElementById('course-category') as HTMLSelectElement;
+  const selectInfo = clone.getElementById(
+    'course-category',
+  ) as HTMLSelectElement;
   populateCategories(selectInfo);
 
   // Currency Mask
@@ -397,13 +438,45 @@ function showCreateCourseView() {
     showEmptyState();
   });
 
+  // Handle Cover Preview
+  const coverInput = clone.getElementById('course-cover') as HTMLInputElement;
+  const previewContainer = clone.getElementById('cover-preview-container');
+
+  if (coverInput && previewContainer) {
+    coverInput.addEventListener('change', () => {
+      const file = coverInput.files ? coverInput.files[0] : null;
+      if (file) {
+        // Validate type
+        if (!file.type.startsWith('image/')) {
+          AppUI.showMessage('Por favor, selecione apenas imagens.', 'error');
+          coverInput.value = ''; // Reset
+          previewContainer.innerHTML = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 4px; margin-top: 0.5rem;" />`;
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewContainer.innerHTML = '';
+      }
+    });
+  }
+
   contentArea.appendChild(clone);
+
 }
 
 // Show Edit Course Form
 function showEditCourseView(course: any) {
   const contentArea = document.getElementById('dashboard-content');
-  const template = document.getElementById('template-course-form') as HTMLTemplateElement;
+  const template = document.getElementById(
+    'template-course-form',
+  ) as HTMLTemplateElement;
   if (!contentArea || !template) return;
 
   contentArea.innerHTML = '';
@@ -412,24 +485,32 @@ function showEditCourseView(course: any) {
   // Setup Form for Edit
   setText(clone, 'form-view-title', 'Editar Curso');
   (clone.getElementById('course-id') as HTMLInputElement).value = course.id;
-  (clone.getElementById('course-title') as HTMLInputElement).value = course.title;
-  (clone.getElementById('course-description') as HTMLTextAreaElement).value = course.description || '';
+  (clone.getElementById('course-title') as HTMLInputElement).value =
+    course.title;
+  (clone.getElementById('course-description') as HTMLTextAreaElement).value =
+    course.description || '';
 
   // Price
   const priceInput = clone.getElementById('course-price') as HTMLInputElement;
   if (priceInput) {
     const priceInCents = Math.round((course.price || 0) * 100);
-    priceInput.value = (priceInCents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    priceInput.value = (priceInCents / 100).toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
     setupCurrencyMask(priceInput);
   }
 
   // Max Students
   if (course.maxStudents) {
-    (clone.getElementById('course-max-students') as HTMLInputElement).value = course.maxStudents;
+    (clone.getElementById('course-max-students') as HTMLInputElement).value =
+      course.maxStudents;
   }
 
   // Populate Categories & Set Value
-  const selectInfo = clone.getElementById('course-category') as HTMLSelectElement;
+  const selectInfo = clone.getElementById(
+    'course-category',
+  ) as HTMLSelectElement;
   populateCategories(selectInfo, course.category?.id || course.categoryId);
 
   // Cover Preview
@@ -467,13 +548,16 @@ function showEditCourseView(course: any) {
 }
 
 // Helper: Populate Categories
-function populateCategories(selectElement: HTMLSelectElement, selectedId?: string) {
+function populateCategories(
+  selectElement: HTMLSelectElement,
+  selectedId?: string,
+) {
   selectElement.innerHTML = `
     <option value="">Selecione...</option>
     <option value="NEW_CATEGORY" style="font-weight: bold; color: var(--primary);">+ Nova Categoria</option>
   `;
 
-  allCategories.forEach(cat => {
+  allCategories.forEach((cat) => {
     const option = document.createElement('option');
     option.value = cat.id;
     option.textContent = cat.name;
@@ -511,7 +595,9 @@ function populateCategories(selectElement: HTMLSelectElement, selectedId?: strin
  */
 async function showCreateCategoryModal(triggerSelect: HTMLSelectElement) {
   const modal = document.getElementById('category-modal');
-  const input = document.getElementById('modal-category-name') as HTMLInputElement;
+  const input = document.getElementById(
+    'modal-category-name',
+  ) as HTMLInputElement;
   const btnCancel = document.getElementById('btn-cat-modal-cancel');
   const btnSave = document.getElementById('btn-cat-modal-save');
 
@@ -554,7 +640,11 @@ async function showCreateCategoryModal(triggerSelect: HTMLSelectElement) {
 }
 
 // Helper: Set Text
-function setText(fragment: DocumentFragment | HTMLElement, id: string, text: string) {
+function setText(
+  fragment: DocumentFragment | HTMLElement,
+  id: string,
+  text: string,
+) {
   const el = fragment.querySelector(`#${id}`);
   if (el) el.textContent = text;
 }
@@ -565,13 +655,24 @@ async function handleCourseSubmit(e: Event) {
   const form = e.target as HTMLFormElement;
 
   // Get values
-  const courseId = (document.getElementById('course-id') as HTMLInputElement).value;
-  const title = (document.getElementById('course-title') as HTMLInputElement).value;
-  const description = (document.getElementById('course-description') as HTMLTextAreaElement).value;
-  const categoryId = (document.getElementById('course-category') as HTMLSelectElement).value;
-  const priceStr = (document.getElementById('course-price') as HTMLInputElement).value;
-  const maxStudentsStr = (document.getElementById('course-max-students') as HTMLInputElement).value;
-  const coverInput = document.getElementById('course-cover') as HTMLInputElement;
+  const courseId = (document.getElementById('course-id') as HTMLInputElement)
+    .value;
+  const title = (document.getElementById('course-title') as HTMLInputElement)
+    .value;
+  const description = (
+    document.getElementById('course-description') as HTMLTextAreaElement
+  ).value;
+  const categoryId = (
+    document.getElementById('course-category') as HTMLSelectElement
+  ).value;
+  const priceStr = (document.getElementById('course-price') as HTMLInputElement)
+    .value;
+  const maxStudentsStr = (
+    document.getElementById('course-max-students') as HTMLInputElement
+  ).value;
+  const coverInput = document.getElementById(
+    'course-cover',
+  ) as HTMLInputElement;
 
   // Parse price (pt-BR format 1.234,56 -> float)
   // Remove thousand separators and replace decimal comma
@@ -583,7 +684,7 @@ async function handleCourseSubmit(e: Event) {
     description,
     price,
     categoryId,
-    maxStudents: maxStudentsStr ? parseInt(maxStudentsStr) : undefined
+    maxStudents: maxStudentsStr ? parseInt(maxStudentsStr) : undefined,
   };
 
   try {
@@ -595,8 +696,49 @@ async function handleCourseSubmit(e: Event) {
     } else {
       // CREATE
       const coverFile = coverInput.files ? coverInput.files[0] : undefined;
+
+      // Check for Intro Video
+      const videoInput = document.getElementById('course-video-intro') as HTMLInputElement;
+      const videoFile = videoInput && videoInput.files ? videoInput.files[0] : undefined;
+
       savedCourse = await Courses.create(data, coverFile);
-      AppUI.showMessage('Curso criado!', 'success');
+
+      // If we have a video, verify type
+      if (videoFile && !videoFile.type.startsWith('video/mp4')) {
+        AppUI.showMessage('O vídeo de introdução deve ser MP4. O curso foi criado, mas o vídeo não foi enviado.', 'error');
+      }
+      else if (videoFile && savedCourse && savedCourse.id) {
+        try {
+          AppUI.showMessage('Criando módulo introdutório...', 'info');
+
+          // 1. Create Module
+          const module = await Modules.create(savedCourse.id, {
+            title: 'Módulo Introdutório',
+            orderIndex: 0
+          });
+
+          if (module && module.id) {
+            // 2. Create Class
+            const cls = await Modules.createClass(module.id, {
+              title: 'Aula de Introdução',
+              description: 'Bem-vindo ao curso!',
+              videoUrl: '' // Will be updated by upload
+            });
+
+            if (cls && cls.id) {
+              AppUI.showMessage('Enviando vídeo de introdução...', 'info');
+              // 3. Upload Video
+              await Classes.uploadVideo(cls.id, videoFile);
+              AppUI.showMessage('Vídeo de introdução enviado com sucesso!', 'success');
+            }
+          }
+        } catch (vidError: any) {
+          console.error('Falha ao processar vídeo de introdução:', vidError);
+          AppUI.showMessage('Curso criado, mas houve erro ao processar o vídeo de introdução: ' + vidError.message, 'error');
+        }
+      }
+
+      AppUI.showMessage('Curso criado com sucesso!', 'success');
     }
 
     // Refresh Sidebar
@@ -606,13 +748,11 @@ async function handleCourseSubmit(e: Event) {
     if (savedCourse && savedCourse.id) {
       selectCourse(savedCourse.id);
     }
-
   } catch (error: any) {
     console.error(error);
     AppUI.showMessage(error.message || 'Erro ao salvar', 'error');
   }
 }
-
 
 // --- Currency Mask Helper ---
 function setupCurrencyMask(input: HTMLInputElement) {
@@ -625,12 +765,15 @@ function setupCurrencyMask(input: HTMLInputElement) {
     // Treat as integer cents
     const amount = parseInt(value, 10) / 100;
     // Format as BRL: 1.234,56
-    input.value = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    input.value = amount.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   };
 
   input.addEventListener('input', format);
   // Also format initially if value exists (though usually handled by creation logic)
-  // format(); 
+  // format();
 }
 
 // Custom Confirm Modal Logic
@@ -670,7 +813,7 @@ function customConfirm(title: string, message: string): Promise<boolean> {
 async function deleteCourse(courseId: string) {
   const confirmed = await customConfirm(
     'Excluir Curso?',
-    'Tem certeza que deseja excluir este curso? Todas as aulas serão perdidas.'
+    'Tem certeza que deseja excluir este curso? Todas as aulas serão perdidas.',
   );
 
   if (confirmed) {
@@ -729,13 +872,29 @@ function setupContentListeners(courseId: string) {
       const target = e.target as HTMLInputElement;
 
       // Upload Material
-      if (target.type === 'file' && target.dataset.action === 'upload-material') {
+      if (
+        target.type === 'file' &&
+        target.dataset.action === 'upload-material'
+      ) {
         const classId = target.dataset.classId;
         if (classId && target.files && target.files[0]) {
           await handleUploadClassMaterial(classId, target.files[0]);
         }
         return;
       }
+
+      // Upload Video
+      if (
+        target.type === 'file' &&
+        target.dataset.action === 'upload-video'
+      ) {
+        const classId = target.dataset.classId;
+        if (classId && target.files && target.files[0]) {
+          await handleUploadClassVideo(classId, target.files[0]);
+        }
+        return;
+      }
+
 
       // Input Fields
       if (!target.classList.contains('tree-input')) return;
@@ -768,7 +927,9 @@ async function toggleCourseContent(courseId: string) {
   const contentArea = document.getElementById('course-content-area');
   const summaryArea = document.getElementById('course-content-summary');
   const btnText = document.querySelector('#btn-toggle-content');
-  const descriptionSection = document.getElementById('course-description-section');
+  const descriptionSection = document.getElementById(
+    'course-description-section',
+  );
   const detailBody = document.querySelector('.detail-body');
 
   if (!contentArea || !summaryArea) return;
@@ -783,7 +944,9 @@ async function toggleCourseContent(courseId: string) {
     if (descriptionSection) descriptionSection.classList.add('hidden');
     if (detailBody) detailBody.classList.add('expanded-mode');
 
-    if (btnText) btnText.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1rem;">close</span> Fechar Edição';
+    if (btnText)
+      btnText.innerHTML =
+        '<span class="material-symbols-outlined" style="font-size: 1rem;">close</span> Fechar Edição';
 
     await renderContentTree(courseId);
   } else {
@@ -794,7 +957,9 @@ async function toggleCourseContent(courseId: string) {
     if (descriptionSection) descriptionSection.classList.remove('hidden');
     if (detailBody) detailBody.classList.remove('expanded-mode');
 
-    if (btnText) btnText.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1rem;">edit_note</span> Editar Conteúdo';
+    if (btnText)
+      btnText.innerHTML =
+        '<span class="material-symbols-outlined" style="font-size: 1rem;">edit_note</span> Editar Conteúdo';
   }
 }
 
@@ -831,7 +996,8 @@ async function renderContentTree(courseId: string) {
                     <div class="tree-module-header">
                         <div class="tree-module-title">
                             <span class="material-symbols-outlined">folder</span>
-                            <span contenteditable="true" class="editable-title" data-module-id="${module.id}">${module.title}</span>
+                            <span contenteditable="true" class="editable-title" data-module-id="${module.id}" title="Clique para editar">${module.title}</span>
+                            <span class="material-symbols-outlined" style="font-size: 1rem; opacity: 0.5; cursor: help;" title="Clique no título para editar">edit</span>
                         </div>
                         <button class="tree-btn-icon" data-action="delete-module" data-id="${module.id}" title="Excluir Módulo">
                             <span class="material-symbols-outlined">delete</span>
@@ -839,12 +1005,19 @@ async function renderContentTree(courseId: string) {
                     </div>
                     
                     <div class="tree-class-list">
-                        ${classes.map((cls: any) => `
+                        ${classes
+            .map((cls: any) => {
+              // Handle BOTH formats: /storage/... (raw) and /classes/:id/video (API-transformed)
+              const isVideoUploaded = cls.videoUrl && (cls.videoUrl.startsWith('/storage') || (cls.videoUrl.startsWith('/classes/') && cls.videoUrl.endsWith('/video')));
+              const isMaterialUploaded = cls.materialUrl && (cls.materialUrl.startsWith('/storage') || (cls.materialUrl.startsWith('/classes/') && cls.materialUrl.endsWith('/material')));
+
+              return `
                         <div class="tree-class-item">
                             <div class="tree-class-header">
                                 <div class="tree-class-title">
                                     <span class="material-symbols-outlined" style="font-size: 1rem;">article</span>
-                                    <span contenteditable="true" class="editable-title" data-class-id="${cls.id}">${cls.title}</span>
+                                    <span contenteditable="true" class="editable-title" data-class-id="${cls.id}" title="Clique para editar">${cls.title}</span>
+                                    <span class="material-symbols-outlined" style="font-size: 0.875rem; opacity: 0.5; cursor: help;" title="Clique no título para editar">edit</span>
                                 </div>
                                 <button class="tree-btn-icon" data-action="delete-class" data-id="${cls.id}" title="Excluir Aula">
                                     <span class="material-symbols-outlined" style="font-size: 1rem;">close</span>
@@ -852,25 +1025,38 @@ async function renderContentTree(courseId: string) {
                             </div>
                             
                             <div class="tree-input-group">
-                                <input type="text" class="tree-input" placeholder="URL do Vídeo (Youtube/Vimeo)" 
-                                    value="${cls.videoUrl || ''}" 
-                                    data-class-id="${cls.id}" data-field="videoUrl">
+                                <div class="tree-input-row">
+                                    <input type="text" class="tree-input ${isVideoUploaded ? 'uploaded' : ''}" 
+                                        placeholder="URL do Vídeo (Youtube/Vimeo ou MP4)" 
+                                        value="${isVideoUploaded ? '✅ Vídeo Interno (.mp4)' : (cls.videoUrl || '')}" 
+                                        data-class-id="${cls.id}" data-field="videoUrl"
+                                        id="video-url-${cls.id}"
+                                        ${isVideoUploaded ? 'readonly style="cursor: default; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);"' : 'style="flex: 1;"'}>
+                                        
+                                    <label class="btn-icon-small" title="Upload Vídeo (MP4)" style="cursor: pointer; border: 1px solid var(--border-light); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card, rgba(94, 23, 235, 0.05)); flex-shrink: 0;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">movie</span>
+                                        <input type="file" style="display: none;" accept="video/mp4" data-action="upload-video" data-class-id="${cls.id}">
+                                    </label>
+                                </div>
                                     
-                                <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
-                                    <input type="text" class="tree-input" placeholder="URL Material" 
-                                        value="${cls.materialUrl || ''}" 
+                                <div class="tree-input-row">
+                                    <input type="text" class="tree-input ${isMaterialUploaded ? 'uploaded' : ''}" 
+                                        placeholder="URL Material (Docs/PDF)" 
+                                        value="${isMaterialUploaded ? '✅ Material de Apoio Carregado' : (cls.materialUrl || '')}" 
                                         data-class-id="${cls.id}" data-field="materialUrl"
                                         id="material-url-${cls.id}"
-                                        style="flex: 1;">
+                                        ${isMaterialUploaded ? 'readonly style="cursor: default; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);"' : 'style="flex: 1;"'}>
                                         
-                                    <label class="btn-icon-small" title="Upload Arquivo" style="cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card);">
+                                    <label class="btn-icon-small" title="Upload Arquivo" style="cursor: pointer; border: 1px solid var(--border-light); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card, rgba(94, 23, 235, 0.05)); flex-shrink: 0;">
                                         <span class="material-symbols-outlined" style="font-size: 1.2rem;">upload_file</span>
                                         <input type="file" style="display: none;" data-action="upload-material" data-class-id="${cls.id}">
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        `).join('')}
+                        `;
+            })
+            .join('')}
 
                         <button class="btn-add-inline" data-action="create-class" data-module-id="${module.id}">
                             <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1rem;">add</span> Adicionar Aula
@@ -881,13 +1067,19 @@ async function renderContentTree(courseId: string) {
       }
     }
 
-    // Inline "New Module" Form
+    // Prominent "Add Module" Section
     html += `
-        <div class="new-module-form" style="margin-top: 1rem; padding: 1rem; border: 1px dashed var(--dash-border); border-radius: 0.5rem;">
-            <div style="display: flex; gap: 0.5rem;">
-                <input type="text" id="new-module-title" class="tree-input" placeholder="Nome do novo módulo..." style="margin-bottom: 0;">
-                <button class="btn-primary" data-action="create-module" style="width: auto; padding: 0 1rem;">
+        <div class="add-module-section">
+            <div class="add-module-header">
+                <span class="material-symbols-outlined">add_circle</span>
+                <h3>Adicionar Novo Módulo</h3>
+            </div>
+            <p class="add-module-hint">Crie um módulo para organizar as aulas do seu curso</p>
+            <div class="add-module-form">
+                <input type="text" id="new-module-title" class="tree-input" placeholder="Ex: Introdução ao JavaScript, Módulo 1, etc..." style="margin-bottom: 0; flex: 1;">
+                <button class="btn-primary-dash" data-action="create-module" style="width: auto; padding: 0.75rem 1.5rem; white-space: nowrap;">
                     <span class="material-symbols-outlined">add</span>
+                    <span>Criar Módulo</span>
                 </button>
             </div>
         </div>
@@ -897,10 +1089,10 @@ async function renderContentTree(courseId: string) {
 
     // Restore scroll position
     if (scrollContainer) scrollContainer.scrollTop = savedScrollTop;
-
   } catch (error) {
     console.error(error);
-    container.innerHTML = '<p class="text-danger">Erro ao carregar conteúdo.</p>';
+    container.innerHTML =
+      '<p class="text-danger">Erro ao carregar conteúdo.</p>';
   }
 }
 
@@ -920,19 +1112,23 @@ async function handleCreateModule(courseId: string) {
     await Modules.create(courseId, { title, orderIndex: 99 });
     await renderContentTree(courseId);
     AppUI.showMessage('Módulo criado', 'success');
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleUpdateModuleTitle(moduleId: string, newTitle: string) {
   try {
     await Modules.update(moduleId, { title: newTitle });
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleDeleteModule(moduleId: string, courseId: string) {
   const confirmed = await customConfirm(
-    "Excluir Módulo?",
-    "Tem certeza que deseja excluir este módulo e todas as suas aulas?"
+    'Excluir Módulo?',
+    'Tem certeza que deseja excluir este módulo e todas as suas aulas?',
   );
   if (!confirmed) return;
 
@@ -940,28 +1136,38 @@ async function handleDeleteModule(moduleId: string, courseId: string) {
     await Modules.delete(moduleId);
     await renderContentTree(courseId);
     AppUI.showMessage('Módulo excluído', 'success');
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleCreateClass(moduleId: string, courseId: string) {
   try {
     // Create with defaults (can be expanded to an inline form if needed, but this is efficient)
     await Modules.createClass(moduleId, {
-      title: "Nova Aula (Clique para editar)",
-      description: "",
-      videoUrl: ""
+      title: 'Nova Aula (Clique para editar)',
+      description: '',
+      videoUrl: '',
     });
     await renderContentTree(courseId);
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleUpdateClassTitle(classId: string, newTitle: string) {
   try {
     await Classes.update(classId, { title: newTitle });
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
-async function handleUpdateClassField(classId: string, field: string, value: string) {
+async function handleUpdateClassField(
+  classId: string,
+  field: string,
+  value: string,
+) {
   try {
     const data: any = {};
     if (field === 'videoUrl' || field === 'materialUrl') {
@@ -969,30 +1175,56 @@ async function handleUpdateClassField(classId: string, field: string, value: str
       await Classes.update(classId, data);
       // No toast for every keystroke/blur, too noisy. Maybe subtle indicator or just error handling.
     }
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleUploadClassMaterial(classId: string, file: File) {
   try {
     AppUI.showMessage('Enviando...', 'info');
     const res = await Classes.uploadMaterial(classId, file);
-    const input = document.getElementById(`material-url-${classId}`) as HTMLInputElement;
+    const input = document.getElementById(
+      `material-url-${classId}`,
+    ) as HTMLInputElement;
     if (input) input.value = res.materialUrl;
     AppUI.showMessage('Arquivo enviado!', 'success');
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
+}
+
+async function handleUploadClassVideo(classId: string, file: File) {
+  try {
+    if (file.type !== 'video/mp4') {
+      AppUI.showMessage('Por favor, envie apenas arquivos MP4.', 'error');
+      return;
+    }
+    AppUI.showMessage('Enviando vídeo... Isso pode demorar um pouco.', 'info');
+    const res = await Classes.uploadVideo(classId, file);
+    const input = document.getElementById(
+      `video-url-${classId}`,
+    ) as HTMLInputElement;
+    if (input) input.value = res.videoUrl;
+    AppUI.showMessage('Vídeo enviado com sucesso!', 'success');
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 async function handleDeleteClass(classId: string, courseId: string) {
   const confirmed = await customConfirm(
-    "Excluir Aula?",
-    "Tem certeza que deseja excluir esta aula?"
+    'Excluir Aula?',
+    'Tem certeza que deseja excluir esta aula?',
   );
   if (!confirmed) return;
 
   try {
     await Classes.delete(classId);
     await renderContentTree(courseId);
-  } catch (e: any) { AppUI.showMessage(e.message, 'error'); }
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
 }
 
 // Start

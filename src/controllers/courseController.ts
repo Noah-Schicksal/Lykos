@@ -15,8 +15,9 @@ export class CourseController {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const search = req.query.search as string;
+            const userId = (req as any).user?.id; // Optional: get logged user ID for isEnrolled check
 
-            const { courses, total } = await this.courseService.list(page, limit, search);
+            const { courses, total } = await this.courseService.list(page, limit, search, userId);
 
             const totalPages = Math.ceil(total / limit);
 
@@ -72,7 +73,8 @@ export class CourseController {
     async show(req: Request, res: Response) {
         try {
             const id = req.params.id as string;
-            const course = await this.courseService.getById(id);
+            const userId = (req as any).user?.id; // Optional auth for progress check
+            const course = await this.courseService.getById(id, userId);
             return ApiResponse.success(res, course);
         } catch (error) {
             if (error instanceof ApplicationError) {

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Lykos</title>
+
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light') {
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+
+<body class="dark"> <!-- Defaulting to dark as per design -->
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- Sidebar Toggle (Moved from Sidebar) -->
+            <div class="nav-left">
+                <button id="btn-toggle-sidebar" class="btn-icon">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <a href="/" class="logo">
+                    <div class="logo-icon">
+                        <span class="material-symbols-outlined">code</span>
+                    </div>
+                    <span class="logo-text">Lykos</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <!-- Sidebar: Course List -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-actions">
+                    <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+                        <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+                        <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+                    </button>
+                </div>
+            </div>
+
+            <h2 class="sidebar-title">Courses</h2>
+
+            <div class="sidebar-search">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input type="text" id="course-search" placeholder="  Search by ID" class="search-input">
+            </div>
+
+            <div id="course-list-container" class="course-list-container">
+                <p class="loading-text">Loading courses...</p>
+            </div>
+
+            <button id="btn-load-more" class="btn-load-more hidden">
+                Load More
+                <span class="material-symbols-outlined">expand_more</span>
+            </button>
+
+            <!-- Sidebar Footer (User Profile) -->
+            <div class="sidebar-footer">
+                <div class="user-profile-card">
+                    <div class="user-avatar-small" id="sidebar-user-avatar">
+                        <span class="material-symbols-outlined">account_circle</span>
+                        <!-- Img injected via JS -->
+                    </div>
+                    <div class="user-info-text">
+                        <span class="user-name" id="sidebar-user-name">Loading...</span>
+                        <span class="user-role" id="sidebar-user-role">...</span>
+                    </div>
+                    <button id="btn-logout-sidebar" class="btn-icon-logout" title="Sair">
+                        <span class="material-symbols-outlined">logout</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Default / Empty State -->
+            <div id="empty-state" class="empty-state">
+                <span class="material-symbols-outlined">school</span>
+                <h3>Select a course to view details</h3>
+                <p>Choose a course from the sidebar to manage content.</p>
+            </div>
+
+            <!-- Course Detail View -->
+            <div id="course-details" class="course-details hidden">
+
+                <!-- Course Info / Curriculum Header -->
+                <section class="curriculum-section">
+                    <!-- Title injected here -->
+                    <h1 id="detail-title" class="section-subtitle" style="font-size: 2rem; margin-bottom: 0.5rem;">
+                        Loading...</h1>
+
+                    <!-- ID injected here -->
+                    <p id="detail-id" class="section-help" style="font-family: monospace; color: var(--primary);">ID:
+                        ...</p>
+
+                    <!-- Description injected here (replacing "No Content" area or new area?) 
+                         User said "No curriculum content found" IS the description. 
+                         I'll add a separate description paragraph below ID for clarity, 
+                         and keep the modules list separate. 
+                    -->
+                    <p id="detail-description" class="course-desc" style="margin-bottom: 2rem;">...</p>
+
+                    <!-- Modules List -->
+                    <div id="modules-list" class="modules-list">
+                        <!-- Modules injected via JS -->
+                    </div>
+                </section>
+
+                <hr class="divider">
+
+                <!-- Danger Zone -->
+                <section class="danger-zone-card">
+                    <div class="danger-info">
+                        <h3 class="danger-title">Danger Zone</h3>
+                        <p class="danger-desc">The course will be permanently removed.</p>
+                    </div>
+
+                    <div class="danger-actions">
+                        <div class="status-toggle">
+                            <span class="status-label">STATUS</span>
+                            <button id="toggle-status" class="toggle-switch active">
+                                <span class="toggle-circle"></span>
+                            </button>
+                            <span id="status-text" class="status-text active">SAFE</span>
+                        </div>
+
+                        <button id="btn-delete-course" class="btn-delete-disabled" disabled>
+                            Delete Course
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- No Modal anymore -->
+
+    <script type="module" src="js/admin.js"></script>
+</body>
+
+</html>

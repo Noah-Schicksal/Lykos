@@ -65,34 +65,22 @@ const publicJsDist = path.join(publicDist, 'js');
 if (!fs.existsSync(publicDist)) fs.mkdirSync(publicDist, { recursive: true });
 
 // HTML files
-if (fs.existsSync(path.join(publicSrc, 'index.html'))) {
-  fs.copyFileSync(
-    path.join(publicSrc, 'index.html'),
-    path.join(publicDist, 'index.html'),
-  );
-}
-if (fs.existsSync(path.join(publicSrc, 'instructor.html'))) {
-  fs.copyFileSync(
-    path.join(publicSrc, 'instructor.html'),
-    path.join(publicDist, 'instructor.html'),
-  );
-}
-if (fs.existsSync(path.join(publicSrc, 'studentDashboard.html'))) {
-  fs.copyFileSync(
-    path.join(publicSrc, 'studentDashboard.html'),
-    path.join(publicDist, 'studentDashboard.html'),
-  );
-}
-if (fs.existsSync(path.join(publicSrc, 'coursePlayer.html'))) {
-  fs.copyFileSync(
-    path.join(publicSrc, 'coursePlayer.html'),
-    path.join(publicDist, 'coursePlayer.html'),
-  );
+// HTML files - Copy all .html files
+const files = fs.readdirSync(publicSrc);
+for (const file of files) {
+  if (path.extname(file) === '.html') {
+    fs.copyFileSync(path.join(publicSrc, file), path.join(publicDist, file));
+  }
 }
 
 // css folder
 if (fs.existsSync(path.join(publicSrc, 'css'))) {
   copyDir(path.join(publicSrc, 'css'), path.join(publicDist, 'css'));
+}
+
+// assets folder
+if (fs.existsSync(path.join(publicSrc, 'assets'))) {
+  copyDir(path.join(publicSrc, 'assets'), path.join(publicDist, 'assets'));
 }
 
 // Component CSS files (from public/ts/components/**/*.css -> dist/public/js/components/**/*.css)

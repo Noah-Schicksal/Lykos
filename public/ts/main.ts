@@ -6,6 +6,7 @@ import { Auth } from './modules/auth.js';
 import { Home } from './home.js';
 import { Categories } from './modules/categories.js';
 import { Cart } from './modules/cart.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 // Expose to window for debugging or legacy scripts if needed
 (window as any).ui = AppUI;
@@ -13,13 +14,32 @@ import { Cart } from './modules/cart.js';
 (window as any).categories = Categories;
 (window as any).cart = Cart;
 
-document.addEventListener('DOMContentLoaded', () => {
-  Auth.init();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Initialize theme toggle first
+  initThemeToggle();
+
+  // Initialize app
+  await Auth.init();
+
+  // Redirect Admin
+  const userStr = localStorage.getItem('auth_user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role === 'ADMIN') {
+        window.location.href = '/admin.html';
+        return; // Stop execution
+      }
+    } catch (e) {
+      console.error('Auth Parse Error', e);
+    }
+  }
+
   // Check Auth Status immediately
   Auth.updateAuthUI();
   Home.init();
 
-  console.log('ChemAcademy App Initialized');
+  console.log('Lykos App Initialized');
 
   // 1. Initialize Cart
   Cart.updateBadge();
@@ -57,7 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       // Check if logged in before showing cart
       if (!localStorage.getItem('auth_user')) {
-        AppUI.showMessage('Por favor, faça login para ver seu carrinho.', 'info');
+        AppUI.showMessage(
+          'Por favor, faça login para ver seu carrinho.',
+          'info',
+        );
         const authContainer = document.getElementById('auth-card-container');
         if (authContainer) authContainer.classList.add('show');
         return;
@@ -90,11 +113,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkoutBtn = document.getElementById('btn-cart-checkout');
   if (checkoutBtn) {
     checkoutBtn.addEventListener('click', async () => {
-      const confirm = await AppUI.promptModal('Finalizar Compra', 'Deseja confirmar a compra dos itens no carrinho?');
+      const confirm = await AppUI.promptModal(
+        'Finalizar Compra',
+        'Deseja confirmar a compra dos itens no carrinho?',
+      );
       if (confirm) {
         const success = await Cart.checkout();
         if (success) {
           cartModal?.classList.remove('show');
+          // Recarregar os cursos para atualizar o status dos cards
+          Home.loadCourses();
         }
       }
     });
@@ -106,30 +134,45 @@ document.addEventListener('DOMContentLoaded', () => {
   async function renderCartItems() {
     const listContainer = document.getElementById('cart-items-list');
     const totalPriceEl = document.getElementById('cart-total-price');
-    const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
+    const checkoutBtn = document.getElementById(
+      'btn-cart-checkout',
+    ) as HTMLButtonElement;
 
     if (!listContainer || !totalPriceEl) return;
 
-    listContainer.innerHTML = '<div class="cart-empty-msg">Carregando itens...</div>';
+    listContainer.innerHTML =
+      '<div class="cart-empty-msg">Carregando itens...</div>';
 
     try {
       const items = await Cart.getCart();
 
       if (items.length === 0) {
-        listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
+        listContainer.innerHTML =
+          '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
         totalPriceEl.textContent = 'R$ 0,00';
         if (checkoutBtn) checkoutBtn.disabled = true;
         return;
       }
 
       let total = 0;
-      listContainer.innerHTML = items.map(item => {
-        total += item.price;
-        const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price);
+      listContainer.innerHTML = items
+        .map((item) => {
+          total += item.price;
+          const price = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+          }).format(item.price);
 
-        return `
+          // Verificar se tem imagem
+          const hasImage =
+            item.coverImageUrl && item.coverImageUrl.trim() !== '';
+          const imageHTML = hasImage
+            ? `<img src="${item.coverImageUrl}" class="cart-item-img" alt="${item.title}" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div class=\'cart-item-img-placeholder\'><span class=\'material-symbols-outlined\'>image</span></div>');">`
+            : `<div class="cart-item-img-placeholder"><span class="material-symbols-outlined">image</span></div>`;
+
+          return `
           <div class="cart-item">
-            <img src="${item.coverImageUrl || 'https://placehold.co/100x60'}" class="cart-item-img" alt="${item.title}">
+            ${imageHTML}
             <div class="cart-item-info">
               <h4 class="cart-item-title">${item.title}</h4>
               <div class="cart-item-price">${price}</div>
@@ -139,14 +182,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
           </div>
         `;
-      }).join('');
+        })
+        .join('');
 
-      totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
+      totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(total);
       if (checkoutBtn) checkoutBtn.disabled = false;
 
       // Add remove listeners
       const removeBtns = listContainer.querySelectorAll('.btn-remove-cart');
-      removeBtns.forEach(btn => {
+      removeBtns.forEach((btn) => {
         btn.addEventListener('click', async (e) => {
           const courseId = (btn as HTMLElement).dataset.id!;
           const success = await Cart.remove(courseId);
@@ -155,36 +202,330 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       });
-
     } catch (error) {
-      listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
+      listContainer.innerHTML =
+        '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
     }
   }
 
   // 4. Auth Card Logic
   const avatarBtn = document.getElementById('user-avatar-btn');
+  const userInfoBtn = document.getElementById('user-info-btn');
   const authContainer = document.getElementById('auth-card-container');
   const cardInner = document.getElementById('auth-card');
   const btnToRegister = document.getElementById('btn-to-register');
   const btnToLogin = document.getElementById('btn-to-login');
 
-  // Toggle Auth Card
+  // User Drawer Elements
+  const userDrawer = document.getElementById('user-drawer');
+  const openDrawerBtn = document.getElementById('open-drawer-btn'); // In navbar - opens drawer
+  const menuDrawerBtn = document.getElementById('menu-drawer-btn'); // In drawer - closes drawer
+  const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
+  const drawerProfilePanel = document.getElementById('drawer-profile-panel');
+  const drawerManagementSection = document.getElementById(
+    'drawer-management-section',
+  );
+  const drawerLogoutBtn = document.getElementById('drawer-logout');
+  const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
+  const drawerDeleteAccountBtn = document.getElementById(
+    'drawer-delete-account',
+  );
+  const drawerCategoriesToggle = document.getElementById(
+    'drawer-categories-toggle',
+  );
+  const drawerCategoriesPanel = document.getElementById(
+    'drawer-categories-panel',
+  );
+
+  // Avatar always opens Auth Card (for login/register)
   if (avatarBtn && authContainer) {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       authContainer.classList.toggle('show');
+      closeDrawer();
     });
+  }
 
-    document.addEventListener('click', (e) => {
-      if (
-        authContainer.classList.contains('show') &&
-        !authContainer.contains(e.target as Node) &&
-        !avatarBtn.contains(e.target as Node)
-      ) {
-        authContainer.classList.remove('show');
+  // User info button (when logged in) does NOT open anything - just displays status
+
+  // Open Drawer Button (in navbar) - opens the drawer
+  if (openDrawerBtn && userDrawer) {
+    openDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDrawer();
+      authContainer?.classList.remove('show');
+    });
+  }
+
+  // Menu Button inside drawer - closes the drawer
+  if (menuDrawerBtn && userDrawer) {
+    menuDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeDrawer();
+    });
+  }
+
+  // Get overlay element
+  const drawerOverlay = document.querySelector('.drawer-overlay');
+
+  // Close drawer when clicking on overlay
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', () => {
+      closeDrawer();
+    });
+  }
+
+  // Helper functions
+  function openDrawer() {
+    updateDrawerUserInfo();
+    userDrawer?.classList.add('show');
+    document.body.classList.add('drawer-open');
+    openDrawerBtn?.classList.add('hidden');
+    drawerOverlay?.classList.add('show');
+
+    // Animate Icon to Close
+    if (menuDrawerBtn) {
+      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = 'close';
+    }
+  }
+
+  function closeDrawer() {
+    userDrawer?.classList.remove('show');
+    document.body.classList.remove('drawer-open');
+    drawerOverlay?.classList.remove('show');
+    // Show open button if logged in
+    const user = localStorage.getItem('auth_user');
+    if (user && openDrawerBtn) {
+      openDrawerBtn.classList.remove('hidden');
+    }
+
+    // Revert Icon to Menu
+    if (menuDrawerBtn) {
+      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = 'menu';
+    }
+  }
+
+  // Close elements when clicking outside
+  document.addEventListener('click', (e) => {
+    // Close auth container
+    if (
+      authContainer?.classList.contains('show') &&
+      !authContainer.contains(e.target as Node) &&
+      !avatarBtn?.contains(e.target as Node)
+    ) {
+      authContainer.classList.remove('show');
+    }
+
+    // Close user drawer
+    if (
+      userDrawer?.classList.contains('show') &&
+      !userDrawer.contains(e.target as Node) &&
+      !openDrawerBtn?.contains(e.target as Node)
+    ) {
+      closeDrawer();
+    }
+  });
+
+  // Show/hide open drawer button, login button, and user info button based on login status
+  function updateMenuButtonVisibility() {
+    const user = localStorage.getItem('auth_user');
+
+    // Show drawer button only when logged in
+    if (openDrawerBtn) {
+      if (user && !userDrawer?.classList.contains('show')) {
+        openDrawerBtn.classList.remove('hidden');
+      } else {
+        openDrawerBtn.classList.add('hidden');
+      }
+    }
+
+    // Show login button only when NOT logged in
+    if (avatarBtn) {
+      if (user) {
+        avatarBtn.classList.add('hidden');
+      } else {
+        avatarBtn.classList.remove('hidden');
+      }
+    }
+
+    // Show user info button only when logged in
+    if (userInfoBtn) {
+      if (user) {
+        userInfoBtn.classList.remove('hidden');
+        // Update role display
+        try {
+          const userData = JSON.parse(user);
+          const displayName = document.getElementById('user-display-name');
+          if (displayName) {
+            // Map role to Portuguese
+            const roleMap: { [key: string]: string } = {
+              INSTRUCTOR: 'Instrutor',
+              STUDENT: 'Estudante',
+              ADMIN: 'Admin',
+              instructor: 'Instrutor',
+              student: 'Estudante',
+              admin: 'Admin',
+            };
+            const role = userData.role || 'STUDENT';
+            displayName.textContent = roleMap[role] || 'Usuário';
+          }
+        } catch (e) {
+          console.error('Error parsing user data:', e);
+        }
+      } else {
+        userInfoBtn.classList.add('hidden');
+      }
+    }
+  }
+
+  // Initial check
+  updateMenuButtonVisibility();
+
+  // Listen for auth changes
+  window.addEventListener('auth-login', updateMenuButtonVisibility);
+  window.addEventListener('auth-logout', updateMenuButtonVisibility);
+
+  // Profile accordion toggle
+  if (drawerProfileToggle && drawerProfilePanel) {
+    drawerProfileToggle.addEventListener('click', () => {
+      drawerProfileToggle.classList.toggle('expanded');
+      drawerProfilePanel.classList.toggle('expanded');
+    });
+  }
+
+  // Drawer logout button
+  if (drawerLogoutBtn) {
+    drawerLogoutBtn.addEventListener('click', async () => {
+      await Auth.logout();
+      closeDrawer();
+    });
+  }
+
+  // Drawer edit profile button
+  // Drawer edit profile button
+  if (drawerEditProfileBtn) {
+    drawerEditProfileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+
+        // Pre-fill form
+        const userStr = localStorage.getItem('auth_user');
+        if (userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            const nameInput = document.getElementById(
+              'edit-name',
+            ) as HTMLInputElement;
+            const emailInput = document.getElementById(
+              'edit-email',
+            ) as HTMLInputElement;
+
+            if (nameInput) nameInput.value = user.name || '';
+            if (emailInput) emailInput.value = user.email || '';
+          } catch (e) {
+            console.error('Error parsing user', e);
+          }
+        }
       }
     });
   }
+
+  const drawerCancelEditBtn = document.getElementById('drawer-cancel-edit');
+  if (drawerCancelEditBtn) {
+    drawerCancelEditBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Drawer delete account button
+  if (drawerDeleteAccountBtn) {
+    drawerDeleteAccountBtn.addEventListener('click', async () => {
+      const confirm = await AppUI.promptModal(
+        'Excluir Conta',
+        'Tem certeza que deseja excluir sua conta? Esta ação é irreversível.',
+      );
+      if (confirm) {
+        await Auth.deleteUserAccount();
+        userDrawer?.classList.remove('show');
+      }
+    });
+  }
+
+  // Drawer manage categories accordion
+  if (drawerCategoriesToggle && drawerCategoriesPanel) {
+    drawerCategoriesToggle.addEventListener('click', () => {
+      drawerCategoriesToggle.classList.toggle('expanded');
+      drawerCategoriesPanel.classList.toggle('expanded');
+
+      if (drawerCategoriesPanel.classList.contains('expanded')) {
+        Categories.renderCategoriesList('categories-list');
+      }
+    });
+  }
+
+  /**
+   * Update drawer user info from localStorage
+   */
+  function updateDrawerUserInfo() {
+    const userStr = localStorage.getItem('auth_user');
+    if (!userStr) return;
+
+    try {
+      const user = JSON.parse(userStr);
+      const drawerName = document.getElementById('drawer-user-name');
+      const drawerEmail = document.getElementById('drawer-user-email');
+      const drawerRole = document.getElementById('drawer-user-role');
+
+      // Normalize role for comparison
+      const userRole = (user.role || '').toLowerCase();
+
+      if (drawerName) drawerName.textContent = user.name || 'Usuário';
+      if (drawerEmail) drawerEmail.textContent = user.email || '';
+      if (drawerRole)
+        drawerRole.textContent =
+          userRole === 'instructor' ? 'Professor' : 'Aluno';
+
+      // Show management section for instructors
+      if (drawerManagementSection) {
+        if (userRole === 'instructor' || userRole === 'admin') {
+          drawerManagementSection.classList.remove('hidden');
+        } else {
+          drawerManagementSection.classList.add('hidden');
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing user data for drawer:', e);
+    }
+  }
+
+  // Update drawer when auth changes
+  window.addEventListener('auth-login', () => {
+    updateDrawerUserInfo();
+  });
+
+  window.addEventListener('auth-logout', () => {
+    userDrawer?.classList.remove('show');
+    // Reset accordion
+    drawerProfileToggle?.classList.remove('expanded');
+    drawerProfilePanel?.classList.remove('expanded');
+  });
 
   // Flip Logic
   if (btnToRegister && cardInner) {
@@ -216,8 +557,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (emailInput && passInput) {
         // Basic client-side validation
-        if (!emailInput.value || !passInput.value) {
-          AppUI.showMessage('Por favor, preencha todos os campos.', 'error');
+        if (!emailInput.value.trim()) {
+          AppUI.showMessage('O campo email é obrigatório', 'error');
+          emailInput.focus();
+          return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+          AppUI.showMessage('Formato de e-mail inválido', 'error');
+          emailInput.focus();
+          return;
+        }
+
+        if (!passInput.value) {
+          AppUI.showMessage('Campo senha é obrigatório', 'error');
+          passInput.focus();
           return;
         }
         await Auth.login(emailInput.value, passInput.value);
@@ -298,7 +653,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const updateData: any = {};
       if (nameInput.value.trim()) updateData.name = nameInput.value.trim();
-      if (emailInput.value.trim()) updateData.email = emailInput.value.trim();
+      if (emailInput.value.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+          AppUI.showMessage('Formato de e-mail inválido', 'error');
+          emailInput.focus();
+          return;
+        }
+        updateData.email = emailInput.value.trim();
+      } else {
+        AppUI.showMessage('O campo email é obrigatório', 'error');
+        emailInput.focus();
+        return;
+      }
       if (passwordInput.value.trim())
         updateData.password = passwordInput.value.trim();
 
@@ -325,35 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'studentDashboard.html';
-    });
-  }
-
-  const btnManageCategories = document.getElementById('btn-manage-categories');
-  if (btnManageCategories) {
-    btnManageCategories.addEventListener('click', (e) => {
-      e.preventDefault();
-      showCategoriesView();
-    });
-  }
-
-  // Handle Instructor Dashboard
-  const btnInstructorDash = document.getElementById('btn-instructor-dash');
-  if (btnInstructorDash) {
-    btnInstructorDash.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.href = 'instructor.html';
-    });
-  }
-
-  // Handle Back from Categories
-  const btnBackFromCategories = document.getElementById(
-    'btn-back-from-categories',
-  );
-  if (btnBackFromCategories) {
-    btnBackFromCategories.addEventListener('click', (e) => {
-      e.preventDefault();
-      Auth.updateAuthUI();
+      window.location.href = '/estudante';
     });
   }
 
@@ -384,23 +723,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Function to show categories view
-  function showCategoriesView() {
-    const loggedInFace = document.getElementById('auth-logged-in');
-    const profileViewFace = document.getElementById('auth-profile-view');
-    const profileEditFace = document.getElementById('auth-profile-edit');
-    const categoriesViewFace = document.getElementById('auth-categories-view');
-
-    if (loggedInFace) loggedInFace.classList.add('hidden');
-    if (profileViewFace) profileViewFace.classList.add('hidden');
-    if (profileEditFace) profileEditFace.classList.add('hidden');
-    if (categoriesViewFace) {
-      categoriesViewFace.classList.remove('hidden');
-      // Load categories when view is shown
-      Categories.renderCategoriesList('categories-list');
-    }
-  }
-
   // Handle Register
   const registerForm = document.getElementById('register-form');
   if (registerForm) {
@@ -428,6 +750,37 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = passInput.value;
       const confirmPass = confirmInput.value;
       const role = roleSelect.value; // 'student' or 'instructor'
+
+      if (!name.trim()) {
+        AppUI.showMessage('O campo nome é obrigatório', 'error');
+        nameInput.focus();
+        return;
+      }
+
+      if (!email.trim()) {
+        AppUI.showMessage('O campo email é obrigatório', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email.trim())) {
+        AppUI.showMessage('Formato de e-mail inválido', 'error');
+        emailInput.focus();
+        return;
+      }
+
+      // Password strength validation
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(password)) {
+        AppUI.showMessage(
+          'A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais',
+          'error',
+        );
+        passInput.focus();
+        return;
+      }
 
       if (password !== confirmPass) {
         AppUI.showMessage('Senhas não conferem!', 'error');
