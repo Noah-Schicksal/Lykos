@@ -81,6 +81,11 @@ if (fs.existsSync(path.join(publicSrc, 'css'))) {
   copyDir(path.join(publicSrc, 'css'), path.join(publicDist, 'css'));
 }
 
+// js/libs folder (Static JS libs)
+if (fs.existsSync(path.join(publicSrc, 'js/libs'))) {
+  copyDir(path.join(publicSrc, 'js/libs'), path.join(publicJsDist, 'libs'));
+}
+
 // Component CSS files (from public/ts/components/**/*.css -> dist/public/js/components/**/*.css)
 function copyComponentStyles(srcDir, destDir) {
   if (!fs.existsSync(srcDir)) return;

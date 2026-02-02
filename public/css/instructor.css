@@ -52,6 +52,7 @@
   background-color: var(--bg-dark);
   color: var(--text-primary);
   font-family: var(--font-body);
+  position: relative;
 }
 
 /* ===========================
@@ -66,6 +67,18 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 100vh;
+  z-index: 100;
+}
+
+.dashboard-sidebar.collapsed {
+  width: 5.5rem;
+  min-width: 5.5rem;
 }
 
 :root.light .dashboard-sidebar {
@@ -76,18 +89,113 @@
   padding: 1.5rem;
   border-bottom: 1px solid var(--border-light);
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.sidebar-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: 2rem;
+}
+
+.dashboard-sidebar.collapsed .sidebar-header {
+  padding: 1.5rem 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-sidebar.collapsed .sidebar-header-top {
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
 }
 
 .sidebar-title {
-  margin: 0 0 1rem 0;
+  margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
   color: white;
   font-family: var(--font-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 :root.light .sidebar-title {
   color: #0d1b2a;
+}
+
+.dashboard-sidebar.collapsed .sidebar-title {
+  display: none;
+}
+
+/* Toggle Button */
+.sidebar-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: rgba(94, 23, 235, 0.1);
+  color: var(--primary);
+  transform: scale(1.05);
+}
+
+.dashboard-sidebar.collapsed .sidebar-toggle-btn {
+  color: var(--primary);
+  background-color: rgba(94, 23, 235, 0.1);
+  margin: 0 auto;
+}
+
+.sidebar-toggle-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Hide toggle button on mobile screens */
+@media (max-width: 768px) {
+  .sidebar-toggle-btn {
+    display: none;
+  }
+}
+
+/* Create Button */
+.btn-primary-dash {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.btn-primary-dash .btn-text {
+  transition: opacity 0.15s ease-in-out;
+}
+
+.dashboard-sidebar.collapsed .btn-primary-dash {
+  padding: 0.75rem;
+  justify-content: center;
+}
+
+.dashboard-sidebar.collapsed .btn-primary-dash .btn-text {
+  display: none;
+  opacity: 0;
+}
+
+.dashboard-sidebar.collapsed .btn-primary-dash .material-symbols-outlined {
+  margin: 0;
 }
 
 .sidebar-list {
@@ -134,6 +242,29 @@
 .course-list-item.active {
   background-color: rgba(94, 23, 235, 0.1);
   border-left-color: var(--primary);
+  border-left-width: 4px;
+  box-shadow: 0 2px 8px rgba(94, 23, 235, 0.2);
+  position: relative;
+}
+
+.course-list-item.active::after {
+  content: 'edit';
+  font-family: 'Material Symbols Outlined';
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary);
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.dashboard-sidebar.collapsed .course-list-item.active::after {
+  display: none;
+}
+
+:root.light .course-list-item.active {
+  box-shadow: 0 2px 8px rgba(94, 23, 235, 0.15);
 }
 
 .course-item-thumb {
@@ -160,6 +291,15 @@
   min-width: 0;
 }
 
+.dashboard-sidebar.collapsed .course-item-info {
+  display: none;
+}
+
+.dashboard-sidebar.collapsed .course-list-item {
+  justify-content: center;
+  padding: 0.75rem;
+}
+
 .course-item-title {
   font-weight: 500;
   font-size: 0.95rem;
@@ -184,18 +324,6 @@
   margin-top: 0.25rem;
 }
 
-.editing-badge {
-  font-size: 0.65rem;
-  padding: 1px 6px;
-  background-color: var(--primary);
-  color: white;
-  border-radius: 4px;
-  margin-left: auto;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 /* ===========================
    Main Dashboard Content
    =========================== */
@@ -208,6 +336,14 @@
   position: relative;
   max-height: 100%;
   min-height: 0;
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-sidebar.collapsed ~ .dashboard-main {
+  margin-left: 5.5rem;
+  width: calc(100% - 5.5rem);
 }
 
 .empty-state {
@@ -331,7 +467,7 @@
 .detail-title-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
   flex: 1;
 }
 
@@ -446,15 +582,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 1rem; /* Add gap for when it wraps */
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-light);
   padding-bottom: 0.5rem;
+}
+
+.section-header-inline .btn-secondary-dash {
+  white-space: nowrap; /* Prevent button text from breaking awkwardly */
+  flex-shrink: 0;
 }
 
 .section-header-inline h3 {
   margin: 0;
   border: none;
   padding: 0;
+  line-height: 1.2;
 }
 
 /* ===========================
@@ -635,9 +779,16 @@
 .tree-module-node {
   background-color: var(--card-dark);
   border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s;
+}
+
+.tree-module-node:hover {
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.15);
 }
 
 :root.light .tree-module-node {
@@ -645,25 +796,73 @@
 }
 
 .tree-module-header {
-  background-color: rgba(94, 23, 235, 0.05);
-  padding: 0.75rem 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.12),
+    rgba(94, 23, 235, 0.06)
+  );
+  padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-light);
 }
 
+:root.light .tree-module-header {
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.08),
+    rgba(94, 23, 235, 0.04)
+  );
+}
+
 .tree-module-title {
   font-weight: 600;
+  font-size: 1.1rem;
   color: white;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   font-family: var(--font-heading);
+}
+
+.tree-module-title .material-symbols-outlined {
+  font-size: 1.5rem;
+  color: var(--primary);
 }
 
 :root.light .tree-module-title {
   color: #0d1b2a;
+}
+
+/* Editable Title Styling */
+.editable-title {
+  outline: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px dashed transparent;
+  transition: all 0.2s;
+  cursor: text;
+  min-width: 150px;
+  display: inline-block;
+}
+
+.editable-title:hover {
+  border-color: rgba(94, 23, 235, 0.3);
+  background-color: rgba(94, 23, 235, 0.05);
+}
+
+.editable-title:focus {
+  border-color: var(--primary);
+  border-style: solid;
+  background-color: rgba(94, 23, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
+}
+
+.editable-title:empty::before {
+  content: 'Digite o título...';
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 .tree-class-list {
@@ -675,10 +874,18 @@
 .tree-class-item {
   background-color: var(--bg-dark);
   border: 1px solid var(--border-light);
+  border-left: 3px solid rgba(94, 23, 235, 0.3);
   border-radius: 0.375rem;
-  margin-bottom: 0.5rem;
-  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
   position: relative;
+  transition: all 0.2s;
+}
+
+.tree-class-item:hover {
+  border-left-color: var(--primary);
+  box-shadow: 0 2px 6px rgba(94, 23, 235, 0.15);
+  transform: translateX(2px);
 }
 
 :root.light .tree-class-item {
@@ -704,10 +911,16 @@
 
 .tree-class-title {
   font-weight: 500;
+  font-size: 0.95rem;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.tree-class-title .material-symbols-outlined {
+  color: var(--primary);
+  opacity: 0.8;
 }
 
 .tree-input-group {
@@ -720,11 +933,12 @@
   background-color: var(--card-dark);
   border: 1px solid var(--border-light);
   color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
   width: 100%;
   font-family: var(--font-body);
+  transition: all 0.2s;
 }
 
 :root.light .tree-input {
@@ -735,6 +949,7 @@
 .tree-input:focus {
   outline: none;
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
 }
 
 .tree-btn-icon {
@@ -742,16 +957,29 @@
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
+  padding: 0.375rem;
+  border-radius: 0.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 }
 
 .tree-btn-icon:hover {
   color: white;
-  background-color: rgba(94, 23, 235, 0.1);
+  background-color: rgba(94, 23, 235, 0.15);
+  transform: scale(1.1);
+}
+
+.tree-btn-icon[data-action='delete-module'],
+.tree-btn-icon[data-action='delete-class'] {
+  color: #ef4444;
+}
+
+.tree-btn-icon[data-action='delete-module']:hover,
+.tree-btn-icon[data-action='delete-class']:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
 :root.light .tree-btn-icon:hover {
@@ -760,22 +988,102 @@
 
 .btn-add-inline {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   background: transparent;
   border: 1px dashed var(--border-light);
   color: var(--text-muted);
   border-radius: 0.375rem;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   margin-top: 0.5rem;
   transition: all 0.2s;
   font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn-add-inline:hover {
   border-color: var(--primary);
+  border-style: solid;
   color: var(--primary);
-  background-color: rgba(94, 23, 235, 0.05);
+  background-color: rgba(94, 23, 235, 0.08);
+}
+
+/* Add Module Section */
+.add-module-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.08),
+    rgba(94, 23, 235, 0.04)
+  );
+  border: 2px dashed rgba(94, 23, 235, 0.3);
+  border-radius: 0.75rem;
+  transition: all 0.3s;
+}
+
+.add-module-section:hover {
+  border-color: var(--primary);
+  background: linear-gradient(
+    135deg,
+    rgba(94, 23, 235, 0.12),
+    rgba(94, 23, 235, 0.06)
+  );
+  box-shadow: 0 4px 12px rgba(94, 23, 235, 0.15);
+}
+
+.add-module-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.add-module-header .material-symbols-outlined {
+  font-size: 1.75rem;
+  color: var(--primary);
+}
+
+.add-module-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  font-family: var(--font-heading);
+}
+
+:root.light .add-module-header h3 {
+  color: #0d1b2a;
+}
+
+.add-module-hint {
+  margin: 0 0 1rem 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.add-module-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .add-module-form {
+    flex-direction: column;
+  }
+
+  .add-module-form input {
+    width: 100%;
+  }
+
+  .add-module-form button {
+    width: 100% !important;
+  }
 }
 
 /* ===========================
@@ -890,18 +1198,164 @@ select.form-input option {
 /* ===========================
    Responsive Design
    =========================== */
-@media (max-width: 768px) {
+/* Tablet and below */
+@media (max-width: 1024px) {
   .dashboard-wrapper {
     flex-direction: column;
     height: auto;
-    overflow: visible;
+    min-height: calc(100vh - 4rem);
   }
 
-  .dashboard-sidebar {
+  /* Navbar goes to top - full width */
+  body:has(.dashboard-sidebar) .navbar {
+    margin-left: 0;
     width: 100%;
-    height: 300px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  /* Sidebar becomes horizontal below navbar */
+  .dashboard-sidebar {
+    position: relative;
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    max-height: none;
+    top: 0;
+    left: 0;
     border-right: none;
     border-bottom: 1px solid var(--border-light);
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .dashboard-sidebar.collapsed {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .sidebar-header {
+    flex-direction: row;
+    padding: 0.75rem;
+    border-bottom: none;
+    border-right: 1px solid var(--border-light);
+    min-width: 180px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header-top {
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+  }
+
+  .btn-primary-dash {
+    white-space: nowrap;
+  }
+
+  .sidebar-list {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.75rem;
+    gap: 0.75rem;
+    display: flex;
+  }
+
+  .course-list-item {
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+
+  /* Main content takes full width */
+  .dashboard-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  .dashboard-sidebar.collapsed ~ .dashboard-main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Hide toggle button on mobile */
+  .sidebar-toggle-btn {
+    display: none;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .dashboard-main {
+    padding: 1rem;
+  }
+
+  .content-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .header-actions .btn-primary,
+  .header-actions .btn-secondary {
+    width: 100%;
+  }
+
+  .form-panel {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .sidebar-header {
+    min-width: 150px;
+    padding: 0.4rem;
+  }
+
+  .sidebar-list {
+    padding: 0.4rem;
+    gap: 0.5rem;
+  }
+
+  .sidebar-title {
+    display: none; /* Hide "Meus Cursos" on mobile */
+  }
+
+  .btn-primary-dash {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .course-list-item {
+    min-width: 140px;
+    max-width: 160px;
+  }
+
+  /* Tree view adjustments */
+  .tree-module-header,
+  .tree-class-header {
+    flex-wrap: wrap;
+  }
+
+  .add-module-section {
+    padding: 1rem;
+  }
+
+  .add-module-form {
+    flex-direction: column;
+  }
+
+  .add-module-form button {
+    width: 100%;
   }
 
   .detail-header {
@@ -912,5 +1366,142 @@ select.form-input option {
   .detail-actions {
     width: 100%;
     justify-content: flex-start;
+  }
+}
+
+/* ===========================
+   Mobile Adjustments - Horizontal Toolbar
+   =========================== */
+@media (max-width: 768px) {
+  /* Transform Sidebar to Horizontal Toolbar */
+  .dashboard-sidebar {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    position: relative; /* Stacks normally in flow below navbar */
+    flex-direction: row;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+    overflow: visible;
+  }
+
+  /* Header becomes a compact left section */
+  .sidebar-header {
+    width: auto;
+    padding: 0.25rem;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    border-bottom: none;
+    border-right: 1px solid var(--border-light);
+  }
+
+  .sidebar-header-top {
+    min-height: 0;
+    margin-bottom: 0; /* Remove bottom margin */
+    display: none; /* Hide top header part entirely if it only contains title/toggle which are hidden/unused */
+  }
+
+  .sidebar-title {
+    display: none;
+  }
+
+  /* Compact Create Button - Square Icon */
+  .btn-primary-dash {
+    padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    margin: 0; /* Ensure no margin */
+  }
+
+  .btn-primary-dash .btn-text {
+    display: none;
+  }
+
+  .btn-primary-dash .material-symbols-outlined {
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  /* Course List becomes horizontal scrollable area */
+  .sidebar-list {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .course-list-item {
+    min-width: 160px; /* Fixed width for horizontal items */
+    max-width: 200px;
+    padding: 0.5rem;
+    flex-shrink: 0;
+    border-left-width: 1px;
+    border-bottom-width: 3px; /* Move active indicator to bottom */
+    border-bottom-color: transparent;
+    background-color: rgba(255, 255, 255, 0.03);
+    margin-bottom: 0;
+  }
+
+  .course-item-thumb {
+    width: 32px;
+    height: 32px;
+  }
+
+  .course-item-info {
+    display: block; /* Ensure info is visible */
+  }
+
+  .course-item-title {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .course-item-meta {
+    display: none; /* Hide extra meta to save vertical space in item */
+  }
+
+  /* Active State adjustments */
+  .course-list-item.active {
+    border-left-width: 1px;
+    border-left-color: transparent;
+    border-bottom-color: var(--primary);
+    border-bottom-width: 3px;
+    background-color: rgba(94, 23, 235, 0.1);
+  }
+
+  .course-list-item.active::after {
+    display: none; /* Hide edit icon on mobile card */
+  }
+
+  /* Main Content Adjustments */
+  .dashboard-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+    height: auto;
+    overflow: visible; /* Let body scroll */
+  }
+
+  /* Ensure wrapper allows scrolling */
+  .dashboard-wrapper {
+    flex-direction: column;
+    height: auto;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  /* Fix sticky navbar behavior */
+  .navbar {
+    position: sticky;
   }
 }

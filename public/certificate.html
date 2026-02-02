@@ -379,6 +379,7 @@
 </head>
 
 <body>
+
     <div class="cert-container">
 
         <div id="loading" class="loading">Validando certificado...</div>
@@ -388,6 +389,7 @@
             <p>Não foi possível encontrar este certificado.</p>
         </div>
 
+        <!-- Certificate Card -->
         <div id="certificate" class="certificate hidden">
             <div class="watermark">🎓</div>
 
@@ -430,7 +432,21 @@
                 Imprimir / Salvar PDF
             </button>
         </div>
+
+        <!-- Floating Actions -->
+        <div class="cert-actions" id="cert-actions-container">
+            <button id="btn-download" class="btn-download">
+                <span class="material-symbols-outlined">print</span>
+                Imprimir / Salvar PDF
+            </button>
+        </div>
+
     </div>
+
+    <!-- PDF Library -->
+    <script src="js/libs/html2pdf.bundle.min.js"></script>
+
+    <script src="js/certificate.js"></script>
 
     <script>
         function printCertificate() {
@@ -455,6 +471,7 @@
             if (!hash) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error-msg').classList.remove('hidden');
+                document.getElementById('cert-actions').style.display = 'none';
                 return;
             }
 
@@ -478,6 +495,7 @@
                     updateText('cert-hash', cert.certificateHash);
                     updateText('issue-date', new Date(cert.issuedAt).toLocaleDateString('pt-BR'));
 
+                    // Show content
                     document.getElementById('loading').classList.add('hidden');
                     const certEl = document.getElementById('certificate');
                     certEl.classList.remove('hidden');
@@ -502,6 +520,7 @@
                 console.error('Error loading certificate:', error);
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error-msg').classList.remove('hidden');
+                document.getElementById('cert-actions').style.display = 'none';
             }
         }
 

@@ -1,0 +1,675 @@
+/* public/css/admin.css */
+
+/* Layout */
+body {
+    background-color: var(--bg-dark);
+    /* Using variable */
+    overflow: hidden;
+    color: var(--text-primary);
+}
+
+/* Navbar overrides */
+.navbar {
+    z-index: 200;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Consider var(--border-light) */
+}
+
+/* Light mode specific border override if needed, 
+   but navbar usually handles itself via styles.css variables. 
+   We will trust styles.css variables were relevant. */
+
+.admin-container {
+    display: flex;
+    height: calc(100vh - 4rem);
+    position: relative;
+}
+
+/* Sidebar */
+/* Sidebar */
+.admin-sidebar {
+    width: 320px;
+    background-color: var(--card-dark);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    overflow-y: auto;
+    /* Should be hidden overflow-x, y auto */
+    overflow-x: hidden;
+    flex-shrink: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-sidebar.closed {
+    width: 80px;
+    /* Mini width to show toggle */
+    padding: 1.5rem 0.5rem;
+}
+
+/* Hide elements when closed */
+.admin-sidebar.closed .sidebar-title,
+.admin-sidebar.closed .sidebar-search,
+.admin-sidebar.closed .course-list-container,
+.admin-sidebar.closed #btn-load-more,
+.admin-sidebar.closed .sidebar-actions,
+.admin-sidebar.closed .user-profile-card {
+    display: none;
+    opacity: 0;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.admin-sidebar.closed .sidebar-header {
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    margin-top: auto;
+    /* Push to bottom */
+    padding-top: 1rem;
+}
+
+.user-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 9999px;
+    /* Pill shape like image? Image looks rounded rect */
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-light);
+}
+
+.user-avatar-small {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    overflow: hidden;
+}
+
+.user-avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-info-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.user-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.btn-icon-logout {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s;
+}
+
+.btn-icon-logout:hover {
+    color: #ef4444;
+    /* Red for logout */
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    /* Variable */
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.sidebar-search {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    width: 100%;
+    background-color: rgba(94, 23, 235, 0.05);
+    /* Consistent with style.css inputs */
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.75rem 0.75rem 3rem;
+    /* Increased padding */
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    transition: border-color 0.2s, background-color 0.3s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: rgba(94, 23, 235, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.btn-load-more {
+    margin-top: 1rem;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.btn-load-more:hover {
+    background: rgba(94, 23, 235, 0.05);
+    color: var(--text-primary);
+    border-color: var(--border-med);
+}
+
+.course-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.course-card-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.course-card-nav:hover {
+    background-color: var(--glass);
+    /* Using glass var */
+}
+
+.course-card-nav.active {
+    background-color: rgba(94, 23, 235, 0.1);
+    border-color: rgba(94, 23, 235, 0.3);
+}
+
+.course-thumb-mini {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.course-thumb-mini img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.course-thumb-mini .placeholder-icon {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.course-info-mini {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.course-title-mini {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-body);
+}
+
+.course-meta-mini {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Main Content */
+.admin-main {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--bg-dark);
+    padding: 2rem 3rem;
+    transition: background-color 0.3s ease;
+}
+
+/* Details Nav */
+.details-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    transition: color 0.2s;
+}
+
+.btn-text:hover {
+    color: var(--text-primary);
+}
+
+.course-header {
+    margin-bottom: 3rem;
+}
+
+.course-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+}
+
+.course-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 800px;
+    line-height: 1.6;
+}
+
+/* Accordion */
+.section-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.section-help {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.modules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.module-item {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-dark);
+    /* Using variable */
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.module-header {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: var(--card-dark);
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.module-header:hover {
+    background-color: rgba(94, 23, 235, 0.05);
+    /* Subtle highlight */
+}
+
+.module-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.module-title {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.module-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.module-content {
+    border-top: 1px solid var(--border-light);
+    background-color: rgba(0, 0, 0, 0.1);
+    /* Slightly darker in dark mode, or handled by transparency */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    width: 100%;
+}
+
+/* Light mode adjustment for module content bg */
+:root.light .module-content {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* FIX: Ensure this query exists to show content! */
+.module-content.open {
+    max-height: 2000px;
+    /* Large enough to fit content */
+    transition: max-height 0.5s ease-in;
+}
+
+.lesson-list {
+    list-style: none;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+}
+
+.lesson-item {
+    display: flex;
+    align-items: center;
+    width: auto;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+}
+
+:root.light .lesson-item {
+    background-color: rgba(0, 0, 0, 0.03);
+    /* Light mode contrast */
+}
+
+.lesson-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: rgba(94, 23, 235, 0.1);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lesson-icon.file {
+    background-color: rgba(0, 73, 83, 0.2);
+    color: var(--secondary);
+}
+
+.lesson-info {
+    flex: 1;
+}
+
+.lesson-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.lesson-type {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.chevron {
+    transition: transform 0.3s;
+    color: var(--text-muted);
+}
+
+.module-header.active .chevron {
+    transform: rotate(180deg);
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--border-light);
+    margin: 3rem 0 2rem;
+}
+
+/* Loading/Empty */
+.loading-text {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.empty-state .material-symbols-outlined {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.2;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   Danger Zone Redesign
+------------------------------------------------------------------ */
+
+.danger-zone-card {
+    background-color: var(--card-dark);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.danger-info {
+    max-width: 60%;
+}
+
+.danger-title {
+    color: #ef4444;
+    /* Keep Red */
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.danger-desc {
+    color: #fca5a5;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.8;
+}
+
+.danger-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Status Toggle Area */
+.status-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-light);
+}
+
+.status-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.toggle-switch {
+    width: 2.5rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background-color: #3b3b45;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+    padding: 2px;
+}
+
+.toggle-circle {
+    display: block;
+    width: 0.9rem;
+    height: 0.9rem;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s;
+    transform: translateX(0);
+}
+
+.toggle-switch.active {
+    background-color: #10b981;
+}
+
+.toggle-switch.active .toggle-circle {
+    transform: translateX(1.25rem);
+}
+
+.toggle-switch.inactive {
+    background-color: #ef4444;
+}
+
+.status-text {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.status-text.active {
+    color: #10b981;
+}
+
+.status-text.inactive {
+    color: #ef4444;
+}
+
+/* Delete Button States */
+.btn-delete-disabled {
+    background-color: #334155;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transition: all 0.2s;
+}
+
+.btn-delete-active {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 1;
+    transition: background-color 0.2s;
+}
+
+.btn-delete-active:hover {
+    background-color: #dc2626;
+}

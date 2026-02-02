@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!user) {
         // Redirect to home page if not logged in
         console.warn('No user session found, redirecting to home.');
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
         return;
     }
 
@@ -116,7 +116,7 @@ function renderCourses(courses: any[]) {
             <div class="col-span-full py-20 text-center bg-surface-dark border border-white/5 rounded-xl">
                 <span class="material-symbols-outlined text-6xl text-slate-700 mb-4">school</span>
                 <p class="text-slate-500 text-lg">Nenhum curso encontrado.</p>
-                <a href="index.html" class="text-primary hover:underline mt-4 inline-block font-bold">Explorar Catálogo de Cursos</a>
+                <a href="/inicio" class="text-primary hover:underline mt-4 inline-block font-bold">Explorar Catálogo de Cursos</a>
             </div>
         `;
         return;
@@ -173,7 +173,7 @@ function setupCourseCardListeners() {
             const target = e.target as HTMLElement;
             if (!target.closest('.btn-resume-course')) {
                 const courseId = (card as HTMLElement).dataset.courseId;
-                if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+                if (courseId) window.location.href = `/aula/${courseId}`;
             }
         });
     });
@@ -340,7 +340,7 @@ function setupNavigation() {
         const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
         if (confirmed) {
             await Auth.logout();
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         }
     });
 
@@ -392,7 +392,7 @@ function setupNavigation() {
     document.getElementById('btn-delete-account')?.addEventListener('click', async () => {
         const deleted = await Auth.deleteUserAccount();
         if (deleted) {
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         }
     });
 
@@ -403,7 +403,7 @@ function setupNavigation() {
     const homeLinks = document.querySelectorAll('a');
     homeLinks.forEach(link => {
         if (link.textContent?.trim() === 'Início') {
-            link.href = 'index.html';
+            link.href = '/inicio';
         }
     });
 
@@ -422,7 +422,7 @@ function setupNavigation() {
         if (a.textContent?.includes('Profile') || a.textContent?.includes('Perfil')) {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = 'index.html';
+                window.location.href = '/inicio';
             });
         }
     });
