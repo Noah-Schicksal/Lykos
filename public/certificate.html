@@ -1,227 +1,259 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Certificado de Conclusão - ChemAcademy</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
     <style>
+      .cert-container {
+        width: 100%;
+        min-height: 100vh;
+        background-color: #f0fdf4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
+
+      .certificate {
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        padding: 4rem;
+        border: 10px double #14532d;
+        text-align: center;
+        position: relative;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .cert-header {
+        font-family: 'Playfair Display', serif;
+        color: #14532d;
+        margin-bottom: 2rem;
+      }
+
+      .cert-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .cert-subtitle {
+        font-size: 1.25rem;
+        font-style: italic;
+        color: #166534;
+        margin-top: 0.5rem;
+      }
+
+      .cert-body {
+        margin: 3rem 0;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        line-height: 1.8;
+        color: #374151;
+      }
+
+      .student-name {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #15803d;
+        border-bottom: 2px solid #bbf7d0;
+        display: block;
+        margin: 1rem 0;
+        padding-bottom: 0.5rem;
+      }
+
+      .course-name {
+        font-weight: 700;
+        color: #14532d;
+      }
+
+      .cert-footer {
+        margin-top: 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-family: 'Inter', sans-serif;
+      }
+
+      .signature {
+        text-align: center;
+        border-top: 1px solid #9ca3af;
+        padding-top: 0.5rem;
+        width: 250px;
+      }
+
+      .hash-info {
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-align: right;
+      }
+
+      .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.05;
+        font-size: 20rem;
+        z-index: 0;
+        pointer-events: none;
+        color: #14532d;
+      }
+
+      @media print {
+        .no-print {
+          display: none;
+        }
+
         .cert-container {
-            width: 100%;
-            min-height: 100vh;
-            background-color: #f0fdf4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
+          padding: 0;
+          background: white;
         }
 
         .certificate {
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            padding: 4rem;
-            border: 10px double #14532d;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          box-shadow: none;
+          border: 5px double #14532d;
+          /* Print browsers might strip backgrounds, ensure 'print background' is on or keep design simple */
         }
-
-        .cert-header {
-            font-family: 'Playfair Display', serif;
-            color: #14532d;
-            margin-bottom: 2rem;
-        }
-
-        .cert-title {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .cert-subtitle {
-            font-size: 1.25rem;
-            font-style: italic;
-            color: #166534;
-            margin-top: 0.5rem;
-        }
-
-        .cert-body {
-            margin: 3rem 0;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            line-height: 1.8;
-            color: #374151;
-        }
-
-        .student-name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #15803d;
-            border-bottom: 2px solid #bbf7d0;
-            display: block;
-            margin: 1rem 0;
-            padding-bottom: 0.5rem;
-        }
-
-        .course-name {
-            font-weight: 700;
-            color: #14532d;
-        }
-
-        .cert-footer {
-            margin-top: 4rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .signature {
-            text-align: center;
-            border-top: 1px solid #9ca3af;
-            padding-top: 0.5rem;
-            width: 250px;
-        }
-
-        .hash-info {
-            font-size: 0.75rem;
-            color: #6b7280;
-            text-align: right;
-        }
-
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.05;
-            font-size: 20rem;
-            z-index: 0;
-            pointer-events: none;
-            color: #14532d;
-        }
-
-        @media print {
-            .no-print {
-                display: none;
-            }
-
-            .cert-container {
-                padding: 0;
-                background: white;
-            }
-
-            .certificate {
-                box-shadow: none;
-                border: 5px double #14532d;
-                /* Print browsers might strip backgrounds, ensure 'print background' is on or keep design simple */
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="cert-container">
+      <div id="loading" style="text-align: center">
+        Validando certificado...
+      </div>
 
-        <div id="loading" style="text-align:center;">Validando certificado...</div>
+      <div id="error-msg" class="hidden" style="text-align: center; color: red">
+        <h2>Certificado Inválido</h2>
+        <p>Não foi possível encontrar este certificado.</p>
+      </div>
 
-        <div id="error-msg" class="hidden" style="text-align:center; color: red;">
-            <h2>Certificado Inválido</h2>
-            <p>Não foi possível encontrar este certificado.</p>
+      <div id="certificate" class="certificate hidden">
+        <div class="watermark">🎓</div>
+
+        <header class="cert-header">
+          <h1 class="cert-title">Certificado</h1>
+          <p class="cert-subtitle">de Conclusão</p>
+        </header>
+
+        <div class="cert-body">
+          <p>Certificamos que</p>
+          <span id="student-name" class="student-name">Nome do Aluno</span>
+          <p>
+            concluiu com êxito o curso de <br />
+            <span id="course-title" class="course-name">Nome do Curso</span>
+          </p>
+          <p style="font-size: 1rem; margin-top: 1rem">
+            Carga Horária Estimada: <span id="workload">20</span> horas
+          </p>
         </div>
 
-        <div id="certificate" class="certificate hidden">
-            <div class="watermark">🎓</div>
+        <footer class="cert-footer">
+          <div class="signature">
+            <p id="instructor-name" style="font-weight: 600; margin: 0">
+              Instrutor
+            </p>
+            <small>Instrutor Responsável</small>
+          </div>
 
-            <header class="cert-header">
-                <h1 class="cert-title">Certificado</h1>
-                <p class="cert-subtitle">de Conclusão</p>
-            </header>
+          <div class="signature">
+            <p style="font-family: cursive; font-size: 1.2rem; margin: 0">
+              ChemAcademy
+            </p>
+            <small>Diretoria Acadêmica</small>
+          </div>
 
-            <div class="cert-body">
-                <p>Certificamos que</p>
-                <span id="student-name" class="student-name">Nome do Aluno</span>
-                <p>
-                    concluiu com êxito o curso de <br>
-                    <span id="course-title" class="course-name">Nome do Curso</span>
-                </p>
-                <p style="font-size: 1rem; margin-top: 1rem;">
-                    Carga Horária Estimada: <span id="workload">20</span> horas
-                </p>
-            </div>
+          <div class="hash-info">
+            <p>Emitido em: <span id="issue-date">Data</span></p>
+            <p>
+              Código de Validação: <br /><strong
+                id="cert-hash"
+                style="font-family: monospace"
+                >HASH</strong
+              >
+            </p>
+            <p>Valide em: localhost:3333/validar</p>
+          </div>
+        </footer>
 
-            <footer class="cert-footer">
-                <div class="signature">
-                    <p id="instructor-name" style="font-weight: 600; margin:0;">Instrutor</p>
-                    <small>Instrutor Responsável</small>
-                </div>
-
-                <div class="signature">
-                    <p style="font-family: cursive; font-size: 1.2rem; margin:0;">ChemAcademy</p>
-                    <small>Diretoria Acadêmica</small>
-                </div>
-
-                <div class="hash-info">
-                    <p>Emitido em: <span id="issue-date">Data</span></p>
-                    <p>Código de Validação: <br><strong id="cert-hash" style="font-family: monospace;">HASH</strong></p>
-                    <p>Valide em: localhost:3333/validar</p>
-                </div>
-            </footer>
-
-            <div class="no-print" style="position: absolute; top: 1rem; right: 1rem;">
-                <button onclick="window.print()"
-                    style="padding: 0.5rem 1rem; background: #14532d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                    Imprimir / Salvar PDF
-                </button>
-            </div>
+        <div
+          class="no-print"
+          style="position: absolute; top: 1rem; right: 1rem"
+        >
+          <button
+            onclick="window.print()"
+            style="
+              padding: 0.5rem 1rem;
+              background: #14532d;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+            "
+          >
+            Imprimir / Salvar PDF
+          </button>
         </div>
+      </div>
     </div>
 
     <script>
-        async function loadCertificate() {
-            const params = new URLSearchParams(window.location.search);
-            const hash = params.get('hash');
+      async function loadCertificate() {
+        const params = new URLSearchParams(window.location.search);
+        const hash = params.get('hash');
 
-            if (!hash) {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error-msg').classList.remove('hidden');
-                return;
-            }
-
-            try {
-                // Fetch Certificate Data
-                const res = await fetch(`/certificates/${hash}`);
-                const data = await res.json();
-
-                if (res.ok && data.data) {
-                    const cert = data.data;
-                    document.getElementById('student-name').textContent = cert.studentName;
-                    document.getElementById('course-title').textContent = cert.courseTitle;
-                    document.getElementById('workload').textContent = cert.workloadHours;
-                    document.getElementById('instructor-name').textContent = cert.instructorName;
-                    document.getElementById('cert-hash').textContent = cert.certificateHash;
-                    document.getElementById('issue-date').textContent = new Date(cert.issuedAt).toLocaleDateString('pt-BR');
-
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('certificate').classList.remove('hidden');
-                } else {
-                    throw new Error('Not found');
-                }
-            } catch (error) {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error-msg').classList.remove('hidden');
-            }
+        if (!hash) {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('error-msg').classList.remove('hidden');
+          return;
         }
 
-        loadCertificate();
-    </script>
-</body>
+        try {
+          // Fetch Certificate Data
+          const res = await fetch(`/certificates/${hash}`);
+          const data = await res.json();
 
+          if (res.ok && data.data) {
+            const cert = data.data;
+            document.getElementById('student-name').textContent =
+              cert.studentName;
+            document.getElementById('course-title').textContent =
+              cert.courseTitle;
+            document.getElementById('workload').textContent =
+              cert.workloadHours;
+            document.getElementById('instructor-name').textContent =
+              cert.instructorName;
+            document.getElementById('cert-hash').textContent =
+              cert.certificateHash;
+            document.getElementById('issue-date').textContent = new Date(
+              cert.issuedAt,
+            ).toLocaleDateString('pt-BR');
+
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('certificate').classList.remove('hidden');
+          } else {
+            throw new Error('Not found');
+          }
+        } catch (error) {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('error-msg').classList.remove('hidden');
+        }
+      }
+
+      loadCertificate();
+    </script>
+  </body>
 </html>

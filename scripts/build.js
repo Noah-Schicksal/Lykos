@@ -69,16 +69,18 @@ if (!fs.existsSync(publicDist)) fs.mkdirSync(publicDist, { recursive: true });
 const files = fs.readdirSync(publicSrc);
 for (const file of files) {
   if (path.extname(file) === '.html') {
-    fs.copyFileSync(
-      path.join(publicSrc, file),
-      path.join(publicDist, file)
-    );
+    fs.copyFileSync(path.join(publicSrc, file), path.join(publicDist, file));
   }
 }
 
 // css folder
 if (fs.existsSync(path.join(publicSrc, 'css'))) {
   copyDir(path.join(publicSrc, 'css'), path.join(publicDist, 'css'));
+}
+
+// assets folder
+if (fs.existsSync(path.join(publicSrc, 'assets'))) {
+  copyDir(path.join(publicSrc, 'assets'), path.join(publicDist, 'assets'));
 }
 
 // Component CSS files (from public/ts/components/**/*.css -> dist/public/js/components/**/*.css)
