@@ -438,7 +438,37 @@ function showCreateCourseView() {
     showEmptyState();
   });
 
+  // Handle Cover Preview
+  const coverInput = clone.getElementById('course-cover') as HTMLInputElement;
+  const previewContainer = clone.getElementById('cover-preview-container');
+
+  if (coverInput && previewContainer) {
+    coverInput.addEventListener('change', () => {
+      const file = coverInput.files ? coverInput.files[0] : null;
+      if (file) {
+        // Validate type
+        if (!file.type.startsWith('image/')) {
+          AppUI.showMessage('Por favor, selecione apenas imagens.', 'error');
+          coverInput.value = ''; // Reset
+          previewContainer.innerHTML = '';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 150px; max-height: 150px; object-fit: cover; border-radius: 4px; margin-top: 0.5rem;" />`;
+          }
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewContainer.innerHTML = '';
+      }
+    });
+  }
+
   contentArea.appendChild(clone);
+
 }
 
 // Show Edit Course Form
@@ -666,8 +696,49 @@ async function handleCourseSubmit(e: Event) {
     } else {
       // CREATE
       const coverFile = coverInput.files ? coverInput.files[0] : undefined;
+
+      // Check for Intro Video
+      const videoInput = document.getElementById('course-video-intro') as HTMLInputElement;
+      const videoFile = videoInput && videoInput.files ? videoInput.files[0] : undefined;
+
       savedCourse = await Courses.create(data, coverFile);
-      AppUI.showMessage('Curso criado!', 'success');
+
+      // If we have a video, verify type
+      if (videoFile && !videoFile.type.startsWith('video/mp4')) {
+        AppUI.showMessage('O vídeo de introdução deve ser MP4. O curso foi criado, mas o vídeo não foi enviado.', 'error');
+      }
+      else if (videoFile && savedCourse && savedCourse.id) {
+        try {
+          AppUI.showMessage('Criando módulo introdutório...', 'info');
+
+          // 1. Create Module
+          const module = await Modules.create(savedCourse.id, {
+            title: 'Módulo Introdutório',
+            orderIndex: 0
+          });
+
+          if (module && module.id) {
+            // 2. Create Class
+            const cls = await Modules.createClass(module.id, {
+              title: 'Aula de Introdução',
+              description: 'Bem-vindo ao curso!',
+              videoUrl: '' // Will be updated by upload
+            });
+
+            if (cls && cls.id) {
+              AppUI.showMessage('Enviando vídeo de introdução...', 'info');
+              // 3. Upload Video
+              await Classes.uploadVideo(cls.id, videoFile);
+              AppUI.showMessage('Vídeo de introdução enviado com sucesso!', 'success');
+            }
+          }
+        } catch (vidError: any) {
+          console.error('Falha ao processar vídeo de introdução:', vidError);
+          AppUI.showMessage('Curso criado, mas houve erro ao processar o vídeo de introdução: ' + vidError.message, 'error');
+        }
+      }
+
+      AppUI.showMessage('Curso criado com sucesso!', 'success');
     }
 
     // Refresh Sidebar
@@ -812,6 +883,19 @@ function setupContentListeners(courseId: string) {
         return;
       }
 
+      // Upload Video
+      if (
+        target.type === 'file' &&
+        target.dataset.action === 'upload-video'
+      ) {
+        const classId = target.dataset.classId;
+        if (classId && target.files && target.files[0]) {
+          await handleUploadClassVideo(classId, target.files[0]);
+        }
+        return;
+      }
+
+
       // Input Fields
       if (!target.classList.contains('tree-input')) return;
       const classId = target.dataset.classId;
@@ -922,8 +1006,12 @@ async function renderContentTree(courseId: string) {
                     
                     <div class="tree-class-list">
                         ${classes
-            .map(
-              (cls: any) => `
+            .map((cls: any) => {
+              // Handle BOTH formats: /storage/... (raw) and /classes/:id/video (API-transformed)
+              const isVideoUploaded = cls.videoUrl && (cls.videoUrl.startsWith('/storage') || (cls.videoUrl.startsWith('/classes/') && cls.videoUrl.endsWith('/video')));
+              const isMaterialUploaded = cls.materialUrl && (cls.materialUrl.startsWith('/storage') || (cls.materialUrl.startsWith('/classes/') && cls.materialUrl.endsWith('/material')));
+
+              return `
                         <div class="tree-class-item">
                             <div class="tree-class-header">
                                 <div class="tree-class-title">
@@ -937,26 +1025,37 @@ async function renderContentTree(courseId: string) {
                             </div>
                             
                             <div class="tree-input-group">
-                                <input type="text" class="tree-input" placeholder="URL do Vídeo (Youtube/Vimeo)" 
-                                    value="${cls.videoUrl || ''}" 
-                                    data-class-id="${cls.id}" data-field="videoUrl">
+                                <div class="tree-input-row">
+                                    <input type="text" class="tree-input ${isVideoUploaded ? 'uploaded' : ''}" 
+                                        placeholder="URL do Vídeo (Youtube/Vimeo ou MP4)" 
+                                        value="${isVideoUploaded ? '✅ Vídeo Interno (.mp4)' : (cls.videoUrl || '')}" 
+                                        data-class-id="${cls.id}" data-field="videoUrl"
+                                        id="video-url-${cls.id}"
+                                        ${isVideoUploaded ? 'readonly style="cursor: default; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);"' : 'style="flex: 1;"'}>
+                                        
+                                    <label class="btn-icon-small" title="Upload Vídeo (MP4)" style="cursor: pointer; border: 1px solid var(--border-light); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card, rgba(94, 23, 235, 0.05)); flex-shrink: 0;">
+                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">movie</span>
+                                        <input type="file" style="display: none;" accept="video/mp4" data-action="upload-video" data-class-id="${cls.id}">
+                                    </label>
+                                </div>
                                     
-                                <div style="display: flex; gap: 0.5rem; align-items: center; width: 100%;">
-                                    <input type="text" class="tree-input" placeholder="URL Material" 
-                                        value="${cls.materialUrl || ''}" 
+                                <div class="tree-input-row">
+                                    <input type="text" class="tree-input ${isMaterialUploaded ? 'uploaded' : ''}" 
+                                        placeholder="URL Material (Docs/PDF)" 
+                                        value="${isMaterialUploaded ? '✅ Material de Apoio Carregado' : (cls.materialUrl || '')}" 
                                         data-class-id="${cls.id}" data-field="materialUrl"
                                         id="material-url-${cls.id}"
-                                        style="flex: 1;">
+                                        ${isMaterialUploaded ? 'readonly style="cursor: default; background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2);"' : 'style="flex: 1;"'}>
                                         
-                                    <label class="btn-icon-small" title="Upload Arquivo" style="cursor: pointer; border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card);">
+                                    <label class="btn-icon-small" title="Upload Arquivo" style="cursor: pointer; border: 1px solid var(--border-light); border-radius: 4px; padding: 6px; display: flex; align-items: center; justify-content: center; background: var(--bg-card, rgba(94, 23, 235, 0.05)); flex-shrink: 0;">
                                         <span class="material-symbols-outlined" style="font-size: 1.2rem;">upload_file</span>
                                         <input type="file" style="display: none;" data-action="upload-material" data-class-id="${cls.id}">
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        `,
-            )
+                        `;
+            })
             .join('')}
 
                         <button class="btn-add-inline" data-action="create-class" data-module-id="${module.id}">
@@ -1090,6 +1189,24 @@ async function handleUploadClassMaterial(classId: string, file: File) {
     ) as HTMLInputElement;
     if (input) input.value = res.materialUrl;
     AppUI.showMessage('Arquivo enviado!', 'success');
+  } catch (e: any) {
+    AppUI.showMessage(e.message, 'error');
+  }
+}
+
+async function handleUploadClassVideo(classId: string, file: File) {
+  try {
+    if (file.type !== 'video/mp4') {
+      AppUI.showMessage('Por favor, envie apenas arquivos MP4.', 'error');
+      return;
+    }
+    AppUI.showMessage('Enviando vídeo... Isso pode demorar um pouco.', 'info');
+    const res = await Classes.uploadVideo(classId, file);
+    const input = document.getElementById(
+      `video-url-${classId}`,
+    ) as HTMLInputElement;
+    if (input) input.value = res.videoUrl;
+    AppUI.showMessage('Vídeo enviado com sucesso!', 'success');
   } catch (e: any) {
     AppUI.showMessage(e.message, 'error');
   }

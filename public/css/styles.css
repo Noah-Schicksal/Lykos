@@ -139,9 +139,8 @@ select {
    Global Scrollbar Styling
    =========================== */
 
-/* Webkit Browsers (Chrome, Safari, Edge) - Dark Mode */
 body::-webkit-scrollbar {
-  width: 10px;
+  width: 14px;
 }
 
 body::-webkit-scrollbar-track {
@@ -225,6 +224,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 
 /* Remove navbar offset on mobile/tablet */
 @media (max-width: 1024px) {
+
   body:has(.dashboard-sidebar) .navbar,
   body:has(.dashboard-sidebar.collapsed) .navbar {
     margin-left: 0 !important;
