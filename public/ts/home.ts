@@ -315,7 +315,7 @@ export const Home = {
         actionButtonHTML = `
             <a 
               class="btn-icon btn-play-course" 
-              href="player.html?courseId=${course.id}"
+              href="/aula/${course.id}"
               style="
                 background: #10b981; 
                 color: white;
