@@ -141,13 +141,34 @@ select {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Navbar offset for instructor page with full-height sidebar */
+body:has(.dashboard-sidebar) .navbar {
+  margin-left: 300px;
+  width: calc(100% - 300px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body:has(.dashboard-sidebar.collapsed) .navbar {
+  margin-left: 5.5rem;
+  width: calc(100% - 5.5rem);
+}
+
+/* Remove navbar offset on mobile/tablet */
+@media (max-width: 1024px) {
+  body:has(.dashboard-sidebar) .navbar,
+  body:has(.dashboard-sidebar.collapsed) .navbar {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
 .nav-container {
-  max-width: 80rem;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1.5rem;
 }
 
@@ -359,6 +380,45 @@ select {
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* User Menu Button (replaces avatar on instructor page) */
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(94, 23, 235, 0.1);
+  border: 1px solid rgba(94, 23, 235, 0.3);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.user-menu-btn:hover {
+  background-color: rgba(94, 23, 235, 0.2);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.user-menu-btn .menu-text {
+  font-weight: 500;
+  color: white;
+  font-size: 0.9rem;
+}
+
+:root.light .user-menu-btn .menu-text {
+  color: #0d1b2a;
+}
+
+.user-menu-btn .material-symbols-outlined {
+  font-size: 1.25rem;
+  color: var(--primary);
+  transition: transform 0.2s;
+}
+
+.user-menu-btn.open .material-symbols-outlined {
+  transform: rotate(180deg);
 }
 
 /* ===========================
