@@ -31,8 +31,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupNavigation();
 
     // Setup Search and Categories
-    loadCategories();
-    setupSearch();
+    if (document.getElementById('category-filter')) {
+        loadCategories();
+    }
+
+    if (document.getElementById('course-search-input')) {
+        setupSearch();
+    }
 
     // Load dynamic courses
     await loadStudentCourses();
@@ -302,6 +307,8 @@ function setupNavigation() {
             e.preventDefault();
             switchView('certificates');
         });
+    } else {
+        console.log('Navigation items not found (normal if using studentDashboard.html)');
     }
 
     // --- Auth Card UI Listeners ---

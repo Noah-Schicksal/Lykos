@@ -232,9 +232,9 @@
       }
         .student-name {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ffffff 0%, var(--primary-light) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -249,9 +249,13 @@
         color: #14532d;
       }
         .course-name {
+            font-family: 'Playfair Display', serif;
             font-weight: 700;
-            color: var(--text-primary);
-            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.7rem;
         }
 
       .cert-footer {
@@ -483,88 +487,59 @@
 
   <body>
     <div class="cert-container">
-      <div id="loading" style="text-align: center">
-        Validando certificado...
-      </div>
 
-      <div id="loading" class="loading">Validando certificado...</div>
+        <div id="loading" class="loading">Validando certificado...</div>
 
-      <div id="error-msg" class="error-msg hidden">
-        <h2>Certificado Inválido</h2>
-        <p>Não foi possível encontrar este certificado.</p>
-      </div>
-
-      <!-- Certificate Card -->
-      <div id="certificate" class="certificate hidden">
-        <div class="watermark">🎓</div>
-
-        <p class="cert-company">LYKOS</p>
-
-        <header class="cert-header">
-          <h1 class="cert-title">Certificado</h1>
-          <p class="cert-subtitle">de Conclusão</p>
-        </header>
-
-        <div class="cert-body">
-          <p>Certificamos que</p>
-          <span id="student-name" class="student-name">Nome do Aluno</span>
-          <p>
-            concluiu com êxito o curso de <br />
-            <span id="course-title" class="course-name">Nome do Curso</span>
-          </p>
+        <div id="error-msg" class="error-msg hidden">
+            <h2>Certificado Inválido</h2>
+            <p>Não foi possível encontrar este certificado.</p>
         </div>
 
-        <footer class="cert-footer">
-          <div class="signature">
-            <p id="instructor-name">Instrutor</p>
-            <small>Instrutor Responsável</small>
-          </div>
+        <!-- Certificate Card -->
+        <div id="certificate" class="certificate hidden">
+            <div class="watermark">🎓</div>
 
-          <div class="signature">
-            <p
-              style="font-family: 'Playfair Display', serif; font-size: 1.2rem"
-            >
-              Lykos
-            </p>
-            <small>Diretoria Acadêmica</small>
-          </div>
+            <p class="cert-company">LYKOS</p>
 
-          <div class="hash-info">
-            <p>Emitido em: <span id="issue-date">Data</span></p>
-            <p>Código de Validação:</p>
-            <strong
-              id="cert-hash"
-              style="
-                color: var(--primary-light);
-                font-size: 0.75rem;
-                display: block;
-                margin-top: 0.25rem;
-                font-family: 'JetBrains Mono', monospace;
-                white-space: nowrap;
-              "
-              >HASH</strong
-            >
-          </div>
-        </footer>
+            <header class="cert-header">
+                <h1 class="cert-title">Certificado</h1>
+                <p class="cert-subtitle">de Conclusão</p>
+            </header>
 
-        <button id="btn-internal-print" class="print-btn no-print">
-          Imprimir / Salvar PDF
-        </button>
-      </div>
+            <div class="cert-body">
+                <p>Certificamos que</p>
+                <span id="student-name" class="student-name">Nome do Aluno</span>
+                <p>
+                    concluiu com êxito o curso de <br>
+                    <span id="course-title" class="course-name">Nome do Curso</span>
+                </p>
+            </div>
 
-      <!-- Floating Actions -->
-      <div class="cert-actions" id="cert-actions-container">
-        <button id="btn-download" class="btn-download">
-          <span class="material-symbols-outlined">print</span>
-          Imprimir / Salvar PDF
-        </button>
-      </div>
+            <footer class="cert-footer">
+                <div class="signature">
+                    <p id="instructor-name">Instrutor</p>
+                    <small>Instrutor Responsável</small>
+                </div>
+
+                <div class="signature">
+                    <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem;">Lykos</p>
+                    <small>Diretoria Acadêmica</small>
+                </div>
+
+                <div class="hash-info">
+                    <p>Emitido em: <span id="issue-date">Data</span></p>
+                    <p>Código de Validação:</p>
+                    <strong id="cert-hash"
+                        style="color: var(--primary-light); font-size: 0.75rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
+                </div>
+            </footer>
+
+            <button id="btn-internal-print" class="print-btn no-print">
+                Imprimir / Salvar PDF
+            </button>
+        </div>
+
     </div>
-
-    <!-- PDF Library -->
-    <script src="js/libs/html2pdf.bundle.min.js"></script>
-
-    <script src="js/certificate.js"></script>
 
     <script>
       function printCertificate() {
