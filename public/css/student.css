@@ -1477,6 +1477,7 @@
     flex-direction: column;
   }
 }
+
 /* Main Content Views */
 .view-section {
   display: block;
@@ -1533,8 +1534,13 @@
 }
 
 @keyframes gold-flow {
-  0% { background-position: 0% 0%; }
-  100% { background-position: 0% 200%; }
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 0% 200%;
+  }
 }
 
 .cert-card-header {
@@ -1624,8 +1630,15 @@
 }
 
 @keyframes modal-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .certificate-preview {
@@ -1649,7 +1662,7 @@
   position: relative;
   padding: 40px;
   color: #1a1a1a;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   font-family: 'Times New Roman', serif;
 }
@@ -1747,7 +1760,8 @@
   font-family: 'Inter', sans-serif;
 }
 
-.cert-date, .cert-hash {
+.cert-date,
+.cert-hash {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -1775,9 +1789,12 @@
   body * {
     visibility: hidden !important;
   }
-  #printable-certificate, #printable-certificate * {
+
+  #printable-certificate,
+  #printable-certificate * {
     visibility: visible !important;
   }
+
   #printable-certificate {
     position: fixed !important;
     left: 0 !important;
@@ -1927,4 +1944,150 @@
 .btn-auth-submit:hover {
   transform: translateY(-2px);
   filter: brightness(1.1);
+}
+
+/* Certificates List Layout Redesign */
+.certificates-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}
+
+.certificate-card {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1.25rem 2rem !important;
+  min-height: 80px !important;
+}
+
+.cert-card-header {
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+.cert-card-info {
+  flex: 1 !important;
+  margin-left: 1.5rem !important;
+}
+
+.cert-card-title {
+  font-size: 1.1rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.cert-card-footer {
+  margin: 0 !important;
+  flex-shrink: 0;
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+}
+
+.cert-card-badge {
+  display: none !important;
+  /* Hide on list style if redundant */
+}
+
+/* Right side highlight icon (Diamond/Download) */
+.btn-view-cert {
+  background: rgba(255, 215, 0, 0.1) !important;
+  padding: 0.75rem !important;
+  border-radius: 50% !important;
+  width: 45px !important;
+  height: 45px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+}
+
+.certificate-card:hover .btn-view-cert {
+  background: #ffd700 !important;
+  color: #000 !important;
+  transform: scale(1.1);
+}
+
+.cert-card-footer span:last-child {
+  font-family: 'JetBrains Mono', monospace !important;
+  color: var(--text-muted) !important;
+  font-size: 0.8rem !important;
+}
+
+/* Adjusting Download Button to match image */
+.cert-card-hash {
+  color: #ffffff !important;
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin-right: 1.5rem !important;
+}
+
+.btn-view-cert {
+  background: rgba(94, 23, 235, 0.1) !important;
+  color: #a78bfa !important;
+  /* Soft purple/system color */
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
+  text-transform: lowercase !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 2rem !important;
+  width: auto !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+}
+
+.certificate-card:hover .btn-view-cert {
+  background: #5e17eb !important;
+  color: white !important;
+  box-shadow: 0 0 15px rgba(94, 23, 235, 0.4);
+}
+
+/* Final Aesthetic Polishing for Certificates */
+
+/* 1. Replace Gold with System Purple */
+.certificate-card::before {
+  background: linear-gradient(to bottom, #5e17eb, #7c3aed, #5e17eb) !important;
+  background-size: 100% 200% !important;
+}
+
+.certificate-card:hover {
+  border-color: #5e17eb !important;
+  box-shadow: 0 10px 30px -10px rgba(94, 23, 235, 0.3) !important;
+}
+
+.cert-card-icon {
+  background: rgba(94, 23, 235, 0.1) !important;
+  color: #a78bfa !important;
+}
+
+/* 2. Spacing Adjustments */
+/* Lower the "Certificados" title */
+
+#certificates-view .section-header {
+  margin-bottom: 0 !important;
+}
+
+/* Approximate the description to the grid - closer to title for emphasis */
+#certificates-view .section-intro {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure the grid doesn't have too much gap from top */
+.certificates-grid {
+  margin-top: 0 !important;
+}
+
+/* Adjust the card side indicator animation to purple */
+@keyframes gold-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: 0% 200%;
+  }
 }

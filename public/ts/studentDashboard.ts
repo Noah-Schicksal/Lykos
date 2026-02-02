@@ -480,18 +480,16 @@ function renderCertificates(courses: any[]) {
                     <div class="cert-card-icon">
                         <span class="material-symbols-outlined">workspace_premium</span>
                     </div>
-                    <span class="cert-card-badge">QUALIFICADO</span>
                 </div>
                 <div class="cert-card-info">
                     <h3 class="cert-card-title">${course.title}</h3>
                     <span class="cert-card-date">Emitido em ${date}</span>
                 </div>
                 <div class="cert-card-footer">
+                    <span class="cert-card-hash">${course.certificateHash.substring(0, 8)}...</span>
                     <span class="btn-view-cert">
-                        <span class="material-symbols-outlined">visibility</span>
-                        Ver Certificado
+                        download
                     </span>
-                    <span class="text-slate-500 text-xs font-mono">${course.certificateHash.substring(0, 8)}...</span>
                 </div>
             </div>
         `;
