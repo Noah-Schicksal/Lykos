@@ -6,6 +6,16 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Lykos | Course Player</title>
 
+  <!-- Apply theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
+
   <head>
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
