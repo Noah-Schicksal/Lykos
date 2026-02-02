@@ -1,16 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Certificado de Conclusão - Lykos</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
     <style>
+      .cert-container {
+        width: 100%;
+        min-height: 100vh;
+        background-color: #f0fdf4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+      }
         :root {
             --primary: #5e17eb;
             --primary-light: #7c3aed;
@@ -80,6 +96,18 @@
             padding: 2rem;
         }
 
+      .certificate {
+        width: 100%;
+        max-width: 900px;
+        background: white;
+        padding: 4rem;
+        border: 10px double #14532d;
+        text-align: center;
+        position: relative;
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
         .certificate {
             width: 100%;
             max-width: 900px;
@@ -134,10 +162,22 @@
             margin-bottom: 0.5rem;
         }
 
+      .cert-header {
+        font-family: 'Playfair Display', serif;
+        color: #14532d;
+        margin-bottom: 2rem;
+      }
         .cert-header {
             margin-bottom: 2rem;
         }
 
+      .cert-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
         .cert-title {
             font-family: 'Playfair Display', serif;
             font-size: 4rem;
@@ -151,6 +191,12 @@
             letter-spacing: 0.15em;
         }
 
+      .cert-subtitle {
+        font-size: 1.25rem;
+        font-style: italic;
+        color: #166534;
+        margin-top: 0.5rem;
+      }
         .cert-subtitle {
             font-family: 'Playfair Display', serif;
             font-size: 1.25rem;
@@ -159,6 +205,13 @@
             margin-top: 0.5rem;
         }
 
+      .cert-body {
+        margin: 3rem 0;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.5rem;
+        line-height: 1.8;
+        color: #374151;
+      }
         .cert-body {
             margin: 3rem 0;
             font-size: 1.25rem;
@@ -168,6 +221,15 @@
             position: relative;
         }
 
+      .student-name {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #15803d;
+        border-bottom: 2px solid #bbf7d0;
+        display: block;
+        margin: 1rem 0;
+        padding-bottom: 0.5rem;
+      }
         .student-name {
             font-family: 'Playfair Display', serif;
             font-size: 2.5rem;
@@ -182,12 +244,23 @@
             border-bottom: 2px solid var(--border-color);
         }
 
+      .course-name {
+        font-weight: 700;
+        color: #14532d;
+      }
         .course-name {
             font-weight: 700;
             color: var(--text-primary);
             font-size: 1.5rem;
         }
 
+      .cert-footer {
+        margin-top: 4rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-family: 'Inter', sans-serif;
+      }
         .cert-footer {
             margin-top: 4rem;
             display: flex;
@@ -198,6 +271,12 @@
             position: relative;
         }
 
+      .signature {
+        text-align: center;
+        border-top: 1px solid #9ca3af;
+        padding-top: 0.5rem;
+        width: 250px;
+      }
         .signature {
             text-align: center;
             border-top: 2px solid var(--border-color);
@@ -216,6 +295,11 @@
             font-size: 0.75rem;
         }
 
+      .hash-info {
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-align: right;
+      }
         .hash-info {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -233,6 +317,17 @@
             font-size: 0.7rem;
         }
 
+      .watermark {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.05;
+        font-size: 20rem;
+        z-index: 0;
+        pointer-events: none;
+        color: #14532d;
+      }
         .watermark {
             position: absolute;
             top: 50%;
@@ -288,6 +383,10 @@
             margin: 0;
         }
 
+      @media print {
+        .no-print {
+          display: none;
+        }
         @media print {
             .no-print {
                 display: none !important;
@@ -302,6 +401,10 @@
                 overflow: hidden !important;
             }
 
+        .cert-container {
+          padding: 0;
+          background: white;
+        }
             .cert-container {
                 min-height: 100vh !important;
                 height: 100vh !important;
@@ -376,71 +479,86 @@
             }
         }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="cert-container">
+      <div id="loading" style="text-align: center">
+        Validando certificado...
+      </div>
 
-        <div id="loading" class="loading">Validando certificado...</div>
+      <div id="loading" class="loading">Validando certificado...</div>
 
-        <div id="error-msg" class="error-msg hidden">
-            <h2>Certificado Inválido</h2>
-            <p>Não foi possível encontrar este certificado.</p>
+      <div id="error-msg" class="error-msg hidden">
+        <h2>Certificado Inválido</h2>
+        <p>Não foi possível encontrar este certificado.</p>
+      </div>
+
+      <!-- Certificate Card -->
+      <div id="certificate" class="certificate hidden">
+        <div class="watermark">🎓</div>
+
+        <p class="cert-company">LYKOS</p>
+
+        <header class="cert-header">
+          <h1 class="cert-title">Certificado</h1>
+          <p class="cert-subtitle">de Conclusão</p>
+        </header>
+
+        <div class="cert-body">
+          <p>Certificamos que</p>
+          <span id="student-name" class="student-name">Nome do Aluno</span>
+          <p>
+            concluiu com êxito o curso de <br />
+            <span id="course-title" class="course-name">Nome do Curso</span>
+          </p>
         </div>
 
-        <!-- Certificate Card -->
-        <div id="certificate" class="certificate hidden">
-            <div class="watermark">🎓</div>
+        <footer class="cert-footer">
+          <div class="signature">
+            <p id="instructor-name">Instrutor</p>
+            <small>Instrutor Responsável</small>
+          </div>
 
-            <p class="cert-company">LYKOS</p>
+          <div class="signature">
+            <p
+              style="font-family: 'Playfair Display', serif; font-size: 1.2rem"
+            >
+              Lykos
+            </p>
+            <small>Diretoria Acadêmica</small>
+          </div>
 
-            <header class="cert-header">
-                <h1 class="cert-title">Certificado</h1>
-                <p class="cert-subtitle">de Conclusão</p>
-            </header>
+          <div class="hash-info">
+            <p>Emitido em: <span id="issue-date">Data</span></p>
+            <p>Código de Validação:</p>
+            <strong
+              id="cert-hash"
+              style="
+                color: var(--primary-light);
+                font-size: 0.75rem;
+                display: block;
+                margin-top: 0.25rem;
+                font-family: 'JetBrains Mono', monospace;
+                white-space: nowrap;
+              "
+              >HASH</strong
+            >
+          </div>
+        </footer>
 
-            <div class="cert-body">
-                <p>Certificamos que</p>
-                <span id="student-name" class="student-name">Nome do Aluno</span>
-                <p>
-                    concluiu com êxito o curso de <br>
-                    <span id="course-title" class="course-name">Nome do Curso</span>
-                </p>
-            </div>
+        <button id="btn-internal-print" class="print-btn no-print">
+          Imprimir / Salvar PDF
+        </button>
+      </div>
 
-            <footer class="cert-footer">
-                <div class="signature">
-                    <p id="instructor-name">Instrutor</p>
-                    <small>Instrutor Responsável</small>
-                </div>
-
-                <div class="signature">
-                    <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem;">Lykos</p>
-                    <small>Diretoria Acadêmica</small>
-                </div>
-
-                <div class="hash-info">
-                    <p>Emitido em: <span id="issue-date">Data</span></p>
-                    <p>Código de Validação:</p>
-                    <strong id="cert-hash"
-                        style="color: var(--primary-light); font-size: 0.75rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
-                </div>
-            </footer>
-
-            <button id="btn-internal-print" class="print-btn no-print">
-                Imprimir / Salvar PDF
-            </button>
-        </div>
-
-        <!-- Floating Actions -->
-        <div class="cert-actions" id="cert-actions-container">
-            <button id="btn-download" class="btn-download">
-                <span class="material-symbols-outlined">print</span>
-                Imprimir / Salvar PDF
-            </button>
-        </div>
-
+      <!-- Floating Actions -->
+      <div class="cert-actions" id="cert-actions-container">
+        <button id="btn-download" class="btn-download">
+          <span class="material-symbols-outlined">print</span>
+          Imprimir / Salvar PDF
+        </button>
+      </div>
     </div>
 
     <!-- PDF Library -->
@@ -449,83 +567,88 @@
     <script src="js/certificate.js"></script>
 
     <script>
-        function printCertificate() {
-            window.focus();
-            setTimeout(() => {
-                window.print();
-            }, 250);
+      function printCertificate() {
+        window.focus();
+        setTimeout(() => {
+          window.print();
+        }, 250);
+      }
+
+      // Attach listener for the internal button
+      document
+        .getElementById('btn-internal-print')
+        ?.addEventListener('click', printCertificate);
+
+      async function loadCertificate() {
+        const params = new URLSearchParams(window.location.search);
+        const hash = params.get('hash');
+        const isEmbedded = params.get('embed') === 'true';
+
+        if (isEmbedded) {
+          document.body.classList.add('embedded');
         }
 
-        // Attach listener for the internal button
-        document.getElementById('btn-internal-print')?.addEventListener('click', printCertificate);
+        if (!hash) {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('error-msg').classList.remove('hidden');
+          document.getElementById('cert-actions').style.display = 'none';
+          return;
+        }
 
-        async function loadCertificate() {
-            const params = new URLSearchParams(window.location.search);
-            const hash = params.get('hash');
-            const isEmbedded = params.get('embed') === 'true';
+        try {
+          // Fetch Certificate Data
+          const res = await fetch(`/certificates/${hash}`);
+          const data = await res.json();
+
+          if (res.ok && data.data) {
+            const cert = data.data;
+
+            // Safely update elements
+            const updateText = (id, text) => {
+              const el = document.getElementById(id);
+              if (el) el.textContent = text;
+            };
+
+            updateText('student-name', cert.studentName);
+            updateText('course-title', cert.courseTitle);
+            updateText('instructor-name', cert.instructorName);
+            updateText('cert-hash', cert.certificateHash);
+            updateText(
+              'issue-date',
+              new Date(cert.issuedAt).toLocaleDateString('pt-BR'),
+            );
+
+            // Show content
+            document.getElementById('loading').classList.add('hidden');
+            const certEl = document.getElementById('certificate');
+            certEl.classList.remove('hidden');
 
             if (isEmbedded) {
-                document.body.classList.add('embedded');
+              // Small delay to ensure content is rendered before scaling
+              setTimeout(() => {
+                const container = document.querySelector('.cert-container');
+                const certificate = document.getElementById('certificate');
+                const scale =
+                  Math.min(
+                    container.offsetWidth / certificate.offsetWidth,
+                    container.offsetHeight / certificate.offsetHeight,
+                  ) * 0.95;
+
+                certificate.style.transform = `scale(${scale})`;
+              }, 100);
             }
-
-            if (!hash) {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error-msg').classList.remove('hidden');
-                document.getElementById('cert-actions').style.display = 'none';
-                return;
-            }
-
-            try {
-                // Fetch Certificate Data
-                const res = await fetch(`/certificates/${hash}`);
-                const data = await res.json();
-
-                if (res.ok && data.data) {
-                    const cert = data.data;
-
-                    // Safely update elements
-                    const updateText = (id, text) => {
-                        const el = document.getElementById(id);
-                        if (el) el.textContent = text;
-                    };
-
-                    updateText('student-name', cert.studentName);
-                    updateText('course-title', cert.courseTitle);
-                    updateText('instructor-name', cert.instructorName);
-                    updateText('cert-hash', cert.certificateHash);
-                    updateText('issue-date', new Date(cert.issuedAt).toLocaleDateString('pt-BR'));
-
-                    // Show content
-                    document.getElementById('loading').classList.add('hidden');
-                    const certEl = document.getElementById('certificate');
-                    certEl.classList.remove('hidden');
-
-                    if (isEmbedded) {
-                        // Small delay to ensure content is rendered before scaling
-                        setTimeout(() => {
-                            const container = document.querySelector('.cert-container');
-                            const certificate = document.getElementById('certificate');
-                            const scale = Math.min(
-                                container.offsetWidth / certificate.offsetWidth,
-                                container.offsetHeight / certificate.offsetHeight
-                            ) * 0.95;
-
-                            certificate.style.transform = `scale(${scale})`;
-                        }, 100);
-                    }
-                } else {
-                    throw new Error('Not found');
-                }
-            } catch (error) {
-                console.error('Error loading certificate:', error);
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('error-msg').classList.remove('hidden');
-                document.getElementById('cert-actions').style.display = 'none';
-            }
+          } else {
+            throw new Error('Not found');
+          }
+        } catch (error) {
+          console.error('Error loading certificate:', error);
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('error-msg').classList.remove('hidden');
+          document.getElementById('cert-actions').style.display = 'none';
         }
+      }
 
-        loadCertificate();
+      loadCertificate();
     </script>
-</body>
-
+  </body>
 </html>
