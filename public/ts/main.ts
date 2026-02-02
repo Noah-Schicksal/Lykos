@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'student.html';
+      window.location.href = '/estudante';
     });
   }
 
