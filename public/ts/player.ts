@@ -515,10 +515,14 @@ const Player = {
             const header = document.createElement('summary');
             header.className = 'module-header';
 
+            // New Structure: Info Wrapper (Title + Meta) on left, Chevron on right
             header.innerHTML = `
-        <span class="material-symbols-outlined layer-icon" style="color: #94A3B8; transition: transform 0.2s; margin-right: 0.5rem;">expand_more</span>
-        <div class="module-title">${mod.title}</div>
-      `;
+                <div class="module-info-wrapper">
+                    <span class="module-title">${mod.title}</span>
+                    <span class="module-meta">${mod.classes.length} Aulas</span> 
+                </div>
+                <span class="material-symbols-outlined layer-icon" style="color: var(--text-muted); transition: transform 0.2s;">expand_more</span>
+            `;
 
             // Toggle Logic to track state
             moduleEl.addEventListener('toggle', () => {
@@ -538,10 +542,6 @@ const Player = {
                 const isActive = cls.id === Player.currentClassId;
 
                 // Determine Lock State
-                // If globalLocked is true, this class is locked.
-                // Exception: If it's the very first class, it's never locked (handled by initial globalLocked=false)
-                // If this class is NOT completed, subsequent classes will be locked.
-
                 const isLocked = globalLocked;
 
                 // Update globalLocked for the NEXT iteration
@@ -559,12 +559,16 @@ const Player = {
                 const playingBadge = isActive ? '<span class="badge-playing">PLAYING</span>' : '';
 
                 classEl.innerHTML = `
-            <span class="material-symbols-outlined class-status-icon">
-                ${iconName}
-            </span>
-            <span class="class-title-mini" style="font-size: 0.9rem; flex: 1; ${isLocked ? 'color: var(--text-muted);' : ''}">${cls.title}</span>
-            ${playingBadge}
-         `;
+                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(94, 23, 235, 0.1); border-radius: 8px; flex-shrink: 0;">
+                        <span class="material-symbols-outlined class-status-icon" style="font-size: 1.5rem; color: var(--primary);">
+                            ${iconName}
+                        </span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; flex: 1;">
+                        <span class="class-title-mini" style="font-size: 0.95rem; font-weight: 600; ${isLocked ? 'color: var(--text-muted);' : ''}">${cls.title}</span>
+                    </div>
+                    ${playingBadge}
+                `;
 
                 if (!isLocked) {
                     classEl.addEventListener('click', () => Player.loadClass(cls));
@@ -642,48 +646,97 @@ const Player = {
         document.getElementById('class-description')!.textContent = cls.description;
 
         // Update Video
+        // Update Video Logic with Download-Only Check
+        const videoWrapper = document.querySelector('.video-container-wrapper') as HTMLElement;
         const videoFrame = document.getElementById('video-frame') as HTMLIFrameElement;
         const html5Player = document.getElementById('html5-player') as HTMLVideoElement;
         const videoPlaceholder = document.getElementById('video-placeholder');
-
-        // Logic to Mark Completed on Video End (if not already added, usually handled in initialization, 
-        // but needs access to current class. We can handle it via a generic currentClassId check in the event handler).
+        const videoControls = document.getElementById('video-controls');
 
         if (cls.videoUrl) {
-            // Check if it's a backend authenticated video (starts with /classes/ or is just a relative path)
-            if (cls.videoUrl.startsWith('/classes/') || !cls.videoUrl.startsWith('http')) {
-                await Player.loadAuthenticatedVideo(cls.id, html5Player);
-            } else {
-                // Direct external MP4 URL (fallback)
-                html5Player.src = cls.videoUrl;
-            }
+            // Show Video Container
+            if (videoWrapper) videoWrapper.style.display = 'block';
 
-            html5Player.classList.remove('hidden');
-            html5Player.classList.add('active');
-            document.getElementById('video-controls')?.classList.remove('hidden');
-            Player.resetControls();
+            // Handle BOTH formats:
+            // 1. Raw storage path: /storage/courses/...
+            // 2. API-transformed path: /classes/:id/video
+            const isStoragePath = cls.videoUrl.startsWith('/storage');
+            const isAPIPath = cls.videoUrl.startsWith('/classes/') && cls.videoUrl.endsWith('/video');
+            const isBackendVideo = isStoragePath || isAPIPath;
+            const isExternalUrl = cls.videoUrl.startsWith('http://') || cls.videoUrl.startsWith('https://');
 
-            // Ensure iframe is hidden
-            if (videoFrame) {
-                videoFrame.src = "";
-                videoFrame.classList.add('hidden');
-                videoFrame.classList.remove('active');
-            }
+            console.log('[Player Debug] Video URL from API:', cls.videoUrl);
 
+            // Reset States
+            if (videoFrame) videoFrame.classList.add('hidden');
+            if (html5Player) html5Player.classList.add('hidden');
             if (videoPlaceholder) videoPlaceholder.classList.add('hidden');
+            if (videoControls) videoControls.classList.add('hidden');
+
+            if (isBackendVideo) {
+                // For backend videos, ALWAYS use the streaming route /classes/:id/video
+                const streamUrl = `/classes/${cls.id}/video`;
+                console.log('[Player Debug] Loading backend video from:', streamUrl);
+
+                html5Player.src = streamUrl;
+                html5Player.load();
+                html5Player.classList.remove('hidden');
+                html5Player.classList.add('active');
+
+                if (videoControls) videoControls.classList.remove('hidden');
+                Player.resetControls();
+
+                if (videoFrame) videoFrame.src = "";
+
+            } else if (isExternalUrl) {
+                const isDirectVideo = cls.videoUrl.endsWith('.mp4') || cls.videoUrl.endsWith('.webm') || cls.videoUrl.endsWith('.ogg');
+
+                if (isDirectVideo) {
+                    console.log('[Player Debug] Loading external MP4 from:', cls.videoUrl);
+                    html5Player.src = cls.videoUrl;
+                    html5Player.load();
+                    html5Player.classList.remove('hidden');
+                    html5Player.classList.add('active');
+                    if (videoControls) videoControls.classList.remove('hidden');
+                    Player.resetControls();
+
+                    if (videoFrame) videoFrame.src = "";
+                } else {
+                    // YouTube/Vimeo Embeds
+                    videoFrame.src = cls.videoUrl;
+                    videoFrame.classList.remove('hidden');
+                    videoFrame.classList.add('active');
+
+                    if (html5Player) html5Player.src = "";
+                }
+            } else {
+                // Fallback
+                if (videoPlaceholder) videoPlaceholder.classList.remove('hidden');
+            }
         } else {
-            // No Video
+            // No Video URL
+            console.log('[Player Debug] No video URL found for this class.');
+
+            // If there is material but no video, HIDE the player wrapper entirely
+            // implying a "Download Only" lesson or just text/material
+            if (cls.materialUrl) {
+                if (videoWrapper) videoWrapper.style.display = 'none';
+            } else {
+                // If neither (or just to be safe), show placeholder or hide wrapper? 
+                // Let's hide wrapper to be cleaner if it's empty, 
+                // BUT if it's the "start state" we might want placeholder.
+                // Since this is loadClass (user clicked something), if there's nothing, just hide player.
+                if (videoWrapper) videoWrapper.style.display = 'none';
+            }
+
+            // Stop any playing video
+            if (html5Player) {
+                html5Player.pause();
+                html5Player.src = "";
+            }
             if (videoFrame) {
                 videoFrame.src = "";
-                videoFrame.classList.remove('active');
-                videoFrame.classList.add('hidden');
             }
-            if (html5Player) {
-                html5Player.src = "";
-                html5Player.classList.add('hidden');
-                document.getElementById('video-controls')?.classList.add('hidden');
-            }
-            if (videoPlaceholder) videoPlaceholder.classList.remove('hidden');
         }
 
         // Completion Button State
@@ -713,44 +766,32 @@ const Player = {
     },
 
     loadAuthenticatedVideo: async (classId: string, videoElement: HTMLVideoElement) => {
-        try {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                AppUI.showMessage('Você precisa estar logado para assistir a este vídeo.', 'error');
-                return;
-            }
-
-            // Request a temporary signed URL for the video
-            const response = await AppUI.apiFetch(`/classes/${classId}/video-stream`, { method: 'GET' });
-            if (response.data && response.data.streamUrl) {
-                videoElement.src = response.data.streamUrl;
-                videoElement.load(); // Load the new source
-                videoElement.play().catch(e => console.log('Auto-play blocked:', e));
-            } else {
-                AppUI.showMessage('Não foi possível obter o link do vídeo.', 'error');
-                videoElement.src = ''; // Clear video source
-            }
-        } catch (error) {
-            console.error('Error loading authenticated video:', error);
-            AppUI.showMessage('Erro ao carregar o vídeo.', 'error');
-            videoElement.src = ''; // Clear video source
-        }
+        // This function is now deprecated in favor of direct src assignment
+        // which triggers the browser's native Range-based streaming.
+        videoElement.src = `/classes/${classId}/video`;
+        videoElement.load();
     },
 
     checkMaterials: async (cls: ClassItem) => {
         try {
             const matList = document.getElementById('materials-list');
-            if (!matList) return;
+            const matSection = document.getElementById('materials-section');
+
+            if (!matList || !matSection) return;
 
             // Clear materials list
             matList.innerHTML = '';
 
             // Only proceed if there is a materialUrl
             if (!cls.materialUrl) {
-                // Show "no materials" message
-                matList.innerHTML = '<p class="no-materials-message">Nenhum material disponível para esta aula.</p>';
+                // HIDE section if no materials
+                matSection.classList.add('hidden');
                 return;
             }
+
+            // SHOW section if materials exist
+            matSection.classList.remove('hidden');
+
 
             const materialUrl = cls.materialUrl; // Capture for closure safety
 

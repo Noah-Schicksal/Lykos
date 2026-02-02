@@ -10,7 +10,7 @@
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Lykos | Course Player</title>
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet" />
@@ -36,7 +36,8 @@
 <body class="molecular-bg">
   <!-- Navbar (Simplified) -->
   <!-- Navbar -->
-  <nav class="navbar">
+  <!-- Navbar (Aligned with Project Standard) -->
+  <header class="navbar">
     <div class="container-xl nav-inner">
       <a href="/inicio" class="logo-container" style="text-decoration: none">
         <div class="logo-icon">
@@ -45,27 +46,30 @@
         <span class="logo-text hidden lg:block">Lykos</span>
       </a>
 
-      <!-- Search (Optional for Player, keeping consistent with Home) -->
+      <!-- Search (Hidden on mobile) -->
       <div class="search-bar-container hidden md:block" style="margin-left: 2rem; margin-right: 2rem">
         <div class="search-icon-wrapper">
           <span class="material-symbols-outlined" style="font-size: 1.25rem">search</span>
         </div>
-        <!-- Search input disabled in player context or redirects to home search -->
-        <input class="search-input" placeholder="Search courses..." type="text" onkeydown="
-              if (event.key === 'Enter')
-                window.location.href = '/inicio?search=' + this.value;
-            " />
+        <input class="search-input" placeholder="Pesquisar aulas..." type="text" disabled
+          style="opacity: 0.7; cursor: not-allowed;" title="Pesquisa disponível na página inicial" />
       </div>
 
       <div class="nav-right-actions">
-        <!-- User Avatar (Triggers Auth Card) -->
+        <!-- Theme Toggle -->
+        <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+          <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+          <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+        </button>
+
+        <!-- User Avatar -->
         <div id="user-avatar-btn">
           <img alt="User avatar"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
         </div>
       </div>
     </div>
-  </nav>
+  </header>
 
   <!-- Auth Flip Card (Hidden/Overlay logic same as Home) -->
   <div id="auth-card-container" class="auth-container perspective-1000">
@@ -159,9 +163,44 @@
               picture-in-picture;
               web-share;
             " referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        <video id="html5-player" class="video-frame hidden" controls controlsList="nodownload">
+        <video id="html5-player" class="video-frame hidden" controlsList="nodownload">
           Seu navegador não suporta a tag de vídeo.
         </video>
+        <!-- Custom Video Controls -->
+        <div id="video-controls" class="video-controls hidden">
+          <!-- Progress Bar -->
+          <div class="progress-container-video">
+            <div class="progress-bar-bg"></div>
+            <div id="video-progress-fill" class="progress-bar-fill"></div>
+            <input type="range" id="video-seek-slider" class="seek-slider" min="0" max="100" value="0">
+          </div>
+          <!-- Main Controls Row -->
+          <div class="controls-main">
+            <div class="controls-left">
+              <!-- Play/Pause -->
+              <button id="btn-play-pause" class="control-btn" title="Play/Pause">
+                <span class="material-symbols-outlined">play_arrow</span>
+              </button>
+              <!-- Volume -->
+              <div class="volume-container">
+                <button id="btn-volume" class="control-btn" title="Volume">
+                  <span class="material-symbols-outlined">volume_up</span>
+                </button>
+                <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="1">
+              </div>
+              <!-- Time Display -->
+              <div class="time-display">
+                <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+              </div>
+            </div>
+            <div class="controls-right">
+              <!-- Fullscreen -->
+              <button id="btn-fullscreen" class="control-btn" title="Fullscreen">
+                <span class="material-symbols-outlined">fullscreen</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="class-info-section">
@@ -199,6 +238,11 @@
 
     <!-- Right Column: Sidebar -->
     <aside class="player-sidebar">
+      <!-- Toggle Button -->
+      <button id="btn-drawer-toggle" class="drawer-toggle-btn" aria-label="Toggle Sidebar">
+        <span class="material-symbols-outlined">double_arrow</span>
+      </button>
+
       <div class="sidebar-header">
         <div style="
               display: flex;
@@ -206,10 +250,7 @@
               align-items: center;
               margin-bottom: 0.5rem;
             ">
-          <button id="btn-collapse-sidebar" class="btn-sidebar-action">
-            <span class="material-symbols-outlined" style="font-size: 1.1rem">last_page</span>
-            Recolher
-          </button>
+
           <a href="/inicio" class="btn-sidebar-action">
             <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
             Voltar

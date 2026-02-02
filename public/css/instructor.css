@@ -341,7 +341,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.dashboard-sidebar.collapsed ~ .dashboard-main {
+.dashboard-sidebar.collapsed~.dashboard-main {
   margin-left: 5.5rem;
   width: calc(100% - 5.5rem);
 }
@@ -582,15 +582,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
-  gap: 1rem; /* Add gap for when it wraps */
+  flex-wrap: wrap;
+  /* Allow wrapping on small screens */
+  gap: 1rem;
+  /* Add gap for when it wraps */
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-light);
   padding-bottom: 0.5rem;
 }
 
 .section-header-inline .btn-secondary-dash {
-  white-space: nowrap; /* Prevent button text from breaking awkwardly */
+  white-space: nowrap;
+  /* Prevent button text from breaking awkwardly */
   flex-shrink: 0;
 }
 
@@ -796,11 +799,9 @@
 }
 
 .tree-module-header {
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.12),
-    rgba(94, 23, 235, 0.06)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.12),
+      rgba(94, 23, 235, 0.06));
   padding: 1rem 1.25rem;
   display: flex;
   justify-content: space-between;
@@ -809,11 +810,9 @@
 }
 
 :root.light .tree-module-header {
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.08),
-    rgba(94, 23, 235, 0.04)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.08),
+      rgba(94, 23, 235, 0.04));
 }
 
 .tree-module-title {
@@ -925,8 +924,16 @@
 
 .tree-input-group {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.tree-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
 }
 
 .tree-input {
@@ -1016,11 +1023,9 @@
 .add-module-section {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.08),
-    rgba(94, 23, 235, 0.04)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.08),
+      rgba(94, 23, 235, 0.04));
   border: 2px dashed rgba(94, 23, 235, 0.3);
   border-radius: 0.75rem;
   transition: all 0.3s;
@@ -1028,11 +1033,9 @@
 
 .add-module-section:hover {
   border-color: var(--primary);
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.12),
-    rgba(94, 23, 235, 0.06)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.12),
+      rgba(94, 23, 235, 0.06));
   box-shadow: 0 4px 12px rgba(94, 23, 235, 0.15);
 }
 
@@ -1275,7 +1278,7 @@ select.form-input option {
     padding: 1.5rem;
   }
 
-  .dashboard-sidebar.collapsed ~ .dashboard-main {
+  .dashboard-sidebar.collapsed~.dashboard-main {
     margin-left: 0;
     width: 100%;
   }
@@ -1327,7 +1330,8 @@ select.form-input option {
   }
 
   .sidebar-title {
-    display: none; /* Hide "Meus Cursos" on mobile */
+    display: none;
+    /* Hide "Meus Cursos" on mobile */
   }
 
   .btn-primary-dash {
@@ -1373,12 +1377,14 @@ select.form-input option {
    Mobile Adjustments - Horizontal Toolbar
    =========================== */
 @media (max-width: 768px) {
+
   /* Transform Sidebar to Horizontal Toolbar */
   .dashboard-sidebar {
     width: 100%;
     height: auto;
     min-width: 0;
-    position: relative; /* Stacks normally in flow below navbar */
+    position: relative;
+    /* Stacks normally in flow below navbar */
     flex-direction: row;
     border-right: none;
     border-bottom: 1px solid var(--border-light);
@@ -1398,8 +1404,10 @@ select.form-input option {
 
   .sidebar-header-top {
     min-height: 0;
-    margin-bottom: 0; /* Remove bottom margin */
-    display: none; /* Hide top header part entirely if it only contains title/toggle which are hidden/unused */
+    margin-bottom: 0;
+    /* Remove bottom margin */
+    display: none;
+    /* Hide top header part entirely if it only contains title/toggle which are hidden/unused */
   }
 
   .sidebar-title {
@@ -1415,7 +1423,8 @@ select.form-input option {
     align-items: center;
     justify-content: center;
     box-shadow: none;
-    margin: 0; /* Ensure no margin */
+    margin: 0;
+    /* Ensure no margin */
   }
 
   .btn-primary-dash .btn-text {
@@ -1439,12 +1448,14 @@ select.form-input option {
   }
 
   .course-list-item {
-    min-width: 160px; /* Fixed width for horizontal items */
+    min-width: 160px;
+    /* Fixed width for horizontal items */
     max-width: 200px;
     padding: 0.5rem;
     flex-shrink: 0;
     border-left-width: 1px;
-    border-bottom-width: 3px; /* Move active indicator to bottom */
+    border-bottom-width: 3px;
+    /* Move active indicator to bottom */
     border-bottom-color: transparent;
     background-color: rgba(255, 255, 255, 0.03);
     margin-bottom: 0;
@@ -1456,7 +1467,8 @@ select.form-input option {
   }
 
   .course-item-info {
-    display: block; /* Ensure info is visible */
+    display: block;
+    /* Ensure info is visible */
   }
 
   .course-item-title {
@@ -1467,7 +1479,8 @@ select.form-input option {
   }
 
   .course-item-meta {
-    display: none; /* Hide extra meta to save vertical space in item */
+    display: none;
+    /* Hide extra meta to save vertical space in item */
   }
 
   /* Active State adjustments */
@@ -1480,7 +1493,8 @@ select.form-input option {
   }
 
   .course-list-item.active::after {
-    display: none; /* Hide edit icon on mobile card */
+    display: none;
+    /* Hide edit icon on mobile card */
   }
 
   /* Main Content Adjustments */
@@ -1489,7 +1503,8 @@ select.form-input option {
     width: 100%;
     padding: 1rem;
     height: auto;
-    overflow: visible; /* Let body scroll */
+    overflow: visible;
+    /* Let body scroll */
   }
 
   /* Ensure wrapper allows scrolling */
