@@ -67,7 +67,7 @@ async function checkAuth() {
         'error',
       );
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -75,7 +75,7 @@ async function checkAuth() {
     if (user.role !== 'INSTRUCTOR') {
       AppUI.showMessage('Acesso negado. É necessário ser instrutor.', 'error');
       setTimeout(() => {
-        window.location.href = 'index.html';
+        window.location.href = '/inicio';
       }, 2000);
       return;
     }
@@ -85,7 +85,7 @@ async function checkAuth() {
       'error',
     );
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.href = '/inicio';
     }, 2000);
   }
 }
@@ -133,11 +133,10 @@ async function loadCoursesSidebar() {
         (course: any) => `
       <div class="course-list-item ${currentCourseId === course.id ? 'active' : ''}" data-course-id="${course.id}">
         <div class="course-item-thumb">
-           ${
-             course.coverImageUrl
-               ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
-               : '<span class="material-symbols-outlined">school</span>'
-           }
+           ${course.coverImageUrl
+            ? `<img src="/courses/${course.id}/cover" alt="Cover" />`
+            : '<span class="material-symbols-outlined">school</span>'
+          }
         </div>
         <div class="course-item-info">
           <p class="course-item-title">${course.title}</p>
@@ -923,8 +922,8 @@ async function renderContentTree(courseId: string) {
                     
                     <div class="tree-class-list">
                         ${classes
-                          .map(
-                            (cls: any) => `
+            .map(
+              (cls: any) => `
                         <div class="tree-class-item">
                             <div class="tree-class-header">
                                 <div class="tree-class-title">
@@ -957,8 +956,8 @@ async function renderContentTree(courseId: string) {
                             </div>
                         </div>
                         `,
-                          )
-                          .join('')}
+            )
+            .join('')}
 
                         <button class="btn-add-inline" data-action="create-class" data-module-id="${module.id}">
                             <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1rem;">add</span> Adicionar Aula

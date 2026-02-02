@@ -116,84 +116,52 @@
           </div>
         </div>
 
-        <!-- Back: Register -->
-        <div class="auth-face auth-register auth-face-back">
-          <h3 class="auth-title">Junte-se ao Lab</h3>
-          <form id="register-form" novalidate>
-            <div class="form-group">
-              <label class="form-label">Eu sou um...</label>
-              <select id="register-role" class="form-input">
-                <option value="student">Estudante</option>
-                <option value="instructor">Instrutor</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nome Completo</label>
-              <input
-                type="text"
-                id="register-name"
-                class="form-input"
-                placeholder="Maria Silva"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Email</label>
-              <input
-                type="email"
-                id="register-email"
-                class="form-input"
-                placeholder="maria@email.com"
-                required
-              />
-            </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label class="form-label">Senha</label>
-                <div class="password-wrapper">
-                  <input
-                    type="password"
-                    id="register-password"
-                    class="form-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-password"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Confirmar</label>
-                <div class="password-wrapper">
-                  <input
-                    type="password"
-                    id="register-confirm"
-                    class="form-input"
-                    placeholder="••••"
-                    required
-                  />
-                  <button
-                    type="button"
-                    class="btn-toggle-password"
-                    data-target="register-confirm"
-                  >
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <button type="submit" class="btn-submit">Registrar</button>
-          </form>
-          <div class="auth-footer">
-            <p class="footer-text">Já tem acesso?</p>
-            <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
+      <!-- Back: Register -->
+      <div class="auth-face auth-register auth-face-back">
+        <h3 class="auth-title">Junte-se ao Lab</h3>
+        <form id="register-form" novalidate>
+          <div class="form-group">
+            <label class="form-label">Eu sou um...</label>
+            <select id="register-role" class="form-input">
+              <option value="student">Estudante</option>
+              <option value="instructor">Instrutor</option>
+            </select>
           </div>
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="register-name" class="form-input" placeholder="Maria Silva" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" id="register-email" class="form-input" placeholder="maria@email.com" required />
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Senha</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-password" class="form-input" placeholder="••••" required />
+                <button type="button" class="btn-toggle-password" data-target="register-password">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar</label>
+              <div class="password-wrapper">
+                <input type="password" id="register-confirm" class="form-input" placeholder="••••" required />
+                <button type="button" class="btn-toggle-password" data-target="register-confirm">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Registrar</button>
+        </form>
+        <div class="auth-footer">
+          <p class="footer-text">Já tem acesso?</p>
+          <button id="btn-to-login" class="btn-link">Voltar ao Login</button>
         </div>
+      </div>
 
         <!-- Logged In View -->
         <div id="auth-logged-in" class="auth-face auth-logged-in hidden">
@@ -794,6 +762,40 @@
             </div>
           </div>
         </div>
+      <!-- Management Section (Instructors only) -->
+      <div id="drawer-management-section" class="drawer-section hidden">
+        <div class="drawer-section-label">Gerenciamento</div>
+        <a href="/professor" class="drawer-item">
+          <span class="material-symbols-outlined">dashboard</span>
+          Painel do Professor
+        </a>
+        <button id="drawer-categories-toggle" class="drawer-section-header">
+          <span class="drawer-section-title">
+            <span class="material-symbols-outlined">category</span>
+            Categorias
+          </span>
+          <span class="material-symbols-outlined drawer-chevron">expand_more</span>
+        </button>
+        <div id="drawer-categories-panel" class="drawer-accordion-panel">
+          <form id="category-create-form" class="category-form">
+            <div class="form-group">
+              <label class="form-label">Nome da Nova Categoria</label>
+              <div class="category-input-group">
+                <input id="new-category-name" type="text" class="form-input" placeholder="ex: Dev Web" required />
+                <button type="submit" class="btn-add">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="drawer-categories-wrapper">
+            <label class="form-label">Categorias Existentes</label>
+            <div id="categories-list" class="categories-list">
+              <p class="loading-text">Carregando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <!-- My Learning Section -->
         <div class="drawer-section">
@@ -804,6 +806,15 @@
           </a>
         </div>
       </div>
+      <!-- My Learning Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Meu Aprendizado</div>
+        <a href="/estudante" class="drawer-item">
+          <span class="material-symbols-outlined">school</span>
+          Meus Cursos
+        </a>
+      </div>
+    </div>
 
       <div class="user-drawer-footer">
         <button id="drawer-logout" class="drawer-btn logout">

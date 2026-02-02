@@ -1,97 +1,102 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard do Aluno | Lykos.eng</title>
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/toast.css" />
-    <link rel="stylesheet" href="css/student.css" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard do Aluno | Lykos.eng</title>
 
-  <body>
-    <div class="student-dashboard">
-      <!-- Sidebar Navigation -->
-      <aside id="sidebar" class="sidebar">
-        <div class="sidebar-content">
-          <!-- Branding -->
-          <div class="brand">
-            <div class="brand-icon">
-              <span class="material-symbols-outlined">code</span>
-            </div>
-            <div class="brand-info">
-              <h1 class="brand-title">Área do Aluno</h1>
-            </div>
-            <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
-              <span class="material-symbols-outlined">menu</span>
-            </button>
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+  <link rel="stylesheet" href="css/student.css" />
+  <link rel="stylesheet" href="css/student-mobile.css" />
+</head>
+
+<body>
+  <div class="student-dashboard">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-content">
+        <!-- Branding -->
+        <div class="brand">
+          <div class="brand-icon">
+            <span class="material-symbols-outlined">code</span>
           </div>
-
-          <!-- Nav Menu -->
-          <nav class="nav-menu">
-            <a href="#" class="nav-item active">
-              <span class="material-symbols-outlined">school</span>
-              <span class="nav-text">Meus Cursos</span>
-            </a>
-            <a href="#" class="nav-item">
-              <span class="material-symbols-outlined">verified</span>
-              <span class="nav-text">Certificados</span>
-            </a>
-          </nav>
+          <div class="brand-info">
+            <h1 class="brand-title">Área do Aluno</h1>
+          </div>
+          <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
         </div>
 
-        <!-- Sidebar Footer -->
-        <div class="sidebar-footer"></div>
-      </aside>
+        <!-- Nav Menu -->
+        <nav class="nav-menu">
+          <a href="#" id="nav-courses" class="nav-item active">
+            <span class="material-symbols-outlined">school</span>
+            <span class="nav-text">Meus Cursos</span>
+          </a>
+          <a href="#" id="nav-certificates" class="nav-item">
+            <span class="material-symbols-outlined">verified</span>
+            <span class="nav-text">Certificados</span>
+          </a>
+        </nav>
+      </div>
 
-      <!-- Main Content -->
-      <main class="main-content">
-        <!-- Top Nav -->
-        <header class="top-header">
-          <div class="breadcrumb-header">
-            <nav class="breadcrumb">
-              <a href="index.html">Início</a>
-              <span class="separator">></span>
-              <span class="current">Meus Cursos</span>
-            </nav>
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <div class="sidebar-user-avatar">
+            <span class="material-symbols-outlined">account_circle</span>
           </div>
-          <div class="header-actions">
-            <!-- Theme Toggle -->
-            <button
-              class="btn-icon"
-              id="theme-toggle"
-              aria-label="Alternar tema"
-            >
-              <span class="material-symbols-outlined theme-icon dark-icon"
-                >dark_mode</span
-              >
-              <span class="material-symbols-outlined theme-icon light-icon"
-                >light_mode</span
-              >
-            </button>
+          <div class="sidebar-user-info">
+            <p class="sidebar-user-name" id="sidebar-user-name">Aluno</p>
+            <p class="sidebar-user-role">Estudante</p>
+          </div>
+          <button class="sidebar-user-menu-btn" id="sidebar-avatar-btn" aria-label="Voltar para o início">
+            <span class="material-symbols-outlined">home</span>
+          </button>
+        </div>
+      </div>
+    </aside>
 
-            <!-- User Avatar -->
-            <div id="user-avatar-btn" class="user-avatar">
-              <img
-                id="user-avatar-img"
-                alt="User"
-                src="https://lh3.googleusercontent.com/a/default-user"
-              />
-            </div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Nav -->
+      <header class="top-header">
+        <div class="breadcrumb-header">
+          <!-- Mobile Menu Toggle -->
+          <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Abrir menu">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+
+          <nav class="breadcrumb">
+            <a href="/inicio">Início</a>
+            <span class="separator">></span>
+            <span id="breadcrumb-current" class="current">Meus Cursos</span>
+          </nav>
+        </div>
+        <div class="header-actions">
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+            <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+            <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+          </button>
+
+          <!-- User Avatar -->
+          <div id="user-avatar-btn" class="user-avatar">
+            <img id="user-avatar-img" alt="User" src="https://lh3.googleusercontent.com/a/default-user" />
           </div>
-        </header>
+        </div>
+      </header>
 
         <!-- Page Heading -->
         <section class="page-heading">
@@ -104,6 +109,13 @@
         </section>
 
         <!-- My Courses Section -->
+        <div class="courses-achievements">
+          <div class="my-courses">
+            <div class="section-header">
+              <h2 class="section-title">Meus Cursos</h2>
+            </div>
+      <!-- My Courses Section -->
+      <div id="courses-view" class="view-section">
         <div class="courses-achievements">
           <div class="my-courses">
             <div class="section-header">
@@ -131,6 +143,21 @@
                 />
               </div>
             </div>
+            <!-- Filters and Search -->
+            <div class="courses-filters">
+              <div class="filter-group">
+                <label class="filter-label">Filtrar por</label>
+                <select id="category-filter" class="filter-select">
+                  <option value="">Todas Categorias</option>
+                  <option disabled>Carregando...</option>
+                </select>
+              </div>
+              <div class="filter-search">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..."
+                  type="text" />
+              </div>
+            </div>
 
             <!-- Courses Grid -->
             <div id="courses-grid" class="courses-grid">
@@ -154,35 +181,36 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Course Card 2 -->
-              <div class="course-card">
-                <div class="course-header">
-                  <div class="course-icon">
-                    <span class="material-symbols-outlined">code</span>
-                  </div>
-                  <span class="course-badge completed">Finalizado</span>
-                </div>
-                <h3 class="course-title">JavaScript Fundamentals</h3>
-                <p class="course-meta">Finalizado: 12 Out 2023</p>
-                <div class="course-progress">
-                  <div class="progress-bar-small">
-                    <div
-                      class="progress-fill-small completed"
-                      style="width: 100%"
-                    ></div>
-                  </div>
-                  <div class="progress-info completed">
-                    <span>CERTIFICADO</span>
-                    <span class="progress-value">100%</span>
-                  </div>
-                </div>
+            <!-- Courses Grid -->
+            <div id="courses-grid" class="courses-grid">
+              <!-- Courses are rendered here dynamically -->
+              <div class="col-span-full py-20 text-center">
+                <p class="text-slate-500">Carregando seus cursos...</p>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+
+      <!-- Certificates View -->
+      <div id="certificates-view" class="view-section hidden">
+        <div class="courses-achievements">
+          <div class="my-courses" style="flex: 1">
+            <div class="section-header">
+              <h2 class="section-title">Certificados</h2>
+            </div>
+            <div class="section-intro mb-6">
+              <p class="text-muted">Aqui estão as conquistas que você alcançou. Parabéns pela dedicação!</p>
+            </div>
+            <div id="certificates-grid" class="certificates-grid">
+              <!-- Certificates are rendered here dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
 
     <!-- Auth Card Container -->
     <div id="auth-card-container" class="auth-container perspective-1000">
@@ -265,53 +293,55 @@
             </button>
           </div>
 
-          <form id="profile-edit-form">
-            <div class="form-group">
-              <label class="form-label">Nome</label>
-              <input
-                id="edit-name"
-                type="text"
-                class="form-input"
-                placeholder="Seu nome"
-              />
+        <form id="profile-edit-form">
+          <div class="form-group">
+            <label class="form-label">Nome</label>
+            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
+            <div class="password-wrapper">
+              <input id="edit-password" type="password" class="form-input" placeholder="••••••••" />
+              <button type="button" class="btn-toggle-password" data-target="edit-password">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
             </div>
-            <div class="form-group">
-              <label class="form-label">Email</label>
-              <input
-                id="edit-email"
-                type="email"
-                class="form-input"
-                placeholder="your.email@example.com"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label"
-                >Nova Senha (deixe em branco para manter a atual)</label
-              >
-              <div class="password-wrapper">
-                <input
-                  id="edit-password"
-                  type="password"
-                  class="form-input"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  class="btn-toggle-password"
-                  data-target="edit-password"
-                >
-                  <span class="material-symbols-outlined">visibility</span>
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="btn-submit">Salvar Alterações</button>
-          </form>
-        </div>
+          </div>
+          <button type="submit" class="btn-submit">Salvar Alterações</button>
+        </form>
       </div>
     </div>
+  </div>
 
-    <!-- Scripts -->
-    <script src="js/theme-toggle.js"></script>
-    <script type="module" src="js/studentDashboard.js"></script>
-  </body>
+  <!-- Certificate Modal -->
+  <div id="certificate-modal" class="modal-overlay hidden">
+    <div class="certificate-modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Visualizar Certificado</h3>
+        <button id="close-cert-modal" class="btn-icon" aria-label="Fechar modal">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 0; overflow: hidden; height: 75vh;">
+        <iframe id="certificate-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+      </div>
+      <div class="modal-footer" style="justify-content: center; align-items: center;">
+        <button id="btn-modal-print" class="btn-auth-submit" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">
+          <span class="material-symbols-outlined"
+            style="font-size: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">print</span>
+          Imprimir / Salvar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/theme-toggle.js"></script>
+  <script type="module" src="js/studentDashboard.js"></script>
+</body>
+
 </html>

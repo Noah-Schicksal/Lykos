@@ -14,11 +14,27 @@ import { initThemeToggle } from './theme-toggle.js';
 (window as any).categories = Categories;
 (window as any).cart = Cart;
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Initialize theme toggle first
   initThemeToggle();
 
-  Auth.init();
+  // Initialize app
+  await Auth.init();
+
+  // Redirect Admin
+  const userStr = localStorage.getItem('auth_user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      if (user.role === 'ADMIN') {
+        window.location.href = '/admin.html';
+        return; // Stop execution
+      }
+    } catch (e) {
+      console.error('Auth Parse Error', e);
+    }
+  }
+
   // Check Auth Status immediately
   Auth.updateAuthUI();
   Home.init();
@@ -676,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnMyLearning) {
     btnMyLearning.addEventListener('click', (e) => {
       e.preventDefault();
-      window.location.href = 'student.html';
+      window.location.href = '/estudante';
     });
   }
 

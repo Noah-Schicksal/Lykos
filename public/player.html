@@ -1,196 +1,156 @@
 <!doctype html>
 <html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Lykos | Course Player</title>
+
   <head>
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Lykos | Course Player</title>
     <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
     <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet" />
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/toast.css" />
     <link rel="stylesheet" href="css/player.css" />
   </head>
+  <!-- Styles -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/toast.css" />
+  <link rel="stylesheet" href="/css/player.css" />
+</head>
 
-  <body class="molecular-bg">
-    <!-- Navbar (Simplified) -->
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="container-xl nav-inner">
-        <a
-          href="index.html"
-          class="logo-container"
-          style="text-decoration: none"
-        >
-          <div class="logo-icon">
-            <span class="material-symbols-outlined">science</span>
-          </div>
-          <span class="logo-text hidden lg:block">Lykos</span>
-        </a>
-
-        <!-- Search (Optional for Player, keeping consistent with Home) -->
-        <div
-          class="search-bar-container hidden md:block"
-          style="margin-left: 2rem; margin-right: 2rem"
-        >
-          <div class="search-icon-wrapper">
-            <span class="material-symbols-outlined" style="font-size: 1.25rem"
-              >search</span
-            >
-          </div>
-          <!-- Search input disabled in player context or redirects to home search -->
-          <input
-            class="search-input"
-            placeholder="Search courses..."
-            type="text"
-            onkeydown="
-              if (event.key === 'Enter')
-                window.location.href = 'index.html?search=' + this.value;
-            "
-          />
+<body class="molecular-bg">
+  <!-- Navbar (Simplified) -->
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container-xl nav-inner">
+      <a href="/inicio" class="logo-container" style="text-decoration: none">
+        <div class="logo-icon">
+          <span class="material-symbols-outlined">science</span>
         </div>
+        <span class="logo-text hidden lg:block">Lykos</span>
+      </a>
 
-        <div class="nav-right-actions">
-          <!-- User Avatar (Triggers Auth Card) -->
-          <div id="user-avatar-btn">
-            <img
-              alt="User avatar"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ"
-            />
-          </div>
+      <!-- Search (Optional for Player, keeping consistent with Home) -->
+      <div class="search-bar-container hidden md:block" style="margin-left: 2rem; margin-right: 2rem">
+        <div class="search-icon-wrapper">
+          <span class="material-symbols-outlined" style="font-size: 1.25rem">search</span>
+        </div>
+        <!-- Search input disabled in player context or redirects to home search -->
+        <input class="search-input" placeholder="Search courses..." type="text" onkeydown="
+              if (event.key === 'Enter')
+                window.location.href = '/inicio?search=' + this.value;
+            " />
+      </div>
+
+      <div class="nav-right-actions">
+        <!-- User Avatar (Triggers Auth Card) -->
+        <div id="user-avatar-btn">
+          <img alt="User avatar"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYH54o-pesZe_AaOpu7x_4oQp7OS21INF7YcU6bV52w6jH7YHib3H0iuZxRU9o91FKg0rVUUK8-7knG5zwYG-haYnr9ZYQ-ecwzVJLTlkxQjpj9OzF3dEle3RcTAuFMsnUnYxdNKLlfbUB1XjzcroWiCAPMZ1hygMfvLMV5y-2wrZ-yy0zAlklxLPXhC2lFCR-qlCbWyttDE9U4wwUpq2oA6QLGIsY2VbXPr8vwlv5mxgToWfuApwOBNiLmGif4UEExzp-7cKx5pdQ" />
         </div>
       </div>
-    </nav>
+    </div>
+  </nav>
 
-    <!-- Auth Flip Card (Hidden/Overlay logic same as Home) -->
-    <div id="auth-card-container" class="auth-container perspective-1000">
-      <div id="auth-card" class="flip-card-inner">
-        <!-- Logged In View (Only view needed for Player usually) -->
-        <div
-          id="auth-logged-in"
-          class="auth-face"
-          style="
+  <!-- Auth Flip Card (Hidden/Overlay logic same as Home) -->
+  <div id="auth-card-container" class="auth-container perspective-1000">
+    <div id="auth-card" class="flip-card-inner">
+      <!-- Logged In View (Only view needed for Player usually) -->
+      <div id="auth-logged-in" class="auth-face" style="
             justify-content: center;
             align-items: center;
             text-align: center;
-          "
-        >
-          <div class="user-avatar-large">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
-          <h3
-            id="user-name-display"
-            class="auth-title"
-            style="margin-bottom: 0.25rem"
-          >
-            User Name
-          </h3>
-          <p
-            id="user-email-display"
-            style="
+          ">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="auth-title" style="margin-bottom: 0.25rem">
+          User Name
+        </h3>
+        <p id="user-email-display" style="
               font-size: 0.875rem;
               color: var(--text-muted);
               margin-bottom: 0.5rem;
-            "
-          >
-            user@example.com
-          </p>
+            ">
+          user@example.com
+        </p>
 
-          <div class="flex-col gap-2" style="width: 100%">
-            <button id="btn-view-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">person</span> View Profile
-            </button>
-            <button id="btn-logout" class="btn-dashboard outline">
-              <span class="material-symbols-outlined">logout</span> Logout
-            </button>
-          </div>
+        <div class="flex-col gap-2" style="width: 100%">
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> View Profile
+          </button>
+          <button id="btn-logout" class="btn-dashboard outline">
+            <span class="material-symbols-outlined">logout</span> Logout
+          </button>
         </div>
+      </div>
 
-        <!-- Profile View (View Mode) -->
-        <div id="auth-profile-view" class="auth-face hidden">
-          <div
-            style="
+      <!-- Profile View (View Mode) -->
+      <div id="auth-profile-view" class="auth-face hidden">
+        <div style="
               display: flex;
               align-items: center;
               justify-content: space-between;
               margin-bottom: 1.5rem;
-            "
-          >
-            <h3 class="auth-title" style="margin: 0">My Profile</h3>
-            <button id="btn-back-from-profile" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
+            ">
+          <h3 class="auth-title" style="margin: 0">My Profile</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
 
-          <div class="user-avatar-large" style="margin-bottom: 1rem">
-            <span
-              class="material-symbols-outlined"
-              style="font-size: 3rem; color: var(--primary)"
-              >account_circle</span
-            >
-          </div>
+        <div class="user-avatar-large" style="margin-bottom: 1rem">
+          <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--primary)">account_circle</span>
+        </div>
 
-          <div style="text-align: left; width: 100%; margin-bottom: 1.5rem">
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Name</label>
-              <p
-                id="profile-view-name"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                User Name
-              </p>
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Email</label>
-              <p
-                id="profile-view-email"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                user@example.com
-              </p>
-            </div>
-            <div style="margin-bottom: 1rem">
-              <label class="auth-label">Role</label>
-              <p
-                id="profile-view-role"
-                style="color: var(--text-primary); font-weight: 500"
-              >
-                Student
-              </p>
-            </div>
+        <div style="text-align: left; width: 100%; margin-bottom: 1.5rem">
+          <div style="margin-bottom: 1rem">
+            <label class="auth-label">Name</label>
+            <p id="profile-view-name" style="color: var(--text-primary); font-weight: 500">
+              User Name
+            </p>
+          </div>
+          <div style="margin-bottom: 1rem">
+            <label class="auth-label">Email</label>
+            <p id="profile-view-email" style="color: var(--text-primary); font-weight: 500">
+              user@example.com
+            </p>
+          </div>
+          <div style="margin-bottom: 1rem">
+            <label class="auth-label">Role</label>
+            <p id="profile-view-role" style="color: var(--text-primary); font-weight: 500">
+              Student
+            </p>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <main class="main-content player-layout">
-      <!-- Left Column: Video & Details -->
-      <div class="player-content">
-        <div class="video-container-wrapper">
-          <div id="video-placeholder" class="video-placeholder">
-            <span class="material-symbols-outlined icon">play_circle</span>
-            <p>Selecione uma aula para começar</p>
-          </div>
-          <iframe
-            id="video-frame"
-            class="video-frame"
-            src=""
-            title="Video Player"
-            frameborder="0"
-            allow="
+  <main class="main-content player-layout">
+    <!-- Left Column: Video & Details -->
+    <div class="player-content">
+      <div class="video-container-wrapper">
+        <div id="video-placeholder" class="video-placeholder">
+          <span class="material-symbols-outlined icon">play_circle</span>
+          <p>Selecione uma aula para começar</p>
+        </div>
+        <iframe id="video-frame" class="video-frame" src="" title="Video Player" frameborder="0" allow="
               accelerometer;
               autoplay;
               clipboard-write;
@@ -198,106 +158,84 @@
               gyroscope;
               picture-in-picture;
               web-share;
-            "
-            referrerpolicy="strict-origin-when-cross-origin"
-            allowfullscreen
-          ></iframe>
-          <video
-            id="html5-player"
-            class="video-frame hidden"
-            controls
-            controlsList="nodownload"
-          >
-            Seu navegador não suporta a tag de vídeo.
-          </video>
+            " referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <video id="html5-player" class="video-frame hidden" controls controlsList="nodownload">
+          Seu navegador não suporta a tag de vídeo.
+        </video>
+      </div>
+
+      <div class="class-info-section">
+        <!-- Header with Title and Action -->
+        <div class="class-header">
+          <h1 id="class-title" class="class-title">Título da Aula</h1>
+          <div class="class-actions">
+            <button id="btn-toggle-sidebar-restore" class="btn-action hidden">
+              <span class="material-symbols-outlined">menu_open</span>
+              <span class="btn-text">Mostrar Aulas</span>
+            </button>
+            <button id="btn-mark-completed" class="btn-action">
+              <span class="material-symbols-outlined">check_circle</span>
+              <span class="btn-text">Marcar como Concluída</span>
+            </button>
+          </div>
         </div>
 
-        <div class="class-info-section">
-          <!-- Header with Title and Action -->
-          <div class="class-header">
-            <h1 id="class-title" class="class-title">Título da Aula</h1>
-            <div class="class-actions">
-              <button id="btn-toggle-sidebar-restore" class="btn-action hidden">
-                <span class="material-symbols-outlined">menu_open</span>
-                <span class="btn-text">Mostrar Aulas</span>
-              </button>
-              <button id="btn-mark-completed" class="btn-action">
-                <span class="material-symbols-outlined">check_circle</span>
-                <span class="btn-text">Marcar como Concluída</span>
-              </button>
-            </div>
-          </div>
+        <p id="class-description" class="class-description">
+          Descrição da aula aparecerá aqui...
+        </p>
 
-          <p id="class-description" class="class-description">
-            Descrição da aula aparecerá aqui...
-          </p>
-
-          <!-- Materials Section -->
-          <div id="materials-section" class="materials-section hidden">
-            <h3 class="section-subtitle">
-              <span class="material-symbols-outlined">folder</span>
-              Materiais Complementares
-            </h3>
-            <div id="materials-list" class="materials-list">
-              <!-- Download items injected here -->
-            </div>
+        <!-- Materials Section -->
+        <div id="materials-section" class="materials-section hidden">
+          <h3 class="section-subtitle">
+            <span class="material-symbols-outlined">folder</span>
+            Materiais Complementares
+          </h3>
+          <div id="materials-list" class="materials-list">
+            <!-- Download items injected here -->
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Right Column: Sidebar -->
-      <aside class="player-sidebar">
-        <div class="sidebar-header">
-          <div
-            style="
+    <!-- Right Column: Sidebar -->
+    <aside class="player-sidebar">
+      <div class="sidebar-header">
+        <div style="
               display: flex;
               justify-content: space-between;
               align-items: center;
               margin-bottom: 0.5rem;
-            "
-          >
-            <button id="btn-collapse-sidebar" class="btn-sidebar-action">
-              <span class="material-symbols-outlined" style="font-size: 1.1rem"
-                >last_page</span
-              >
-              Recolher
-            </button>
-            <a href="index.html" class="btn-sidebar-action">
-              <span class="material-symbols-outlined" style="font-size: 1.1rem"
-                >arrow_back</span
-              >
-              Voltar
-            </a>
+            ">
+          <button id="btn-collapse-sidebar" class="btn-sidebar-action">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem">last_page</span>
+            Recolher
+          </button>
+          <a href="/inicio" class="btn-sidebar-action">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem">arrow_back</span>
+            Voltar
+          </a>
+        </div>
+        <h2 class="course-title-sidebar" id="course-title">Nome do Curso</h2>
+        <div class="progress-container">
+          <div class="flex justify-between" style="font-size: 0.75rem; margin-bottom: 0.25rem">
+            <span>Progresso</span>
+            <span id="course-progress-text">0%</span>
           </div>
-          <h2 class="course-title-sidebar" id="course-title">Nome do Curso</h2>
-          <div class="progress-container">
-            <div
-              class="flex justify-between"
-              style="font-size: 0.75rem; margin-bottom: 0.25rem"
-            >
-              <span>Progresso</span>
-              <span id="course-progress-text">0%</span>
-            </div>
-            <div class="progress-bar">
-              <div
-                id="course-progress-fill"
-                class="progress-fill"
-                style="width: 0%"
-              ></div>
-            </div>
+          <div class="progress-bar">
+            <div id="course-progress-fill" class="progress-fill" style="width: 0%"></div>
           </div>
         </div>
+      </div>
 
-        <div id="modules-list" class="modules-accordion">
-          <p
-            style="padding: 1rem; text-align: center; color: var(--text-muted)"
-          >
-            Carregando aulas...
-          </p>
-        </div>
-      </aside>
-    </main>
+      <div id="modules-list" class="modules-accordion">
+        <p style="padding: 1rem; text-align: center; color: var(--text-muted)">
+          Carregando aulas...
+        </p>
+      </div>
+    </aside>
+  </main>
 
-    <script type="module" src="js/player.js"></script>
-  </body>
+  <script type="module" src="/js/player.js"></script>
+</body>
+
 </html>

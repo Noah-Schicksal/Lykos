@@ -135,6 +135,57 @@ select {
   font-family: inherit;
 }
 
+/* ===========================
+   Global Scrollbar Styling
+   =========================== */
+
+/* Webkit Browsers (Chrome, Safari, Edge) - Dark Mode */
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed, #0891b2);
+  box-shadow: 0 0 10px rgba(94, 23, 235, 0.5);
+}
+
+/* Webkit Browsers - Light Mode */
+:root.light body::-webkit-scrollbar-track {
+  background: rgba(94, 23, 235, 0.05);
+}
+
+:root.light body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.light body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #7c3aed, #0891b2);
+  box-shadow: 0 0 10px rgba(94, 23, 235, 0.3);
+}
+
+/* Firefox Scrollbar */
+body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(0, 0, 0, 0.2);
+}
+
+:root.light body {
+  scrollbar-color: var(--primary) rgba(94, 23, 235, 0.05);
+}
+
 .hidden {
   display: none !important;
 }
