@@ -283,29 +283,60 @@
             margin-bottom: 1rem;
         }
 
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+
         @media print {
             .no-print {
-                display: none;
+                display: none !important;
             }
 
+            html,
             body {
-                background: white;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                overflow: hidden !important;
             }
 
             .cert-container {
-                padding: 0;
+                min-height: 100vh !important;
+                height: 100vh !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+                background: white !important;
             }
 
             .certificate {
-                box-shadow: none;
-                border: 3px solid #5e17eb;
-                background: white;
+                width: 95% !important;
+                height: 90% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 3rem !important;
+                border: 3px solid #5e17eb !important;
+                box-shadow: none !important;
+                background: white !important;
+                transform: scale(1) !important;
+                page-break-inside: avoid !important;
             }
 
             .cert-title,
-            .student-name {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
+            .student-name,
+            .course-name {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .certificate::before,
+            .certificate::after {
+                display: none !important;
             }
         }
 

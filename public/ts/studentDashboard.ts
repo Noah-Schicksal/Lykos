@@ -280,11 +280,10 @@ function setupNavigation() {
         });
     }
 
-    // Sidebar Avatar Button (Logout)
+    // Sidebar Avatar Button (Redirect to Home)
     const sidebarAvatarBtn = document.getElementById('sidebar-avatar-btn');
     if (sidebarAvatarBtn) {
         sidebarAvatarBtn.addEventListener('click', () => {
-            Auth.logout();
             window.location.href = 'index.html';
         });
     }
@@ -408,15 +407,11 @@ function setupNavigation() {
         }
     });
 
-    // Logout handling
+    // Home navigation handling
     const btnLogout = document.getElementById('btn-logout-sidebar');
     if (btnLogout) {
-        btnLogout.addEventListener('click', async () => {
-            const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
-            if (confirmed) {
-                await Auth.logout();
-                window.location.href = 'index.html';
-            }
+        btnLogout.addEventListener('click', () => {
+            window.location.href = 'index.html';
         });
     }
 
