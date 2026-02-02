@@ -8,6 +8,7 @@ export interface FindAllParams {
     limit: number;
     search?: string;
     userId?: string;
+    includeInactive?: boolean;
 }
 
 export interface FindAllResponse {
@@ -16,7 +17,6 @@ export interface FindAllResponse {
 }
 
 export class CourseRepository {
-
     // salva um novo curso no banco de dados
     save(course: Course): Course {
         const id = randomUUID();
@@ -47,7 +47,7 @@ export class CourseRepository {
     }
 
     // busca todos os cursos com filtros, paginação e joins
-    findAll({ page, limit, search, userId }: FindAllParams): FindAllResponse {
+    findAll({ page, limit, search, userId, includeInactive = false }: FindAllParams): FindAllResponse {
         const offset = (page - 1) * limit;
 
         // Base select
@@ -59,7 +59,8 @@ export class CourseRepository {
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
         `;
 
-        // If userId provided, add enrollment status and progress columns
+        // ... (rest of selection logic unchanged until FROM)
+
         if (userId) {
             query += `,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id AND user_id = ?) as is_enrolled,
@@ -79,8 +80,12 @@ export class CourseRepository {
             FROM courses c
             LEFT JOIN categories cat ON c.category_id = cat.id
             JOIN users u ON c.instructor_id = u.id
-            WHERE c.is_active = 1
+            WHERE 1=1
         `;
+
+        if (!includeInactive) {
+            query += ` AND c.is_active = 1`;
+        }
 
         const params: any[] = [];
 
@@ -89,8 +94,8 @@ export class CourseRepository {
         }
 
         if (search) {
-            query += ` AND c.title LIKE ?`;
-            params.push(`%${search}%`);
+            query += ` AND (c.title LIKE ? OR c.id LIKE ?)`;
+            params.push(`%${search}%`, `%${search}%`);
         }
 
         // conta o total de itens para a paginação

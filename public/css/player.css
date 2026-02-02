@@ -1,15 +1,263 @@
+/* ===========================
+   Player Navbar Alignment
+   Matches project standard from styles.css
+   =========================== */
+
+/* Player Specific Theme Variables */
+:root {
+    --sidebar-bg: #0F172A;
+    --sidebar-border: #1E293B;
+    --sidebar-header: #0F172A;
+    --sidebar-hover: #1E293B;
+    --sidebar-text: #E2E8F0;
+    --sidebar-meta: #94A3B8;
+    --sidebar-active: rgba(34, 211, 238, 0.1);
+    --sidebar-active-text: white;
+    /* Light/Glow shadow for dark mode */
+    --player-shadow: 0 0 15px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.05);
+}
+
+:root.light {
+    --sidebar-bg: #F8FAFC;
+    --sidebar-border: #E2E8F0;
+    --sidebar-header: #F1F5F9;
+    --sidebar-hover: #E2E8F0;
+    --sidebar-text: #0F172A;
+    --sidebar-meta: #64748B;
+    --sidebar-active: rgba(6, 182, 212, 0.1);
+    --sidebar-active-text: #0891b2;
+    /* Softer shadow for light mode */
+    --player-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Global Scrollbar Styling - Dark Mode */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 5px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    box-shadow: 0 0 10px rgba(94, 23, 235, 0.5);
+}
+
+/* Global Scrollbar Styling - Light Mode */
+:root.light body::-webkit-scrollbar-track {
+    background: rgba(94, 23, 235, 0.05);
+}
+
+:root.light body::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+:root.light body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    box-shadow: 0 0 10px rgba(94, 23, 235, 0.3);
+}
+
+/* Firefox Scrollbar */
+body {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) rgba(0, 0, 0, 0.2);
+}
+
+:root.light body {
+    scrollbar-color: var(--primary) rgba(94, 23, 235, 0.05);
+}
+
+/* Container matching .nav-container from styles.css */
+.container-xl {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+}
+
+/* Logo Container matching .logo from styles.css */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.logo-container .logo-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 15px -3px rgba(94, 23, 235, 0.3);
+    color: white;
+    font-weight: bold;
+}
+
+.logo-container .logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.025em;
+    font-family: var(--font-heading);
+}
+
+:root.light .logo-container .logo-text {
+    color: #004953;
+}
+
+/* Search Bar Container matching .search-bar from styles.css */
+.search-bar-container {
+    flex-grow: 1;
+    max-width: 42rem;
+    position: relative;
+}
+
+.search-icon-wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding-left: 1rem;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    color: var(--text-muted);
+}
+
+.search-bar-container .search-input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.75rem;
+    background-color: rgba(94, 23, 235, 0.05);
+    border: 1px solid var(--border-med);
+    border-radius: 9999px;
+    color: white;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+
+.search-bar-container .search-input:focus {
+    background-color: rgba(94, 23, 235, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+.search-bar-container .search-input::placeholder {
+    color: var(--text-muted);
+}
+
+:root.light .search-bar-container .search-input {
+    color: var(--text-primary);
+    background-color: rgba(94, 23, 235, 0.03);
+}
+
+/* Nav Right Actions matching .nav-actions from styles.css */
+.nav-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-left: auto;
+}
+
+/* User Avatar matching .user-avatar from styles.css */
+#user-avatar-btn {
+    cursor: pointer;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    overflow: hidden;
+    padding: 2px;
+    transition: all 0.3s;
+}
+
+#user-avatar-btn:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 0 15px rgba(94, 23, 235, 0.5);
+}
+
+#user-avatar-btn img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .logo-container .logo-text {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .search-bar-container {
+        display: none;
+    }
+}
+
+/* Theme Toggle Styles */
+.theme-icon {
+    font-size: 1.25rem;
+    transition: opacity 0.3s ease;
+}
+
+/* Default dark mode - show moon icon */
+.dark-icon {
+    display: block;
+}
+
+.light-icon {
+    display: none;
+}
+
+/* Light mode - show sun icon */
+:root.light .dark-icon {
+    display: none;
+}
+
+:root.light .light-icon {
+    display: block;
+}
+
+/* ===========================
+   Player Layout
+   =========================== */
+
 /* Player Layout */
 .player-layout {
     display: grid;
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: 1fr 450px;
     gap: 0;
-    height: calc(100vh - 70px);
-    /* Adjust for navbar height */
-    overflow: hidden;
+    /* Use auto height to let Body scroll handle the main content */
+    height: auto;
+    min-height: calc(100vh - 70px);
+    overflow: visible;
     margin-top: 0;
     padding-top: 0;
     transition: grid-template-columns 0.3s ease;
-    /* Animate transition */
 }
 
 .player-layout.sidebar-collapsed {
@@ -18,14 +266,45 @@
 
 @media (max-width: 1024px) {
     .player-layout {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        /* Stack vertically */
         height: auto;
-        overflow-y: auto;
+        overflow-y: visible;
+        /* Let main scroll handle it */
     }
 
     .player-layout.sidebar-collapsed {
-        grid-template-columns: 1fr;
-        /* No effect on mobile usually, or hide sidebar section */
+        grid-template-columns: 100%;
+    }
+
+    /* Reset Content Padding for Mobile */
+    .player-content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        overflow-y: visible;
+        /* Content flows naturally */
+        height: auto;
+    }
+
+    /* Sidebar adjusts to bottom stack */
+    .player-sidebar {
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-top: 1px solid var(--sidebar-border);
+        box-shadow: none;
+        flex-shrink: 0;
+    }
+
+    /* Hide drawer toggle on mobile */
+    .drawer-toggle-btn {
+        display: none;
+    }
+
+    /* Ensure video container respects width */
+    .video-container-wrapper {
+        border-radius: 0.5rem;
     }
 }
 
@@ -35,24 +314,49 @@
     background-color: var(--bg-dark);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    padding: 1.5rem;
-    /* Add padding around the content as per wireframe containment */
+    overflow: visible;
+    height: auto;
+    padding: 1.5rem 0 1.5rem 0;
     gap: 1.5rem;
+
+    /* Dynamic padding to align with .container-xl logo position */
+    /* .container-xl is centered with max-width 80rem and 1rem padding */
+    /* Formula: max(1rem, (100vw - 80rem)/2 + 1rem) */
+    padding-left: max(1rem, calc((100vw - 80rem) / 2 + 1rem));
+    padding-right: 1rem;
+    /* Provide some right spacing from sidebar */
 }
 
 /* Video Container matches wireframe 'Video exibido' */
 .video-container-wrapper {
     width: 100%;
+    /* Max width should just rely on available space, removing complex calcs that fight with padding */
+    max-width: 100%;
     aspect-ratio: 16 / 9;
     background-color: black;
-    /* Placeholder for video area */
     border-radius: 1rem;
-    /* Wireframe implies rounded containers */
     overflow: hidden;
     position: relative;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* Updated Shadow */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
+    margin: 0;
+    /* Handled by parent padding */
+}
+
+/* When sidebar is collapsed, center and use full navbar width */
+.player-layout.sidebar-collapsed .video-container-wrapper {
+    max-width: 80rem;
+    /* Re-apply max-width limit when full screen */
+    margin: 0;
+    /* Parent padding handles centering logic mostly, but we can clamp */
+}
+
+/* Override parent padding for collapsed state if needed, or let it flow naturally. 
+   Actually, the dynamic padding on .player-content works for both states to align with logo! 
+   But if sidebar is collapsed, we might want to respect the right side margin too. */
+.player-layout.sidebar-collapsed .player-content {
+    padding-right: max(1rem, calc((100vw - 80rem) / 2 + 1rem));
 }
 
 .video-frame {
@@ -90,9 +394,19 @@
 /* Info Section (Title + Material) */
 .class-info-section {
     width: 100%;
+    max-width: 100%;
+    margin: 0;
+    /* Handled by parent padding */
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+/* When sidebar is collapsed */
+.player-layout.sidebar-collapsed .class-info-section {
+    max-width: 80rem;
+    margin: 0;
 }
 
 .class-header {
@@ -220,144 +534,194 @@
     color: var(--text-muted);
 }
 
-/* Right Column: Sidebar */
+/* Right Column: Sidebar (Drawer Style) */
+/* Right Column: Sidebar (Drawer Style) */
 .player-sidebar {
-    background-color: var(--bg-card);
-    border-left: 1px solid var(--border-light);
+    background-color: var(--sidebar-bg);
+    border-left: 1px solid var(--sidebar-border);
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-    /* Prevent sidebar itself from scrolling, force children */
+    /* Sticky position ensures it stays in view while body scrolls */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    /* Scroll internally if modules list is long */
+    transition: width 0.3s ease, background-color 0.3s ease;
+    z-index: 50;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
 }
 
+/* Sidebar Toggle Button (Drawer Tab) */
+.drawer-toggle-btn {
+    position: absolute;
+    left: -40px;
+    top: 20px;
+    width: 40px;
+    height: 48px;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 8px 0 0 8px;
+    color: white;
+    /* Keep white for button text/icon */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, width 0.2s;
+    z-index: 51;
+}
+
+.drawer-toggle-btn:hover {
+    background-color: #0891b2;
+    /* Could use var, but this custom teal hover is likely fine */
+    width: 44px;
+    left: -44px;
+}
+
+.drawer-toggle-btn .material-symbols-outlined {
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.player-layout.sidebar-collapsed .drawer-toggle-btn .material-symbols-outlined {
+    transform: rotate(180deg);
+}
+
+/* Sidebar Header */
 .sidebar-header {
     padding: 1.5rem;
-    border-bottom: 1px solid var(--border-light);
-    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--sidebar-border);
+    background-color: var(--sidebar-header);
     z-index: 10;
     flex-shrink: 0;
-    /* Ensure header doesn't shrink */
 }
 
 .course-title-sidebar {
-    font-size: 1.125rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: var(--sidebar-text);
+    line-height: 1.4;
 }
 
-.btn-sidebar-action {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    text-decoration: none;
+:root.light .course-title-sidebar {
+    color: var(--sidebar-text);
 }
 
-.btn-sidebar-action:hover {
-    background-color: var(--bg-dark);
-    color: var(--primary);
-}
-
+/* Accordion Styling */
 .modules-accordion {
     flex: 1;
     overflow-y: auto;
-    min-height: 0;
-    /* Crucial for flexbox scrolling */
-
-    /* Custom Scrollbar for Sidebar */
     scrollbar-width: thin;
-    scrollbar-color: var(--border-med) var(--bg-card);
+    scrollbar-color: #334155 var(--sidebar-bg);
 }
 
-.modules-accordion::-webkit-scrollbar {
-    width: 6px;
-}
-
-.modules-accordion::-webkit-scrollbar-track {
-    background: var(--bg-card);
-}
-
-.modules-accordion::-webkit-scrollbar-thumb {
-    background-color: var(--border-med);
-    border-radius: 3px;
-}
-
-.modules-accordion::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary);
-}
-
-/* Accordion Items */
 .module-item {
-    border-bottom: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--sidebar-border);
+}
+
+/* Summary default reset */
+summary.module-header {
+    list-style: none;
+    /* Hide default marker */
+}
+
+summary.module-header::-webkit-details-marker {
+    display: none;
+    /* Hide for Webkit */
 }
 
 .module-header {
-    padding: 1rem 1.5rem;
-    background-color: rgba(255, 255, 255, 0.02);
+    padding: 1rem 1.25rem;
+    background-color: var(--sidebar-bg);
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     transition: background-color 0.2s;
+    user-select: none;
+    /* Prevent text selection on double click */
 }
 
 .module-header:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--sidebar-hover);
 }
 
 .module-title {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--sidebar-text);
 }
 
 .module-meta {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: var(--sidebar-meta);
+    margin-top: 0.25rem;
 }
 
 .classes-list {
-    display: none;
-    background-color: var(--bg-dark);
+    /* No display:none needed, details handles visibility */
+    background-color: var(--sidebar-hover);
+    /* Remove padding to let items stretch */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-.module-item.open .classes-list {
-    display: block;
+/* Icon rotation based on details[open] */
+details.module-item[open] .layer-icon {
+    transform: rotate(0deg);
+}
+
+details.module-item:not([open]) .layer-icon {
+    transform: rotate(-90deg);
 }
 
 .class-item {
-    padding: 0.75rem 1rem 0.75rem 2rem;
-    /* Indented */
+    /* Mapped from user reference: padding 15px 20px -> ~1rem 1.25rem */
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 10px;
+    /* from user ref */
+    background-color: var(--sidebar-hover);
+    /* Match background logic */
+    border-bottom: 1px solid var(--sidebar-border);
+    /* from user ref */
     cursor: pointer;
-    transition: background-color 0.2s;
-    border-left: 3px solid transparent;
+    transition: all 0.2s;
+    border-left: 4px solid transparent;
+    /* Prepare for active border */
+    color: var(--sidebar-text);
+    opacity: 0.9;
 }
 
 .class-item:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(255, 255, 255, 0.05);
+    /* Keep generic hover tint */
+}
+
+:root.light .class-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .class-item.active {
-    background-color: rgba(6, 182, 212, 0.1);
-    border-left-color: var(--primary);
+    background-color: var(--sidebar-active);
+    border-left: 4px solid var(--primary);
+    /* Match reference border width */
+    color: var(--sidebar-active-text);
+    opacity: 1;
 }
 
 .class-status-icon {
     font-size: 1.25rem;
-    color: var(--text-muted);
+    color: var(--sidebar-meta);
+    flex-shrink: 0;
 }
+
 
 .class-item.completed .class-status-icon {
     color: #10b981;
@@ -365,17 +729,369 @@
     font-variation-settings: 'FILL' 1;
 }
 
-.class-info-mini {
-    flex: 1;
+.class-item.active .class-status-icon {
+    color: var(--primary);
+    font-variation-settings: 'FILL' 1;
 }
 
-.class-title-mini {
-    font-size: 0.9rem;
+/* PLAYING Badge */
+.badge-playing {
+    font-size: 0.65rem;
+    font-weight: 700;
+    background-color: var(--primary);
+    color: white;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: auto;
+    text-transform: uppercase;
+}
+
+
+/* ===========================
+   New UI Elements - Based on Reference Image
+   =========================== */
+
+/* Breadcrumb Navigation */
+.breadcrumb-player {
+    width: 100%;
+    margin: 0 0 1rem 0;
+    /* No left margin */
+    padding: 0;
+    font-size: 0.875rem;
     color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: start;
+}
+
+/* When sidebar is collapsed */
+.player-layout.sidebar-collapsed .breadcrumb-player {
+    max-width: 80rem;
+    margin: 0 0 1rem 0;
+    padding: 0;
+}
+
+.breadcrumb-item {
+    color: var(--text-muted);
+}
+
+.breadcrumb-separator {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* Tabs Container */
+.tabs-container {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--border-light);
+    margin: 1rem 0;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.tab-btn:hover {
+    color: var(--text-primary);
+}
+
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    padding: 1.5rem 0;
+}
+
+.tab-content.active {
     display: block;
 }
 
-.class-item.active .class-title-mini {
+.tab-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
     color: var(--text-primary);
-    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Discussion Placeholder */
+.discussion-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 0.75rem;
+    border: 1px dashed var(--border-light);
+}
+
+/* No Materials Message */
+.no-materials-message {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 0.75rem;
+}
+
+/* Next Lesson Button */
+.btn-next-lesson {
+    width: calc(100% - 3rem);
+    margin: 0 1.5rem 1rem 1.5rem;
+    padding: 0.875rem 1.5rem;
+    background: linear-gradient(135deg, var(--primary), #0891b2);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+.btn-next-lesson:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+}
+
+.btn-next-lesson:active {
+    transform: translateY(0);
+}
+
+.btn-next-lesson.hidden {
+    display: none;
+}
+
+/* PLAYING Badge */
+.badge-playing {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Module Progress Counter */
+.module-progress-counter {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-left: auto;
+}
+
+/* ===========================
+   Custom Video Player Controls
+   =========================== */
+
+/* Hide native controls if they somehow persist */
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+.video-container-wrapper:hover .video-controls {
+    opacity: 1;
+    visibility: visible;
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    padding: 1rem 1rem 0.5rem 1rem;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    /* Hidden by default, shown on hover */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 20;
+    /* Ensure it's above video */
+}
+
+/* Force show when paused or specific class */
+.video-controls.visible {
+    opacity: 1;
+}
+
+.video-controls.hidden {
+    display: none;
+}
+
+/* Progress Bar Container */
+.progress-container-video {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.progress-container-video:hover {
+    height: 8px;
+    /* Expand on hover */
+}
+
+.progress-bar-bg {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 5px;
+    width: 0%;
+    transition: width 0.1s linear;
+    pointer-events: none;
+    position: relative;
+}
+
+/* Thumb (circle at end of fill) */
+.progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 12px;
+    height: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.progress-container-video:hover .progress-bar-fill::after {
+    transform: translateY(-50%) scale(1);
+}
+
+/* Invisible Range Input for Interaction */
+.seek-slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    margin: 0;
+    z-index: 2;
+}
+
+/* Controls Main Row */
+.controls-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.controls-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.controls-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Buttons */
+.control-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+.control-btn .material-symbols-outlined {
+    font-size: 1.75rem;
+}
+
+/* Volume */
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    position: relative;
+}
+
+.volume-slider {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    margin-left: 0.25rem;
+    cursor: pointer;
+    /* Custom styling for range input needed for consistency, but standard is okay for now */
+    accent-color: var(--primary);
+}
+
+.volume-container:hover .volume-slider,
+.volume-slider:hover,
+.volume-slider:active {
+    width: 70px;
+}
+
+/* Time */
+.time-display {
+    color: white;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    margin-left: 0.5rem;
+    user-select: none;
+}
+
+/* Fullscreen adjustments */
+.video-container-wrapper:fullscreen .video-controls {
+    position: fixed;
+    bottom: 0;
+    z-index: 2147483647;
 }
