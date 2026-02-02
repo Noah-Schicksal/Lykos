@@ -210,7 +210,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // 4. Auth Card Logic
   const avatarBtn = document.getElementById('user-avatar-btn');
-  const userInfoBtn = document.getElementById('user-info-btn');
   const authContainer = document.getElementById('auth-card-container');
   const cardInner = document.getElementById('auth-card');
   const btnToRegister = document.getElementById('btn-to-register');
@@ -222,22 +221,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const menuDrawerBtn = document.getElementById('menu-drawer-btn'); // In drawer - closes drawer
   const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
   const drawerProfilePanel = document.getElementById('drawer-profile-panel');
-  const drawerManagementSection = document.getElementById(
-    'drawer-management-section',
-  );
+  const drawerManagementSection = document.getElementById('drawer-management-section');
   const drawerLogoutBtn = document.getElementById('drawer-logout');
   const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
-  const drawerDeleteAccountBtn = document.getElementById(
-    'drawer-delete-account',
-  );
-  const drawerCategoriesToggle = document.getElementById(
-    'drawer-categories-toggle',
-  );
-  const drawerCategoriesPanel = document.getElementById(
-    'drawer-categories-panel',
-  );
+  const drawerDeleteAccountBtn = document.getElementById('drawer-delete-account');
+  const drawerCategoriesToggle = document.getElementById('drawer-categories-toggle');
+  const drawerCategoriesPanel = document.getElementById('drawer-categories-panel');
 
-  // Avatar always opens Auth Card (for login/register)
+  // Avatar always opens Auth Card (for login/register or profile view if logged in)
   if (avatarBtn && authContainer) {
     avatarBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -245,8 +236,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       closeDrawer();
     });
   }
-
-  // User info button (when logged in) does NOT open anything - just displays status
 
   // Open Drawer Button (in navbar) - opens the drawer
   if (openDrawerBtn && userDrawer) {
@@ -268,13 +257,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get overlay element
   const drawerOverlay = document.querySelector('.drawer-overlay');
 
-  // Close drawer when clicking on overlay
-  if (drawerOverlay) {
-    drawerOverlay.addEventListener('click', () => {
-      closeDrawer();
-    });
-  }
-
   // Helper functions
   function openDrawer() {
     updateDrawerUserInfo();
@@ -282,12 +264,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.add('drawer-open');
     openDrawerBtn?.classList.add('hidden');
     drawerOverlay?.classList.add('show');
-
-    // Animate Icon to Close
-    if (menuDrawerBtn) {
-      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = 'close';
-    }
   }
 
   function closeDrawer() {
@@ -298,12 +274,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = localStorage.getItem('auth_user');
     if (user && openDrawerBtn) {
       openDrawerBtn.classList.remove('hidden');
-    }
-
-    // Revert Icon to Menu
-    if (menuDrawerBtn) {
-      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
-      if (icon) icon.textContent = 'menu';
     }
   }
 
@@ -328,54 +298,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Show/hide open drawer button, login button, and user info button based on login status
+  // Show/hide open drawer button based on login status
   function updateMenuButtonVisibility() {
     const user = localStorage.getItem('auth_user');
-
-    // Show drawer button only when logged in
     if (openDrawerBtn) {
       if (user && !userDrawer?.classList.contains('show')) {
         openDrawerBtn.classList.remove('hidden');
       } else {
         openDrawerBtn.classList.add('hidden');
-      }
-    }
-
-    // Show login button only when NOT logged in
-    if (avatarBtn) {
-      if (user) {
-        avatarBtn.classList.add('hidden');
-      } else {
-        avatarBtn.classList.remove('hidden');
-      }
-    }
-
-    // Show user info button only when logged in
-    if (userInfoBtn) {
-      if (user) {
-        userInfoBtn.classList.remove('hidden');
-        // Update role display
-        try {
-          const userData = JSON.parse(user);
-          const displayName = document.getElementById('user-display-name');
-          if (displayName) {
-            // Map role to Portuguese
-            const roleMap: { [key: string]: string } = {
-              INSTRUCTOR: 'Instrutor',
-              STUDENT: 'Estudante',
-              ADMIN: 'Admin',
-              instructor: 'Instrutor',
-              student: 'Estudante',
-              admin: 'Admin',
-            };
-            const role = userData.role || 'STUDENT';
-            displayName.textContent = roleMap[role] || 'Usuário';
-          }
-        } catch (e) {
-          console.error('Error parsing user data:', e);
-        }
-      } else {
-        userInfoBtn.classList.add('hidden');
       }
     }
   }
@@ -422,18 +352,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (userStr) {
           try {
             const user = JSON.parse(userStr);
-            const nameInput = document.getElementById(
-              'edit-name',
-            ) as HTMLInputElement;
-            const emailInput = document.getElementById(
-              'edit-email',
-            ) as HTMLInputElement;
+            const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+            const emailInput = document.getElementById('edit-email') as HTMLInputElement;
 
             if (nameInput) nameInput.value = user.name || '';
             if (emailInput) emailInput.value = user.email || '';
-          } catch (e) {
-            console.error('Error parsing user', e);
-          }
+          } catch (e) { console.error('Error parsing user', e); }
         }
       }
     });
@@ -498,9 +422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (drawerName) drawerName.textContent = user.name || 'Usuário';
       if (drawerEmail) drawerEmail.textContent = user.email || '';
-      if (drawerRole)
-        drawerRole.textContent =
-          userRole === 'instructor' ? 'Professor' : 'Aluno';
+      if (drawerRole) drawerRole.textContent = userRole === 'instructor' ? 'Professor' : 'Aluno';
 
       // Show management section for instructors
       if (drawerManagementSection) {
@@ -695,6 +617,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.location.href = '/estudante';
     });
   }
+
+
 
   // Handle Category Create Form
   const categoryCreateForm = document.getElementById('category-create-form');
