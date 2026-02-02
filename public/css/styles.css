@@ -3280,3 +3280,14 @@ body.drawer-open {
 :root.light .user-menu-btn:hover .menu-text {
   color: white;
 }
+
+.btn-validate-home:hover {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 0 15px rgba(94, 23, 235, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-validate-home:hover .material-symbols-outlined {
+  color: white !important;
+}
