@@ -244,12 +244,39 @@ async function loadCategories() {
  * Sets up sidebar navigation and UI toggles
  */
 function setupNavigation() {
-    // Sidebar Toggle
+    // Sidebar Toggle (inside sidebar)
     const btnToggle = document.getElementById('btn-toggle-sidebar');
     const sidebar = document.getElementById('sidebar');
-    if (btnToggle && sidebar) {
-        btnToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
+
+    // Mobile Menu Toggle (in header)
+    const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+
+    if (sidebar) {
+        // Toggle from sidebar button
+        if (btnToggle) {
+            btnToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Toggle from mobile menu button in header
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement;
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(target) &&
+                (!btnToggle || !btnToggle.contains(target)) &&
+                (!mobileMenuBtn || !mobileMenuBtn.contains(target))) {
+                sidebar.classList.remove('active');
+            }
         });
     }
 

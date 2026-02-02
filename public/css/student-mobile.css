@@ -1,0 +1,112 @@
+/* ============================================
+   MOBILE RESPONSIVENESS - MAXIMUM PRIORITY
+   ============================================ */
+
+/* Force icon-only sidebar on ALL mobile devices */
+@media (max-width: 1023px) {
+
+    /* CRITICAL: Force sidebar to display and position */
+    body .student-dashboard .sidebar,
+    .student-dashboard .sidebar,
+    #sidebar.sidebar {
+        display: flex !important;
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 70px !important;
+        height: 100vh !important;
+        padding: 1rem 0.5rem !important;
+        z-index: 9999 !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* Force hide all text elements */
+    .sidebar .nav-text,
+    .sidebar .brand-title,
+    .sidebar .sidebar-user-name,
+    .sidebar .sidebar-user-role,
+    .nav-text,
+    .brand-title,
+    .sidebar-user-name,
+    .sidebar-user-role {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Center navigation items */
+    .sidebar .nav-item,
+    .nav-item {
+        justify-content: center !important;
+        padding: 0.75rem 0.5rem !important;
+        display: flex !important;
+    }
+
+    /* Stack brand vertically */
+    .sidebar .brand,
+    .brand {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 0 !important;
+        display: flex !important;
+    }
+
+    /* Hide ALL toggle buttons */
+    .sidebar-toggle-btn,
+    .btn-toggle-sidebar,
+    .mobile-menu-btn,
+    .sidebar .sidebar-toggle-btn,
+    .sidebar .btn-toggle-sidebar {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    /* Adjust main content */
+    .main-content,
+    .student-dashboard .main-content {
+        margin-left: 70px !important;
+        width: calc(100% - 70px) !important;
+    }
+
+    /* User card compact */
+    .sidebar-user-card,
+    .sidebar .sidebar-user-card {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 0.5rem !important;
+        display: flex !important;
+    }
+
+    .sidebar-user-avatar {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Course cards single column */
+    .courses-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Certificates single column */
+    .certificates-grid {
+        gap: 0.75rem !important;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 479px) {
+
+    body .student-dashboard .sidebar,
+    .student-dashboard .sidebar,
+    #sidebar.sidebar {
+        width: 60px !important;
+    }
+
+    .main-content,
+    .student-dashboard .main-content {
+        margin-left: 60px !important;
+        width: calc(100% - 60px) !important;
+    }
+}
