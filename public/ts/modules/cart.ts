@@ -54,6 +54,8 @@ export const Cart = {
                 method: 'DELETE'
             });
             await Cart.updateBadge();
+            // Dispatch event to notify components that cart was updated
+            window.dispatchEvent(new CustomEvent('cart-updated', { detail: { action: 'remove', courseId } }));
             return true;
         } catch (error: any) {
             AppUI.showMessage(error.message || 'Erro ao remover do carrinho', 'error');

@@ -110,6 +110,29 @@ export const Home = {
     }
 
     Home.syncCart();
+
+    // Listen for cart updates to keep local state in sync
+    window.addEventListener('cart-updated', (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.action === 'remove' && detail?.courseId) {
+        // Remove from local state
+        Home.cartItems = Home.cartItems.filter(id => id !== detail.courseId);
+        console.log(`[Home] Cart updated - removed ${detail.courseId}. Current items:`, Home.cartItems);
+      }
+    });
+
+    // Listen for auth changes to reload courses with correct user context
+    window.addEventListener('auth-login', () => {
+      console.log('[Home] Auth login detected - reloading courses and cart');
+      Home.loadCourses();
+      Home.syncCart();
+    });
+
+    window.addEventListener('auth-logout', () => {
+      console.log('[Home] Auth logout detected - reloading courses and clearing cart state');
+      Home.cartItems = [];
+      Home.loadCourses();
+    });
   },
 
   /**
@@ -249,13 +272,16 @@ export const Home = {
 
       // Check enrollment status (requires matching backend support)
       // Assuming course object now has isEnrolled and progress from updated backend
-      const isEnrolled = (course as any).isEnrolled;
+      const isEnrolled = (course as any).isEnrolled === true;
       const progress = (course as any).progress || 0;
 
       // Check if logged user is the course owner
       const userStr = localStorage.getItem('auth_user');
       const currentUser = userStr ? JSON.parse(userStr) : null;
-      const isOwner = currentUser && (course.instructorId === currentUser.id || course.instructor?.id === currentUser.id);
+      const isOwner = currentUser && currentUser.id && (course.instructorId === currentUser.id || course.instructor?.id === currentUser.id);
+
+      // Debug log
+      console.log(`[Card Debug] Course: ${course.title}, instructorId: ${course.instructorId}, instructor.id: ${course.instructor?.id}, currentUser.id: ${currentUser?.id}, isOwner: ${isOwner}, isEnrolled: ${isEnrolled}`);
 
       let actionButtonHTML = '';
       if (isOwner) {
@@ -336,22 +362,12 @@ export const Home = {
           `;
       }
 
-      // Progress Bar HTML (only if enrolled)
-      let progressHTML = '';
-      if (isEnrolled) {
-        progressHTML = `
-            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 0.5rem; overflow: hidden;">
-                <div style="width: ${progress}%; height: 100%; background: #10b981;"></div>
-            </div>
-            <div style="font-size: 0.7rem; color: #10b981; margin-top: 2px; text-align: right;">${progress}% Concluído</div>
-          `;
-      }
+
 
       card.innerHTML = `
         <div class="card-img-container">
-          ${
-            hasImage
-              ? `
+          ${hasImage
+          ? `
             <img
               alt="${course.title}"
               class="card-img"
@@ -359,13 +375,13 @@ export const Home = {
               onerror="this.onerror=null;this.style.display='none';this.parentElement.innerHTML='<div class=\'card-img-placeholder\'><span class=\'material-symbols-outlined\'>image</span><span style=\'font-size: 0.75rem; opacity: 0.7;\'>Sem imagem</span></div>' + this.parentElement.querySelector('.badge-tag').outerHTML + (this.parentElement.querySelector('[style*=\'MATRICULADO\']') ? this.parentElement.querySelector('[style*=\'MATRICULADO\']').outerHTML : '');"
             />
           `
-              : `
+          : `
             <div class="card-img-placeholder">
               <span class="material-symbols-outlined">image</span>
               <span style="font-size: 0.75rem; opacity: 0.7;">Sem imagem</span>
             </div>
           `
-          }
+        }
           <div class="badge-tag bg-tag-primary">${categoryName}</div>
           ${isEnrolled && !isOwner ? '<div style="position: absolute; top: 10px; right: 10px; background: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold;">MATRICULADO</div>' : ''}
         </div>
@@ -378,14 +394,11 @@ export const Home = {
             <span>Criado por: ${course.instructor?.name || 'Instrutor Desconhecido'}</span>
           </div>
 
+          ${!isEnrolled ? `
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-             ${isEnrolled
-          ? `<span style="color: #10b981; font-weight: 500;">Curso em andamento</span>`
-          : `<span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}`
-        }
+             <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}
           </div>
-          
-          ${progressHTML}
+          ` : ''}
           
           <div class="card-footer">
              ${!isEnrolled ? `<span class="card-price">${priceFormatted}</span>` : '<div></div>'}
@@ -694,10 +707,12 @@ export const Home = {
         category.textContent = course.category?.name || 'Sem Categoria';
 
       if (slots) {
-        slots.textContent =
-          course.maxStudents === undefined || course.maxStudents === null
-            ? '∞ ilimitadas'
-            : `${course.maxStudents} total`;
+        const enrolledCount = course.enrolledCount || 0;
+        if (course.maxStudents === undefined || course.maxStudents === null) {
+          slots.textContent = `${enrolledCount} matriculados / ∞ vagas ilimitadas`;
+        } else {
+          slots.textContent = `${enrolledCount} matriculados / ${course.maxStudents} vagas`;
+        }
       }
 
       if (cartBtn) {
@@ -713,7 +728,7 @@ export const Home = {
           // Owner cannot add their own course to cart
           cartBtn.innerHTML = `
             <span class="material-symbols-outlined">verified</span>
-            Você é o criador deste curso
+            Criador
           `;
           cartBtn.setAttribute('disabled', 'true');
           (cartBtn as HTMLElement).style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
@@ -723,10 +738,10 @@ export const Home = {
           // User already has this course
           cartBtn.innerHTML = `
             <span class="material-symbols-outlined">check_circle</span>
-            Você já possui este curso
+            Obtido
           `;
           cartBtn.setAttribute('disabled', 'true');
-          (cartBtn as HTMLElement).style.background = '#8b5cf6';
+          (cartBtn as HTMLElement).style.background = '#10b981';
           (cartBtn as HTMLElement).style.cursor = 'not-allowed';
           (cartBtn as HTMLElement).style.opacity = '0.9';
         } else if (Home.cartItems.includes(courseId)) {
