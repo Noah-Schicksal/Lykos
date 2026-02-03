@@ -475,7 +475,14 @@ function checkIfUserIsCreator(course: Course) {
 /**
  * Setup action buttons (Buy Now and Add to Cart)
  */
+let actionButtonsInitialized = false;
+
 function setupActionButtons(courseId: string) {
+  // Prevent multiple initializations
+  if (actionButtonsInitialized) {
+    return;
+  }
+
   const btnBuyNow = document.getElementById('btn-buy-now');
   const btnAddToCart = document.getElementById('btn-add-to-cart');
 
@@ -484,18 +491,33 @@ function setupActionButtons(courseId: string) {
     const newBtnAddToCart = btnAddToCart.cloneNode(true) as HTMLElement;
     btnAddToCart.parentNode?.replaceChild(newBtnAddToCart, btnAddToCart);
 
-    newBtnAddToCart.addEventListener('click', async () => {
-      if (!localStorage.getItem('auth_user')) {
-        AppUI.showMessage('Por favor, faça login para adicionar ao carrinho.', 'info');
-        return;
-      }
+    newBtnAddToCart.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-      const success = await Cart.add(courseId);
-      if (success) {
-        AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
-        Cart.updateBadge();
+      // Disable button temporarily to prevent double clicks
+      const btn = e.currentTarget as HTMLButtonElement;
+      if (btn.disabled) return;
+      btn.disabled = true;
+
+      try {
+        if (!localStorage.getItem('auth_user')) {
+          AppUI.showMessage('Por favor, faça login para adicionar ao carrinho.', 'info');
+          return;
+        }
+
+        const success = await Cart.add(courseId);
+        if (success) {
+          AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
+          Cart.updateBadge();
+        }
+      } finally {
+        // Re-enable button after a short delay
+        setTimeout(() => {
+          btn.disabled = false;
+        }, 1000);
       }
-    }, { once: false });
+    });
   }
 
   if (btnBuyNow) {
@@ -503,27 +525,44 @@ function setupActionButtons(courseId: string) {
     const newBtnBuyNow = btnBuyNow.cloneNode(true) as HTMLElement;
     btnBuyNow.parentNode?.replaceChild(newBtnBuyNow, btnBuyNow);
 
-    newBtnBuyNow.addEventListener('click', async () => {
-      if (!localStorage.getItem('auth_user')) {
-        AppUI.showMessage('Por favor, faça login para comprar.', 'info');
-        return;
-      }
+    newBtnBuyNow.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-      // Add to cart
-      const success = await Cart.add(courseId);
-      if (success) {
-        AppUI.showMessage('Curso adicionado ao carrinho! Clique no carrinho para finalizar a compra.', 'success');
-        Cart.updateBadge();
+      // Disable button temporarily to prevent double clicks
+      const btn = e.currentTarget as HTMLButtonElement;
+      if (btn.disabled) return;
+      btn.disabled = true;
 
-        // Open cart modal to show the item
-        const cartModal = document.getElementById('cart-modal');
-        if (cartModal) {
-          cartModal.classList.add('show');
-          renderCartItems();
+      try {
+        if (!localStorage.getItem('auth_user')) {
+          AppUI.showMessage('Por favor, faça login para comprar.', 'info');
+          return;
         }
+
+        // Add to cart
+        const success = await Cart.add(courseId);
+        if (success) {
+          AppUI.showMessage('Curso adicionado ao carrinho! Clique no carrinho para finalizar a compra.', 'success');
+          Cart.updateBadge();
+
+          // Open cart modal to show the item
+          const cartModal = document.getElementById('cart-modal');
+          if (cartModal) {
+            cartModal.classList.add('show');
+            renderCartItems();
+          }
+        }
+      } finally {
+        // Re-enable button after a short delay
+        setTimeout(() => {
+          btn.disabled = false;
+        }, 1000);
       }
-    }, { once: false });
+    });
   }
+
+  actionButtonsInitialized = true;
 }
 
 /**
