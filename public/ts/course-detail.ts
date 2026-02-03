@@ -164,6 +164,9 @@ function populateCourseDetails(course: Course) {
 
   // Update page title
   document.title = `${course.title} | Lykos`;
+
+  // Check if current user is the course creator
+  checkIfUserIsCreator(course);
 }
 
 /**
@@ -405,6 +408,68 @@ async function renderCartItems() {
   } catch (error) {
     listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
   }
+
+  // Setup checkout button
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', async () => {
+      await Cart.checkout();
+    });
+  }
+}
+
+/**
+ * Check if current user is the course creator and update UI accordingly
+ */
+function checkIfUserIsCreator(course: Course) {
+  const authUser = localStorage.getItem('auth_user');
+  if (!authUser) return;
+
+  try {
+    const user = JSON.parse(authUser);
+    const isCreator = course.instructor?.id === user.id;
+
+    if (isCreator) {
+      // Hide purchase buttons
+      const btnBuyNow = document.getElementById('btn-buy-now');
+      const btnAddToCart = document.getElementById('btn-add-to-cart');
+      const actionButtons = document.querySelector('.action-buttons');
+
+      if (btnBuyNow) btnBuyNow.style.display = 'none';
+      if (btnAddToCart) btnAddToCart.style.display = 'none';
+
+      // Add creator badge
+      const instructorEl = document.getElementById('course-instructor');
+      if (instructorEl && !instructorEl.querySelector('.creator-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'creator-badge';
+        badge.textContent = 'CRIADOR';
+        badge.style.cssText = `
+          display: inline-block;
+          background: linear-gradient(135deg, #5e17eb, #00d4ff);
+          color: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 0.5rem;
+          font-size: 0.75rem;
+          font-weight: 700;
+          margin-left: 0.5rem;
+          vertical-align: middle;
+        `;
+        instructorEl.appendChild(badge);
+      }
+
+      // Show message in sidebar
+      if (actionButtons) {
+        actionButtons.innerHTML = `
+          <div style="padding: 1rem; text-align: center; color: var(--text-muted); border: 1px solid var(--border-light); border-radius: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--primary);">verified</span>
+            <p style="margin-top: 0.5rem; font-weight: 600;">Você é o criador deste curso</p>
+          </div>
+        `;
+      }
+    }
+  } catch (error) {
+    console.error('Error checking creator status:', error);
+  }
 }
 
 /**
@@ -415,7 +480,11 @@ function setupActionButtons(courseId: string) {
   const btnAddToCart = document.getElementById('btn-add-to-cart');
 
   if (btnAddToCart) {
-    btnAddToCart.addEventListener('click', async () => {
+    // Remove any existing listeners by cloning the button
+    const newBtnAddToCart = btnAddToCart.cloneNode(true) as HTMLElement;
+    btnAddToCart.parentNode?.replaceChild(newBtnAddToCart, btnAddToCart);
+
+    newBtnAddToCart.addEventListener('click', async () => {
       if (!localStorage.getItem('auth_user')) {
         AppUI.showMessage('Por favor, faça login para adicionar ao carrinho.', 'info');
         return;
@@ -426,28 +495,34 @@ function setupActionButtons(courseId: string) {
         AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
         Cart.updateBadge();
       }
-    });
+    }, { once: false });
   }
 
   if (btnBuyNow) {
-    btnBuyNow.addEventListener('click', async () => {
+    // Remove any existing listeners by cloning the button
+    const newBtnBuyNow = btnBuyNow.cloneNode(true) as HTMLElement;
+    btnBuyNow.parentNode?.replaceChild(newBtnBuyNow, btnBuyNow);
+
+    newBtnBuyNow.addEventListener('click', async () => {
       if (!localStorage.getItem('auth_user')) {
         AppUI.showMessage('Por favor, faça login para comprar.', 'info');
         return;
       }
 
-      // Add to cart and checkout immediately
+      // Add to cart
       const success = await Cart.add(courseId);
       if (success) {
-        const confirm = await AppUI.promptModal(
-          'Finalizar Compra',
-          'Deseja confirmar a compra deste curso?'
-        );
-        if (confirm) {
-          await Cart.checkout();
+        AppUI.showMessage('Curso adicionado ao carrinho! Clique no carrinho para finalizar a compra.', 'success');
+        Cart.updateBadge();
+
+        // Open cart modal to show the item
+        const cartModal = document.getElementById('cart-modal');
+        if (cartModal) {
+          cartModal.classList.add('show');
+          renderCartItems();
         }
       }
-    });
+    }, { once: false });
   }
 }
 
