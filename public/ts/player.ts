@@ -2,6 +2,10 @@
  * Player Logic
  */
 import { AppUI } from './utils/ui.js';
+import { Auth } from './modules/auth.js';
+import { Cart } from './modules/cart.js';
+import { Categories } from './modules/categories.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 interface ClassItem {
     id: string;
@@ -36,7 +40,6 @@ const Player = {
 
     init: async () => {
         // Get courseId from URL
-        // Get courseId from URL (Path or Query)
         let id = new URLSearchParams(window.location.search).get('courseId');
 
         if (!id) {
@@ -55,15 +58,21 @@ const Player = {
 
         Player.courseId = id;
 
+        // Initialize App Core
+        initThemeToggle();
+        await Auth.init();
+        Cart.updateBadge(); // Init cart badge
+
         // Auth Check
         const user = localStorage.getItem('auth_user');
         if (!user) {
             window.location.href = '/inicio'; // Redirect if not logged in
             return;
         }
-        Player.setupAuthUI(JSON.parse(user));
-        Player.setupThemeToggle(); // Setup theme toggle
-        Player.setupSidebarToggle(); // Setup toggle logic
+
+        // Setup UI
+        Player.setupNavigation();
+        Player.setupSidebarToggle(); // Player implementation of sidebar (video list)
         Player.setupTabs(); // Setup tabs navigation
         Player.setupNextLesson(); // Setup next lesson button
         Player.setupCustomControls(); // Setup custom video controls
@@ -71,34 +80,412 @@ const Player = {
         await Player.loadCourseData();
     },
 
-    setupThemeToggle: () => {
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
+    setupNavigation: () => {
+        // --- 1. Password Toggle ---
+        const passwordToggleBtns = document.querySelectorAll('.btn-toggle-password');
+        passwordToggleBtns.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = btn.getAttribute('data-target');
+                if (!targetId) return;
 
-        // Load saved theme or default to dark
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            htmlElement.classList.remove('dark');
-            htmlElement.classList.add('light');
-        } else {
-            htmlElement.classList.remove('light');
-            htmlElement.classList.add('dark');
-        }
+                const input = document.getElementById(targetId) as HTMLInputElement;
+                const icon = btn.querySelector('.material-symbols-outlined');
 
-        // Toggle theme on button click
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                if (htmlElement.classList.contains('dark')) {
-                    htmlElement.classList.remove('dark');
-                    htmlElement.classList.add('light');
-                    localStorage.setItem('theme', 'light');
+                if (!input || !icon) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
                 } else {
-                    htmlElement.classList.remove('light');
-                    htmlElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        });
+
+        // --- 2. Cart Toggle & Logic ---
+        const cartToggleBtn = document.getElementById('cart-toggle-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const closeCartBtn = document.getElementById('close-cart-btn');
+
+        if (cartToggleBtn && cartModal) {
+            cartToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!localStorage.getItem('auth_user')) {
+                    AppUI.showMessage('Por favor, faça login para ver seu carrinho.', 'info');
+                    const authContainer = document.getElementById('auth-card-container');
+                    if (authContainer) authContainer.classList.add('show');
+                    return;
+                }
+                cartModal.classList.toggle('show');
+                if (cartModal.classList.contains('show')) {
+                    Player.renderCartItems();
+                }
+            });
+
+            if (closeCartBtn) {
+                closeCartBtn.addEventListener('click', () => {
+                    cartModal.classList.remove('show');
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                if (
+                    cartModal.classList.contains('show') &&
+                    !cartModal.contains(e.target as Node) &&
+                    !cartToggleBtn.contains(e.target as Node)
+                ) {
+                    cartModal.classList.remove('show');
                 }
             });
         }
+
+        // Checkout Button
+        const checkoutBtn = document.getElementById('btn-cart-checkout');
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', async () => {
+                const confirm = await AppUI.promptModal(
+                    'Finalizar Compra',
+                    'Deseja confirmar a compra dos itens no carrinho?'
+                );
+                if (confirm) {
+                    const success = await Cart.checkout();
+                    if (success) {
+                        cartModal?.classList.remove('show');
+                        // Optionally reload course data if user bought modules for this course
+                        // Player.loadCourseData(); 
+                    }
+                }
+            });
+        }
+
+        // --- 3. Auth & Drawer Logic ---
+        const avatarBtn = document.getElementById('user-avatar-btn');
+        const userInfoBtn = document.getElementById('user-info-btn'); // Logged in button
+        const authContainer = document.getElementById('auth-card-container');
+        const cardInner = document.getElementById('auth-card');
+        const btnToRegister = document.getElementById('btn-to-register');
+        const btnToLogin = document.getElementById('btn-to-login');
+
+        // Drawer Elements
+        const userDrawer = document.getElementById('user-drawer');
+        const openDrawerBtn = document.getElementById('open-drawer-btn');
+        const menuDrawerBtn = document.getElementById('menu-drawer-btn');
+        const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
+        const drawerProfilePanel = document.getElementById('drawer-profile-panel');
+        const drawerLogoutBtn = document.getElementById('drawer-logout');
+        const drawerOverlay = document.querySelector('.drawer-overlay');
+        const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
+        const drawerDeleteAccountBtn = document.getElementById('drawer-delete-account');
+        const drawerCategoriesToggle = document.getElementById('drawer-categories-toggle');
+        const drawerCategoriesPanel = document.getElementById('drawer-categories-panel');
+
+        // Helpers
+        const openDrawer = () => {
+            Player.updateDrawerUserInfo();
+            userDrawer?.classList.add('show');
+            document.body.classList.add('drawer-open');
+            openDrawerBtn?.classList.add('hidden');
+            drawerOverlay?.classList.add('show');
+            if (menuDrawerBtn) {
+                const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+                if (icon) icon.textContent = 'close';
+            }
+        };
+
+        const closeDrawer = () => {
+            userDrawer?.classList.remove('show');
+            document.body.classList.remove('drawer-open');
+            drawerOverlay?.classList.remove('show');
+            const user = localStorage.getItem('auth_user');
+            if (user && openDrawerBtn) {
+                openDrawerBtn.classList.remove('hidden');
+            }
+            if (menuDrawerBtn) {
+                const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+                if (icon) icon.textContent = 'menu';
+            }
+        };
+
+        // Event Listeners
+        if (avatarBtn && authContainer) {
+            avatarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                authContainer.classList.toggle('show');
+                closeDrawer();
+            });
+        }
+
+        if (openDrawerBtn && userDrawer) {
+            openDrawerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openDrawer();
+                authContainer?.classList.remove('show');
+            });
+        }
+
+        if (menuDrawerBtn && userDrawer) {
+            menuDrawerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeDrawer();
+            });
+        }
+
+        if (drawerOverlay) {
+            drawerOverlay.addEventListener('click', () => closeDrawer());
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (
+                authContainer?.classList.contains('show') &&
+                !authContainer.contains(e.target as Node) &&
+                !avatarBtn?.contains(e.target as Node)
+            ) {
+                authContainer.classList.remove('show');
+            }
+
+            if (
+                userDrawer?.classList.contains('show') &&
+                !userDrawer.contains(e.target as Node) &&
+                !openDrawerBtn?.contains(e.target as Node)
+            ) {
+                closeDrawer();
+            }
+        });
+
+        // Update Visibility
+        const updateMenuButtonVisibility = () => {
+            const user = localStorage.getItem('auth_user');
+
+            if (openDrawerBtn) {
+                if (user && !userDrawer?.classList.contains('show')) openDrawerBtn.classList.remove('hidden');
+                else openDrawerBtn.classList.add('hidden');
+            }
+
+            if (avatarBtn) {
+                if (user) avatarBtn.classList.add('hidden');
+                else avatarBtn.classList.remove('hidden');
+            }
+
+            if (userInfoBtn) {
+                if (user) {
+                    userInfoBtn.classList.remove('hidden');
+                    try {
+                        const userData = JSON.parse(user);
+                        const displayName = document.getElementById('user-display-name');
+                        if (displayName) {
+                            const roleMap: { [key: string]: string } = {
+                                INSTRUCTOR: 'Instrutor', STUDENT: 'Estudante', ADMIN: 'Admin',
+                                instructor: 'Instrutor', student: 'Estudante', admin: 'Admin',
+                            };
+                            const role = userData.role || 'STUDENT';
+                            displayName.textContent = roleMap[role] || 'Usuário';
+                        }
+                    } catch (e) { }
+                } else {
+                    userInfoBtn.classList.add('hidden');
+                }
+            }
+        };
+
+        updateMenuButtonVisibility();
+        window.addEventListener('auth-login', updateMenuButtonVisibility);
+        window.addEventListener('auth-logout', () => {
+            updateMenuButtonVisibility();
+            closeDrawer();
+            drawerProfileToggle?.classList.remove('expanded');
+            drawerProfilePanel?.classList.remove('expanded');
+        });
+
+        // Drawer Interactions
+        if (drawerProfileToggle && drawerProfilePanel) {
+            drawerProfileToggle.addEventListener('click', () => {
+                drawerProfileToggle.classList.toggle('expanded');
+                drawerProfilePanel.classList.toggle('expanded');
+            });
+        }
+
+        if (drawerLogoutBtn) {
+            drawerLogoutBtn.addEventListener('click', async () => {
+                await Auth.logout();
+                closeDrawer();
+            });
+        }
+
+        // Edit Profile Toggle in Drawer
+        if (drawerEditProfileBtn) {
+            drawerEditProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const viewMode = document.getElementById('drawer-profile-view');
+                const editMode = document.getElementById('drawer-profile-edit');
+                if (viewMode && editMode) {
+                    viewMode.classList.add('hidden');
+                    editMode.classList.remove('hidden');
+                    // Pre-fill
+                    const userStr = localStorage.getItem('auth_user');
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+                        const n = document.getElementById('edit-name') as HTMLInputElement;
+                        const em = document.getElementById('edit-email') as HTMLInputElement;
+                        if (n) n.value = user.name || '';
+                        if (em) em.value = user.email || '';
+                    }
+                }
+            });
+        }
+        const drawerCancelEdit = document.getElementById('drawer-cancel-edit');
+        if (drawerCancelEdit) {
+            drawerCancelEdit.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document.getElementById('drawer-profile-view')?.classList.remove('hidden');
+                document.getElementById('drawer-profile-edit')?.classList.add('hidden');
+            });
+        }
+
+        // Drawer: Delete Logic
+        if (drawerDeleteAccountBtn) {
+            drawerDeleteAccountBtn.addEventListener('click', async () => {
+                const confirm = await AppUI.promptModal('Excluir Conta', 'Tem certeza?');
+                if (confirm) {
+                    await Auth.deleteUserAccount();
+                }
+            });
+        }
+
+        // Categories
+        if (drawerCategoriesToggle && drawerCategoriesPanel) {
+            drawerCategoriesToggle.addEventListener('click', () => {
+                drawerCategoriesToggle.classList.toggle('expanded');
+                drawerCategoriesPanel.classList.toggle('expanded');
+                if (drawerCategoriesPanel.classList.contains('expanded')) {
+                    Categories.renderCategoriesList('categories-list');
+                }
+            });
+        }
+
+        // Auth Flip
+        if (btnToRegister && cardInner) {
+            btnToRegister.addEventListener('click', (e) => { e.preventDefault(); cardInner.classList.add('flipped'); });
+        }
+        if (btnToLogin && cardInner) {
+            btnToLogin.addEventListener('click', (e) => { e.preventDefault(); cardInner.classList.remove('flipped'); });
+        }
+
+        // Auth Forms (Basic Hooks)
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = (document.getElementById('login-email') as HTMLInputElement).value;
+                const pass = (document.getElementById('login-password') as HTMLInputElement).value;
+                await Auth.login(email, pass);
+                Cart.updateBadge(); // Update cart on login
+            });
+        }
+
+        // Register Form
+        const regForm = document.getElementById('register-form');
+        if (regForm) {
+            regForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                // ... simplified reg logic or full port ...
+                // Providing full port for completeness
+                const name = (document.getElementById('register-name') as HTMLInputElement).value;
+                const email = (document.getElementById('register-email') as HTMLInputElement).value;
+                const pass = (document.getElementById('register-password') as HTMLInputElement).value;
+                const confirm = (document.getElementById('register-confirm') as HTMLInputElement).value;
+                const role = (document.getElementById('register-role') as HTMLSelectElement).value;
+
+                if (pass !== confirm) { AppUI.showMessage('Senhas não conferem', 'error'); return; }
+                try {
+                    const endpoint = role === 'instructor' ? '/auth/register/instructor' : '/auth/register/student';
+                    await AppUI.apiFetch(endpoint, { method: 'POST', body: JSON.stringify({ name, email, password: pass }) });
+                    AppUI.showMessage('Conta criada! Faça Login.', 'success');
+                    (regForm as HTMLFormElement).reset();
+                    cardInner?.classList.remove('flipped');
+                } catch (err: any) {
+                    AppUI.showMessage(err.message || 'Erro', 'error');
+                }
+            });
+        }
+
+        // Profile View Buttons
+        const btnViewProfile = document.getElementById('btn-view-profile');
+        if (btnViewProfile) btnViewProfile.addEventListener('click', (e) => { e.preventDefault(); Auth.showProfileView(); });
+        const btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) btnLogout.addEventListener('click', (e) => { e.preventDefault(); Auth.logout(); Cart.updateBadge(); });
+
+        // My Learning
+        const btnMyLearning = document.getElementById('btn-my-learning');
+        if (btnMyLearning) btnMyLearning.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/estudante'; });
+    },
+
+    renderCartItems: async () => {
+        const listContainer = document.getElementById('cart-items-list');
+        const totalPriceEl = document.getElementById('cart-total-price');
+        const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
+
+        if (!listContainer || !totalPriceEl) return;
+        listContainer.innerHTML = '<div class="cart-empty-msg">Carregando...</div>';
+        try {
+            const items = await Cart.getCart();
+            if (items.length === 0) {
+                listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
+                totalPriceEl.textContent = 'R$ 0,00';
+                if (checkoutBtn) checkoutBtn.disabled = true;
+                return;
+            }
+
+            let total = 0;
+            listContainer.innerHTML = items.map(item => {
+                total += item.price;
+                const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price);
+                const hasImage = item.coverImageUrl && item.coverImageUrl.trim() !== '';
+                const imgHtml = hasImage ? `<img src="${item.coverImageUrl}" class="cart-item-img">` : `<div class="cart-item-img-placeholder"><span class="material-symbols-outlined">image</span></div>`;
+
+                return `<div class="cart-item">
+                     ${imgHtml}
+                     <div class="cart-item-info"><h4 class="cart-item-title">${item.title}</h4><div class="cart-item-price">${price}</div></div>
+                     <button class="btn-remove-cart" data-id="${item.courseId}"><span class="material-symbols-outlined">delete</span></button>
+                 </div>`;
+            }).join('');
+
+            totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
+            if (checkoutBtn) checkoutBtn.disabled = false;
+
+            listContainer.querySelectorAll('.btn-remove-cart').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    await Cart.remove((btn as HTMLElement).dataset.id!);
+                    Player.renderCartItems();
+                });
+            });
+        } catch (e) { listContainer.innerHTML = '<div class="cart-empty-msg">Erro.</div>'; }
+    },
+
+    updateDrawerUserInfo: () => {
+        const userStr = localStorage.getItem('auth_user');
+        if (!userStr) return;
+        try {
+            const user = JSON.parse(userStr);
+            const dName = document.getElementById('drawer-user-name');
+            const dEmail = document.getElementById('drawer-user-email');
+            const dRole = document.getElementById('drawer-user-role');
+            const drawerManagementSection = document.getElementById('drawer-management-section');
+
+            if (dName) dName.textContent = user.name || 'Usuário';
+            if (dEmail) dEmail.textContent = user.email || '';
+            const role = (user.role || '').toLowerCase();
+            if (dRole) dRole.textContent = role === 'instructor' ? 'Professor' : 'Aluno';
+
+            if (drawerManagementSection) {
+                if (role === 'instructor' || role === 'admin') drawerManagementSection.classList.remove('hidden');
+                else drawerManagementSection.classList.add('hidden');
+            }
+        } catch (e) { }
     },
 
     setupSidebarToggle: () => {
@@ -376,68 +763,6 @@ const Player = {
         }
     },
 
-    setupAuthUI: (user: any) => {
-        const avatarBtn = document.getElementById('user-avatar-btn');
-        const authContainer = document.getElementById('auth-card-container');
-        const authLogged = document.getElementById('auth-logged-in');
-        const viewProfileBtn = document.getElementById('btn-view-profile');
-        const profileView = document.getElementById('auth-profile-view');
-        const backProfileBtn = document.getElementById('btn-back-from-profile');
-        const logoutBtn = document.getElementById('btn-logout');
-
-        // Update User Info
-        const nameDisplay = document.getElementById('user-name-display');
-        const emailDisplay = document.getElementById('user-email-display');
-        const profileName = document.getElementById('profile-view-name');
-        const profileEmail = document.getElementById('profile-view-email');
-        const profileRole = document.getElementById('profile-view-role');
-
-        if (nameDisplay) nameDisplay.textContent = user.name;
-        if (emailDisplay) emailDisplay.textContent = user.email;
-        if (profileName) profileName.textContent = user.name;
-        if (profileEmail) profileEmail.textContent = user.email;
-        if (profileRole) profileRole.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Estudante';
-
-
-        if (avatarBtn && authContainer) {
-            avatarBtn.addEventListener('click', () => {
-                authContainer.classList.toggle('show');
-            });
-
-            // Close when clicking outside
-            window.addEventListener('click', (e) => {
-                if (
-                    authContainer.classList.contains('show') &&
-                    !authContainer.contains(e.target as Node) &&
-                    !avatarBtn.contains(e.target as Node)
-                ) {
-                    authContainer.classList.remove('show');
-                }
-            });
-        }
-
-        if (viewProfileBtn && authLogged && profileView) {
-            viewProfileBtn.addEventListener('click', () => {
-                authLogged.classList.add('hidden');
-                profileView.classList.remove('hidden');
-            });
-        }
-
-        if (backProfileBtn && authLogged && profileView) {
-            backProfileBtn.addEventListener('click', () => {
-                profileView.classList.add('hidden');
-                authLogged.classList.remove('hidden');
-            });
-        }
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('auth_user');
-                window.location.href = '/inicio';
-            });
-        }
-    },
 
     loadCourseData: async () => {
         try {
