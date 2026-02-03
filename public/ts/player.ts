@@ -908,7 +908,32 @@ const Player = {
             moduleEl.appendChild(header);
             moduleEl.appendChild(classesContainer);
             list.appendChild(moduleEl);
+
+            // Green style for completed module
+            const allCompleted = mod.classes.every(c => c.isCompleted);
+            if (allCompleted) {
+                moduleEl.classList.add('completed-module');
+            }
         });
+
+        // Certificate Button (Below last module if course is 100% complete)
+        if (Player.courseData.progress === 100) {
+            const btnCert = document.createElement('button');
+            btnCert.className = 'sidebar-certificate-btn';
+            btnCert.innerHTML = '<span class="material-symbols-outlined">workspace_premium</span> <span class="btn-text">Gerar Certificado</span>';
+            btnCert.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
+                    if (res.data && res.data.hash) {
+                        window.location.href = `certificate.html?hash=${res.data.hash}`;
+                    }
+                } catch (err) {
+                    AppUI.showMessage('Erro ao gerar certificado.', 'error');
+                }
+            });
+            list.appendChild(btnCert);
+        }
     },
 
     updateLessonsCompleted: () => {
@@ -1234,35 +1259,14 @@ const Player = {
     },
 
     showCertificateButton: () => {
-        const actionsContainer = document.querySelector('.class-actions');
-        if (!actionsContainer) return;
-
-        // Check if button already exists
-        if (document.getElementById('btn-generate-certificate')) return;
-
-        const btnCert = document.createElement('button');
-        btnCert.id = 'btn-generate-certificate';
-        btnCert.className = 'btn-action completed'; // Use green style
-        btnCert.innerHTML = '<span class="material-symbols-outlined">workspace_premium</span> <span class="btn-text">Gerar Certificado</span>';
-        // Remove direct margin as we use flex gap
-
-        btnCert.addEventListener('click', async () => {
-            try {
-                const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
-                if (res.data && res.data.hash) {
-                    window.location.href = `certificate.html?hash=${res.data.hash}`;
-                }
-            } catch (e) {
-                AppUI.showMessage('Erro ao gerar certificado.', 'error');
-            }
-        });
-
-        actionsContainer.appendChild(btnCert);
+        // Deprecated: Certificate button is now rendered in the sidebar by renderSidebar()
     },
 
     checkCertificateStatus: async () => {
+        // Deprecated: Logic moved to renderSidebar checking progress === 100
+        // If we strictly wanted to force a sidebar re-render here we could, but typical flow handles it.
         if (Player.courseData && Player.courseData.progress === 100) {
-            Player.showCertificateButton();
+            Player.renderSidebar();
         }
     }
 };
