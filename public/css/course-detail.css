@@ -1,0 +1,581 @@
+/* Course Detail Page Specific Styles */
+
+:root {
+  --course-accent: #5e17eb;
+  --course-accent-glow: rgba(94, 23, 235, 0.4);
+  --sidebar-width: 350px;
+  --container-max: 1200px;
+}
+
+.course-detail-container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  margin-top: 80px;
+  /* Navbar height */
+}
+
+.course-detail-layout {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 1024px) {
+  .course-detail-layout {
+    flex-direction: column;
+  }
+}
+
+.course-main-content {
+  flex: 1;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.breadcrumb-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--primary);
+}
+
+.breadcrumb-tag {
+  color: var(--primary);
+}
+
+/* Header */
+.course-header {
+  margin-bottom: 3rem;
+}
+
+.course-title-main {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 3rem;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.course-meta-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta-item .material-symbols-outlined {
+  font-size: 1.2rem;
+}
+
+.star-icon {
+  color: #fbbf24;
+}
+
+.rating-value {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.course-description-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 800px;
+}
+
+/* Sections */
+.section-title-alt {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.learning-outcomes {
+  background: var(--glass);
+  border: 1px solid var(--border-light);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+.learning-description-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.learning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.learning-item {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.check-icon {
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+
+/* Content & Accordion */
+.course-content-section {
+  margin-bottom: 3rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.content-meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.modules-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.module-card {
+  border: 1px solid var(--border-light);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--card-dark);
+}
+
+.module-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.2s;
+}
+
+.module-header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.module-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.module-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--bg-dark);
+  background: var(--primary);
+  width: 1.75rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+}
+
+.module-title-text {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.module-chevron {
+  transition: transform 0.3s;
+  color: var(--text-muted);
+}
+
+.module-card.active .module-chevron {
+  transform: rotate(180deg);
+}
+
+.module-classes {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: transparent;
+}
+
+.module-card.active .module-classes {
+  max-height: 1000px;
+}
+
+.class-item {
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.9rem;
+}
+
+.class-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.class-play-icon {
+  font-size: 1.1rem;
+  color: var(--primary);
+}
+
+/* Instructor Section */
+.instructor-section {
+  padding: 3rem 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.instructor-card {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.instructor-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary);
+  flex-shrink: 0;
+}
+
+.instructor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.instructor-info {
+  flex: 1;
+}
+
+.instructor-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary);
+}
+
+.instructor-role {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.instructor-bio {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.instructor-social {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-icon-small {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--glass);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon-small:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+/* Sidebar */
+.course-sidebar {
+  width: var(--sidebar-width);
+  position: sticky;
+  top: 120px;
+}
+
+@media (max-width: 1024px) {
+  .course-sidebar {
+    width: 100%;
+    position: static;
+  }
+}
+
+.sidebar-card {
+  background: var(--card-dark);
+  border: 1px solid var(--border-med);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-image-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.sidebar-course-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.sidebar-image-container:hover .sidebar-course-img {
+  transform: scale(1.05);
+}
+
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.play-overlay .material-symbols-outlined {
+  font-size: 4rem;
+  color: white;
+}
+
+.sidebar-content {
+  padding: 1.5rem;
+}
+
+.price-container {
+  margin-bottom: 1.5rem;
+}
+
+.price-promo-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.price-values {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.current-price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: 'Space Mono', monospace;
+}
+
+.original-price {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.btn-primary-large {
+  width: 100%;
+  padding: 1.125rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary-large:hover {
+  background: var(--secondary);
+  box-shadow: 0 10px 20px var(--course-accent-glow);
+  transform: translateY(-2px);
+}
+
+.btn-secondary-large {
+  width: 100%;
+  padding: 1.125rem;
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-med);
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary-large:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--text-primary);
+}
+
+.course-includes {
+  margin-bottom: 2rem;
+}
+
+.includes-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.includes-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.includes-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.includes-list li .material-symbols-outlined {
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.sidebar-footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.btn-link-sidebar {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-link-sidebar:hover {
+  color: var(--text-primary);
+}
+
+.guarantee-card {
+  background: var(--glass);
+  border: 1px solid var(--border-light);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.guarantee-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+}
+
+.guarantee-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.guarantee-text strong {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.guarantee-text span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Light Theme Adjustments */
+:root.light .module-card {
+  background: white;
+}
+
+:root.light .sidebar-card {
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+:root.light .learning-outcomes,
+:root.light .guarantee-card {
+  background: #f8fafc;
+}
+
+:root.light .current-price {
+  color: #0d1b2a;
+}

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lykos | Detalhes do Curso</title>
+
+  <!-- Apply theme immediately to prevent flash -->
+  <script>
+    (function () {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/toast.css" />
+  <link rel="stylesheet" href="css/course-detail.css" />
+  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo" style="text-decoration: none;">
+        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img" />
+      </a>
+
+      <div class="nav-actions">
+        <div class="cart-wrapper">
+          <button id="cart-toggle-btn" class="btn-icon">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span id="cart-count-badge" class="badge-count">0</span>
+          </button>
+        </div>
+        <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
+          <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
+          <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
+        </button>
+        <button id="user-avatar-btn" class="btn-text-login hidden">Entrar</button>
+        <button id="user-info-btn" class="btn-text-user hidden">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span id="user-display-name" class="user-display-name">Usuário</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="course-detail-container">
+    <div class="course-detail-layout">
+      <!-- Content Area -->
+      <div class="course-main-content">
+        <nav class="breadcrumb">
+          <a href="/" class="breadcrumb-link"><span class="material-symbols-outlined"
+              style="font-size: 1rem; vertical-align: middle;">arrow_back</span> Voltar</a>
+          <span class="breadcrumb-separator">/</span>
+          <span id="breadcrumb-category" class="breadcrumb-tag">Categoria</span>
+        </nav>
+
+        <header class="course-header">
+          <h1 id="course-title" class="course-title-main">Título do Curso</h1>
+
+          <div class="course-meta-top">
+            <div class="meta-item">
+              <span class="material-symbols-outlined star-icon">star</span>
+              <span class="rating-value">4.9</span>
+              <span class="rating-count">(1,240 avaliações)</span>
+            </div>
+            <div class="meta-item">
+              <span class="material-symbols-outlined">person</span>
+              <span>Criado por <strong id="course-instructor">Instrutor</strong></span>
+            </div>
+            <div class="meta-item">
+              <span class="material-symbols-outlined">event</span>
+              <span>Criado em <span id="course-created-date">--</span></span>
+            </div>
+          </div>
+        </header>
+
+        <section class="learning-outcomes">
+          <h2 class="section-title-alt">O que você vai aprender</h2>
+
+          <!-- Course Description Text -->
+          <p id="course-description" class="learning-description-text">
+            Carregando descrição do curso...
+          </p>
+
+          <!-- Learning Items Grid -->
+          <div id="learning-list" class="learning-grid">
+            <!-- Learning items will be populated dynamically from course description -->
+            <p class="loading-text">Carregando...</p>
+          </div>
+        </section>
+
+        <section id="course-content-section" class="course-content-section">
+          <div class="content-header">
+            <h2 class="section-title-alt">Conteúdo do Curso</h2>
+            <div class="content-meta">
+              <span id="module-count">0 módulos</span> •
+              <span id="class-count">0 aulas</span> •
+              <span id="total-duration">Carregando...</span>
+            </div>
+          </div>
+
+          <div id="modules-accordion" class="modules-accordion">
+            <!-- Modules will be injected here -->
+            <p class="loading-text">Carregando conteúdo...</p>
+          </div>
+        </section>
+
+        <!-- Instructor section removed - will be added when backend provides instructor details -->
+      </div>
+
+      <!-- Sidebar Area -->
+      <aside class="course-sidebar">
+        <div class="sidebar-card">
+          <div class="sidebar-image-container">
+            <img id="course-sidebar-img" src="" alt="Capa do Curso" class="sidebar-course-img">
+            <div class="play-overlay">
+              <span class="material-symbols-outlined">play_circle</span>
+            </div>
+          </div>
+
+          <div class="sidebar-content">
+            <div class="price-container">
+              <div class="price-labels">
+                <span class="price-promo-label">PREÇO PROMOCIONAL</span>
+                <div class="price-values">
+                  <span id="course-price" class="current-price">R$ 0,00</span>
+                  <span id="original-price" class="original-price">R$ 0,00</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-buttons">
+              <button id="btn-buy-now" class="btn-primary-large">Comprar agora</button>
+              <button id="btn-add-to-cart" class="btn-secondary-large">Adicionar ao carrinho</button>
+            </div>
+
+            <div class="sidebar-footer-actions">
+              <button id="btn-share-course" class="btn-link-sidebar">COMPARTILHAR</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="guarantee-card">
+          <span class="material-symbols-outlined guarantee-icon">verified_user</span>
+          <div class="guarantee-text">
+            <strong>Garantia de 7 dias</strong>
+            <span>Satisfação total ou seu dinheiro de volta.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="home-footer">
+    <div class="home-footer-content">
+      <div class="footer-logo-bottom">
+        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img-small">
+      </div>
+      <div class="footer-bottom-links">
+        <a href="#">Termos</a>
+        <a href="#">Privacidade</a>
+        <a href="#">Ajuda</a>
+      </div>
+      <p class="home-footer-text">
+        © 2026 Lykos Academy. Todos os direitos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Auth Card Container -->
+  <div id="auth-card-container" class="auth-container">
+    <!-- Reusing same structure from index.html for auth -->
+  </div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cart-modal" class="cart-sidebar">
+    <!-- Injected by common JS -->
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="js/course-detail.js"></script>
+</body>
+
+</html>
