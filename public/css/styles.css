@@ -210,31 +210,11 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Navbar offset for instructor page with full-height sidebar */
-body:has(.dashboard-sidebar) .navbar {
-  margin-left: 300px;
-  width: calc(100% - 300px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body:has(.dashboard-sidebar.collapsed) .navbar {
-  margin-left: 5.5rem;
-  width: calc(100% - 5.5rem);
-}
-
-/* Remove navbar offset on mobile/tablet */
-@media (max-width: 1024px) {
-
-  body:has(.dashboard-sidebar) .navbar,
-  body:has(.dashboard-sidebar.collapsed) .navbar {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-}
+/* Navbar stays full width - sidebar is now positioned below it */
 
 .nav-container {
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 1.5rem 0.75rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -378,7 +358,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.8rem;
   margin-left: auto;
 }
 

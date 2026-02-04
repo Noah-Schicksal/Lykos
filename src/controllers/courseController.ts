@@ -169,8 +169,41 @@ export class CourseController {
         try {
             const id = req.params.id as string;
             const instructorId = req.user.id;
+            
+            // First update the course data
             const course = await this.courseService.update(id, req.body, instructorId);
-            return ApiResponse.success(res, course, 'Curso atualizado com sucesso');
+            
+            // Handle cover image upload if present
+            if ((req as any).file) {
+                const { StorageService } = require('../services/storageService');
+                const storageService = new StorageService();
+                try {
+                    const coverUrl = await storageService.uploadCourseCover(course.id, (req as any).file, instructorId);
+                    course.setCoverImageUrl(coverUrl);
+                    // Persist the updated cover URL
+                    await this.courseService.update(id, { coverImageUrl: coverUrl }, instructorId);
+                } catch (uploadError: any) {
+                    console.error('Failed to upload cover image:', uploadError);
+                    return ApiResponse.success(res, course.toJSON ? course.toJSON() : course, 'Curso atualizado, mas falha no upload da imagem: ' + uploadError.message);
+                }
+            } else if (req.body.clearCover === 'true' || req.body.clearCover === true) {
+                // Clear the cover image
+                const { StorageService } = require('../services/storageService');
+                const storageService = new StorageService();
+                try {
+                    // Get current course to find old cover
+                    const currentCourse = await this.courseService.getById(id);
+                    if (currentCourse?.coverImageUrl) {
+                        await storageService.deleteFile(currentCourse.coverImageUrl);
+                    }
+                    await this.courseService.update(id, { coverImageUrl: null } as any, instructorId);
+                    course.setCoverImageUrl(null as any);
+                } catch (deleteError: any) {
+                    console.error('Failed to delete cover image:', deleteError);
+                }
+            }
+            
+            return ApiResponse.success(res, course.toJSON ? course.toJSON() : course, 'Curso atualizado com sucesso');
         } catch (error) {
             if (error instanceof ApplicationError) {
                 if (error.message.includes('não encontrado')) return ApiResponse.notFound(res, error.message);

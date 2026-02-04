@@ -57,6 +57,8 @@ courseRoutes.put(
   '/:id',
   authMiddleware,
   roleMiddleware(['INSTRUCTOR']),
+  upload.single('coverImage'),
+  validateCourseCreate,
   (req, res) => courseController.update(req, res),
 );
 courseRoutes.delete(

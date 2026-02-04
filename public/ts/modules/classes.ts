@@ -39,6 +39,7 @@ export const Classes = {
       title?: string;
       description?: string;
       videoUrl?: string;
+      materialUrl?: string;
     },
   ): Promise<Class> => {
     try {
