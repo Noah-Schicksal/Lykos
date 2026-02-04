@@ -27,11 +27,8 @@
       <div class="sidebar-content">
         <!-- Branding -->
         <div class="brand">
-          <div class="brand-icon">
-            <span class="material-symbols-outlined">code</span>
-          </div>
           <div class="brand-info">
-            <h1 class="brand-title">Área do Aluno</h1>
+            <h1 class="brand-title">LYKOS</h1>
           </div>
           <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
             <span class="material-symbols-outlined">menu</span>
@@ -78,42 +75,38 @@
             <span class="material-symbols-outlined">menu</span>
           </button>
 
-          <nav class="breadcrumb">
-            <a href="/inicio">Início</a>
-            <span class="separator">></span>
-            <span id="breadcrumb-current" class="current">Meus Cursos</span>
-          </nav>
         </div>
         <div class="header-actions">
+          <!-- Shopping Cart -->
+          <button id="cart-toggle-btn" class="btn-icon" aria-label="Carrinho de compras">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span id="cart-count-badge" class="cart-badge" style="display:none">0</span>
+          </button>
+
           <!-- Theme Toggle -->
           <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
             <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
             <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
           </button>
 
-          <!-- User Avatar -->
-          <div id="user-avatar-btn" class="user-avatar">
-            <img id="user-avatar-img" alt="User" src="https://lh3.googleusercontent.com/a/default-user" />
-          </div>
+          <!-- User Badge Button -->
+          <button id="user-avatar-btn" class="btn-text-user">
+            <span class="material-symbols-outlined">account_circle</span>
+            <span id="user-display-name" class="user-display-name">Estudante</span>
+          </button>
         </div>
       </header>
 
-        <!-- Page Heading -->
-        <section class="page-heading">
-          <h1 id="welcome-title" class="page-title">
-            Bem-vindo de volta, Aluno!
-          </h1>
-          <p id="courses-status" class="page-subtitle">
-            Continue sua jornada no mundo do código.
-          </p>
-        </section>
+      <!-- Page Heading -->
+      <section class="page-heading">
+        <h1 id="welcome-title" class="page-title">
+          Bem-vindo de volta, Aluno!
+        </h1>
+        <p id="courses-status" class="page-subtitle">
+          Continue sua jornada no mundo do código.
+        </p>
+      </section>
 
-        <!-- My Courses Section -->
-        <div class="courses-achievements">
-          <div class="my-courses">
-            <div class="section-header">
-              <h2 class="section-title">Meus Cursos</h2>
-            </div>
       <!-- My Courses Section -->
       <div id="courses-view" class="view-section">
         <div class="courses-achievements">
@@ -132,55 +125,12 @@
                 </select>
               </div>
               <div class="filter-search">
-                <span class="material-symbols-outlined search-icon"
-                  >search</span
-                >
-                <input
-                  id="course-search-input"
-                  class="search-input"
-                  placeholder="Pesquisar meus cursos..."
-                  type="text"
-                />
-              </div>
-            </div>
-            <!-- Filters and Search -->
-            <div class="courses-filters">
-              <div class="filter-group">
-                <label class="filter-label">Filtrar por</label>
-                <select id="category-filter" class="filter-select">
-                  <option value="">Todas Categorias</option>
-                  <option disabled>Carregando...</option>
-                </select>
-              </div>
-              <div class="filter-search">
                 <span class="material-symbols-outlined search-icon">search</span>
                 <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..."
                   type="text" />
               </div>
             </div>
 
-            <!-- Courses Grid -->
-            <div id="courses-grid" class="courses-grid">
-              <!-- Course Card 1 -->
-              <div class="course-card">
-                <div class="course-header">
-                  <div class="course-icon">
-                    <span class="material-symbols-outlined">terminal</span>
-                  </div>
-                  <span class="course-badge">12 Aulas Restantes</span>
-                </div>
-                <h3 class="course-title">Backend Development</h3>
-                <p class="course-meta">Último acesso: 2 dias atrás</p>
-                <div class="course-progress">
-                  <div class="progress-bar-small">
-                    <div class="progress-fill-small" style="width: 45%"></div>
-                  </div>
-                  <div class="progress-info">
-                    <span>PROGRESSO</span>
-                    <span class="progress-value">45%</span>
-                  </div>
-                </div>
-              </div>
             <!-- Courses Grid -->
             <div id="courses-grid" class="courses-grid">
               <!-- Courses are rendered here dynamically -->
@@ -212,86 +162,86 @@
   </div>
 
 
-    <!-- Auth Card Container -->
-    <div id="auth-card-container" class="auth-container perspective-1000">
-      <div id="auth-card" class="auth-card">
-        <!-- Logged In View -->
-        <div id="auth-logged-in" class="auth-face auth-logged-in">
-          <div class="user-avatar-large">
-            <span class="material-symbols-outlined">account_circle</span>
-          </div>
-          <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
-          <p id="user-email-display" class="user-email">user@example.com</p>
-          <div id="user-role-badge" class="role-badge">Aluno</div>
+  <!-- Auth Card Container -->
+  <div id="auth-card-container" class="auth-container perspective-1000">
+    <div id="auth-card" class="auth-card">
+      <!-- Logged In View -->
+      <div id="auth-logged-in" class="auth-face auth-logged-in">
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
+        <p id="user-email-display" class="user-email">user@example.com</p>
+        <div id="user-role-badge" class="role-badge">Aluno</div>
 
-          <div class="dashboard-actions">
-            <button id="btn-my-learning" class="btn-dashboard">
-              <span class="material-symbols-outlined">school</span> Meus Cursos
-            </button>
-            <button id="btn-instructor-dash" class="btn-dashboard hidden">
-              <span class="material-symbols-outlined">dashboard</span> Painel do
-              Instrutor
-            </button>
-            <button id="btn-view-profile" class="btn-dashboard">
-              <span class="material-symbols-outlined">person</span> Ver Perfil
-            </button>
-            <button id="btn-logout" class="btn-dashboard btn-logout">
-              <span class="material-symbols-outlined">logout</span> Sair
-            </button>
+        <div class="dashboard-actions">
+          <button id="btn-my-learning" class="btn-dashboard">
+            <span class="material-symbols-outlined">school</span> Meus Cursos
+          </button>
+          <button id="btn-instructor-dash" class="btn-dashboard hidden">
+            <span class="material-symbols-outlined">dashboard</span> Painel do
+            Instrutor
+          </button>
+          <button id="btn-view-profile" class="btn-dashboard">
+            <span class="material-symbols-outlined">person</span> Ver Perfil
+          </button>
+          <button id="btn-logout" class="btn-dashboard btn-logout">
+            <span class="material-symbols-outlined">logout</span> Sair
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="auth-profile-view" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Perfil</h3>
+          <button id="btn-back-from-profile" class="btn-icon">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+        </div>
+
+        <div class="user-avatar-large">
+          <span class="material-symbols-outlined">account_circle</span>
+        </div>
+
+        <div class="profile-info">
+          <div class="info-item">
+            <label class="form-label">Nome</label>
+            <p id="profile-name-display" class="info-value">
+              Nome do Usuário
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Email</label>
+            <p id="profile-email-display" class="info-value">
+              user@example.com
+            </p>
+          </div>
+          <div class="info-item">
+            <label class="form-label">Função</label>
+            <p id="profile-role-display" class="info-value">Aluno</p>
           </div>
         </div>
 
-        <!-- Profile View -->
-        <div id="auth-profile-view" class="auth-face hidden">
-          <div class="view-header">
-            <h3 class="auth-title">Perfil</h3>
-            <button id="btn-back-from-profile" class="btn-icon">
-              <span class="material-symbols-outlined">arrow_back</span>
-            </button>
-          </div>
-
-          <div class="user-avatar-large">
-            <span class="material-symbols-outlined">account_circle</span>
-          </div>
-
-          <div class="profile-info">
-            <div class="info-item">
-              <label class="form-label">Nome</label>
-              <p id="profile-name-display" class="info-value">
-                Nome do Usuário
-              </p>
-            </div>
-            <div class="info-item">
-              <label class="form-label">Email</label>
-              <p id="profile-email-display" class="info-value">
-                user@example.com
-              </p>
-            </div>
-            <div class="info-item">
-              <label class="form-label">Função</label>
-              <p id="profile-role-display" class="info-value">Aluno</p>
-            </div>
-          </div>
-
-          <div class="profile-actions">
-            <button id="btn-edit-profile" class="btn-submit">
-              <span class="material-symbols-outlined">edit</span> Editar Perfil
-            </button>
-            <button id="btn-delete-account" class="btn-delete">
-              <span class="material-symbols-outlined">delete</span> Excluir
-              Conta
-            </button>
-          </div>
+        <div class="profile-actions">
+          <button id="btn-edit-profile" class="btn-submit">
+            <span class="material-symbols-outlined">edit</span> Editar Perfil
+          </button>
+          <button id="btn-delete-account" class="btn-delete">
+            <span class="material-symbols-outlined">delete</span> Excluir
+            Conta
+          </button>
         </div>
+      </div>
 
-        <!-- Profile Edit -->
-        <div id="auth-profile-edit" class="auth-face hidden">
-          <div class="view-header">
-            <h3 class="auth-title">Editar Perfil</h3>
-            <button id="btn-cancel-edit" class="btn-icon">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
+      <!-- Profile Edit -->
+      <div id="auth-profile-edit" class="auth-face hidden">
+        <div class="view-header">
+          <h3 class="auth-title">Editar Perfil</h3>
+          <button id="btn-cancel-edit" class="btn-icon">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
 
         <form id="profile-edit-form">
           <div class="form-group">
@@ -316,6 +266,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cart-modal" class="cart-sidebar">
+    <div class="cart-sidebar-header">
+      <h3 class="cart-sidebar-title">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Seu Carrinho
+      </h3>
+      <button id="close-cart-btn" class="btn-icon">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div id="cart-items-list" class="cart-sidebar-content">
+      <!-- Items will be injected here -->
+      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
+    </div>
+
+    <div class="cart-sidebar-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
+      </div>
+      <button id="btn-cart-checkout" class="btn-checkout" disabled>
+        Finalizar Compra
+      </button>
+    </div>
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay"></div>
 
   <!-- Certificate Modal -->
   <div id="certificate-modal" class="modal-overlay hidden">
