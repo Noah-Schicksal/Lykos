@@ -18,17 +18,44 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
+  
+  <!-- Preload Material Symbols to reduce FOUT -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="https://fonts.gstatic.com/s/materialsymbolsoutlined/v205/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
 
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/toast.css" />
   <link rel="stylesheet" href="css/instructor.css" />
+  
+  <style>
+    /* Hide icons until font is loaded */
+    .material-symbols-outlined {
+      visibility: hidden;
+    }
+    .fonts-loaded .material-symbols-outlined {
+      visibility: visible;
+    }
+  </style>
 </head>
 
 <body>
   <div id="app-root"></div>
   <script type="module" src="js/instructor/main.js"></script>
+  <script>
+    // Detect when Material Symbols font is loaded
+    if (document.fonts) {
+      document.fonts.ready.then(function() {
+        document.documentElement.classList.add('fonts-loaded');
+      });
+    } else {
+      // Fallback for browsers without document.fonts
+      setTimeout(function() {
+        document.documentElement.classList.add('fonts-loaded');
+      }, 100);
+    }
+  </script>
 </body>
 
 </html>
