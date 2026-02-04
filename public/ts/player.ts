@@ -558,26 +558,22 @@ const Player = {
         });
 
         // Video Ended (Mark Completed)
-        video.addEventListener('ended', () => {
+        video.addEventListener('ended', async () => {
             if (!Player.courseData || !Player.currentClassId) return;
 
-            // Find and update current class
-            let found = false;
+            // Find current class
+            let currentClass: ClassItem | null = null;
             Player.courseData.modules.forEach(mod => {
                 mod.classes.forEach(cls => {
                     if (cls.id === Player.currentClassId) {
-                        if (!cls.isCompleted) {
-                            cls.isCompleted = true;
-                            found = true;
-                        }
+                        currentClass = cls;
                     }
                 });
             });
 
-            if (found) {
-                Player.updateLessonsCompleted();
-                Player.renderSidebar(); // Unlock next lesson
-                AppUI.showMessage('Aula concluída! Próxima aula desbloqueada.', 'success');
+            // Only mark as completed if not already completed
+            if (currentClass && !currentClass.isCompleted) {
+                await Player.toggleCompletion(currentClass);
             }
         });
     },
@@ -905,7 +901,7 @@ const Player = {
 
         const lessonsCompletedEl = document.getElementById('course-lessons-completed');
         if (lessonsCompletedEl) {
-            lessonsCompletedEl.textContent = `${completedClasses}/${totalClasses} Lessons Completed`;
+            lessonsCompletedEl.textContent = `${completedClasses}/${totalClasses} Aulas Concluídas`;
         }
     },
 

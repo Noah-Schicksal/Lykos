@@ -316,15 +316,8 @@ body {
     flex-direction: column;
     overflow: visible;
     height: auto;
-    padding: 1.5rem 0 1.5rem 0;
+    padding: 1.5rem 2rem;
     gap: 1.5rem;
-
-    /* Dynamic padding to align with .container-xl logo position */
-    /* .container-xl is centered with max-width 80rem and 1rem padding */
-    /* Formula: max(1rem, (100vw - 80rem)/2 + 1rem) */
-    padding-left: max(1rem, calc((100vw - 80rem) / 2 + 1rem));
-    padding-right: 1rem;
-    /* Provide some right spacing from sidebar */
 }
 
 /* Video Container matches wireframe 'Video exibido' */
@@ -344,19 +337,11 @@ body {
     /* Handled by parent padding */
 }
 
-/* When sidebar is collapsed, center and use full navbar width */
-.player-layout.sidebar-collapsed .video-container-wrapper {
-    max-width: 80rem;
-    /* Re-apply max-width limit when full screen */
-    margin: 0;
-    /* Parent padding handles centering logic mostly, but we can clamp */
-}
-
-/* Override parent padding for collapsed state if needed, or let it flow naturally. 
-   Actually, the dynamic padding on .player-content works for both states to align with logo! 
-   But if sidebar is collapsed, we might want to respect the right side margin too. */
+/* When sidebar is collapsed, center content with equal padding */
 .player-layout.sidebar-collapsed .player-content {
-    padding-right: max(1rem, calc((100vw - 80rem) / 2 + 1rem));
+    max-width: 90rem;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
 }
 
 .video-frame {
@@ -1238,9 +1223,27 @@ video::-webkit-media-controls {
     }
 
     .player-content {
-        padding-left: 1rem !important;
-        /* Force override dynamic calc */
-        padding-right: 1rem !important;
+        padding: 1rem;
+    }
+}
+
+/* Tablets (Medium Screens) */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .player-content {
+        padding: 1.25rem 1.5rem;
+    }
+
+    .class-title {
+        font-size: 1.5rem;
+    }
+
+    .class-actions {
+        gap: 0.75rem;
+    }
+
+    .btn-action {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
     }
 }
 
