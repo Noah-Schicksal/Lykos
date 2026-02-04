@@ -184,6 +184,7 @@ export class CourseRepository {
         const query = `
             SELECT 
                 c.id, c.title, c.description, c.price, c.cover_image_url, c.is_active,
+                c.category_id,
                 cat.name as category_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
             FROM courses c
@@ -202,7 +203,9 @@ export class CourseRepository {
             coverImageUrl: row.cover_image_url,
             isActive: !!row.is_active,
             enrolledCount: row.enrolled_count,
-            category: row.category_name ? {
+            categoryId: row.category_id,
+            category: row.category_id ? {
+                id: row.category_id,
                 name: row.category_name
             } : null
         }));
