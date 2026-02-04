@@ -104,62 +104,6 @@ const Player = {
             });
         });
 
-        // --- 2. Cart Toggle & Logic ---
-        const cartToggleBtn = document.getElementById('cart-toggle-btn');
-        const cartModal = document.getElementById('cart-modal');
-        const closeCartBtn = document.getElementById('close-cart-btn');
-
-        if (cartToggleBtn && cartModal) {
-            cartToggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (!localStorage.getItem('auth_user')) {
-                    AppUI.showMessage('Por favor, faça login para ver seu carrinho.', 'info');
-                    const authContainer = document.getElementById('auth-card-container');
-                    if (authContainer) authContainer.classList.add('show');
-                    return;
-                }
-                cartModal.classList.toggle('show');
-                if (cartModal.classList.contains('show')) {
-                    Player.renderCartItems();
-                }
-            });
-
-            if (closeCartBtn) {
-                closeCartBtn.addEventListener('click', () => {
-                    cartModal.classList.remove('show');
-                });
-            }
-
-            document.addEventListener('click', (e) => {
-                if (
-                    cartModal.classList.contains('show') &&
-                    !cartModal.contains(e.target as Node) &&
-                    !cartToggleBtn.contains(e.target as Node)
-                ) {
-                    cartModal.classList.remove('show');
-                }
-            });
-        }
-
-        // Checkout Button
-        const checkoutBtn = document.getElementById('btn-cart-checkout');
-        if (checkoutBtn) {
-            checkoutBtn.addEventListener('click', async () => {
-                const confirm = await AppUI.promptModal(
-                    'Finalizar Compra',
-                    'Deseja confirmar a compra dos itens no carrinho?'
-                );
-                if (confirm) {
-                    const success = await Cart.checkout();
-                    if (success) {
-                        cartModal?.classList.remove('show');
-                        // Optionally reload course data if user bought modules for this course
-                        // Player.loadCourseData(); 
-                    }
-                }
-            });
-        }
-
         // --- 3. Auth & Drawer Logic ---
         const avatarBtn = document.getElementById('user-avatar-btn');
         const userInfoBtn = document.getElementById('user-info-btn'); // Logged in button
@@ -422,48 +366,6 @@ const Player = {
         // My Learning
         const btnMyLearning = document.getElementById('btn-my-learning');
         if (btnMyLearning) btnMyLearning.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/estudante'; });
-    },
-
-    renderCartItems: async () => {
-        const listContainer = document.getElementById('cart-items-list');
-        const totalPriceEl = document.getElementById('cart-total-price');
-        const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
-
-        if (!listContainer || !totalPriceEl) return;
-        listContainer.innerHTML = '<div class="cart-empty-msg">Carregando...</div>';
-        try {
-            const items = await Cart.getCart();
-            if (items.length === 0) {
-                listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
-                totalPriceEl.textContent = 'R$ 0,00';
-                if (checkoutBtn) checkoutBtn.disabled = true;
-                return;
-            }
-
-            let total = 0;
-            listContainer.innerHTML = items.map(item => {
-                total += item.price;
-                const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.price);
-                const hasImage = item.coverImageUrl && item.coverImageUrl.trim() !== '';
-                const imgHtml = hasImage ? `<img src="${item.coverImageUrl}" class="cart-item-img">` : `<div class="cart-item-img-placeholder"><span class="material-symbols-outlined">image</span></div>`;
-
-                return `<div class="cart-item">
-                     ${imgHtml}
-                     <div class="cart-item-info"><h4 class="cart-item-title">${item.title}</h4><div class="cart-item-price">${price}</div></div>
-                     <button class="btn-remove-cart" data-id="${item.courseId}"><span class="material-symbols-outlined">delete</span></button>
-                 </div>`;
-            }).join('');
-
-            totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(total);
-            if (checkoutBtn) checkoutBtn.disabled = false;
-
-            listContainer.querySelectorAll('.btn-remove-cart').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    await Cart.remove((btn as HTMLElement).dataset.id!);
-                    Player.renderCartItems();
-                });
-            });
-        } catch (e) { listContainer.innerHTML = '<div class="cart-empty-msg">Erro.</div>'; }
     },
 
     updateDrawerUserInfo: () => {
@@ -770,7 +672,8 @@ const Player = {
             const courseRes = await AppUI.apiFetch(`/courses/${Player.courseId}`);
             const course = courseRes.data;
 
-            document.getElementById('course-title')!.textContent = course.title;
+            const titleEl = document.getElementById('course-title');
+            if (titleEl) titleEl.textContent = course.title;
 
             // Update breadcrumb
             const breadcrumbCourse = document.getElementById('breadcrumb-course');
@@ -799,11 +702,6 @@ const Player = {
                 Player.loadClass(firstClass);
             }
 
-            // Check Certificate Availability
-            if (course.progress === 100) {
-                Player.showCertificateButton();
-            }
-
         } catch (error) {
             AppUI.showMessage('Erro ao carregar dados do curso', 'error');
             console.error(error);
@@ -814,7 +712,7 @@ const Player = {
         const list = document.getElementById('modules-list');
         if (!list || !Player.courseData) return;
 
-        list.innerHTML = '';
+        list.innerHTML = ''; // Clearing list is fine
 
         let globalLocked = false; // logic to lock future lessons
 
@@ -840,14 +738,30 @@ const Player = {
             const header = document.createElement('summary');
             header.className = 'module-header';
 
-            // New Structure: Info Wrapper (Title + Meta) on left, Chevron on right
-            header.innerHTML = `
-                <div class="module-info-wrapper">
-                    <span class="module-title">${mod.title}</span>
-                    <span class="module-meta">${mod.classes.length} Aulas</span> 
-                </div>
-                <span class="material-symbols-outlined layer-icon" style="color: var(--text-muted); transition: transform 0.2s;">expand_more</span>
-            `;
+            // --- New Structure: Info Wrapper (Title + Meta) on left, Chevron on right ---
+            const infoWrapper = document.createElement('div');
+            infoWrapper.className = 'module-info-wrapper';
+
+            const moduleTitle = document.createElement('span');
+            moduleTitle.className = 'module-title';
+            moduleTitle.textContent = mod.title;
+
+            const moduleMeta = document.createElement('span');
+            moduleMeta.className = 'module-meta';
+            moduleMeta.textContent = `${mod.classes.length} Aulas`;
+
+            infoWrapper.appendChild(moduleTitle);
+            infoWrapper.appendChild(moduleMeta);
+
+            const arrowIcon = document.createElement('span');
+            arrowIcon.className = 'material-symbols-outlined layer-icon';
+            arrowIcon.style.color = 'var(--text-muted)';
+            arrowIcon.style.transition = 'transform 0.2s';
+            arrowIcon.textContent = 'expand_more';
+
+            header.appendChild(infoWrapper);
+            header.appendChild(arrowIcon);
+            // -------------------------------------------------------------
 
             // Toggle Logic to track state
             moduleEl.addEventListener('toggle', () => {
@@ -881,19 +795,50 @@ const Player = {
                 if (isLocked) iconName = 'lock';
                 else if (isCompleted) iconName = 'check_circle';
 
-                const playingBadge = isActive ? '<span class="badge-playing">PLAYING</span>' : '';
+                // --- Safe DOM Construction for Class Item ---
+                // 1. Icon Container
+                const iconContainer = document.createElement('div');
+                Object.assign(iconContainer.style, {
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '40px', height: '40px', background: 'rgba(94, 23, 235, 0.1)',
+                    borderRadius: '8px', flexShrink: '0'
+                });
 
-                classEl.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(94, 23, 235, 0.1); border-radius: 8px; flex-shrink: 0;">
-                        <span class="material-symbols-outlined class-status-icon" style="font-size: 1.5rem; color: var(--primary);">
-                            ${iconName}
-                        </span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; flex: 1;">
-                        <span class="class-title-mini" style="font-size: 0.95rem; font-weight: 600; ${isLocked ? 'color: var(--text-muted);' : ''}">${cls.title}</span>
-                    </div>
-                    ${playingBadge}
-                `;
+                const statusIcon = document.createElement('span');
+                statusIcon.className = 'material-symbols-outlined class-status-icon';
+                statusIcon.style.fontSize = '1.5rem';
+                statusIcon.style.color = 'var(--primary)';
+                statusIcon.textContent = iconName;
+
+                iconContainer.appendChild(statusIcon);
+
+                // 2. Title Container
+                const titleContainer = document.createElement('div');
+                Object.assign(titleContainer.style, {
+                    display: 'flex', flexDirection: 'column', flex: '1'
+                });
+
+                const classTitleMini = document.createElement('span');
+                classTitleMini.className = 'class-title-mini';
+                Object.assign(classTitleMini.style, {
+                    fontSize: '0.95rem', fontWeight: '600'
+                });
+                if (isLocked) classTitleMini.style.color = 'var(--text-muted)';
+                classTitleMini.textContent = cls.title;
+
+                titleContainer.appendChild(classTitleMini);
+
+                classEl.appendChild(iconContainer);
+                classEl.appendChild(titleContainer);
+
+                // 3. Playing Badge
+                if (isActive) {
+                    const playingBadge = document.createElement('span');
+                    playingBadge.className = 'badge-playing';
+                    playingBadge.textContent = 'PLAYING';
+                    classEl.appendChild(playingBadge);
+                }
+                // ---------------------------------------------
 
                 if (!isLocked) {
                     classEl.addEventListener('click', () => Player.loadClass(cls));
@@ -920,7 +865,18 @@ const Player = {
         if (Player.courseData.progress === 100) {
             const btnCert = document.createElement('button');
             btnCert.className = 'sidebar-certificate-btn';
-            btnCert.innerHTML = '<span class="material-symbols-outlined">workspace_premium</span> <span class="btn-text">Gerar Certificado</span>';
+
+            const certIcon = document.createElement('span');
+            certIcon.className = 'material-symbols-outlined';
+            certIcon.textContent = 'workspace_premium';
+
+            const certText = document.createElement('span');
+            certText.className = 'btn-text';
+            certText.textContent = 'Gerar Certificado';
+
+            btnCert.appendChild(certIcon);
+            btnCert.appendChild(certText);
+
             btnCert.addEventListener('click', async (e) => {
                 e.preventDefault();
                 try {
@@ -1090,14 +1046,29 @@ const Player = {
         }
 
         // Completion Button State
+        // Completion Button State
         const btnComplete = document.getElementById('btn-mark-completed');
         if (btnComplete) {
+            // Clear current content
+            btnComplete.innerHTML = '';
+
+            // Create Icon
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.textContent = 'check_circle';
+
+            // Create Text
+            const text = document.createElement('span');
+            text.className = 'btn-text';
+            text.textContent = cls.isCompleted ? 'Concluída' : 'Marcar como Concluída';
+
+            btnComplete.appendChild(icon);
+            btnComplete.appendChild(text);
+
             if (cls.isCompleted) {
                 btnComplete.classList.add('completed');
-                btnComplete.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="btn-text">Concluída</span>';
             } else {
                 btnComplete.classList.remove('completed');
-                btnComplete.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="btn-text">Marcar como Concluída</span>';
             }
 
             // Clone to remove old listeners (lazy way) or just handle logic carefully
@@ -1149,13 +1120,27 @@ const Player = {
             const item = document.createElement('div');
             item.className = 'material-item';
             item.style.cursor = 'pointer';
-            item.innerHTML = `
-                <span class="material-symbols-outlined material-icon">download</span>
-                <div class="material-info">
-                    <span class="material-name">Baixar Material de Apoio</span>
-                    <span class="material-size">Clique para baixar</span>
-                </div>
-             `;
+
+            const matIcon = document.createElement('span');
+            matIcon.className = 'material-symbols-outlined material-icon';
+            matIcon.textContent = 'download';
+
+            const matInfo = document.createElement('div');
+            matInfo.className = 'material-info';
+
+            const matName = document.createElement('span');
+            matName.className = 'material-name';
+            matName.textContent = 'Baixar Material de Apoio';
+
+            const matSize = document.createElement('span');
+            matSize.className = 'material-size';
+            matSize.textContent = 'Clique para baixar';
+
+            matInfo.appendChild(matName);
+            matInfo.appendChild(matSize);
+
+            item.appendChild(matIcon);
+            item.appendChild(matInfo);
 
             item.addEventListener('click', async () => {
                 try {
@@ -1239,11 +1224,6 @@ const Player = {
                     progressFill.style.width = `${prog}%`;
                     progressText.textContent = `${prog}%`;
                 }
-
-                // Check Certificate Availability
-                if (Player.courseData.progress === 100) {
-                    Player.showCertificateButton();
-                }
             }
 
             // Refresh View
@@ -1258,10 +1238,6 @@ const Player = {
         }
     },
 
-    showCertificateButton: () => {
-        // Deprecated: Certificate button is now rendered in the sidebar by renderSidebar()
-    },
-
     checkCertificateStatus: async () => {
         // Deprecated: Logic moved to renderSidebar checking progress === 100
         // If we strictly wanted to force a sidebar re-render here we could, but typical flow handles it.
@@ -1270,6 +1246,4 @@ const Player = {
         }
     }
 };
-
-// Start
 document.addEventListener('DOMContentLoaded', Player.init);
