@@ -1,156 +1,206 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Validação de Certificado - ChemAcademy</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
-    <style>
-      .validator-container {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: var(--bg-dark);
-        padding: 1rem;
-      }
 
-      .validator-card {
-        background-color: var(--bg-card);
-        padding: 2.5rem;
-        border-radius: 1rem;
-        border: 1px solid var(--border-light);
-        width: 100%;
-        max-width: 500px;
-        text-align: center;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validação de Certificado - ChemAcademy</title>
 
-      .input-hash {
+  <!-- Apply theme immediately to prevent flash -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'light') {
+        document.documentElement.classList.add('light');
+      }
+    })();
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+  <style>
+    .validator-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-dark);
+      padding: 1rem;
+    }
+
+    .validator-card {
+      background-color: var(--bg-card);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-light);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .input-hash {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-light);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-family: monospace;
+      margin: 1.5rem 0;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .result-box {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      display: none;
+    }
+
+    .result-box.valid {
+      display: block;
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid #10b981;
+      color: #10b981;
+    }
+
+    .result-box.invalid {
+      display: block;
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      color: #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="validator-container">
+    <div class="validator-card">
+      <h1 class="text-xl font-bold mb-2" style="color: var(--primary); margin-bottom: 1.5rem;">Validar Certificado</h1>
+      <p class="text-muted text-sm">
+        Insira o código de validação para verificar a autenticidade.
+      </p>
+
+      <input type="text" id="hash-input" class="input-hash" placeholder="Ex: 123e4567-e89b..." />
+
+      <button id="validate-btn" class="btn-submit w-full" style="
+        margin-top: 1.5rem; 
+        background: #5e17eb; 
+        color: white; 
+        border: none; 
+        padding: 0.75rem; 
+        border-radius: 0.5rem; 
+        cursor: pointer; 
+        font-weight: bold; 
+        display: block;
         width: 100%;
-        padding: 0.75rem;
-        background-color: var(--bg-dark);
-        border: 1px solid var(--border-light);
-        border-radius: 0.5rem;
-        color: var(--text-primary);
-        font-family: monospace;
-        margin: 1.5rem 0;
-        text-align: center;
         font-size: 1rem;
-      }
+      ">
+        Analisar Certificado
+      </button>
 
-      .result-box {
-        margin-top: 1.5rem;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        display: none;
-      }
-
-      .result-box.valid {
-        display: block;
-        background-color: rgba(16, 185, 129, 0.1);
-        border: 1px solid #10b981;
-        color: #10b981;
-      }
-
-      .result-box.invalid {
-        display: block;
-        background-color: rgba(239, 68, 68, 0.1);
-        border: 1px solid #ef4444;
-        color: #ef4444;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="validator-container">
-      <div class="validator-card">
-        <span
-          class="material-symbols-outlined"
-          style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem"
-          >verified</span
-        >
-        <h1 class="text-xl font-bold mb-2">Validar Certificado</h1>
-        <p class="text-muted text-sm">
-          Insira o código de validação para verificar a autenticidade.
-        </p>
-
-        <input
-          type="text"
-          id="hash-input"
-          class="input-hash"
-          placeholder="Ex: 123e4567-e89b..."
-        />
-
-        <button onclick="validate()" class="btn-primary w-full">
-          Verificar
-        </button>
-
-        <div id="result" class="result-box">
-          <h3 id="result-title" class="font-bold"></h3>
-          <p id="result-msg" class="text-sm mt-1"></p>
-          <a
-            id="view-link"
-            href="#"
-            target="_blank"
-            style="
+      <div id="result" class="result-box">
+        <h3 id="result-title" class="font-bold"></h3>
+        <p id="result-msg" class="text-sm mt-1"></p>
+        <a id="view-link" href="#" target="_blank" style="
               display: none;
               text-decoration: underline;
               margin-top: 0.5rem;
               display: block;
-            "
-            >Ver Certificado</a
-          >
-        </div>
-
-        <div class="mt-4">
-          <a href="index.html" class="text-sm text-primary">Voltar para Home</a>
-        </div>
+            ">Ver Certificado</a>
       </div>
-            <div class="mt-4">
-                <a href="/inicio" class="text-sm text-primary">Voltar para Home</a>
-            </div>
-        </div>
+
+      <div class="mt-4">
+        <a href="index.html" class="text-sm text-primary">Voltar para Home</a>
+      </div>
     </div>
+  </div>
 
-    <script>
-      async function validate() {
-        const hash = document.getElementById('hash-input').value.trim();
-        const resultBox = document.getElementById('result');
-        const resultTitle = document.getElementById('result-title');
-        const resultMsg = document.getElementById('result-msg');
-        const viewLink = document.getElementById('view-link');
+  <script>
+    console.log('Validator Script Loaded');
 
-        if (!hash) return;
+    async function handleValidate() {
+      console.log('handleValidate called');
+      const input = document.getElementById('hash-input');
+      const btn = document.getElementById('validate-btn');
+      const hash = input.value?.trim() || '';
 
-        resultBox.className = 'result-box'; // Reset
-        resultBox.style.display = 'none';
+      const resultBox = document.getElementById('result');
+      const resultTitle = document.getElementById('result-title');
+      const resultMsg = document.getElementById('result-msg');
+      const viewLink = document.getElementById('view-link');
 
-        try {
-          const res = await fetch(`/certificates/${hash}`);
-          const data = await res.json();
-
-          if (res.ok && data.data && data.data.isValid) {
-            resultBox.className = 'result-box valid';
-            resultTitle.textContent = 'Certificado Válido';
-            resultMsg.textContent = `Aluno: ${data.data.studentName} | Curso: ${data.data.courseTitle}`;
-            viewLink.href = `certificate.html?hash=${hash}`;
-            viewLink.style.display = 'block';
-          } else {
-            throw new Error('Invalid');
-          }
-        } catch (error) {
-          resultBox.className = 'result-box invalid';
-          resultTitle.textContent = 'Inválido';
-          resultMsg.textContent =
-            'Código não encontrado ou certificado inválido.';
-          viewLink.style.display = 'none';
-        }
+      if (!hash) {
+        console.warn('Empty hash');
+        input.style.borderColor = '#ef4444';
+        setTimeout(() => input.style.borderColor = '', 2000);
+        return;
       }
-    </script>
-  </body>
+
+      // Start Loading State
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = 'Analisando...';
+      btn.style.opacity = '0.7';
+
+      resultBox.className = 'result-box';
+      resultBox.style.display = 'none';
+      viewLink.style.display = 'none';
+
+      try {
+        console.log('Fetching certificate for hash:', hash);
+        const res = await fetch(`/certificates/${hash}`);
+        const data = await res.json();
+        console.log('API Response:', data);
+
+        if (res.ok && data.data && data.data.isValid) {
+          resultBox.className = 'result-box valid';
+          resultTitle.textContent = 'Certificado Válido';
+          resultMsg.textContent = `Aluno: ${data.data.studentName} | Curso: ${data.data.courseTitle}`;
+          viewLink.href = `certificate.html?hash=${hash}`;
+          viewLink.style.display = 'block';
+        } else {
+          throw new Error('Certificado não encontrado');
+        }
+      } catch (error) {
+        console.error('Validation Error:', error);
+        resultBox.className = 'result-box invalid';
+        resultTitle.textContent = 'Inválido';
+        resultMsg.textContent = 'Código não encontrado ou certificado expirado.';
+        viewLink.style.display = 'none';
+      } finally {
+        // End Loading State
+        btn.disabled = false;
+        btn.textContent = originalText;
+        btn.style.opacity = '1';
+      }
+    }
+
+    // Bind events
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOM Ready. Binding events.');
+      const btn = document.getElementById('validate-btn');
+      const input = document.getElementById('hash-input');
+
+      if (btn) {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          handleValidate();
+        });
+      }
+
+      if (input) {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            handleValidate();
+          }
+        });
+      }
+    });
+  </script>
+</body>
+
 </html>

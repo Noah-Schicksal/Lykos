@@ -467,13 +467,46 @@ export const Home = {
         `;
     };
 
+    const generateValidateButton = () => {
+      return `
+        <div style="width: 100%; display: flex; justify-content: center; margin-top: 1rem;">
+          <a href="certificate-validator.html" class="btn-validate-home" style="
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(94, 23, 235, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+          ">
+            <span class="material-symbols-outlined" style="font-size: 1.2rem; color: var(--primary);">verified</span>
+            Validar Certificado
+          </a>
+        </div>
+      `;
+    };
+
     const controlsHTML = generateControls();
+    const validateButtonHTML = generateValidateButton();
 
     const topContainer = document.getElementById('pagination-top');
     const bottomContainer = document.getElementById('pagination-bottom');
 
     if (topContainer) topContainer.innerHTML = controlsHTML;
-    if (bottomContainer) bottomContainer.innerHTML = controlsHTML;
+    if (bottomContainer) {
+      bottomContainer.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            ${controlsHTML}
+          </div>
+          ${validateButtonHTML}
+        </div>
+      `;
+    }
   },
 
   /**

@@ -139,9 +139,8 @@ select {
    Global Scrollbar Styling
    =========================== */
 
-/* Webkit Browsers (Chrome, Safari, Edge) - Dark Mode */
 body::-webkit-scrollbar {
-  width: 10px;
+  width: 14px;
 }
 
 body::-webkit-scrollbar-track {
@@ -225,6 +224,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 
 /* Remove navbar offset on mobile/tablet */
 @media (max-width: 1024px) {
+
   body:has(.dashboard-sidebar) .navbar,
   body:has(.dashboard-sidebar.collapsed) .navbar {
     margin-left: 0 !important;
@@ -2620,6 +2620,12 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 /* ========================================
    User Drawer Sidebar (Left Side)
    ======================================== */
+
+/* Prevent body scroll when drawer is open */
+body.drawer-open {
+  overflow: hidden;
+}
+
 .user-drawer {
   position: fixed;
   top: 0;
@@ -2635,6 +2641,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
 
 :root.light .user-drawer {
@@ -3135,6 +3142,12 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 .user-drawer-footer {
   padding: 1rem;
   border-top: 1px solid var(--border-light);
+  flex-shrink: 0;
+  background: #000;
+}
+
+:root.light .user-drawer-footer {
+  background: #ffffff;
 }
 
 /* Drawer Overlay */
@@ -3266,4 +3279,15 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 
 :root.light .user-menu-btn:hover .menu-text {
   color: white;
+}
+
+.btn-validate-home:hover {
+  background: var(--primary) !important;
+  color: white !important;
+  box-shadow: 0 0 15px rgba(94, 23, 235, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-validate-home:hover .material-symbols-outlined {
+  color: white !important;
 }
