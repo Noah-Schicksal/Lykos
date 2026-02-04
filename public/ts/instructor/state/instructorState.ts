@@ -20,6 +20,11 @@ export interface Course {
   price: number;
   categoryId: string;
   categoryName?: string;
+  category?: {
+    id: string;
+    name: string;
+  };
+  coverImageUrl?: string;
   coverImage?: string;
   maxStudents?: number;
   instructorId: string;

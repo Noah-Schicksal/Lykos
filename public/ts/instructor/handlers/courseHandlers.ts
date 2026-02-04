@@ -1,6 +1,4 @@
 import { Courses } from '../../modules/courses.js';
-import { Modules } from '../../modules/modules.js';
-import { Classes } from '../../modules/classes.js';
 import { AppUI } from '../../utils/ui.js';
 import { getAllCategories, getCurrentCourseId, setCurrentCourseId } from '../state/instructorState.js';
 import { parseBRLPrice, customConfirm, el, icon, clearChildren } from '../utils/dom.js';
@@ -20,7 +18,7 @@ export function setupCourseHandlers(): void {
   const coursesList = document.getElementById('courses-sidebar-list');
   if (coursesList) {
     coursesList.addEventListener('click', (e) => {
-      const item = (e.target as HTMLElement).closest('.sidebar-item');
+      const item = (e.target as HTMLElement).closest('.course-list-item');
       if (item) {
         const courseId = item.getAttribute('data-course-id');
         if (courseId) {
@@ -118,57 +116,40 @@ function showCreateCourseView(): void {
       showEmptyState();
     });
 
-  const coverInput = document.getElementById(
-    'course-cover',
-  ) as HTMLInputElement;
-  if (coverInput) {
-    coverInput.addEventListener('change', (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const previewContainer = document.getElementById(
-            'cover-preview-container',
-          );
-          if (previewContainer) {
-            clearChildren(previewContainer);
-            const img = el('img', {
-              src: event.target?.result as string,
-              alt: 'Preview',
-              className: 'cover-preview-img'
-            }) as HTMLImageElement;
-            img.style.maxWidth = '200px';
-            img.style.maxHeight = '150px';
-            img.style.marginTop = '10px';
-            img.style.marginBottom = '10px';
-            img.style.borderRadius = '8px';
-            img.style.objectFit = 'cover';
-            previewContainer.appendChild(img);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
   setCurrentCourseId(null);
 }
 
 export async function showEditCourseView(course: any): Promise<void> {
+  console.log('=== showEditCourseView DEBUG ===');
+  console.log('Course object:', JSON.stringify(course, null, 2));
+  console.log('course.categoryId:', course?.categoryId);
+  console.log('course.category:', course?.category);
+  console.log('course.category?.id:', course?.category?.id);
+  
   const contentArea = document.getElementById('dashboard-content');
-  if (!contentArea) return;
+  if (!contentArea) {
+    console.error('Content area not found!');
+    return;
+  }
 
   const categories = getAllCategories();
+  console.log('All categories from state:', JSON.stringify(categories, null, 2));
+  console.log('Number of categories:', categories.length);
+  
   const formElement = renderCourseForm(course, categories);
+  console.log('Form element created successfully');
 
   clearChildren(contentArea);
   contentArea.appendChild(formElement);
+  console.log('Form appended to content area');
 
   const categorySelect = document.getElementById(
     'course-category',
   ) as HTMLSelectElement;
   if (categorySelect) {
-    setupCategorySelectListener(categorySelect, course.categoryId);
+    // Usa categoryId ou category.id como fallback
+    const categoryId = course.categoryId || course.category?.id;
+    setupCategorySelectListener(categorySelect, categoryId);
   }
 
   const form = document.getElementById(
@@ -183,39 +164,6 @@ export async function showEditCourseView(course: any): Promise<void> {
     ?.addEventListener('click', () => {
       selectCourse(course.id);
     });
-
-  const coverInput = document.getElementById(
-    'course-cover',
-  ) as HTMLInputElement;
-  if (coverInput) {
-    coverInput.addEventListener('change', (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const previewContainer = document.getElementById(
-            'cover-preview-container',
-          );
-          if (previewContainer) {
-            clearChildren(previewContainer);
-            const img = el('img', {
-              src: event.target?.result as string,
-              alt: 'Preview',
-              className: 'cover-preview-img'
-            }) as HTMLImageElement;
-            img.style.maxWidth = '200px';
-            img.style.maxHeight = '150px';
-            img.style.marginTop = '10px';
-            img.style.marginBottom = '10px';
-            img.style.borderRadius = '8px';
-            img.style.objectFit = 'cover';
-            previewContainer.appendChild(img);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
 }
 
 async function handleCourseSubmit(e: Event): Promise<void> {
@@ -250,61 +198,17 @@ async function handleCourseSubmit(e: Event): Promise<void> {
     maxStudents: maxStudentsStr ? parseInt(maxStudentsStr) : undefined,
   };
 
+  const coverFile = coverInput.files?.[0];
+  const clearCover = (coverInput as any)._cleared === true;
+
   try {
     let savedCourse;
 
     if (courseId) {
-      savedCourse = await Courses.update(courseId, data);
+      savedCourse = await Courses.update(courseId, data, coverFile, clearCover);
       AppUI.showMessage('Curso atualizado!', 'success');
     } else {
-      const coverFile = coverInput.files ? coverInput.files[0] : undefined;
-      const videoInput = document.getElementById(
-        'course-video-intro',
-      ) as HTMLInputElement;
-      const videoFile = videoInput && videoInput.files ? videoInput.files[0] : undefined;
-
       savedCourse = await Courses.create(data, coverFile);
-
-      if (videoFile && !videoFile.type.startsWith('video/mp4')) {
-        AppUI.showMessage(
-          'O vídeo de introdução deve ser MP4. O curso foi criado, mas o vídeo não foi enviado.',
-          'error',
-        );
-      } else if (videoFile && savedCourse && savedCourse.id) {
-        try {
-          AppUI.showMessage('Criando módulo introdutório...', 'info');
-
-          const module = await Modules.create(savedCourse.id, {
-            title: 'Módulo Introdutório',
-            orderIndex: 0,
-          });
-
-          if (module && module.id) {
-            const cls = await Modules.createClass(module.id, {
-              title: 'Aula de Introdução',
-              description: 'Bem-vindo ao curso!',
-              videoUrl: '',
-            });
-
-            if (cls && cls.id) {
-              AppUI.showMessage('Enviando vídeo de introdução...', 'info');
-              await Classes.uploadVideo(cls.id, videoFile);
-              AppUI.showMessage(
-                'Vídeo de introdução enviado com sucesso!',
-                'success',
-              );
-            }
-          }
-        } catch (vidError: any) {
-          console.error('Falha ao processar vídeo de introdução:', vidError);
-          AppUI.showMessage(
-            'Curso criado, mas houve erro ao processar o vídeo de introdução: ' +
-              vidError.message,
-            'error',
-          );
-        }
-      }
-
       AppUI.showMessage('Curso criado com sucesso!', 'success');
     }
 

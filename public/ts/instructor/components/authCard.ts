@@ -146,7 +146,7 @@ function renderProfileView(): HTMLElement {
     );
 
   return el('div', { id: 'auth-profile-view', className: 'auth-face' },
-    viewHeader('Perfil', 'btn-back-from-profile'),
+    viewHeader('Perfil', 'btn-back-from-profile', 'close'),
     el('div', { className: 'user-avatar-large' }, icon('account_circle')),
     el('div', { className: 'profile-info' },
       infoItem('Nome', 'profile-name-display', 'Nome do Usuário'),

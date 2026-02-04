@@ -5,11 +5,21 @@ import { getCurrentCourseId, setContentExpanded } from '../state/instructorState
 import { renderContentTree } from '../components/contentEditor.js';
 import { customConfirm, el, icon, clearChildren } from '../utils/dom.js';
 
+// Track if listeners have been set up for a specific container
+const listenersSetup = new WeakSet<HTMLElement>();
+
 export function setupContentHandlers(): void {
-  const contentArea = document.getElementById('course-content-area');
-  if (contentArea) {
-    setupContentTreeListeners(contentArea);
-  }
+  // This function is called on init, but the content area doesn't exist yet.
+  // We'll set up listeners when the content area is first expanded.
+  // See toggleCourseContent and setupContentAreaListeners
+}
+
+function setupContentAreaListeners(contentArea: HTMLElement): void {
+  // Prevent duplicate listeners
+  if (listenersSetup.has(contentArea)) return;
+  listenersSetup.add(contentArea);
+  
+  setupContentTreeListeners(contentArea);
 }
 
 function setupContentTreeListeners(contentArea: HTMLElement): void {
@@ -36,6 +46,14 @@ function setupContentTreeListeners(contentArea: HTMLElement): void {
       case 'delete-class':
         const delClassId = target.getAttribute('data-id');
         if (delClassId) await handleDeleteClass(delClassId, courseId);
+        break;
+      case 'remove-video':
+        const videoClassId = target.getAttribute('data-class-id');
+        if (videoClassId) await handleRemoveClassVideo(videoClassId, courseId);
+        break;
+      case 'remove-material':
+        const materialClassId = target.getAttribute('data-class-id');
+        if (materialClassId) await handleRemoveClassMaterial(materialClassId, courseId);
         break;
       case 'upload-video':
       case 'upload-material':
@@ -64,10 +82,12 @@ function setupContentTreeListeners(contentArea: HTMLElement): void {
     input.value = '';
   });
 
-  const editableTitles = contentArea.querySelectorAll('.editable-title');
-  editableTitles.forEach((el) => {
-    el.addEventListener('blur', async (e) => {
-      const element = e.target as HTMLElement;
+  // Use event delegation for blur events on editable titles
+  contentArea.addEventListener('blur', async (e) => {
+    const element = e.target as HTMLElement;
+    
+    // Handle editable titles
+    if (element.classList.contains('editable-title')) {
       const moduleId = element.getAttribute('data-module-id');
       const classId = element.getAttribute('data-class-id');
       const newTitle = element.textContent?.trim() || '';
@@ -82,35 +102,42 @@ function setupContentTreeListeners(contentArea: HTMLElement): void {
       } else if (classId) {
         await handleUpdateClassTitle(classId, newTitle);
       }
-    });
+    }
+    
+    // Handle URL inputs
+    if (element.classList.contains('tree-input') && element.hasAttribute('data-field')) {
+      const inputEl = element as HTMLInputElement;
+      if (inputEl.readOnly) return;
 
-    el.setAttribute('data-original', el.textContent || '');
+      const classId = inputEl.getAttribute('data-class-id');
+      const field = inputEl.getAttribute('data-field');
+      const value = inputEl.value.trim();
 
-    el.addEventListener('focus', (e) => {
+      if (classId && field) {
+        await handleUpdateClassField(classId, field, value);
+      }
+    }
+  }, true); // Use capture phase for blur events
+
+  // Use event delegation for focus events on editable titles
+  contentArea.addEventListener('focusin', (e) => {
+    const element = e.target as HTMLElement;
+    
+    if (element.classList.contains('editable-title')) {
+      // Store original value
+      if (!element.hasAttribute('data-original')) {
+        element.setAttribute('data-original', element.textContent || '');
+      }
+      
+      // Select all text
       const range = document.createRange();
-      range.selectNodeContents(e.target as HTMLElement);
+      range.selectNodeContents(element);
       const sel = window.getSelection();
       if (sel) {
         sel.removeAllRanges();
         sel.addRange(range);
       }
-    });
-  });
-
-  const urlInputs = contentArea.querySelectorAll('.tree-input[data-field]');
-  urlInputs.forEach((input) => {
-    input.addEventListener('blur', async (e) => {
-      const element = e.target as HTMLInputElement;
-      if (element.readOnly) return; 
-
-      const classId = element.getAttribute('data-class-id');
-      const field = element.getAttribute('data-field');
-      const value = element.value.trim();
-
-      if (classId && field) {
-        await handleUpdateClassField(classId, field, value);
-      }
-    });
+    }
   });
 }
 
@@ -151,6 +178,9 @@ async function toggleCourseContent(courseId: string): Promise<void> {
       btnToggle.appendChild(closeIcon);
       btnToggle.appendChild(document.createTextNode(' Fechar Edição'));
     }
+
+    // Setup listeners for the content area (only once)
+    setupContentAreaListeners(contentArea);
 
     await renderContentTreeInArea(courseId);
   } else {
@@ -201,7 +231,8 @@ async function renderContentTreeInArea(courseId: string): Promise<void> {
     clearChildren(container);
     container.appendChild(contentTreeElement);
 
-    setupContentTreeListeners(container);
+    // Listeners are already set up via event delegation in setupContentHandlers
+    // No need to call setupContentTreeListeners again
 
     if (scrollContainer) scrollContainer.scrollTop = savedScrollTop;
   } catch (error: any) {
@@ -309,16 +340,13 @@ async function handleUploadClassMaterial(
   classId: string,
   file: File,
 ): Promise<void> {
+  const courseId = getCurrentCourseId();
   try {
-    AppUI.showMessage('Enviando...', 'info');
-    const res = await Classes.uploadMaterial(classId, file);
-    const input = document.getElementById(
-      `material-url-${classId}`,
-    ) as HTMLInputElement;
-    if (input) input.value = res.materialUrl;
+    await Classes.uploadMaterial(classId, file);
     AppUI.showMessage('Arquivo enviado!', 'success');
+    if (courseId) await renderContentTreeInArea(courseId);
   } catch (error: any) {
-    AppUI.showMessage(error.message || 'Erro ao enviar arquivo', 'error');
+    // Erro já é tratado no módulo Classes
   }
 }
 
@@ -326,20 +354,18 @@ async function handleUploadClassVideo(
   classId: string,
   file: File,
 ): Promise<void> {
+  const courseId = getCurrentCourseId();
   try {
     if (file.type !== 'video/mp4') {
       AppUI.showMessage('Por favor, envie apenas arquivos MP4.', 'error');
       return;
     }
-    AppUI.showMessage('Enviando vídeo... Isso pode demorar um pouco.', 'info');
-    const res = await Classes.uploadVideo(classId, file);
-    const input = document.getElementById(
-      `video-url-${classId}`,
-    ) as HTMLInputElement;
-    if (input) input.value = res.videoUrl;
-    AppUI.showMessage('Vídeo enviado com sucesso!', 'success');
+    AppUI.showMessage('Enviando vídeo...', 'info');
+    await Classes.uploadVideo(classId, file);
+    AppUI.showMessage('Vídeo enviado!', 'success');
+    if (courseId) await renderContentTreeInArea(courseId);
   } catch (error: any) {
-    AppUI.showMessage(error.message || 'Erro ao enviar vídeo', 'error');
+    // Erro já é tratado no módulo Classes
   }
 }
 
@@ -359,5 +385,45 @@ async function handleDeleteClass(
     await renderContentTreeInArea(courseId);
   } catch (error: any) {
     AppUI.showMessage(error.message || 'Erro ao excluir aula', 'error');
+  }
+}
+
+async function handleRemoveClassVideo(
+  classId: string,
+  courseId: string,
+): Promise<void> {
+  const confirmed = await customConfirm(
+    'Remover Vídeo?',
+    'Tem certeza que deseja remover o vídeo desta aula?',
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await Classes.update(classId, { videoUrl: '' });
+    await renderContentTreeInArea(courseId);
+    AppUI.showMessage('Vídeo removido', 'success');
+  } catch (error: any) {
+    AppUI.showMessage(error.message || 'Erro ao remover vídeo', 'error');
+  }
+}
+
+async function handleRemoveClassMaterial(
+  classId: string,
+  courseId: string,
+): Promise<void> {
+  const confirmed = await customConfirm(
+    'Remover Material?',
+    'Tem certeza que deseja remover o material desta aula?',
+  );
+
+  if (!confirmed) return;
+
+  try {
+    await Classes.update(classId, { materialUrl: '' });
+    await renderContentTreeInArea(courseId);
+    AppUI.showMessage('Material removido', 'success');
+  } catch (error: any) {
+    AppUI.showMessage(error.message || 'Erro ao remover material', 'error');
   }
 }

@@ -162,92 +162,150 @@ function renderClass(cls: Class): HTMLElement {
 }
 
 function renderVideoInputRow(cls: Class, isUploaded: boolean): HTMLElement {
-  const input = el('input', {
-    type: 'text',
-    className: `tree-input ${isUploaded ? 'uploaded' : ''}`,
-    placeholder: 'URL do Vídeo (Youtube/Vimeo ou MP4)',
-    value: isUploaded ? '✅ Vídeo Interno (.mp4)' : (cls.videoUrl || ''),
-    'data-class-id': cls.id,
-    'data-field': 'videoUrl',
-    id: `video-url-${cls.id}`
-  }) as HTMLInputElement;
-
-  if (isUploaded) {
-    input.readOnly = true;
-    input.style.cursor = 'default';
-    input.style.background = 'rgba(16, 185, 129, 0.05)';
-    input.style.borderColor = 'rgba(16, 185, 129, 0.2)';
-  } else {
-    input.style.flex = '1';
-  }
-
-  const uploadIcon = el('span', { className: 'material-symbols-outlined' }, 'movie');
-  uploadIcon.style.fontSize = '1.2rem';
-
   const fileInput = el('input', {
     type: 'file',
     accept: 'video/mp4',
     'data-action': 'upload-video',
     'data-class-id': cls.id,
-    style: 'display: none;'
+  }) as HTMLInputElement;
+  fileInput.style.display = 'none';
+
+  // Se tem vídeo interno uploaded
+  if (isUploaded) {
+    const uploadedCard = el('div', { className: 'media-card media-card-success' },
+      el('div', { className: 'media-card-icon' }, icon('check_circle')),
+      el('div', { className: 'media-card-content' },
+        el('span', { className: 'media-card-title' }, 'Vídeo carregado'),
+        el('span', { className: 'media-card-subtitle' }, 'Arquivo MP4')
+      ),
+      el('button', {
+        type: 'button',
+        className: 'media-card-action',
+        'data-action': 'remove-video',
+        'data-class-id': cls.id,
+        title: 'Remover vídeo'
+      }, icon('delete'))
+    );
+    return el('div', { className: 'media-input-wrapper' }, fileInput, uploadedCard);
+  }
+
+  // Dropzone para upload
+  const dropZone = el('div', { 
+    className: 'media-dropzone',
+    'data-class-id': cls.id,
+    'data-type': 'video'
+  },
+    el('div', { className: 'media-dropzone-content' },
+      icon('movie'),
+      el('span', { className: 'media-dropzone-text' }, 'Arraste um vídeo ou clique para selecionar'),
+      el('span', { className: 'media-dropzone-hint' }, 'MP4 • Máx 500MB')
+    )
+  );
+
+  // Event handlers
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
   });
 
-  const uploadLabel = el('label', {
-    className: 'btn-icon-small',
-    title: 'Upload Vídeo (MP4)'
-  }, uploadIcon, fileInput);
-  applyUploadButtonStyle(uploadLabel);
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
 
-  return el('div', { className: 'tree-input-row' }, input, uploadLabel);
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.type === 'video/mp4') {
+        fileInput.files = files;
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+  });
+
+  return el('div', { className: 'media-input-wrapper' },
+    el('div', { className: 'media-input-label' },
+      icon('movie'),
+      el('span', null, 'Vídeo')
+    ),
+    fileInput,
+    dropZone
+  );
 }
 
 function renderMaterialInputRow(cls: Class, isUploaded: boolean): HTMLElement {
-  const input = el('input', {
-    type: 'text',
-    className: `tree-input ${isUploaded ? 'uploaded' : ''}`,
-    placeholder: 'URL Material (Docs/PDF)',
-    value: isUploaded ? '✅ Material de Apoio Carregado' : (cls.materialUrl || ''),
-    'data-class-id': cls.id,
-    'data-field': 'materialUrl',
-    id: `material-url-${cls.id}`
-  }) as HTMLInputElement;
-
-  if (isUploaded) {
-    input.readOnly = true;
-    input.style.cursor = 'default';
-    input.style.background = 'rgba(16, 185, 129, 0.05)';
-    input.style.borderColor = 'rgba(16, 185, 129, 0.2)';
-  } else {
-    input.style.flex = '1';
-  }
-
-  const uploadIcon = el('span', { className: 'material-symbols-outlined' }, 'upload_file');
-  uploadIcon.style.fontSize = '1.2rem';
-
   const fileInput = el('input', {
     type: 'file',
+    accept: '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar',
     'data-action': 'upload-material',
     'data-class-id': cls.id,
-    style: 'display: none;'
+  }) as HTMLInputElement;
+  fileInput.style.display = 'none';
+
+  // Se tem material uploaded
+  if (isUploaded) {
+    const uploadedCard = el('div', { className: 'media-card media-card-success' },
+      el('div', { className: 'media-card-icon' }, icon('check_circle')),
+      el('div', { className: 'media-card-content' },
+        el('span', { className: 'media-card-title' }, 'Material carregado'),
+        el('span', { className: 'media-card-subtitle' }, 'Arquivo de apoio')
+      ),
+      el('button', {
+        type: 'button',
+        className: 'media-card-action',
+        'data-action': 'remove-material',
+        'data-class-id': cls.id,
+        title: 'Remover material'
+      }, icon('delete'))
+    );
+    return el('div', { className: 'media-input-wrapper' }, fileInput, uploadedCard);
+  }
+
+  // Dropzone para upload
+  const dropZone = el('div', { 
+    className: 'media-dropzone',
+    'data-class-id': cls.id,
+    'data-type': 'material'
+  },
+    el('div', { className: 'media-dropzone-content' },
+      icon('description'),
+      el('span', { className: 'media-dropzone-text' }, 'Arraste um arquivo ou clique para selecionar'),
+      el('span', { className: 'media-dropzone-hint' }, 'PDF, DOC, PPT, XLS, ZIP')
+    )
+  );
+
+  // Event handlers
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
   });
 
-  const uploadLabel = el('label', {
-    className: 'btn-icon-small',
-    title: 'Upload Arquivo'
-  }, uploadIcon, fileInput);
-  applyUploadButtonStyle(uploadLabel);
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
 
-  return el('div', { className: 'tree-input-row' }, input, uploadLabel);
-}
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      fileInput.files = files;
+      fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
 
-function applyUploadButtonStyle(label: HTMLElement): void {
-  label.style.cursor = 'pointer';
-  label.style.border = '1px solid var(--border-light)';
-  label.style.borderRadius = '4px';
-  label.style.padding = '6px';
-  label.style.display = 'flex';
-  label.style.alignItems = 'center';
-  label.style.justifyContent = 'center';
-  label.style.background = 'var(--bg-card, rgba(94, 23, 235, 0.05))';
-  label.style.flexShrink = '0';
+  return el('div', { className: 'media-input-wrapper' },
+    el('div', { className: 'media-input-label' },
+      icon('description'),
+      el('span', null, 'Material')
+    ),
+    fileInput,
+    dropZone
+  );
 }

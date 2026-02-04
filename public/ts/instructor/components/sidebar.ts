@@ -45,13 +45,17 @@ export function updateSidebarCourses(courses: Course[]): void {
 }
 
 function renderCourseItem(course: Course): HTMLElement {
-  return el('div', { className: 'sidebar-item', 'data-course-id': course.id },
-    el('div', { className: 'sidebar-item-cover' },
-      el('img', { src: course.coverImage || 'assets/default-course.png', alt: course.title })
+  const imageUrl = course.coverImageUrl || course.coverImage;
+
+  return el('div', { className: 'course-list-item', 'data-course-id': course.id },
+    el('div', { className: 'course-item-thumb' },
+      imageUrl
+        ? el('img', { src: imageUrl, alt: course.title })
+        : el('span', { className: 'material-symbols-outlined' }, 'video_library')
     ),
-    el('div', { className: 'sidebar-item-info' },
-      el('h4', { className: 'sidebar-item-title' }, course.title),
-      el('p', { className: 'sidebar-item-meta' }, course.categoryName || 'Sem categoria')
+    el('div', { className: 'course-item-info' },
+      el('h4', { className: 'course-item-title' }, course.title),
+      el('p', { className: 'course-item-meta' }, course.categoryName || course.category?.name || 'Sem categoria')
     )
   );
 }

@@ -2,25 +2,41 @@ import { Auth } from '../../modules/auth.js';
 import { AppUI } from '../../utils/ui.js';
 
 export function setupAuthHandlers(): void {
-  const avatarBtn = document.getElementById('user-avatar-btn');
   const authContainer = document.getElementById('auth-card-container');
 
-  if (avatarBtn && authContainer) {
-    avatarBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      authContainer.classList.toggle('show');
-      avatarBtn.classList.toggle('open');
+  // User menu dropdown handlers - Edit Profile
+  const btnEditProfile = document.getElementById('btn-edit-user-profile');
+  if (btnEditProfile) {
+    btnEditProfile.addEventListener('click', () => {
+      closeUserMenu();
+      showProfileView();
     });
+  }
 
-    document.addEventListener('click', (e) => {
-      if (
-        authContainer.classList.contains('show') &&
-        !authContainer.contains(e.target as Node) &&
-        !avatarBtn.contains(e.target as Node)
-      ) {
-        authContainer.classList.remove('show');
-        avatarBtn.classList.remove('open');
-      }
+  // Logout button
+  const btnLogout = document.getElementById('btn-logout-menu');
+  if (btnLogout) {
+    btnLogout.addEventListener('click', () => {
+      closeUserMenu();
+      Auth.logout();
+    });
+  }
+
+  // Login button (for non-logged users)
+  const btnDropdownLogin = document.getElementById('btn-dropdown-login');
+  if (btnDropdownLogin) {
+    btnDropdownLogin.addEventListener('click', () => {
+      closeUserMenu();
+      showLoginView();
+    });
+  }
+
+  // Register button (for non-logged users)
+  const btnDropdownRegister = document.getElementById('btn-dropdown-register');
+  if (btnDropdownRegister) {
+    btnDropdownRegister.addEventListener('click', () => {
+      closeUserMenu();
+      showRegisterView();
     });
   }
 
@@ -114,7 +130,11 @@ export function setupAuthHandlers(): void {
   document
     .getElementById('btn-back-from-profile')
     ?.addEventListener('click', () => {
-      Auth.updateAuthUI();
+      // Close the auth card completely instead of showing the logged-in face
+      const authCard = document.getElementById('auth-card-container');
+      if (authCard) {
+        authCard.classList.remove('show');
+      }
     });
 
   const profileEditForm = document.getElementById(
@@ -149,7 +169,11 @@ export function setupAuthHandlers(): void {
     .getElementById('btn-cancel-edit')
     ?.addEventListener('click', (e) => {
       e.preventDefault();
-      Auth.updateAuthUI();
+      // Close the auth card completely instead of showing the logged-in face
+      const authCard = document.getElementById('auth-card-container');
+      if (authCard) {
+        authCard.classList.remove('show');
+      }
     });
 
   document
@@ -247,4 +271,77 @@ async function handleDeleteAccount(e: Event): Promise<void> {
       'error',
     );
   }
+}
+
+function closeUserMenu(): void {
+  const dropdown = document.getElementById('user-dropdown-menu');
+  const avatarBtn = document.getElementById('user-avatar-btn');
+  if (dropdown) {
+    dropdown.classList.remove('show');
+  }
+  if (avatarBtn) {
+    avatarBtn.classList.remove('open');
+  }
+}
+
+function showProfileView(): void {
+  const authCard = document.getElementById('auth-card-container');
+  if (authCard) {
+    authCard.classList.add('show');
+  }
+  Auth.showProfileView();
+}
+
+function showLoginView(): void {
+  const authCard = document.getElementById('auth-card-container');
+  const cardInner = document.getElementById('auth-card');
+  
+  // Hide all faces first
+  hideAllAuthFaces();
+  
+  // Show login face
+  const loginFace = document.getElementById('auth-login');
+  if (loginFace) loginFace.classList.remove('hidden');
+  
+  if (authCard) {
+    authCard.classList.add('show');
+  }
+  if (cardInner) {
+    cardInner.classList.remove('flipped');
+  }
+}
+
+function showRegisterView(): void {
+  const authCard = document.getElementById('auth-card-container');
+  const cardInner = document.getElementById('auth-card');
+  
+  // Hide all faces first
+  hideAllAuthFaces();
+  
+  // Show register face
+  const registerFace = document.getElementById('auth-register');
+  if (registerFace) registerFace.classList.remove('hidden');
+  
+  if (authCard) {
+    authCard.classList.add('show');
+  }
+  if (cardInner) {
+    cardInner.classList.add('flipped');
+  }
+}
+
+function hideAllAuthFaces(): void {
+  const faces = [
+    'auth-login',
+    'auth-register', 
+    'auth-logged-in',
+    'auth-categories-view',
+    'auth-profile-view',
+    'auth-profile-edit'
+  ];
+  
+  faces.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
 }

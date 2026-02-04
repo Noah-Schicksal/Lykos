@@ -24,11 +24,10 @@ export function setupCategoryHandlers(): void {
     .getElementById('btn-back-from-categories')
     ?.addEventListener('click', (e) => {
       e.preventDefault();
-      const loggedInFace = document.getElementById('auth-logged-in');
-      const categoriesFace = document.getElementById('auth-categories-view');
-      if (loggedInFace && categoriesFace) {
-        loggedInFace.classList.remove('hidden');
-        categoriesFace.classList.add('hidden');
+      // Close the auth card completely instead of showing the logged-in face
+      const authCard = document.getElementById('auth-card-container');
+      if (authCard) {
+        authCard.classList.remove('show');
       }
     });
 }

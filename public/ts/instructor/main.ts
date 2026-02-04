@@ -7,7 +7,7 @@ import { Categories } from '../modules/categories.js';
 import { initThemeToggle } from '../theme-toggle.js';
 import { el, clearChildren } from './utils/dom.js';
 
-import { renderNavbar } from './components/navbar.js';
+import { renderNavbar, setupNavbarHandlers } from './components/navbar.js';
 import { renderAuthCard } from './components/authCard.js';
 import { renderSidebar } from './components/sidebar.js';
 import { renderModals } from './components/modals.js';
@@ -54,6 +54,7 @@ async function init(): Promise<void> {
 
     await loadCoursesInSidebar();
 
+    setupNavbarHandlers();
     setupAuthHandlers();
     setupCategoryHandlers();
     setupCourseHandlers();

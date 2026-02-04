@@ -7,7 +7,7 @@ export interface EmptyStateOptions {
 }
 
 const defaults: Required<EmptyStateOptions> = {
-  icon: '📚',
+  icon: '',
   title: 'Nenhum curso selecionado',
   description: 'Crie um novo curso ou selecione um da barra lateral para começar.',
 };
@@ -15,9 +15,15 @@ const defaults: Required<EmptyStateOptions> = {
 export function renderEmptyState(options?: EmptyStateOptions): HTMLElement {
   const { icon, title, description } = { ...defaults, ...options };
 
-  return el('div', { className: 'empty-state' },
-    el('div', { className: 'empty-state-icon' }, icon),
-    el('h2', { className: 'empty-state-title' }, title),
-    el('p', { className: 'empty-state-description' }, description)
-  );
+  const container = el('div', { className: 'empty-state' });
+  
+  // Only add icon element if icon is provided
+  if (icon) {
+    container.appendChild(el('div', { className: 'empty-state-icon' }, icon));
+  }
+  
+  container.appendChild(el('h2', { className: 'empty-state-title' }, title));
+  container.appendChild(el('p', { className: 'empty-state-description' }, description));
+  
+  return container;
 }
