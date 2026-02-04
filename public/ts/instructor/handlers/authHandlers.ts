@@ -69,7 +69,7 @@ export function setupAuthHandlers(): void {
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const role = (document.getElementById('register-role') as HTMLSelectElement)
         .value;
       const name = (document.getElementById('register-name') as HTMLInputElement)
@@ -240,8 +240,9 @@ async function handleProfileEditSubmit(e: Event): Promise<void> {
       email,
       password: password || undefined,
     });
-    AppUI.showMessage('Perfil atualizado com sucesso!', 'success');
+    // Message is handled in Auth.updateUserProfile
     Auth.updateAuthUI();
+    showProfileView(); // Return to profile view so user can see changes and close the modal
   } catch (error: any) {
     AppUI.showMessage(
       error.message || 'Erro ao atualizar perfil',
@@ -261,7 +262,7 @@ async function handleDeleteAccount(e: Event): Promise<void> {
 
   try {
     await Auth.deleteUserAccount();
-    AppUI.showMessage('Conta deletada com sucesso.', 'success');
+    // Message is handled in Auth.deleteUserAccount
     setTimeout(() => {
       window.location.href = '/inicio';
     }, 2000);
@@ -295,14 +296,14 @@ function showProfileView(): void {
 function showLoginView(): void {
   const authCard = document.getElementById('auth-card-container');
   const cardInner = document.getElementById('auth-card');
-  
+
   // Hide all faces first
   hideAllAuthFaces();
-  
+
   // Show login face
   const loginFace = document.getElementById('auth-login');
   if (loginFace) loginFace.classList.remove('hidden');
-  
+
   if (authCard) {
     authCard.classList.add('show');
   }
@@ -314,14 +315,14 @@ function showLoginView(): void {
 function showRegisterView(): void {
   const authCard = document.getElementById('auth-card-container');
   const cardInner = document.getElementById('auth-card');
-  
+
   // Hide all faces first
   hideAllAuthFaces();
-  
+
   // Show register face
   const registerFace = document.getElementById('auth-register');
   if (registerFace) registerFace.classList.remove('hidden');
-  
+
   if (authCard) {
     authCard.classList.add('show');
   }
@@ -333,13 +334,13 @@ function showRegisterView(): void {
 function hideAllAuthFaces(): void {
   const faces = [
     'auth-login',
-    'auth-register', 
+    'auth-register',
     'auth-logged-in',
     'auth-categories-view',
     'auth-profile-view',
     'auth-profile-edit'
   ];
-  
+
   faces.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');

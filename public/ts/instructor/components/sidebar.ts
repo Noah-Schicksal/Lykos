@@ -7,7 +7,7 @@ export function renderSidebar(): HTMLElement {
       el('div', { className: 'sidebar-header-top' },
         el('h2', { className: 'sidebar-title' }, 'Meus Cursos'),
         el('button', { id: 'btn-toggle-sidebar', className: 'sidebar-toggle-btn' },
-          icon('menu')
+          icon('keyboard_double_arrow_left')
         )
       ),
       el('button', { id: 'btn-create-new-course', className: 'btn-primary-dash' },

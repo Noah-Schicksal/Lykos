@@ -7,20 +7,50 @@ function formGroup(labelText: string, input: HTMLElement): HTMLElement {
   );
 }
 
-function passwordField(id: string, placeholder: string): HTMLElement {
+function passwordField(id: string, placeholder: string, isRequired = true): HTMLElement {
   return el('div', { className: 'password-wrapper' },
     el('input', {
       type: 'password',
       id,
       className: 'form-input',
       placeholder,
-      required: true,
+      required: isRequired,
     }),
     el('button', {
       type: 'button',
       className: 'btn-toggle-password',
       'data-target': id,
     }, icon('visibility'))
+  );
+}
+
+// ... (renderLoginFace and renderRegisterFace use default true, update if needed or rely on default)
+
+function renderProfileEditView(): HTMLElement {
+  return el('div', { id: 'auth-profile-edit', className: 'auth-face' },
+    viewHeader('Editar Perfil', 'btn-cancel-edit', 'close'),
+    el('form', { id: 'profile-edit-form' },
+      formGroup('Nome',
+        el('input', {
+          id: 'edit-name',
+          type: 'text',
+          className: 'form-input',
+          placeholder: 'Seu nome',
+        })
+      ),
+      formGroup('Email',
+        el('input', {
+          id: 'edit-email',
+          type: 'email',
+          className: 'form-input',
+          placeholder: 'your.email@example.com',
+        })
+      ),
+      formGroup('Nova Senha (deixe em branco para manter a atual)',
+        passwordField('edit-password', '••••••••', false) // Pass false here
+      ),
+      el('button', { type: 'submit', className: 'btn-submit' }, 'Salvar Alterações')
+    )
   );
 }
 
@@ -164,33 +194,7 @@ function renderProfileView(): HTMLElement {
   );
 }
 
-function renderProfileEditView(): HTMLElement {
-  return el('div', { id: 'auth-profile-edit', className: 'auth-face' },
-    viewHeader('Editar Perfil', 'btn-cancel-edit', 'close'),
-    el('form', { id: 'profile-edit-form' },
-      formGroup('Nome',
-        el('input', {
-          id: 'edit-name',
-          type: 'text',
-          className: 'form-input',
-          placeholder: 'Seu nome',
-        })
-      ),
-      formGroup('Email',
-        el('input', {
-          id: 'edit-email',
-          type: 'email',
-          className: 'form-input',
-          placeholder: 'your.email@example.com',
-        })
-      ),
-      formGroup('Nova Senha (deixe em branco para manter a atual)',
-        passwordField('edit-password', '••••••••')
-      ),
-      el('button', { type: 'submit', className: 'btn-submit' }, 'Salvar Alterações')
-    )
-  );
-}
+
 
 export function renderAuthCard(): HTMLElement {
   const authCard = el('div', { id: 'auth-card', className: 'auth-card' },

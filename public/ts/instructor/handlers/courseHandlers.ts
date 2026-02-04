@@ -125,7 +125,7 @@ export async function showEditCourseView(course: any): Promise<void> {
   console.log('course.categoryId:', course?.categoryId);
   console.log('course.category:', course?.category);
   console.log('course.category?.id:', course?.category?.id);
-  
+
   const contentArea = document.getElementById('dashboard-content');
   if (!contentArea) {
     console.error('Content area not found!');
@@ -135,7 +135,7 @@ export async function showEditCourseView(course: any): Promise<void> {
   const categories = getAllCategories();
   console.log('All categories from state:', JSON.stringify(categories, null, 2));
   console.log('Number of categories:', categories.length);
-  
+
   const formElement = renderCourseForm(course, categories);
   console.log('Form element created successfully');
 
@@ -252,7 +252,7 @@ export async function selectCourse(courseId: string): Promise<void> {
         await deleteCourse(courseId);
       });
 
-    document.querySelectorAll('.sidebar-item').forEach((item) => {
+    document.querySelectorAll('.course-list-item').forEach((item) => {
       if (item.getAttribute('data-course-id') === courseId) {
         item.classList.add('active');
       } else {

@@ -154,8 +154,30 @@ function setupSidebarToggle(): void {
 
   if (btnToggleSidebar && sidebar) {
     btnToggleSidebar.addEventListener('click', () => {
-      sidebar.classList.toggle('collapsed');
+      const isCollapsed = sidebar.classList.toggle('collapsed');
+
+      const iconSpan = btnToggleSidebar.querySelector('.material-symbols-outlined');
+      if (iconSpan) {
+        if (isCollapsed) {
+          // Sidebar is now collapsed -> Show icon to expand (arrow right)
+          iconSpan.textContent = 'keyboard_double_arrow_right';
+          btnToggleSidebar.classList.remove('active');
+        } else {
+          // Sidebar is now expanded -> Show icon to collapse (arrow left)
+          iconSpan.textContent = 'keyboard_double_arrow_left';
+          btnToggleSidebar.classList.add('active');
+        }
+      }
     });
+
+    // Initialize icon based on current state
+    if (sidebar.classList.contains('collapsed')) {
+      const iconSpan = btnToggleSidebar.querySelector('.material-symbols-outlined');
+      if (iconSpan) iconSpan.textContent = 'keyboard_double_arrow_right';
+    } else {
+      const iconSpan = btnToggleSidebar.querySelector('.material-symbols-outlined');
+      if (iconSpan) iconSpan.textContent = 'keyboard_double_arrow_left';
+    }
   }
 }
 
