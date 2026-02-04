@@ -561,19 +561,13 @@ const Player = {
         video.addEventListener('ended', async () => {
             if (!Player.courseData || !Player.currentClassId) return;
 
-            // Find current class
-            let currentClass: ClassItem | null = null;
-            Player.courseData.modules.forEach(mod => {
-                mod.classes.forEach(cls => {
-                    if (cls.id === Player.currentClassId) {
-                        currentClass = cls;
-                    }
-                });
-            });
-
-            // Only mark as completed if not already completed
-            if (currentClass && !currentClass.isCompleted) {
-                await Player.toggleCompletion(currentClass);
+            // Find and mark current class as completed
+            for (const mod of Player.courseData.modules) {
+                const cls = mod.classes.find(c => c.id === Player.currentClassId);
+                if (cls && !cls.isCompleted) {
+                    await Player.toggleCompletion(cls);
+                    break;
+                }
             }
         });
     },
