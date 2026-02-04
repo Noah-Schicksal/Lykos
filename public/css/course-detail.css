@@ -9,14 +9,16 @@
 
 /* Hide icons until font is loaded */
 .material-symbols-outlined {
-  font-size: 0;
+  font-size: 1.25rem;
   visibility: hidden;
+  opacity: 0;
 }
 
-.material-symbols-outlined.loaded,
-.fonts-loaded .material-symbols-outlined {
-  font-size: inherit;
+.fonts-loaded .material-symbols-outlined,
+.material-symbols-outlined.loaded {
   visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s ease;
 }
 
 /* Global text overflow prevention */
@@ -65,26 +67,25 @@
   margin: 0 auto;
   padding: 2rem 1rem;
   margin-top: 1rem;
-  overflow-x: hidden;
 }
 
 .course-detail-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr var(--sidebar-width);
   gap: 3rem;
-  align-items: flex-start;
+  align-items: start;
 }
 
 @media (max-width: 1024px) {
   .course-detail-layout {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 }
 
 .course-main-content {
-  flex: 1;
-  min-width: 0; /* Prevents flex item from overflowing */
+  min-width: 0; /* Prevents grid item from overflowing */
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: hidden; /* Move overflow here instead of container */
 }
 
 /* Breadcrumb */
@@ -412,14 +413,14 @@
 
 /* Sidebar */
 .course-sidebar {
-  width: var(--sidebar-width);
   position: sticky;
-  top: 120px;
+  top: 100px;
+  height: fit-content;
+  align-self: start;
 }
 
 @media (max-width: 1024px) {
   .course-sidebar {
-    width: 100%;
     position: static;
   }
 }
