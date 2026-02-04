@@ -11,7 +11,7 @@
     --sidebar-hover: #1E293B;
     --sidebar-text: #E2E8F0;
     --sidebar-meta: #94A3B8;
-    --sidebar-active: rgba(34, 211, 238, 0.1);
+    --sidebar-active: rgba(139, 92, 246, 0.1);
     --sidebar-active-text: white;
     /* Light/Glow shadow for dark mode */
     --player-shadow: 0 0 15px rgba(255, 255, 255, 0.1), 0 0 30px rgba(255, 255, 255, 0.05);
@@ -24,8 +24,8 @@
     --sidebar-hover: #E2E8F0;
     --sidebar-text: #0F172A;
     --sidebar-meta: #64748B;
-    --sidebar-active: rgba(6, 182, 212, 0.1);
-    --sidebar-active-text: #0891b2;
+    --sidebar-active: rgba(124, 58, 237, 0.1);
+    --sidebar-active-text: #7c3aed;
     /* Softer shadow for light mode */
     --player-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
@@ -48,7 +48,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 body::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
     box-shadow: 0 0 10px rgba(94, 23, 235, 0.5);
 }
 
@@ -63,7 +63,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 :root.light body::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(135deg, #7c3aed, #0891b2);
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
     box-shadow: 0 0 10px rgba(94, 23, 235, 0.3);
 }
 
@@ -297,10 +297,7 @@ body {
         flex-shrink: 0;
     }
 
-    /* Hide drawer toggle on mobile */
-    .drawer-toggle-btn {
-        display: none;
-    }
+    /* Toggle button is now shown in sidebar drawer mode */
 
     /* Ensure video container respects width */
     .video-container-wrapper {
@@ -461,7 +458,7 @@ body {
 .btn-action:hover {
     border-color: var(--primary);
     color: var(--primary);
-    background-color: rgba(6, 182, 212, 0.05);
+    background-color: rgba(124, 58, 237, 0.05);
 }
 
 .btn-action.completed {
@@ -518,7 +515,7 @@ body {
 .material-icon {
     color: var(--primary);
     font-size: 2rem;
-    background: rgba(6, 182, 212, 0.1);
+    background: rgba(124, 58, 237, 0.1);
     padding: 0.5rem;
     border-radius: 0.5rem;
 }
@@ -581,8 +578,8 @@ body {
 }
 
 .drawer-toggle-btn:hover {
-    background-color: #0891b2;
-    /* Could use var, but this custom teal hover is likely fine */
+    background-color: #7c3aed;
+    /* Could use var, but this custom purple hover is likely fine */
     width: 44px;
     left: -44px;
 }
@@ -783,21 +780,35 @@ details.module-item:not([open]) .layer-icon {
     color: #10b981;
 }
 
+/* Certificate Container in Sidebar Header */
+.certificate-container {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04));
+    border-radius: 0.75rem;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.certificate-container.hidden {
+    display: none;
+}
+
 /* Certificate Button in Sidebar */
 .sidebar-certificate-btn {
-    margin: 1.5rem 1rem;
-    padding: 1rem;
+    width: 100%;
+    padding: 0.875rem 1rem;
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    border-radius: 0.75rem;
-    font-weight: 700;
+    border-radius: 0.5rem;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
     transition: all 0.2s;
     text-decoration: none;
     /* In case it's an anchor */
@@ -805,7 +816,7 @@ details.module-item:not([open]) .layer-icon {
 
 .sidebar-certificate-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 
@@ -936,7 +947,7 @@ details.module-item:not([open]) .layer-icon {
     width: calc(100% - 3rem);
     margin: 0 1.5rem 1rem 1.5rem;
     padding: 0.875rem 1.5rem;
-    background: linear-gradient(135deg, var(--primary), #0891b2);
+    background: linear-gradient(135deg, var(--primary), #8b5cf6);
     color: white;
     border: none;
     border-radius: 0.75rem;
@@ -948,12 +959,12 @@ details.module-item:not([open]) .layer-icon {
     justify-content: center;
     gap: 0.75rem;
     transition: all 0.3s;
-    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
 }
 
 .btn-next-lesson:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
 }
 
 .btn-next-lesson:active {
@@ -1177,6 +1188,65 @@ video::-webkit-media-controls {
 }
 
 /* ===========================
+   Sidebar Responsive Drawer Mode
+   =========================== */
+
+/* Backdrop for sidebar overlay on mobile */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 998;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-backdrop.active {
+    display: block;
+}
+
+/* Transform sidebar to drawer on mobile/tablet */
+@media (max-width: 1024px) {
+    .drawer-toggle-btn {
+        display: flex !important;
+        position: fixed;
+        top: 5rem;
+        right: 1rem;
+        z-index: 1001;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--sidebar-border);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        width: auto;
+        height: auto;
+        left: auto;
+    }
+
+    .drawer-toggle-btn:hover {
+        background-color: var(--sidebar-hover);
+    }
+
+    .player-sidebar {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 90vw;
+        max-width: 450px;
+        height: 100vh;
+        z-index: 999;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+        border-left: none;
+        border-right: 1px solid var(--sidebar-border);
+    }
+
+    .player-sidebar.sidebar-open {
+        right: 0;
+    }
+}
+
+/* ===========================
    Responsive Refinements
    =========================== */
 
@@ -1212,10 +1282,7 @@ video::-webkit-media-controls {
         font-size: 0.9rem;
     }
 
-    /* Hide sidebar toggle completely if not already */
-    .drawer-toggle-btn {
-        display: none !important;
-    }
+    /* Toggle button is shown for drawer mode in mobile */
 
     /* Reduce Sidebar padding */
     .module-item {

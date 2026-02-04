@@ -391,32 +391,87 @@ const Player = {
     },
 
     setupSidebarToggle: () => {
-        const layout = document.querySelector('.player-layout');
-        const btnToggle = document.getElementById('btn-drawer-toggle');
+        const layout = document.querySelector('.player-layout') as HTMLElement;
+        const btnToggle = document.getElementById('btn-drawer-toggle') as HTMLElement;
+        const sidebar = document.querySelector('.player-sidebar') as HTMLElement;
 
-        if (!layout || !btnToggle) return;
+        if (!layout || !btnToggle || !sidebar) return;
+
+        // Create backdrop for mobile drawer
+        const backdrop = document.createElement('div');
+        backdrop.className = 'sidebar-backdrop';
+        document.body.appendChild(backdrop);
 
         const toggleSidebar = (forceState?: boolean) => {
-            const isCollapsed = forceState !== undefined
-                ? forceState
-                : !layout.classList.contains('sidebar-collapsed');
+            const isMobile = window.innerWidth <= 1024;
 
-            if (isCollapsed) {
-                layout.classList.add('sidebar-collapsed');
-                localStorage.setItem('player_sidebar_collapsed', 'true');
+            if (isMobile) {
+                // Mobile: Toggle drawer open/closed
+                const isOpen = forceState !== undefined
+                    ? forceState
+                    : !sidebar.classList.contains('sidebar-open');
+
+                if (isOpen) {
+                    sidebar.classList.add('sidebar-open');
+                    backdrop.classList.add('active');
+                } else {
+                    sidebar.classList.remove('sidebar-open');
+                    backdrop.classList.remove('active');
+                }
+
+                // Update icon
+                const icon = btnToggle.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.textContent = isOpen ? 'close' : 'menu';
+                }
             } else {
-                layout.classList.remove('sidebar-collapsed');
-                localStorage.setItem('player_sidebar_collapsed', 'false');
-            }
+                // Desktop: Toggle collapse state
+                const isCollapsed = forceState !== undefined
+                    ? forceState
+                    : !layout.classList.contains('sidebar-collapsed');
 
-            // Icon rotation is handled by CSS based on parent class
+                if (isCollapsed) {
+                    layout.classList.add('sidebar-collapsed');
+                    localStorage.setItem('player_sidebar_collapsed', 'true');
+                } else {
+                    layout.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('player_sidebar_collapsed', 'false');
+                }
+            }
         };
 
         btnToggle.addEventListener('click', () => toggleSidebar());
 
-        // Restore state
-        const savedState = localStorage.getItem('player_sidebar_collapsed') === 'true';
-        if (savedState) toggleSidebar(true);
+        // Close drawer when clicking backdrop
+        backdrop.addEventListener('click', () => {
+            if (sidebar.classList.contains('sidebar-open')) {
+                toggleSidebar(false);
+            }
+        });
+
+        // Close drawer on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+                toggleSidebar(false);
+            }
+        });
+
+        // Close drawer when selecting a class
+        const modulesList = document.getElementById('modules-list');
+        if (modulesList) {
+            modulesList.addEventListener('click', () => {
+                if (window.innerWidth <= 1024 && sidebar.classList.contains('sidebar-open')) {
+                    toggleSidebar(false);
+                }
+            });
+        }
+
+        // Restore desktop state if was collapsed
+        const isMobile = window.innerWidth <= 1024;
+        if (!isMobile) {
+            const savedState = localStorage.getItem('player_sidebar_collapsed') === 'true';
+            if (savedState) toggleSidebar(true);
+        }
     },
 
     setupTabs: () => {
@@ -851,34 +906,41 @@ const Player = {
             }
         });
 
-        // Certificate Button (Below last module if course is 100% complete)
-        if (Player.courseData.progress === 100) {
-            const btnCert = document.createElement('button');
-            btnCert.className = 'sidebar-certificate-btn';
+        // Certificate Button (In sidebar header if course is 100% complete)
+        const certContainer = document.getElementById('certificate-container');
+        if (certContainer) {
+            if (Player.courseData.progress === 100) {
+                certContainer.innerHTML = ''; // Clear
+                certContainer.classList.remove('hidden');
 
-            const certIcon = document.createElement('span');
-            certIcon.className = 'material-symbols-outlined';
-            certIcon.textContent = 'workspace_premium';
+                const btnCert = document.createElement('button');
+                btnCert.className = 'sidebar-certificate-btn';
 
-            const certText = document.createElement('span');
-            certText.className = 'btn-text';
-            certText.textContent = 'Gerar Certificado';
+                const certIcon = document.createElement('span');
+                certIcon.className = 'material-symbols-outlined';
+                certIcon.textContent = 'workspace_premium';
 
-            btnCert.appendChild(certIcon);
-            btnCert.appendChild(certText);
+                const certText = document.createElement('span');
+                certText.textContent = 'Gerar Certificado';
 
-            btnCert.addEventListener('click', async (e) => {
-                e.preventDefault();
-                try {
-                    const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
-                    if (res.data && res.data.hash) {
-                        window.location.href = `/certificate.html?hash=${res.data.hash}`;
+                btnCert.appendChild(certIcon);
+                btnCert.appendChild(certText);
+
+                btnCert.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
+                        if (res.data && res.data.hash) {
+                            window.location.href = `/certificate.html?hash=${res.data.hash}`;
+                        }
+                    } catch (err) {
+                        AppUI.showMessage('Erro ao gerar certificado.', 'error');
                     }
-                } catch (err) {
-                    AppUI.showMessage('Erro ao gerar certificado.', 'error');
-                }
-            });
-            list.appendChild(btnCert);
+                });
+                certContainer.appendChild(btnCert);
+            } else {
+                certContainer.classList.add('hidden');
+            }
         }
     },
 
