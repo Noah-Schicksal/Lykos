@@ -882,7 +882,7 @@ const Player = {
                 try {
                     const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
                     if (res.data && res.data.hash) {
-                        window.location.href = `certificate.html?hash=${res.data.hash}`;
+                        window.location.href = `/certificate.html?hash=${res.data.hash}`;
                     }
                 } catch (err) {
                     AppUI.showMessage('Erro ao gerar certificado.', 'error');
