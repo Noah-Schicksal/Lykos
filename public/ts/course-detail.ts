@@ -76,20 +76,30 @@ async function loadCourseData(courseId: string) {
  * Populate course details in the page
  */
 function populateCourseDetails(course: Course) {
+  // Helper to remove loading state
+  const removeLoading = (el: HTMLElement | null) => {
+    if (el) el.classList.remove('loading-text-inline', 'loading-text', 'loading-compact', 'loading-price');
+  };
+
   // Breadcrumb
   const breadcrumbCategory = document.getElementById('breadcrumb-category');
   if (breadcrumbCategory) {
-    breadcrumbCategory.textContent = course.category?.name || 'Categoria';
+    breadcrumbCategory.textContent = course.category?.name || 'Sem categoria';
+    removeLoading(breadcrumbCategory);
   }
 
   // Title
   const titleEl = document.getElementById('course-title');
-  if (titleEl) titleEl.textContent = course.title;
+  if (titleEl) {
+    titleEl.textContent = course.title;
+    removeLoading(titleEl);
+  }
 
   // Instructor
   const instructorEl = document.getElementById('course-instructor');
   if (instructorEl) {
-    instructorEl.textContent = course.instructor?.name || 'Instrutor Desconhecido';
+    instructorEl.textContent = course.instructor?.name || 'Instrutor';
+    removeLoading(instructorEl);
   }
 
   // Created date
@@ -101,12 +111,21 @@ function populateCourseDetails(course: Course) {
       month: 'long',
       year: 'numeric',
     });
+    removeLoading(dateEl);
+  }
+
+  // Rating
+  const ratingEl = document.getElementById('course-rating');
+  if (ratingEl) {
+    const rating = course.averageRating ?? 0;
+    ratingEl.textContent = rating.toFixed(1);
   }
 
   // Description
   const descEl = document.getElementById('course-description');
   if (descEl) {
     const description = course.description || '';
+    removeLoading(descEl);
     if (description.trim() === '') {
       descEl.textContent = 'O instrutor não especificou os objetivos de aprendizagem para este curso.';
       // Hide the learning list if description is empty
@@ -128,6 +147,22 @@ function populateCourseDetails(course: Course) {
       style: 'currency',
       currency: 'BRL',
     }).format(course.price);
+    removeLoading(priceEl);
+  }
+
+  // Slots/Vagas info
+  const slotsInfoEl = document.getElementById('slots-info');
+  if (slotsInfoEl) {
+    const maxStudents = course.maxStudents ?? 0;
+    const enrolledCount = course.enrolledCount ?? 0;
+    const availableSlots = maxStudents - enrolledCount;
+    
+    if (maxStudents > 0) {
+      slotsInfoEl.textContent = `${availableSlots} vagas disponíveis de ${maxStudents}`;
+    } else {
+      slotsInfoEl.textContent = 'Vagas ilimitadas';
+    }
+    removeLoading(slotsInfoEl);
   }
 
   // Remove original price element entirely since it's mocked
@@ -138,6 +173,8 @@ function populateCourseDetails(course: Course) {
 
   // Sidebar image
   const sidebarImg = document.getElementById('course-sidebar-img') as HTMLImageElement;
+  const imgPlaceholder = document.querySelector('.sidebar-img-placeholder') as HTMLElement;
+  
   if (sidebarImg) {
     let imageUrl = course.coverImageUrl;
     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
@@ -145,20 +182,19 @@ function populateCourseDetails(course: Course) {
     }
 
     if (imageUrl) {
-      sidebarImg.src = imageUrl;
+      // Show image when loaded
+      sidebarImg.onload = function() {
+        sidebarImg.style.display = 'block';
+        if (imgPlaceholder) imgPlaceholder.style.display = 'none';
+      };
       sidebarImg.onerror = function () {
         sidebarImg.style.display = 'none';
-        const container = sidebarImg.parentElement;
-        if (container) {
-          container.style.background = 'linear-gradient(135deg, rgba(94, 23, 235, 0.1), rgba(0, 73, 83, 0.1))';
-        }
+        if (imgPlaceholder) imgPlaceholder.style.display = 'flex';
       };
+      sidebarImg.src = imageUrl;
     } else {
       sidebarImg.style.display = 'none';
-      const container = sidebarImg.parentElement;
-      if (container) {
-        container.style.background = 'linear-gradient(135deg, rgba(94, 23, 235, 0.1), rgba(0, 73, 83, 0.1))';
-      }
+      if (imgPlaceholder) imgPlaceholder.style.display = 'flex';
     }
   }
 
@@ -227,7 +263,6 @@ function populateModules(modules: any[]) {
   // Update content meta
   const moduleCountEl = document.getElementById('module-count');
   const classCountEl = document.getElementById('class-count');
-  const totalDurationEl = document.getElementById('total-duration');
 
   let totalClasses = 0;
   modules.forEach((module) => {
@@ -239,13 +274,6 @@ function populateModules(modules: any[]) {
   }
   if (classCountEl) {
     classCountEl.textContent = `${totalClasses} ${totalClasses === 1 ? 'aula' : 'aulas'}`;
-  }
-  if (totalDurationEl) {
-    // Mocked duration
-    const estimatedMinutes = totalClasses * 15;
-    const hours = Math.floor(estimatedMinutes / 60);
-    const minutes = estimatedMinutes % 60;
-    totalDurationEl.textContent = `${hours}h ${minutes}min total`;
   }
 
   // Render accordion
@@ -260,7 +288,6 @@ function populateModules(modules: any[]) {
               <span class="material-symbols-outlined class-play-icon">play_circle</span>
               <span>${cls.title}</span>
             </div>
-            <span style="color: var(--text-muted); font-size: 0.8rem;">10:45</span>
           </div>
         `;
         })
@@ -302,6 +329,25 @@ function setupCartToggle() {
   const cartToggleBtn = document.getElementById('cart-toggle-btn');
   const cartModal = document.getElementById('cart-modal');
   const closeCartBtn = document.getElementById('close-cart-btn');
+  const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
+
+  // Setup checkout button listener once
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', async () => {
+      const success = await Cart.checkout();
+      if (success) {
+        // Close cart drawer
+        if (cartModal) {
+          cartModal.classList.remove('show');
+          document.body.style.overflow = '';
+        }
+        // Reload page to show updated enrollment status
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    });
+  }
 
   if (cartToggleBtn && cartModal) {
     cartToggleBtn.addEventListener('click', (e) => {
@@ -312,15 +358,22 @@ function setupCartToggle() {
         return;
       }
 
+      const isOpening = !cartModal.classList.contains('show');
       cartModal.classList.toggle('show');
-      if (cartModal.classList.contains('show')) {
+      
+      // Disable/enable body scroll when cart is open/closed
+      if (isOpening) {
+        document.body.style.overflow = 'hidden';
         renderCartItems();
+      } else {
+        document.body.style.overflow = '';
       }
     });
 
     if (closeCartBtn) {
       closeCartBtn.addEventListener('click', () => {
         cartModal.classList.remove('show');
+        document.body.style.overflow = '';
       });
     }
 
@@ -331,6 +384,7 @@ function setupCartToggle() {
         !cartToggleBtn.contains(e.target as Node)
       ) {
         cartModal.classList.remove('show');
+        document.body.style.overflow = '';
       }
     });
   }
@@ -408,13 +462,6 @@ async function renderCartItems() {
   } catch (error) {
     listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
   }
-
-  // Setup checkout button
-  if (checkoutBtn) {
-    checkoutBtn.addEventListener('click', async () => {
-      await Cart.checkout();
-    });
-  }
 }
 
 /**
@@ -422,7 +469,30 @@ async function renderCartItems() {
  */
 function checkIfUserIsCreator(course: Course) {
   const authUser = localStorage.getItem('auth_user');
-  if (!authUser) return;
+  const actionButtons = document.querySelector('.action-buttons') as HTMLElement;
+  
+  // First, check if user is enrolled
+  if (course.isEnrolled) {
+    if (actionButtons) {
+      actionButtons.style.display = 'flex';
+      actionButtons.innerHTML = `
+        <div class="status-card status-enrolled">
+          <span class="material-symbols-outlined status-icon">check_circle</span>
+          <span class="status-text">Você já possui este curso</span>
+          <a href="/student.html" class="status-link">Acessar conteúdo <span class="material-symbols-outlined" style="font-size: 1rem; vertical-align: middle;">arrow_forward</span></a>
+        </div>
+      `;
+    }
+    return;
+  }
+  
+  if (!authUser) {
+    // Show buttons for non-logged users
+    if (actionButtons) {
+      actionButtons.style.display = 'flex';
+    }
+    return;
+  }
 
   try {
     const user = JSON.parse(authUser);
@@ -432,43 +502,32 @@ function checkIfUserIsCreator(course: Course) {
       // Hide purchase buttons
       const btnBuyNow = document.getElementById('btn-buy-now');
       const btnAddToCart = document.getElementById('btn-add-to-cart');
-      const actionButtons = document.querySelector('.action-buttons');
 
       if (btnBuyNow) btnBuyNow.style.display = 'none';
       if (btnAddToCart) btnAddToCart.style.display = 'none';
 
-      // Add creator badge
-      const instructorEl = document.getElementById('course-instructor');
-      if (instructorEl && !instructorEl.querySelector('.creator-badge')) {
-        const badge = document.createElement('span');
-        badge.className = 'creator-badge';
-        badge.textContent = 'CRIADOR';
-        badge.style.cssText = `
-          display: inline-block;
-          background: linear-gradient(135deg, #5e17eb, #00d4ff);
-          color: white;
-          padding: 0.25rem 0.75rem;
-          border-radius: 0.5rem;
-          font-size: 0.75rem;
-          font-weight: 700;
-          margin-left: 0.5rem;
-          vertical-align: middle;
-        `;
-        instructorEl.appendChild(badge);
-      }
-
       // Show message in sidebar
       if (actionButtons) {
+        actionButtons.style.display = 'flex';
         actionButtons.innerHTML = `
-          <div style="padding: 1rem; text-align: center; color: var(--text-muted); border: 1px solid var(--border-light); border-radius: 0.5rem;">
-            <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--primary);">verified</span>
-            <p style="margin-top: 0.5rem; font-weight: 600;">Você é o criador deste curso</p>
+          <div class="status-card status-creator">
+            <span class="material-symbols-outlined status-icon">verified</span>
+            <span class="status-text">Você é o criador deste curso</span>
           </div>
         `;
+      }
+    } else {
+      // Show buttons for students
+      if (actionButtons) {
+        actionButtons.style.display = 'flex';
       }
     }
   } catch (error) {
     console.error('Error checking creator status:', error);
+    // Show buttons on error as fallback
+    if (actionButtons) {
+      actionButtons.style.display = 'flex';
+    }
   }
 }
 
@@ -506,11 +565,7 @@ function setupActionButtons(courseId: string) {
           return;
         }
 
-        const success = await Cart.add(courseId);
-        if (success) {
-          AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
-          Cart.updateBadge();
-        }
+        await Cart.add(courseId);
       } finally {
         // Re-enable button after a short delay
         setTimeout(() => {
@@ -540,16 +595,16 @@ function setupActionButtons(courseId: string) {
           return;
         }
 
-        // Add to cart
-        const success = await Cart.add(courseId);
+        // Add to cart silently (no toast)
+        const success = await Cart.add(courseId, false);
         if (success) {
-          AppUI.showMessage('Curso adicionado ao carrinho! Clique no carrinho para finalizar a compra.', 'success');
-          Cart.updateBadge();
+          AppUI.showMessage('Curso adicionado! Finalize sua compra no carrinho.', 'success');
 
           // Open cart modal to show the item
           const cartModal = document.getElementById('cart-modal');
           if (cartModal) {
             cartModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
             renderCartItems();
           }
         }

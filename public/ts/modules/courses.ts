@@ -12,6 +12,7 @@ export interface Course {
   maxStudents?: number;
   enrolledCount?: number;
   averageRating?: number;
+  isEnrolled?: boolean;
   instructorId: string;
   categoryId: string;
   category?: {

@@ -13,6 +13,17 @@
       if (theme === 'light') {
         document.documentElement.classList.add('light');
       }
+      // Detect when Material Symbols font is loaded
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() {
+          document.documentElement.classList.add('fonts-loaded');
+        });
+      } else {
+        // Fallback for browsers without font loading API
+        setTimeout(function() {
+          document.documentElement.classList.add('fonts-loaded');
+        }, 500);
+      }
     })();
   </script>
 
@@ -67,25 +78,24 @@
           <a href="/" class="breadcrumb-link"><span class="material-symbols-outlined"
               style="font-size: 1rem; vertical-align: middle;">arrow_back</span> Voltar</a>
           <span class="breadcrumb-separator">/</span>
-          <span id="breadcrumb-category" class="breadcrumb-tag">Categoria</span>
+          <span id="breadcrumb-category" class="breadcrumb-tag loading-text-inline">Carregando...</span>
         </nav>
 
         <header class="course-header">
-          <h1 id="course-title" class="course-title-main">Título do Curso</h1>
+          <h1 id="course-title" class="course-title-main loading-text-inline">Carregando título...</h1>
 
           <div class="course-meta-top">
-            <div class="meta-item">
+            <div id="rating-meta-item" class="meta-item">
               <span class="material-symbols-outlined star-icon">star</span>
-              <span class="rating-value">4.9</span>
-              <span class="rating-count">(1,240 avaliações)</span>
+              <span id="course-rating" class="rating-value">--</span>
             </div>
             <div class="meta-item">
               <span class="material-symbols-outlined">person</span>
-              <span>Criado por <strong id="course-instructor">Instrutor</strong></span>
+              <span>Criado por <strong id="course-instructor" class="loading-text-inline">Carregando...</strong></span>
             </div>
             <div class="meta-item">
               <span class="material-symbols-outlined">event</span>
-              <span>Criado em <span id="course-created-date">--</span></span>
+              <span>Criado em <span id="course-created-date" class="loading-text-inline">Carregando...</span></span>
             </div>
           </div>
         </header>
@@ -110,8 +120,7 @@
             <h2 class="section-title-alt">Conteúdo do Curso</h2>
             <div class="content-meta">
               <span id="module-count">0 módulos</span> •
-              <span id="class-count">0 aulas</span> •
-              <span id="total-duration">Carregando...</span>
+              <span id="class-count">0 aulas</span>
             </div>
           </div>
 
@@ -128,24 +137,29 @@
       <aside class="course-sidebar">
         <div class="sidebar-card">
           <div class="sidebar-image-container">
-            <img id="course-sidebar-img" src="" alt="Capa do Curso" class="sidebar-course-img">
-            <div class="play-overlay">
-              <span class="material-symbols-outlined">play_circle</span>
+            <div class="sidebar-img-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
             </div>
+            <img id="course-sidebar-img" src="" alt="Capa do Curso" class="sidebar-course-img" style="display: none;">
           </div>
 
           <div class="sidebar-content">
             <div class="price-container">
-              <div class="price-labels">
-                <span class="price-promo-label">PREÇO PROMOCIONAL</span>
-                <div class="price-values">
-                  <span id="course-price" class="current-price">R$ 0,00</span>
-                  <span id="original-price" class="original-price">R$ 0,00</span>
-                </div>
+              <div class="price-values">
+                <span id="course-price" class="current-price loading-text-inline loading-price">Carregando...</span>
               </div>
             </div>
 
-            <div class="action-buttons">
+            <div id="course-slots" class="slots-container">
+              <span class="material-symbols-outlined">groups</span>
+              <span id="slots-info" class="loading-text-inline loading-compact">Carregando vagas...</span>
+            </div>
+
+            <div class="action-buttons" style="display: none;">
               <button id="btn-buy-now" class="btn-primary-large">Comprar agora</button>
               <button id="btn-add-to-cart" class="btn-secondary-large">Adicionar ao carrinho</button>
             </div>
@@ -155,14 +169,6 @@
             </div>
           </div>
         </div>
-
-        <div class="guarantee-card">
-          <span class="material-symbols-outlined guarantee-icon">verified_user</span>
-          <div class="guarantee-text">
-            <strong>Garantia de 7 dias</strong>
-            <span>Satisfação total ou seu dinheiro de volta.</span>
-          </div>
-        </div>
       </aside>
     </div>
   </main>
@@ -170,16 +176,8 @@
   <!-- Footer -->
   <footer class="home-footer">
     <div class="home-footer-content">
-      <div class="footer-logo-bottom">
-        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img-small">
-      </div>
-      <div class="footer-bottom-links">
-        <a href="#">Termos</a>
-        <a href="#">Privacidade</a>
-        <a href="#">Ajuda</a>
-      </div>
       <p class="home-footer-text">
-        © 2026 Lykos Academy. Todos os direitos reservados.
+        © 2026 Lykos. Todos os direitos reservados.
       </p>
     </div>
   </footer>
@@ -191,23 +189,26 @@
 
   <!-- Shopping Cart Sidebar -->
   <div id="cart-modal" class="cart-sidebar">
-    <div class="cart-header">
-      <h3 class="cart-title">Carrinho de Compras</h3>
-      <button id="close-cart-btn" class="btn-icon" aria-label="Fechar carrinho">
+    <div class="cart-sidebar-header">
+      <h3 class="cart-sidebar-title">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Seu Carrinho
+      </h3>
+      <button id="close-cart-btn" class="btn-icon">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
-    <div id="cart-items-list" class="cart-items-container">
+    <div id="cart-items-list" class="cart-sidebar-content">
       <div class="cart-empty-msg">Seu carrinho está vazio.</div>
     </div>
 
-    <div class="cart-footer">
-      <div class="cart-total">
-        <span class="cart-total-label">Total:</span>
-        <span id="cart-total-price" class="cart-total-value">R$ 0,00</span>
+    <div class="cart-sidebar-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
       </div>
-      <button id="btn-cart-checkout" class="btn-primary-large" disabled>
+      <button id="btn-cart-checkout" class="btn-checkout" disabled>
         Finalizar Compra
       </button>
     </div>
