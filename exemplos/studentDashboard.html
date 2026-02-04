@@ -5,17 +5,6 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Painel do Aluno | Lykos</title>
-
-  <!-- Apply theme immediately to prevent flash -->
-  <script>
-    (function() {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.documentElement.classList.add('light');
-      }
-    })();
-  </script>
-
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/toast.css" />
   <link rel="stylesheet" href="css/auth.css" />
@@ -40,14 +29,14 @@
           <span class="material-symbols-outlined font-bold">menu</span>
         </button>
         <div class="flex items-center gap-3 sidebar-logo-container">
-          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-black shadow-primary-xl">
+          <div
+            class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-black shadow-lg shadow-primary/20">
             <span class="material-symbols-outlined font-bold">science</span>
           </div>
           <div class="sidebar-text">
-            <h1 class="font-bold text-lg tracking-tight leading-none text-white">
-              Lykos
+            <h1 class="font-bold text-xl tracking-tight leading-none text-white">
+              LYKOS
             </h1>
-            <p class="text-xs text-primary/70 font-medium">PORTAL DO ALUNO</p>
           </div>
         </div>
       </div>
@@ -113,10 +102,17 @@
               placeholder="Pesquisar meus cursos..." type="text" />
           </div>
           <div class="flex items-center gap-3">
+            <button id="cart-toggle-btn" class="relative p-1 hover:text-primary transition-colors text-slate-400">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              <span id="cart-count-badge"
+                class="absolute -top-1 -right-1 bg-primary text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center"
+                style="display:none">0</span>
+            </button>
             <button
               class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 text-slate-400 relative transition-colors">
               <span class="material-symbols-outlined">notifications</span>
-              <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-black"></span>
+              <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-black">
+              </span>
             </button>
             <div class="h-8 w-[1px] bg-white/10 mx-1"></div>
             <div class="flex items-center gap-3 pl-2">
@@ -125,7 +121,7 @@
                   Alex Rivera
                 </p>
                 <p id="header-user-role" class="text-xs text-primary">
-                  Aluno
+                  Estudante
                 </p>
               </div>
               <button id="user-avatar-btn"
