@@ -4,7 +4,6 @@
 import { AppUI } from '../utils/ui.js';
 
 // Flag to prevent duplicate session expiration notifications
-// Flag to prevent duplicate session expiration notifications
 let sessionExpiredHandled = false;
 let sessionTimeoutId: number | null = null;
 
@@ -33,8 +32,6 @@ function parseJwt(token: string) {
     return null;
   }
 }
-
-
 
 export const Auth = {
   init: () => {
@@ -78,6 +75,16 @@ export const Auth = {
 
       AppUI.showMessage('Sua sessão expirou. Faça login novamente.', 'info');
 
+      // Immediate redirection to home if on admin page or other restricted areas
+      const isRestricted = window.location.pathname.includes('admin.html') ||
+        window.location.pathname.includes('student.html');
+
+      if (isRestricted) {
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500); // Small delay to allow toast to be visible
+      }
+
       // Reset flag after 2 seconds to allow re-login
       setTimeout(() => {
         sessionExpiredHandled = false;
@@ -109,7 +116,9 @@ export const Auth = {
     const now = Date.now();
     const delay = expiryTimestamp - now;
 
-    console.log(`[Auth] Scheduling expiration. Now: ${now}, Expiry: ${expiryTimestamp}, DelayMs: ${delay}`);
+    console.log(
+      `[Auth] Scheduling expiration. Now: ${now}, Expiry: ${expiryTimestamp}, DelayMs: ${delay}`,
+    );
 
     if (delay <= 0) {
       window.dispatchEvent(new CustomEvent('session-expired'));
@@ -130,30 +139,18 @@ export const Auth = {
         body: JSON.stringify({ email, password }),
       });
 
-      if (response.data) {
-        // Backend now returns { user, token }
-        // Token is sent via HTTP-only cookie, no need to store in localStorage
+      if (response && response.data) {
         const { user, token } = response.data;
-
         localStorage.setItem('auth_user', JSON.stringify(user));
 
         // Parse token to get expiration
         if (token) {
-          console.log('[Auth] Login successful. Parsing token...');
           const decoded = parseJwt(token);
-          console.log('[Auth] Decoded token payload:', decoded);
-
           if (decoded && decoded.exp) {
-            // exp is in seconds, convert to ms
             const expMs = decoded.exp * 1000;
-            console.log(`[Auth] Session expires at: ${new Date(expMs).toLocaleString()} (${expMs})`);
             localStorage.setItem('auth_expiration', expMs.toString());
             Auth.scheduleSessionExpiration(expMs);
-          } else {
-            console.warn('[Auth] Token exists but no exp claim found');
           }
-        } else {
-          console.warn('[Auth] No token found in login response');
         }
 
         if (user.role === 'ADMIN') {
@@ -163,11 +160,8 @@ export const Auth = {
 
         Auth.updateAuthUI();
         AppUI.showMessage('Login realizado com sucesso!', 'success');
-
-        // Dispatch event to notify components of login
         window.dispatchEvent(new CustomEvent('auth-login'));
 
-        // Close auth card after successful login
         setTimeout(() => {
           const authContainer = document.getElementById('auth-card-container');
           if (authContainer) authContainer.classList.remove('show');
@@ -182,7 +176,6 @@ export const Auth = {
 
   logout: async () => {
     try {
-      // Call backend logout to clear cookie
       await AppUI.apiFetch('/auth/logout', {
         method: 'DELETE',
       });
@@ -199,8 +192,6 @@ export const Auth = {
 
       Auth.updateAuthUI();
       AppUI.showMessage('Você saiu da conta.', 'info');
-
-      // Dispatch event to notify components of logout
       window.dispatchEvent(new CustomEvent('auth-logout'));
 
       const authContainer = document.getElementById('auth-card-container');
@@ -215,13 +206,11 @@ export const Auth = {
       });
 
       if (response) {
-        // Update localStorage with fresh data
         const userData = response.id ? response : response.data || response;
         localStorage.setItem('auth_user', JSON.stringify(userData));
         Auth.updateAuthUI();
         return userData;
       }
-
       return null;
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao buscar perfil', 'error');
@@ -235,7 +224,6 @@ export const Auth = {
     password?: string;
   }) => {
     try {
-      // Remove empty fields
       const updateData: any = {};
       if (data.name?.trim()) updateData.name = data.name.trim();
       if (data.email?.trim()) updateData.email = data.email.trim();
@@ -246,7 +234,7 @@ export const Auth = {
         body: JSON.stringify(updateData),
       });
 
-      if (response.data) {
+      if (response && response.data) {
         localStorage.setItem('auth_user', JSON.stringify(response.data));
         Auth.updateAuthUI();
         AppUI.showMessage(
@@ -270,12 +258,10 @@ export const Auth = {
     if (!confirmed) return false;
 
     try {
-      // API returns 204 No Content on success
       await AppUI.apiFetch('/users/me', {
         method: 'DELETE',
       });
 
-      // Clear user data and logout
       localStorage.removeItem('auth_user');
       localStorage.removeItem('auth_expiration');
 
@@ -284,16 +270,11 @@ export const Auth = {
         sessionTimeoutId = null;
       }
 
-      // Close auth card
       const authContainer = document.getElementById('auth-card-container');
       if (authContainer) authContainer.classList.remove('show');
 
-      // Update UI to guest state
       Auth.updateAuthUI();
-
-      // Show success message
       AppUI.showMessage('Conta excluída com sucesso.', 'success');
-
       return true;
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao excluir conta', 'error');
@@ -313,14 +294,10 @@ export const Auth = {
     const profileViewFace = document.getElementById('auth-profile-view');
     const profileEditFace = document.getElementById('auth-profile-edit');
     const categoriesViewFace = document.getElementById('auth-categories-view');
-    const registerFace = cardInner?.querySelector(
-      '.auth-face-back',
-    ) as HTMLElement;
+    const registerFace = cardInner?.querySelector('.auth-face-back') as HTMLElement;
     const userAvatarBtn = document.getElementById('user-avatar-btn');
 
     if (user && loggedInFace) {
-      // LOGGED IN STATE
-      console.log('[Auth] Updating UI to Logged In state');
       if (loginFace) loginFace.classList.add('hidden');
       if (registerFace) registerFace.classList.add('hidden');
       loggedInFace.classList.remove('hidden');
@@ -333,24 +310,21 @@ export const Auth = {
       const nameDisplay = document.getElementById('user-name-display');
       const emailDisplay = document.getElementById('user-email-display');
       const roleBadge = document.getElementById('user-role-badge');
-
       const userRole = user.role ? user.role.toLowerCase() : '';
 
       if (nameDisplay) nameDisplay.textContent = user.name;
       if (emailDisplay) emailDisplay.textContent = user.email;
       if (roleBadge) {
-        roleBadge.textContent =
-          userRole === 'instructor' ? 'Instrutor' : 'Aluno';
-        roleBadge.className = `badge-tag ${userRole === 'instructor' ? 'bg-tag-primary' : 'bg-tag-secondary'}`;
+        roleBadge.textContent = userRole === 'instructor' ? 'Instrutor' : 'Aluno';
+        roleBadge.className = `badge-tag ${userRole === 'instructor' ? 'bg-tag-primary' : 'bg-tag-secondary'
+          }`;
         roleBadge.style.display = 'inline-block';
         roleBadge.style.marginBottom = '2rem';
       }
 
       const btnInstructor = document.getElementById('btn-instructor-dash');
       const btnCreateCourse = document.getElementById('btn-create-course');
-      const btnManageCategories = document.getElementById(
-        'btn-manage-categories',
-      );
+      const btnManageCategories = document.getElementById('btn-manage-categories');
 
       if (userRole === 'instructor') {
         if (btnInstructor) btnInstructor.classList.remove('hidden');
@@ -361,24 +335,13 @@ export const Auth = {
         if (btnCreateCourse) btnCreateCourse.classList.add('hidden');
         if (btnManageCategories) btnManageCategories.classList.add('hidden');
       }
-
-      if (userAvatarBtn) {
-        // Let CSS handle the border color
-        userAvatarBtn.style.borderColor = '';
-      }
     } else if (loggedInFace) {
-      // GUEST STATE
       if (loginFace) loginFace.classList.remove('hidden');
       loggedInFace.classList.add('hidden');
       if (profileViewFace) profileViewFace.classList.add('hidden');
       if (profileEditFace) profileEditFace.classList.add('hidden');
       if (categoriesViewFace) categoriesViewFace.classList.add('hidden');
       if (registerFace) registerFace.classList.remove('hidden');
-
-      if (userAvatarBtn) {
-        // Let CSS handle the border color
-        userAvatarBtn.style.borderColor = '';
-      }
     }
   },
 
@@ -391,7 +354,6 @@ export const Auth = {
     if (profileEditFace) profileEditFace.classList.add('hidden');
     if (profileViewFace) profileViewFace.classList.remove('hidden');
 
-    // Update profile view with current data
     const userStr = localStorage.getItem('auth_user');
     const user = userStr ? JSON.parse(userStr) : null;
 
@@ -402,8 +364,7 @@ export const Auth = {
 
       if (nameEl) nameEl.textContent = user.name;
       if (emailEl) emailEl.textContent = user.email;
-      if (roleEl)
-        roleEl.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
+      if (roleEl) roleEl.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Aluno';
     }
   },
 
@@ -416,20 +377,13 @@ export const Auth = {
     if (profileViewFace) profileViewFace.classList.add('hidden');
     if (profileEditFace) profileEditFace.classList.remove('hidden');
 
-    // Pre-fill form with current data
     const userStr = localStorage.getItem('auth_user');
     const user = userStr ? JSON.parse(userStr) : null;
 
     if (user) {
-      const nameInput = document.getElementById(
-        'edit-name',
-      ) as HTMLInputElement;
-      const emailInput = document.getElementById(
-        'edit-email',
-      ) as HTMLInputElement;
-      const passwordInput = document.getElementById(
-        'edit-password',
-      ) as HTMLInputElement;
+      const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+      const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+      const passwordInput = document.getElementById('edit-password') as HTMLInputElement;
 
       if (nameInput) nameInput.value = user.name || '';
       if (emailInput) emailInput.value = user.email || '';
@@ -448,7 +402,6 @@ export const Auth = {
     if (profileEditFace) profileEditFace.classList.add('hidden');
     if (categoriesViewFace) categoriesViewFace.classList.remove('hidden');
 
-    // Trigger categories load
     window.dispatchEvent(new CustomEvent('load-categories'));
   },
 };
