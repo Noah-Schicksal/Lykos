@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Setup user dropdown menu
   setupUserDropdown();
+
+  // Setup drawer functionality
+  setupDrawer();
 });
 
 /**
@@ -187,6 +190,261 @@ function updateUserMenuVisibility() {
 }
 
 /**
+ * Setup drawer functionality
+ */
+function setupDrawer() {
+  const userDrawer = document.getElementById('user-drawer');
+  const openDrawerBtn = document.getElementById('open-drawer-btn');
+  const menuDrawerBtn = document.getElementById('menu-drawer-btn');
+  const drawerOverlay = document.querySelector('.drawer-overlay');
+  const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
+  const drawerProfilePanel = document.getElementById('drawer-profile-panel');
+  const drawerManagementSection = document.getElementById('drawer-management-section');
+  const drawerLogoutBtn = document.getElementById('drawer-logout');
+  const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
+  const drawerDeleteAccountBtn = document.getElementById('drawer-delete-account');
+  const drawerCancelEditBtn = document.getElementById('drawer-cancel-edit');
+  const drawerCategoriesToggle = document.getElementById('drawer-categories-toggle');
+  const drawerCategoriesPanel = document.getElementById('drawer-categories-panel');
+
+  // Helper functions
+  function openDrawer() {
+    updateDrawerUserInfo();
+    userDrawer?.classList.add('show');
+    document.body.classList.add('drawer-open');
+    openDrawerBtn?.classList.add('hidden');
+    drawerOverlay?.classList.add('show');
+
+    // Animate Icon to Close
+    if (menuDrawerBtn) {
+      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = 'close';
+    }
+  }
+
+  function closeDrawer() {
+    userDrawer?.classList.remove('show');
+    document.body.classList.remove('drawer-open');
+    drawerOverlay?.classList.remove('show');
+    // Show open button if logged in
+    const user = localStorage.getItem('auth_user');
+    if (user && openDrawerBtn) {
+      openDrawerBtn.classList.remove('hidden');
+    }
+
+    // Revert Icon to Menu
+    if (menuDrawerBtn) {
+      const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+      if (icon) icon.textContent = 'menu';
+    }
+  }
+
+  function updateDrawerUserInfo() {
+    const userStr = localStorage.getItem('auth_user');
+    if (!userStr) return;
+
+    try {
+      const user = JSON.parse(userStr);
+      const drawerName = document.getElementById('drawer-user-name');
+      const drawerEmail = document.getElementById('drawer-user-email');
+      const drawerRole = document.getElementById('drawer-user-role');
+
+      // Normalize role for comparison
+      const userRole = (user.role || '').toLowerCase();
+
+      if (drawerName) drawerName.textContent = user.name || 'Usuário';
+      if (drawerEmail) drawerEmail.textContent = user.email || '';
+      if (drawerRole)
+        drawerRole.textContent =
+          userRole === 'instructor' ? 'Professor' : 'Aluno';
+
+      // Show management section for instructors
+      if (drawerManagementSection) {
+        if (userRole === 'instructor' || userRole === 'admin') {
+          drawerManagementSection.classList.remove('hidden');
+        } else {
+          drawerManagementSection.classList.add('hidden');
+        }
+      }
+    } catch (e) {
+      console.error('Error parsing user data for drawer:', e);
+    }
+  }
+
+  // Open Drawer Button
+  if (openDrawerBtn && userDrawer) {
+    openDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDrawer();
+    });
+  }
+
+  // Menu Button inside drawer - closes the drawer
+  if (menuDrawerBtn && userDrawer) {
+    menuDrawerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeDrawer();
+    });
+  }
+
+  // Close drawer when clicking on overlay
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', () => {
+      closeDrawer();
+    });
+  }
+
+  // Close drawer when clicking outside
+  document.addEventListener('click', (e) => {
+    if (
+      userDrawer?.classList.contains('show') &&
+      !userDrawer.contains(e.target as Node) &&
+      !openDrawerBtn?.contains(e.target as Node)
+    ) {
+      closeDrawer();
+    }
+  });
+
+  // Profile accordion toggle
+  if (drawerProfileToggle && drawerProfilePanel) {
+    drawerProfileToggle.addEventListener('click', () => {
+      drawerProfileToggle.classList.toggle('expanded');
+      drawerProfilePanel.classList.toggle('expanded');
+    });
+  }
+
+  // Drawer logout button
+  if (drawerLogoutBtn) {
+    drawerLogoutBtn.addEventListener('click', async () => {
+      await Auth.logout();
+      closeDrawer();
+    });
+  }
+
+  // Drawer edit profile button
+  if (drawerEditProfileBtn) {
+    drawerEditProfileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+
+        // Pre-fill form
+        const userStr = localStorage.getItem('auth_user');
+        if (userStr) {
+          try {
+            const user = JSON.parse(userStr);
+            const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+            const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+
+            if (nameInput) nameInput.value = user.name || '';
+            if (emailInput) emailInput.value = user.email || '';
+          } catch (e) {
+            console.error('Error parsing user', e);
+          }
+        }
+      }
+    });
+  }
+
+  // Cancel edit button
+  if (drawerCancelEditBtn) {
+    drawerCancelEditBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const viewMode = document.getElementById('drawer-profile-view');
+      const editMode = document.getElementById('drawer-profile-edit');
+
+      if (viewMode && editMode) {
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+      }
+    });
+  }
+
+  // Drawer delete account button
+  if (drawerDeleteAccountBtn) {
+    drawerDeleteAccountBtn.addEventListener('click', async () => {
+      if (confirm('Tem certeza que deseja excluir sua conta? Esta ação é irreversível.')) {
+        await Auth.deleteUserAccount();
+        userDrawer?.classList.remove('show');
+      }
+    });
+  }
+
+  // Profile edit form submission
+  const profileEditForm = document.getElementById('profile-edit-form');
+  if (profileEditForm) {
+    profileEditForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nameInput = document.getElementById('edit-name') as HTMLInputElement;
+      const emailInput = document.getElementById('edit-email') as HTMLInputElement;
+      const passwordInput = document.getElementById('edit-password') as HTMLInputElement;
+
+      const updateData: any = {};
+      if (nameInput.value.trim()) updateData.name = nameInput.value.trim();
+      if (emailInput.value.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value.trim())) {
+          AppUI.showMessage('Formato de e-mail inválido', 'error');
+          emailInput.focus();
+          return;
+        }
+        updateData.email = emailInput.value.trim();
+      } else {
+        AppUI.showMessage('O campo email é obrigatório', 'error');
+        emailInput.focus();
+        return;
+      }
+      if (passwordInput.value.trim()) updateData.password = passwordInput.value.trim();
+
+      try {
+        await Auth.updateUserProfile(updateData);
+
+        // Return to view mode
+        const viewMode = document.getElementById('drawer-profile-view');
+        const editMode = document.getElementById('drawer-profile-edit');
+        if (viewMode && editMode) {
+          editMode.classList.add('hidden');
+          viewMode.classList.remove('hidden');
+        }
+
+        // Update drawer user info
+        updateDrawerUserInfo();
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    });
+  }
+
+  // Drawer manage categories accordion (if present)
+  if (drawerCategoriesToggle && drawerCategoriesPanel) {
+    drawerCategoriesToggle.addEventListener('click', () => {
+      drawerCategoriesToggle.classList.toggle('expanded');
+      drawerCategoriesPanel.classList.toggle('expanded');
+    });
+  }
+
+  // Update drawer when auth changes
+  window.addEventListener('auth-login', () => {
+    updateDrawerUserInfo();
+  });
+
+  window.addEventListener('auth-logout', () => {
+    userDrawer?.classList.remove('show');
+    // Reset accordion
+    drawerProfileToggle?.classList.remove('expanded');
+    drawerProfilePanel?.classList.remove('expanded');
+  });
+}
+
+/**
  * Load and display course data
  */
 async function loadCourseData(courseId: string): Promise<Course | null> {
@@ -295,7 +553,7 @@ function populateCourseDetails(course: Course) {
     const maxStudents = course.maxStudents ?? 0;
     const enrolledCount = course.enrolledCount ?? 0;
     const availableSlots = maxStudents - enrolledCount;
-    
+
     if (maxStudents > 0) {
       slotsInfoEl.textContent = `${availableSlots} vagas disponíveis de ${maxStudents}`;
     } else {
@@ -313,7 +571,7 @@ function populateCourseDetails(course: Course) {
   // Sidebar image
   const sidebarImg = document.getElementById('course-sidebar-img') as HTMLImageElement;
   const imgPlaceholder = document.querySelector('.sidebar-img-placeholder') as HTMLElement;
-  
+
   if (sidebarImg) {
     let imageUrl = course.coverImageUrl;
     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
@@ -322,7 +580,7 @@ function populateCourseDetails(course: Course) {
 
     if (imageUrl) {
       // Show image when loaded
-      sidebarImg.onload = function() {
+      sidebarImg.onload = function () {
         sidebarImg.style.display = 'block';
         if (imgPlaceholder) imgPlaceholder.style.display = 'none';
       };
@@ -499,7 +757,7 @@ function setupCartToggle() {
 
       const isOpening = !cartModal.classList.contains('show');
       cartModal.classList.toggle('show');
-      
+
       // Disable/enable body scroll when cart is open/closed
       if (isOpening) {
         document.body.style.overflow = 'hidden';
@@ -609,7 +867,7 @@ async function renderCartItems() {
 function checkIfUserIsCreator(course: Course) {
   const authUser = localStorage.getItem('auth_user');
   const actionButtons = document.querySelector('.action-buttons') as HTMLElement;
-  
+
   // First, check if user is enrolled
   if (course.isEnrolled) {
     if (actionButtons) {
@@ -624,7 +882,7 @@ function checkIfUserIsCreator(course: Course) {
     }
     return;
   }
-  
+
   if (!authUser) {
     // Show buttons for non-logged users
     if (actionButtons) {
@@ -825,21 +1083,21 @@ let userHasReview = false;
 async function loadReviews(courseId: string, page: number = 1) {
   currentCourseId = courseId;
   currentReviewsPage = page;
-  
+
   const reviewsList = document.getElementById('reviews-list');
   const paginationEl = document.getElementById('reviews-pagination');
-  
+
   if (reviewsList) {
     reviewsList.innerHTML = '<p class="loading-text">Carregando avaliações...</p>';
   }
-  
+
   try {
     const response = await AppUI.apiFetch(`/courses/${courseId}/reviews?page=${page}&limit=5`) as ReviewsResponse;
-    
+
     // Update summary
     const averageEl = document.getElementById('reviews-average');
     const countEl = document.getElementById('reviews-count');
-    
+
     if (averageEl) {
       const avg = response.meta.averageRating ?? 0;
       averageEl.textContent = avg.toFixed(1);
@@ -848,29 +1106,29 @@ async function loadReviews(courseId: string, page: number = 1) {
       const total = response.meta.totalItems;
       countEl.textContent = `${total} ${total === 1 ? 'avaliação' : 'avaliações'}`;
     }
-    
+
     // Check if current user has a review in this page
     const authUser = localStorage.getItem('auth_user');
     let currentUserName = '';
     if (authUser) {
       try {
         currentUserName = JSON.parse(authUser).name;
-      } catch (e) {}
+      } catch (e) { }
     }
-    
+
     // Find user's review and load it into form
     const userReview = response.data.find(r => r.userName === currentUserName);
     if (userReview) {
       userHasReview = true;
       loadUserReviewIntoForm(userReview);
     }
-    
+
     // Render reviews
     renderReviews(response.data, currentUserName);
-    
+
     // Render pagination
     renderReviewsPagination(response.meta, paginationEl);
-    
+
   } catch (error) {
     console.error('Error loading reviews:', error);
     if (reviewsList) {
@@ -888,7 +1146,7 @@ function loadUserReviewIntoForm(review: ReviewData) {
   const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
   const submitBtn = document.querySelector('.btn-submit-review') as HTMLButtonElement;
   const formTitle = document.querySelector('.review-form-title');
-  
+
   // Set rating
   selectedRating = review.rating;
   if (starSelector) {
@@ -904,12 +1162,12 @@ function loadUserReviewIntoForm(review: ReviewData) {
   if (ratingText) {
     ratingText.textContent = `${review.rating} estrela${review.rating > 1 ? 's' : ''}`;
   }
-  
+
   // Set comment
   if (commentEl && review.comment) {
     commentEl.value = review.comment;
   }
-  
+
   // Update UI to show "edit mode"
   if (formTitle) {
     formTitle.textContent = 'Editar sua Avaliação';
@@ -920,7 +1178,7 @@ function loadUserReviewIntoForm(review: ReviewData) {
       Atualizar Avaliação
     `;
   }
-  
+
   // Show delete button
   showDeleteButton();
 }
@@ -931,10 +1189,10 @@ function loadUserReviewIntoForm(review: ReviewData) {
 function showDeleteButton() {
   const form = document.getElementById('review-form');
   if (!form) return;
-  
+
   // Check if delete button already exists
   if (form.querySelector('.btn-delete-review')) return;
-  
+
   const deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
   deleteBtn.className = 'btn-delete-review';
@@ -963,32 +1221,32 @@ function showDeleteButton() {
     deleteBtn.style.background = 'transparent';
     deleteBtn.style.color = '#ef4444';
   };
-  
+
   deleteBtn.addEventListener('click', async () => {
     if (!confirm('Tem certeza que deseja remover sua avaliação?')) return;
-    
+
     deleteBtn.disabled = true;
     try {
       await AppUI.apiFetch(`/courses/${currentCourseId}/reviews`, {
         method: 'DELETE'
       });
-      
+
       AppUI.showMessage('Avaliação removida com sucesso!', 'success');
-      
+
       // Reset form
       resetReviewForm();
       userHasReview = false;
-      
+
       // Reload reviews
       await loadReviews(currentCourseId, 1);
-      
+
     } catch (error: any) {
       AppUI.showMessage(error.message || 'Erro ao remover avaliação.', 'error');
     } finally {
       deleteBtn.disabled = false;
     }
   });
-  
+
   // Add button container for both buttons
   const submitBtn = form.querySelector('.btn-submit-review');
   if (submitBtn && submitBtn.parentElement) {
@@ -1010,9 +1268,9 @@ function resetReviewForm() {
   const submitBtn = document.querySelector('.btn-submit-review') as HTMLButtonElement;
   const formTitle = document.querySelector('.review-form-title');
   const deleteBtn = document.querySelector('.btn-delete-review');
-  
+
   selectedRating = 0;
-  
+
   if (starSelector) {
     starSelector.querySelectorAll('.star-btn').forEach(btn => {
       btn.classList.remove('active', 'hover');
@@ -1036,12 +1294,12 @@ function resetReviewForm() {
 function renderReviews(reviews: ReviewData[], currentUserName: string = '') {
   const reviewsList = document.getElementById('reviews-list');
   if (!reviewsList) return;
-  
+
   if (reviews.length === 0) {
     reviewsList.innerHTML = '<p class="reviews-empty">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
     return;
   }
-  
+
   reviewsList.innerHTML = reviews.map(review => {
     const date = new Date(review.createdAt);
     const formattedDate = date.toLocaleDateString('pt-BR', {
@@ -1049,17 +1307,17 @@ function renderReviews(reviews: ReviewData[], currentUserName: string = '') {
       month: 'short',
       year: 'numeric'
     });
-    
+
     // Generate stars
     const starsHTML = Array.from({ length: 5 }, (_, i) => {
       const isFilled = i < review.rating;
       return `<span class="material-symbols-outlined ${isFilled ? '' : 'empty'}">star</span>`;
     }).join('');
-    
+
     // Highlight user's own review
     const isOwnReview = review.userName === currentUserName;
     const cardClass = isOwnReview ? 'review-card own-review' : 'review-card';
-    
+
     return `
       <div class="${cardClass}" ${isOwnReview ? 'style="border-color: var(--primary); border-width: 2px;"' : ''}>
         <div class="review-card-header">
@@ -1080,15 +1338,15 @@ function renderReviews(reviews: ReviewData[], currentUserName: string = '') {
  */
 function renderReviewsPagination(meta: ReviewsResponse['meta'], container: HTMLElement | null) {
   if (!container) return;
-  
+
   if (meta.totalPages <= 1) {
     container.innerHTML = '';
     return;
   }
-  
+
   const prevDisabled = meta.currentPage === 1;
   const nextDisabled = meta.currentPage >= meta.totalPages;
-  
+
   container.innerHTML = `
     <button 
       type="button" 
@@ -1110,7 +1368,7 @@ function renderReviewsPagination(meta: ReviewsResponse['meta'], container: HTMLE
       <span class="material-symbols-outlined">chevron_right</span>
     </button>
   `;
-  
+
   // Add click listeners
   container.querySelectorAll('.reviews-pagination-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1128,19 +1386,19 @@ function setupReviewForm(courseId: string, isEnrolled: boolean) {
   const form = document.getElementById('review-form') as HTMLFormElement;
   const starSelector = document.getElementById('star-rating-selector');
   const ratingText = document.getElementById('selected-rating-text');
-  
+
   // Only show form if user is enrolled
   if (!isEnrolled || !localStorage.getItem('auth_user')) {
     if (formContainer) formContainer.classList.add('hidden');
     return;
   }
-  
+
   if (formContainer) formContainer.classList.remove('hidden');
-  
+
   // Setup star rating interaction
   if (starSelector) {
     const starBtns = starSelector.querySelectorAll('.star-btn');
-    
+
     starBtns.forEach((btn, index) => {
       // Hover effect
       btn.addEventListener('mouseenter', () => {
@@ -1152,7 +1410,7 @@ function setupReviewForm(courseId: string, isEnrolled: boolean) {
           }
         });
       });
-      
+
       // Click to select
       btn.addEventListener('click', () => {
         selectedRating = index + 1;
@@ -1168,7 +1426,7 @@ function setupReviewForm(courseId: string, isEnrolled: boolean) {
         }
       });
     });
-    
+
     // Reset hover on mouse leave
     starSelector.addEventListener('mouseleave', () => {
       starBtns.forEach((btn, i) => {
@@ -1179,23 +1437,23 @@ function setupReviewForm(courseId: string, isEnrolled: boolean) {
       });
     });
   }
-  
+
   // Form submission
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       if (selectedRating === 0) {
         AppUI.showMessage('Por favor, selecione uma nota de 1 a 5 estrelas.', 'error');
         return;
       }
-      
+
       const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
       const comment = commentEl?.value.trim() || '';
-      
+
       const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
       if (submitBtn) submitBtn.disabled = true;
-      
+
       try {
         await AppUI.apiFetch(`/courses/${courseId}/reviews`, {
           method: 'POST',
@@ -1204,21 +1462,21 @@ function setupReviewForm(courseId: string, isEnrolled: boolean) {
             comment: comment
           })
         });
-        
+
         const message = userHasReview ? 'Avaliação atualizada com sucesso!' : 'Avaliação enviada com sucesso!';
         AppUI.showMessage(message, 'success');
         userHasReview = true;
-        
+
         // Reload reviews to show the updated one
         await loadReviews(courseId, 1);
-        
+
         // Also update the main rating display
         const mainRatingEl = document.getElementById('course-rating');
         const avgEl = document.getElementById('reviews-average');
         if (mainRatingEl && avgEl) {
           mainRatingEl.textContent = avgEl.textContent || '--';
         }
-        
+
       } catch (error: any) {
         AppUI.showMessage(error.message || 'Erro ao enviar avaliação.', 'error');
       } finally {

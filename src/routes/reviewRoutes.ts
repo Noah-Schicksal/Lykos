@@ -13,7 +13,7 @@ reviewRoutes.get('/courses/:id/reviews', (req, res, next) =>
 reviewRoutes.post(
   '/courses/:id/reviews',
   authMiddleware,
-  roleMiddleware(['STUDENT']),
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
   (req, res, next) => reviewController.create(req, res, next),
 );
 

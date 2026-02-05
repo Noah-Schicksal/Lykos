@@ -38,7 +38,7 @@ export class ReviewController {
             return ApiResponse.created(res, review, 'Avaliação enviada com sucesso');
         } catch (error) {
             if (error instanceof ApplicationError) {
-                if (error.message.includes('Apenas alunos')) return ApiResponse.forbidden(res, error.message);
+                if (error.message.includes('matriculado')) return ApiResponse.forbidden(res, error.message);
             }
             next(error);
         }

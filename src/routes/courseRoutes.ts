@@ -94,13 +94,13 @@ courseRoutes.get('/:id/reviews', (req, res, next) =>
 courseRoutes.post(
   '/:id/reviews',
   authMiddleware,
-  roleMiddleware(['STUDENT']),
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
   (req, res, next) => reviewController.create(req, res, next)
 );
 courseRoutes.delete(
   '/:id/reviews',
   authMiddleware,
-  roleMiddleware(['STUDENT']),
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
   (req, res, next) => reviewController.delete(req, res, next)
 );
 
