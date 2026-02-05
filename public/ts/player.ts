@@ -392,7 +392,7 @@ const Player = {
 
     setupSidebarToggle: () => {
         const layout = document.querySelector('.player-layout') as HTMLElement;
-        const btnToggle = document.getElementById('btn-drawer-toggle') as HTMLElement;
+        const btnToggle = document.getElementById('btn-toggle-sidebar') as HTMLElement;
         const sidebar = document.querySelector('.player-sidebar') as HTMLElement;
         const backdrop = document.querySelector('.sidebar-overlay-backdrop') as HTMLElement;
 
@@ -762,8 +762,6 @@ const Player = {
 
         list.innerHTML = ''; // Clearing list is fine
 
-        let globalLocked = false; // logic to lock future lessons
-
         Player.courseData.modules.forEach((mod, index) => {
             const moduleEl = document.createElement('details');
 
@@ -828,35 +826,34 @@ const Player = {
                 const isCompleted = cls.isCompleted;
                 const isActive = cls.id === Player.currentClassId;
 
-                // Determine Lock State
-                const isLocked = globalLocked;
-
-                // Update globalLocked for the NEXT iteration
-                if (!isCompleted) {
-                    globalLocked = true;
-                }
-
-                classEl.className = `class-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+                classEl.className = `class-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
                 classEl.dataset.id = cls.id;
 
-                let iconName = 'play_circle';
-                if (isLocked) iconName = 'lock';
-                else if (isCompleted) iconName = 'check_circle';
+                // Icon logic: check_circle when completed, radio_button_unchecked when not
+                let iconName = isCompleted ? 'check_circle' : 'radio_button_unchecked';
 
                 // --- Safe DOM Construction for Class Item ---
                 // 1. Icon Container
                 const iconContainer = document.createElement('div');
+                iconContainer.className = 'class-icon-container';
                 Object.assign(iconContainer.style, {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: '40px', height: '40px', background: 'rgba(94, 23, 235, 0.1)',
+                    width: '40px', height: '40px',
                     borderRadius: '8px', flexShrink: '0'
                 });
 
                 const statusIcon = document.createElement('span');
                 statusIcon.className = 'material-symbols-outlined class-status-icon';
                 statusIcon.style.fontSize = '1.5rem';
-                statusIcon.style.color = 'var(--primary)';
+                // Let CSS handle the color based on completed/active state
                 statusIcon.textContent = iconName;
+
+                // Add click handler to toggle completion
+                statusIcon.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    await Player.toggleCompletion(cls);
+                });
+                statusIcon.style.cursor = 'pointer';
 
                 iconContainer.appendChild(statusIcon);
 
@@ -871,7 +868,6 @@ const Player = {
                 Object.assign(classTitleMini.style, {
                     fontSize: '0.95rem', fontWeight: '600'
                 });
-                if (isLocked) classTitleMini.style.color = 'var(--text-muted)';
                 classTitleMini.textContent = cls.title;
 
                 titleContainer.appendChild(classTitleMini);
@@ -879,21 +875,8 @@ const Player = {
                 classEl.appendChild(iconContainer);
                 classEl.appendChild(titleContainer);
 
-                // 3. Playing Badge
-                if (isActive) {
-                    const playingBadge = document.createElement('span');
-                    playingBadge.className = 'badge-playing';
-                    playingBadge.textContent = 'PLAYING';
-                    classEl.appendChild(playingBadge);
-                }
-                // ---------------------------------------------
-
-                if (!isLocked) {
-                    classEl.addEventListener('click', () => Player.loadClass(cls));
-                } else {
-                    classEl.style.cursor = 'not-allowed';
-                    classEl.style.opacity = '0.6';
-                }
+                // All classes are clickable - no locking
+                classEl.addEventListener('click', () => Player.loadClass(cls));
 
                 classesContainer.appendChild(classEl);
             });

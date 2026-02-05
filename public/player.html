@@ -19,7 +19,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Lykos | Course Player</title>
+    <title>Lykos | Aulas</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
@@ -45,9 +45,8 @@
   <!-- Navbar (Aligned with Project Standard) -->
   <nav class="navbar">
     <div class="nav-container">
-      <!-- Open Drawer Button (only visible when logged in and drawer closed) -->
-      <button id="open-drawer-btn" class="btn-icon menu-btn hidden"
-        style="display: flex; align-items: center; justify-content: center">
+      <!-- Sidebar Toggle Button (for player) -->
+      <button id="btn-toggle-sidebar" class="btn-icon sidebar-nav-toggle">
         <span class="material-symbols-outlined">menu</span>
       </button>
 
@@ -323,10 +322,6 @@
               <span class="material-symbols-outlined">check_circle</span>
               <span class="btn-text">Marcar como Concluída</span>
             </button>
-            <button id="btn-next-lesson" class="btn-action hidden">
-              <span class="btn-text">Próxima Aula</span>
-              <span class="material-symbols-outlined">skip_next</span>
-            </button>
           </div>
         </div>
 
@@ -349,11 +344,6 @@
 
     <!-- Right Column: Sidebar -->
     <aside class="player-sidebar">
-      <!-- Toggle Button -->
-      <button id="btn-drawer-toggle" class="drawer-toggle-btn" aria-label="Toggle Sidebar">
-        <span class="material-symbols-outlined">double_arrow</span>
-      </button>
-
       <div class="sidebar-header">
         <div class="sidebar-header-top">
           <a href="/inicio" class="btn-sidebar-action">

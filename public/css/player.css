@@ -264,6 +264,14 @@ body {
     grid-template-columns: 1fr 0px;
 }
 
+.player-layout.sidebar-collapsed .player-sidebar {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    visibility: hidden;
+    transform: translateX(100%);
+}
+
 @media (max-width: 1024px) {
     .player-layout {
         display: flex;
@@ -457,6 +465,11 @@ body {
     white-space: nowrap;
 }
 
+/* Hide mark completed button */
+#btn-mark-completed {
+    display: none !important;
+}
+
 .btn-action:hover {
     border-color: var(--primary);
     color: var(--primary);
@@ -563,44 +576,25 @@ body {
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Sidebar Toggle Button (Drawer Tab) */
-.drawer-toggle-btn {
-    position: absolute;
-    left: -48px;
-    top: 80px;
-    width: 48px;
-    height: 56px;
-    background: linear-gradient(135deg, var(--primary), #8b5cf6);
-    border: none;
-    border-radius: 8px 0 0 8px;
-    color: white;
-    cursor: pointer;
+/* Sidebar Toggle Button (now in navbar) */
+#btn-toggle-sidebar {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: -4px 8px 16px rgba(0, 0, 0, 0.25);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 901;
+    padding: 0.5rem;
+    margin-left: 0.5rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    border-radius: 0.5rem;
 }
 
-.drawer-toggle-btn:hover {
-    left: -52px;
-    box-shadow: -6px 12px 24px rgba(94, 23, 235, 0.4);
-    transform: scale(1.05);
+#btn-toggle-sidebar:hover {
+    background-color: rgba(94, 23, 235, 0.1);
+    color: var(--primary);
 }
 
-.drawer-toggle-btn:active {
-    transform: scale(0.95);
-}
-
-.drawer-toggle-btn .material-symbols-outlined {
-    font-size: 1.75rem;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-}
-
-.player-layout.sidebar-collapsed .drawer-toggle-btn .material-symbols-outlined {
-    transform: rotate(180deg);
+#btn-toggle-sidebar .material-symbols-outlined {
+    font-size: 1.5rem;
 }
 
 /* Sidebar Header */
@@ -825,6 +819,24 @@ details.module-item:not([open]) .layer-icon {
     position: relative;
 }
 
+/* Icon container styling */
+.class-icon-container {
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.class-item:hover .class-icon-container {
+    background-color: rgba(94, 23, 235, 0.1);
+}
+
+.class-item.completed .class-icon-container {
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+.class-item.active:not(.completed) .class-icon-container {
+    background-color: rgba(94, 23, 235, 0.1);
+}
+
 .class-item:hover {
     background-color: var(--sidebar-hover);
     opacity: 1;
@@ -845,21 +857,35 @@ details.module-item:not([open]) .layer-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    font-variation-settings: 'FILL' 0;
+    background-color: transparent;
 }
 
 .class-item:hover .class-status-icon {
     color: var(--primary);
+    background-color: rgba(94, 23, 235, 0.1);
 }
 
+/* Completed state - show green check with fill */
 .class-item.completed .class-status-icon {
     color: #10b981;
     font-variation-settings: 'FILL' 1;
+    background-color: rgba(16, 185, 129, 0.15);
+}
+
+/* Not completed - keep neutral without special color */
+.class-item:not(.completed):not(.active) .class-status-icon {
+    color: var(--sidebar-meta);
+    font-variation-settings: 'FILL' 0;
+    background-color: transparent;
 }
 
 .class-item.completed {
-    color: #10b981;
-    opacity: 0.7;
+    opacity: 0.85;
 }
 
 .class-item.completed .class-title {
@@ -924,9 +950,18 @@ details.module-item:not([open]) .layer-icon {
 }
 
 
-.class-item.active .class-status-icon {
+/* Active item - show filled icon with primary color */
+.class-item.active:not(.completed) .class-status-icon {
     color: var(--primary);
     font-variation-settings: 'FILL' 1;
+    background-color: rgba(94, 23, 235, 0.1);
+}
+
+/* Active AND completed - keep green check */
+.class-item.active.completed .class-status-icon {
+    color: #10b981;
+    font-variation-settings: 'FILL' 1;
+    background-color: rgba(16, 185, 129, 0.15);
 }
 
 /* PLAYING Badge */
@@ -1302,7 +1337,7 @@ video::-webkit-media-controls {
     inset: 0;
     background: rgba(0, 0, 0, 0.6);
     z-index: 999;
-    backdrop-filter: blur(2px);
+    pointer-events: auto;
 }
 
 .sidebar-backdrop.active {
@@ -1311,62 +1346,44 @@ video::-webkit-media-controls {
 
 /* Transform sidebar to drawer on mobile/tablet */
 @media (max-width: 1024px) {
-    .drawer-toggle-btn {
+    /* Hide sidebar toggle on mobile - sidebar is stacked below video */
+    #btn-toggle-sidebar,
+    .drawer-toggle-btn,
+    .sidebar-nav-toggle {
         display: none !important;
-        position: fixed;
-        top: 4.5rem;
-        right: 1rem;
-        z-index: 1002;
-        width: 48px;
-        height: 48px;
-        left: auto;
-        background: linear-gradient(135deg, var(--primary), #8b5cf6);
-        border: none;
-        box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
-        border-radius: 50%;
-        padding: 0;
-    }
-
-    .drawer-toggle-btn.visible {
-        display: flex !important;
-    }
-
-    .drawer-toggle-btn:hover {
-        background: linear-gradient(135deg, #8b5cf6, var(--primary));
-        box-shadow: 0 6px 20px rgba(94, 23, 235, 0.4);
     }
 
     .player-sidebar {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 85vw;
-        max-width: 380px;
-        height: 100vh;
-        z-index: 1000;
-        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        z-index: 1;
+        transition: none;
+        box-shadow: none;
         border-left: none;
-        border-right: 1px solid var(--sidebar-border);
-        overflow-y: auto;
+        border-top: 1px solid var(--sidebar-border);
+        overflow-y: visible;
+        pointer-events: auto;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
-    .player-sidebar.sidebar-open {
-        right: 0;
+    .class-item {
+        min-height: 48px;
+        padding: 1rem 1.25rem;
     }
 
-    /* Sidebar overlay backdrop */
+    /* Hide backdrop on mobile - not needed */
     .sidebar-overlay-backdrop {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-        backdrop-filter: blur(2px);
+        display: none !important;
     }
 
-    .sidebar-overlay-backdrop.active {
-        display: block;
+    /* Prevent body scroll when sidebar is open */
+    body.sidebar-open-state {
+        overflow: hidden;
     }
 }
 
