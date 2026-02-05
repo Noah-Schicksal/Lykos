@@ -70,7 +70,11 @@ export const AppUI: UIHelper = {
         if (response.status === 401) {
           // Check if user was logged in (token is in HTTP-only cookie)
           const hadSession = localStorage.getItem('auth_user');
-          if (hadSession && !sessionExpirationDispatched) {
+
+          // Check if this is a login request (invalid credentials)
+          const isLoginRequest = url.includes('/auth/login');
+
+          if (hadSession && !sessionExpirationDispatched && !isLoginRequest) {
             console.warn('[API] Session expired - dispatching event');
             sessionExpirationDispatched = true;
             window.dispatchEvent(new CustomEvent('session-expired'));
@@ -78,14 +82,19 @@ export const AppUI: UIHelper = {
             setTimeout(() => {
               sessionExpirationDispatched = false;
             }, 3000);
-          } else if (hadSession) {
+          } else if (hadSession && !isLoginRequest) {
             console.log('[API] Session expired event already dispatched');
           } else {
-            console.log('[API] Unauthorized (no active session)');
+            console.log('[API] Unauthorized (no active session or login failure)');
           }
 
-          // Throw a standard message for 401 so debouncer catches duplicates
-          throw new Error('Sua sessão expirou. Faça login novamente.');
+          // Throw the actual error message from the server for login failures
+          // or standard session expired message for actual session expiration
+          if (isLoginRequest) {
+            throw new Error(data.message || data.error || 'Credenciais inválidas');
+          } else {
+            throw new Error('Sua sessão expirou. Faça login novamente.');
+          }
         }
         throw new Error(data.message || data.error || 'Erro na requisição');
       }
