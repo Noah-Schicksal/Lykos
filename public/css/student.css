@@ -575,6 +575,8 @@
   justify-content: space-between;
   margin-bottom: 2rem;
   gap: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1rem;
 }
 
 .header-actions {
@@ -2834,4 +2836,57 @@
     width: 35px !important;
     height: 35px !important;
   }
+}
+
+/* Cart Badge */
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 8px rgba(94, 23, 235, 0.4);
+}
+
+/* User Badge Button */
+.btn-text-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(94, 23, 235, 0.1);
+  border: 1px solid rgba(94, 23, 235, 1) !important;
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-text-user .material-symbols-outlined {
+  font-size: 1.25rem;
+  color: rgba(94, 23, 235, 1);
+}
+
+.user-display-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:root.light .btn-text-user {
+  background: rgba(94, 23, 235, 0.08);
+  border-color: rgba(94, 23, 235, 1) !important;
+  color: var(--text-primary);
 }

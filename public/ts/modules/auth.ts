@@ -4,7 +4,37 @@
 import { AppUI } from '../utils/ui.js';
 
 // Flag to prevent duplicate session expiration notifications
+// Flag to prevent duplicate session expiration notifications
 let sessionExpiredHandled = false;
+let sessionTimeoutId: number | null = null;
+
+// Helper to decode JWT locally
+function parseJwt(token: string) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Add padding if needed
+    const pad = base64.length % 4;
+    const padding = pad ? new Array(5 - pad).join('=') : '';
+
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64 + padding)
+        .split('')
+        .map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        })
+        .join(''),
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Error parsing JWT:', e);
+    return null;
+  }
+}
+
+
 
 export const Auth = {
   init: () => {
@@ -22,8 +52,18 @@ export const Auth = {
 
       // Clear data but don't call backend logout (token is already invalid)
       localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_expiration');
+
+      if (sessionTimeoutId) {
+        clearTimeout(sessionTimeoutId);
+        sessionTimeoutId = null;
+      }
 
       Auth.updateAuthUI();
+
+      // Trigger global logout event to update other UI components (like navbar)
+      window.dispatchEvent(new CustomEvent('auth-logout'));
 
       // Show auth card and show message
       const authContainer = document.getElementById('auth-card-container');
@@ -43,6 +83,44 @@ export const Auth = {
         sessionExpiredHandled = false;
       }, 2000);
     });
+
+    // Check for existing session expiration
+    const expiryStr = localStorage.getItem('auth_expiration');
+    if (expiryStr) {
+      const expiry = parseInt(expiryStr, 10);
+      const now = Date.now();
+
+      if (now >= expiry) {
+        console.log('[Auth] Found expired session on init');
+        // Trigger immediately
+        window.dispatchEvent(new CustomEvent('session-expired'));
+      } else {
+        console.log(`[Auth] Scheduling session expiry in ${(expiry - now) / 1000}s`);
+        Auth.scheduleSessionExpiration(expiry);
+      }
+    }
+  },
+
+  scheduleSessionExpiration: (expiryTimestamp: number) => {
+    if (sessionTimeoutId) {
+      clearTimeout(sessionTimeoutId);
+    }
+
+    const now = Date.now();
+    const delay = expiryTimestamp - now;
+
+    console.log(`[Auth] Scheduling expiration. Now: ${now}, Expiry: ${expiryTimestamp}, DelayMs: ${delay}`);
+
+    if (delay <= 0) {
+      window.dispatchEvent(new CustomEvent('session-expired'));
+      return;
+    }
+
+    // Set timeout to trigger event
+    sessionTimeoutId = window.setTimeout(() => {
+      console.log('[Auth] Auto-expiring session via timer');
+      window.dispatchEvent(new CustomEvent('session-expired'));
+    }, delay);
   },
 
   login: async (email: string, password: string) => {
@@ -55,9 +133,28 @@ export const Auth = {
       if (response.data) {
         // Backend now returns { user, token }
         // Token is sent via HTTP-only cookie, no need to store in localStorage
-        const { user } = response.data;
+        const { user, token } = response.data;
 
         localStorage.setItem('auth_user', JSON.stringify(user));
+
+        // Parse token to get expiration
+        if (token) {
+          console.log('[Auth] Login successful. Parsing token...');
+          const decoded = parseJwt(token);
+          console.log('[Auth] Decoded token payload:', decoded);
+
+          if (decoded && decoded.exp) {
+            // exp is in seconds, convert to ms
+            const expMs = decoded.exp * 1000;
+            console.log(`[Auth] Session expires at: ${new Date(expMs).toLocaleString()} (${expMs})`);
+            localStorage.setItem('auth_expiration', expMs.toString());
+            Auth.scheduleSessionExpiration(expMs);
+          } else {
+            console.warn('[Auth] Token exists but no exp claim found');
+          }
+        } else {
+          console.warn('[Auth] No token found in login response');
+        }
 
         if (user.role === 'ADMIN') {
           window.location.href = '/admin.html';
@@ -93,6 +190,13 @@ export const Auth = {
       console.error('Logout error:', error);
     } finally {
       localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_expiration');
+
+      if (sessionTimeoutId) {
+        clearTimeout(sessionTimeoutId);
+        sessionTimeoutId = null;
+      }
+
       Auth.updateAuthUI();
       AppUI.showMessage('Você saiu da conta.', 'info');
 
@@ -173,6 +277,12 @@ export const Auth = {
 
       // Clear user data and logout
       localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_expiration');
+
+      if (sessionTimeoutId) {
+        clearTimeout(sessionTimeoutId);
+        sessionTimeoutId = null;
+      }
 
       // Close auth card
       const authContainer = document.getElementById('auth-card-container');
@@ -252,7 +362,10 @@ export const Auth = {
         if (btnManageCategories) btnManageCategories.classList.add('hidden');
       }
 
-      if (userAvatarBtn) userAvatarBtn.style.borderColor = 'var(--primary)';
+      if (userAvatarBtn) {
+        // Let CSS handle the border color
+        userAvatarBtn.style.borderColor = '';
+      }
     } else if (loggedInFace) {
       // GUEST STATE
       if (loginFace) loginFace.classList.remove('hidden');
@@ -262,8 +375,10 @@ export const Auth = {
       if (categoriesViewFace) categoriesViewFace.classList.add('hidden');
       if (registerFace) registerFace.classList.remove('hidden');
 
-      if (userAvatarBtn)
-        userAvatarBtn.style.borderColor = 'rgba(0, 245, 212, 0.5)';
+      if (userAvatarBtn) {
+        // Let CSS handle the border color
+        userAvatarBtn.style.borderColor = '';
+      }
     }
   },
 

@@ -126,8 +126,37 @@ export const Courses = {
       categoryId?: string;
       maxStudents?: number;
     },
+    coverImage?: File,
+    clearCover?: boolean,
   ): Promise<Course> => {
     try {
+      // Use FormData if we have a file or need to clear the cover
+      if (coverImage || clearCover) {
+        const formData = new FormData();
+        if (data.title) formData.append('title', data.title);
+        if (data.description) formData.append('description', data.description);
+        if (data.price !== undefined) formData.append('price', data.price.toString());
+        if (data.categoryId) formData.append('categoryId', data.categoryId);
+        if (data.maxStudents !== undefined) formData.append('maxStudents', data.maxStudents.toString());
+        if (coverImage) formData.append('coverImage', coverImage);
+        if (clearCover) formData.append('clearCover', 'true');
+
+        const response = await fetch(`/courses/${courseId}`, {
+          method: 'PUT',
+          body: formData,
+          credentials: 'include',
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || errorData.error || 'Erro ao atualizar curso');
+        }
+
+        const result = await response.json();
+        return result.data;
+      }
+
+      // Otherwise use JSON
       const response = await AppUI.apiFetch(`/courses/${courseId}`, {
         method: 'PUT',
         body: JSON.stringify(data),

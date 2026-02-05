@@ -102,6 +102,9 @@ export class CourseRepository {
         const countQuery = `SELECT COUNT(*) as total FROM (${query})`;
         const total = (db.prepare(countQuery).get(...params) as any).total;
 
+        // Ordena por data de criação (mais recentes primeiro)
+        query += ` ORDER BY c.created_at DESC`;
+
         // adiciona limite e offset para paginação
         query += ` LIMIT ? OFFSET ?`;
         params.push(limit, offset);
@@ -156,6 +159,7 @@ export class CourseRepository {
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
             WHERE c.category_id = ? AND c.is_active = 1
+            ORDER BY c.created_at DESC
             LIMIT ? OFFSET ?
         `;
 
@@ -184,6 +188,7 @@ export class CourseRepository {
         const query = `
             SELECT 
                 c.id, c.title, c.description, c.price, c.cover_image_url, c.is_active,
+                c.category_id,
                 cat.name as category_name,
                 (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
             FROM courses c
@@ -202,7 +207,9 @@ export class CourseRepository {
             coverImageUrl: row.cover_image_url,
             isActive: !!row.is_active,
             enrolledCount: row.enrolled_count,
-            category: row.category_name ? {
+            categoryId: row.category_id,
+            category: row.category_id ? {
+                id: row.category_id,
                 name: row.category_name
             } : null
         }));

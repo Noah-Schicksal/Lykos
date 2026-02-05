@@ -15,12 +15,12 @@
       }
       // Detect when Material Symbols font is loaded
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function() {
+        document.fonts.ready.then(function () {
           document.documentElement.classList.add('fonts-loaded');
         });
       } else {
         // Fallback for browsers without font loading API
-        setTimeout(function() {
+        setTimeout(function () {
           document.documentElement.classList.add('fonts-loaded');
         }, 500);
       }
@@ -45,10 +45,17 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="/" class="logo" style="text-decoration: none;">
-        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img" />
-      </a>
+      <!-- Open Drawer Button (only visible when logged in and drawer closed) -->
+      <button id="open-drawer-btn" class="btn-icon menu-btn hidden"
+        style="display: flex; align-items: center; justify-content: center">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
 
+      <div class="logo">
+        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img" />
+      </div>
+
+      <!-- Right Actions -->
       <div class="nav-actions">
         <div class="cart-wrapper">
           <button id="cart-toggle-btn" class="btn-icon">
@@ -56,19 +63,38 @@
             <span id="cart-count-badge" class="badge-count">0</span>
           </button>
         </div>
+        <!-- Theme Toggle -->
         <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
           <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
           <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
         </button>
-        <button id="user-avatar-btn" class="btn-text-login hidden">Entrar</button>
-        <button id="user-info-btn" class="btn-text-user hidden">
-          <span class="material-symbols-outlined">account_circle</span>
-          <span id="user-display-name" class="user-display-name">Usuário</span>
+
+        <button id="user-avatar-btn" class="user-menu-btn hidden">
+          <span class="material-symbols-outlined">login</span>
+          <span class="menu-text">Login</span>
         </button>
+        <!-- User Info Button (only visible when logged in) -->
+        <div class="user-menu-container">
+          <button id="user-info-btn" class="user-menu-btn hidden">
+            <span id="user-display-name" class="menu-text">Usuário</span>
+            <span class="material-symbols-outlined menu-arrow">expand_more</span>
+          </button>
+          <div id="user-dropdown-menu" class="user-dropdown">
+            <button id="dropdown-profile" class="dropdown-item">
+              <span class="material-symbols-outlined">person</span>
+              <span>Perfil</span>
+            </button>
+            <button id="dropdown-logout" class="dropdown-item dropdown-item-danger">
+              <span class="material-symbols-outlined">logout</span>
+              <span>Sair</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
 
+  <!-- Main Content -->
   <!-- Main Content -->
   <main class="course-detail-container">
     <div class="course-detail-layout">
@@ -138,10 +164,11 @@
         <div class="sidebar-card">
           <div class="sidebar-image-container">
             <div class="sidebar-img-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
               </svg>
             </div>
             <img id="course-sidebar-img" src="" alt="Capa do Curso" class="sidebar-course-img" style="display: none;">
@@ -172,6 +199,168 @@
       </aside>
     </div>
   </main>
+
+  <!-- User Drawer -->
+  <div id="user-drawer" class="user-drawer">
+    <div class="user-drawer-header">
+      <button id="menu-drawer-btn" class="btn-icon menu-toggle-btn">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+
+    <div class="user-drawer-content">
+      <!-- Back to Home Button (only on course detail page) -->
+      <div class="drawer-section">
+        <a href="/inicio" class="drawer-item"
+          style="background: var(--primary-gradient); color: white; font-weight: 600;">
+          <span class="material-symbols-outlined">home</span>
+          Voltar para Home
+        </a>
+      </div>
+
+      <!-- Profile Section with Accordion -->
+      <div class="drawer-section">
+        <button id="drawer-profile-toggle" class="drawer-section-header">
+          <span class="drawer-section-title">
+            <span class="material-symbols-outlined">person</span>
+            Perfil
+          </span>
+          <span class="material-symbols-outlined drawer-chevron">expand_more</span>
+        </button>
+        <div id="drawer-profile-panel" class="drawer-accordion-panel">
+          <!-- View Mode -->
+          <div id="drawer-profile-view">
+            <div class="drawer-profile-info">
+              <div class="drawer-avatar">
+                <span class="material-symbols-outlined">account_circle</span>
+              </div>
+              <div class="drawer-info-row">
+                <p id="drawer-user-name" class="drawer-user-name">
+                  Nome do Usuário
+                </p>
+              </div>
+              <div class="drawer-info-row">
+                <span class="drawer-info-label">EMAIL</span>
+                <p id="drawer-user-email" class="drawer-user-email">
+                  email@exemplo.com
+                </p>
+              </div>
+              <div class="drawer-info-row">
+                <span class="drawer-info-label">FUNÇÃO</span>
+                <span id="drawer-user-role" class="drawer-role-badge">Aluno</span>
+              </div>
+            </div>
+            <div class="drawer-profile-actions">
+              <button id="drawer-edit-profile" class="drawer-btn primary">
+                <span class="material-symbols-outlined">edit</span>
+                Editar Perfil
+              </button>
+              <button id="drawer-delete-account" class="drawer-btn danger">
+                <span class="material-symbols-outlined">delete</span>
+                Excluir Conta
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit Mode (Hidden by default) -->
+          <div id="drawer-profile-edit" class="hidden" style="padding: 0 0.5rem">
+            <div style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  margin-bottom: 1rem;
+                ">
+              <h4 style="margin: 0; color: var(--text-primary)">
+                Editar Perfil
+              </h4>
+              <button id="drawer-cancel-edit" class="btn-icon" type="button">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form id="profile-edit-form" novalidate>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.7rem">Nome</label>
+                <input id="edit-name" type="text" class="form-input" placeholder="Seu nome"
+                  style="font-size: 0.85rem" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.7rem">Email</label>
+                <input id="edit-email" type="email" class="form-input" placeholder="seu@email.com"
+                  style="font-size: 0.85rem" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.7rem">Nova Senha</label>
+                <div class="password-wrapper">
+                  <input id="edit-password" type="password" class="form-input" placeholder="Opcional"
+                    style="font-size: 0.85rem" />
+                  <button type="button" class="btn-toggle-password" data-target="edit-password">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="drawer-btn primary"
+                style="width: 100%; justify-content: center; margin-top: 1rem">
+                Salvar
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Management Section (Instructors only) -->
+      <div id="drawer-management-section" class="drawer-section hidden">
+        <div class="drawer-section-label">Gerenciamento</div>
+        <a href="/instructor.html" class="drawer-item">
+          <span class="material-symbols-outlined">dashboard</span>
+          Painel do Professor
+        </a>
+        <button id="drawer-categories-toggle" class="drawer-section-header">
+          <span class="drawer-section-title">
+            <span class="material-symbols-outlined">category</span>
+            Categorias
+          </span>
+          <span class="material-symbols-outlined drawer-chevron">expand_more</span>
+        </button>
+        <div id="drawer-categories-panel" class="drawer-accordion-panel">
+          <form id="category-create-form" class="category-form">
+            <div class="form-group">
+              <label class="form-label">Nome da Nova Categoria</label>
+              <div class="category-input-group">
+                <input id="new-category-name" type="text" class="form-input" placeholder="ex: Dev Web" required />
+                <button type="submit" class="btn-add">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="drawer-categories-wrapper">
+            <label class="form-label">Categorias Existentes</label>
+            <div id="categories-list" class="categories-list">
+              <p class="loading-text">Carregando...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- My Learning Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-label">Meu Aprendizado</div>
+        <a href="/estudante" class="drawer-item">
+          <span class="material-symbols-outlined">school</span>
+          Meus Cursos
+        </a>
+      </div>
+    </div>
+
+    <div class="user-drawer-footer">
+      <button id="drawer-logout" class="drawer-btn logout">
+        <span class="material-symbols-outlined">logout</span>
+        Sair
+      </button>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="home-footer">

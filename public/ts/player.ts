@@ -2,6 +2,10 @@
  * Player Logic
  */
 import { AppUI } from './utils/ui.js';
+import { Auth } from './modules/auth.js';
+import { Cart } from './modules/cart.js';
+import { Categories } from './modules/categories.js';
+import { initThemeToggle } from './theme-toggle.js';
 
 interface ClassItem {
     id: string;
@@ -36,7 +40,6 @@ const Player = {
 
     init: async () => {
         // Get courseId from URL
-        // Get courseId from URL (Path or Query)
         let id = new URLSearchParams(window.location.search).get('courseId');
 
         if (!id) {
@@ -55,15 +58,21 @@ const Player = {
 
         Player.courseId = id;
 
+        // Initialize App Core
+        initThemeToggle();
+        await Auth.init();
+        Cart.updateBadge(); // Init cart badge
+
         // Auth Check
         const user = localStorage.getItem('auth_user');
         if (!user) {
             window.location.href = '/inicio'; // Redirect if not logged in
             return;
         }
-        Player.setupAuthUI(JSON.parse(user));
-        Player.setupThemeToggle(); // Setup theme toggle
-        Player.setupSidebarToggle(); // Setup toggle logic
+
+        // Setup UI
+        Player.setupNavigation();
+        Player.setupSidebarToggle(); // Player implementation of sidebar (video list)
         Player.setupTabs(); // Setup tabs navigation
         Player.setupNextLesson(); // Setup next lesson button
         Player.setupCustomControls(); // Setup custom video controls
@@ -71,63 +80,401 @@ const Player = {
         await Player.loadCourseData();
     },
 
-    setupThemeToggle: () => {
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlElement = document.documentElement;
+    setupNavigation: () => {
+        // --- 1. Password Toggle ---
+        const passwordToggleBtns = document.querySelectorAll('.btn-toggle-password');
+        passwordToggleBtns.forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = btn.getAttribute('data-target');
+                if (!targetId) return;
 
-        // Load saved theme or default to dark
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            htmlElement.classList.remove('dark');
-            htmlElement.classList.add('light');
-        } else {
-            htmlElement.classList.remove('light');
-            htmlElement.classList.add('dark');
+                const input = document.getElementById(targetId) as HTMLInputElement;
+                const icon = btn.querySelector('.material-symbols-outlined');
+
+                if (!input || !icon) return;
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        });
+
+        // --- 3. Auth & Drawer Logic ---
+        const avatarBtn = document.getElementById('user-avatar-btn');
+        const userInfoBtn = document.getElementById('user-info-btn'); // Logged in button
+        const authContainer = document.getElementById('auth-card-container');
+        const cardInner = document.getElementById('auth-card');
+        const btnToRegister = document.getElementById('btn-to-register');
+        const btnToLogin = document.getElementById('btn-to-login');
+
+        // Drawer Elements
+        const userDrawer = document.getElementById('user-drawer');
+        const openDrawerBtn = document.getElementById('open-drawer-btn');
+        const menuDrawerBtn = document.getElementById('menu-drawer-btn');
+        const drawerProfileToggle = document.getElementById('drawer-profile-toggle');
+        const drawerProfilePanel = document.getElementById('drawer-profile-panel');
+        const drawerLogoutBtn = document.getElementById('drawer-logout');
+        const drawerOverlay = document.querySelector('.drawer-overlay');
+        const drawerEditProfileBtn = document.getElementById('drawer-edit-profile');
+        const drawerDeleteAccountBtn = document.getElementById('drawer-delete-account');
+        const drawerCategoriesToggle = document.getElementById('drawer-categories-toggle');
+        const drawerCategoriesPanel = document.getElementById('drawer-categories-panel');
+
+        // Helpers
+        const openDrawer = () => {
+            Player.updateDrawerUserInfo();
+            userDrawer?.classList.add('show');
+            document.body.classList.add('drawer-open');
+            openDrawerBtn?.classList.add('hidden');
+            drawerOverlay?.classList.add('show');
+            if (menuDrawerBtn) {
+                const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+                if (icon) icon.textContent = 'close';
+            }
+        };
+
+        const closeDrawer = () => {
+            userDrawer?.classList.remove('show');
+            document.body.classList.remove('drawer-open');
+            drawerOverlay?.classList.remove('show');
+            const user = localStorage.getItem('auth_user');
+            if (user && openDrawerBtn) {
+                openDrawerBtn.classList.remove('hidden');
+            }
+            if (menuDrawerBtn) {
+                const icon = menuDrawerBtn.querySelector('.material-symbols-outlined');
+                if (icon) icon.textContent = 'menu';
+            }
+        };
+
+        // Event Listeners
+        if (avatarBtn && authContainer) {
+            avatarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                authContainer.classList.toggle('show');
+                closeDrawer();
+            });
         }
 
-        // Toggle theme on button click
-        if (themeToggleBtn) {
-            themeToggleBtn.addEventListener('click', () => {
-                if (htmlElement.classList.contains('dark')) {
-                    htmlElement.classList.remove('dark');
-                    htmlElement.classList.add('light');
-                    localStorage.setItem('theme', 'light');
+        if (openDrawerBtn && userDrawer) {
+            openDrawerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openDrawer();
+                authContainer?.classList.remove('show');
+            });
+        }
+
+        if (menuDrawerBtn && userDrawer) {
+            menuDrawerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeDrawer();
+            });
+        }
+
+        if (drawerOverlay) {
+            drawerOverlay.addEventListener('click', () => closeDrawer());
+        }
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (
+                authContainer?.classList.contains('show') &&
+                !authContainer.contains(e.target as Node) &&
+                !avatarBtn?.contains(e.target as Node)
+            ) {
+                authContainer.classList.remove('show');
+            }
+
+            if (
+                userDrawer?.classList.contains('show') &&
+                !userDrawer.contains(e.target as Node) &&
+                !openDrawerBtn?.contains(e.target as Node)
+            ) {
+                closeDrawer();
+            }
+        });
+
+        // Update Visibility
+        const updateMenuButtonVisibility = () => {
+            const user = localStorage.getItem('auth_user');
+
+            if (openDrawerBtn) {
+                if (user && !userDrawer?.classList.contains('show')) openDrawerBtn.classList.remove('hidden');
+                else openDrawerBtn.classList.add('hidden');
+            }
+
+            if (avatarBtn) {
+                if (user) avatarBtn.classList.add('hidden');
+                else avatarBtn.classList.remove('hidden');
+            }
+
+            if (userInfoBtn) {
+                if (user) {
+                    userInfoBtn.classList.remove('hidden');
+                    try {
+                        const userData = JSON.parse(user);
+                        const displayName = document.getElementById('user-display-name');
+                        if (displayName) {
+                            const roleMap: { [key: string]: string } = {
+                                INSTRUCTOR: 'Instrutor', STUDENT: 'Estudante', ADMIN: 'Admin',
+                                instructor: 'Instrutor', student: 'Estudante', admin: 'Admin',
+                            };
+                            const role = userData.role || 'STUDENT';
+                            displayName.textContent = roleMap[role] || 'Usuário';
+                        }
+                    } catch (e) { }
                 } else {
-                    htmlElement.classList.remove('light');
-                    htmlElement.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
+                    userInfoBtn.classList.add('hidden');
+                }
+            }
+        };
+
+        updateMenuButtonVisibility();
+        window.addEventListener('auth-login', updateMenuButtonVisibility);
+        window.addEventListener('auth-logout', () => {
+            updateMenuButtonVisibility();
+            closeDrawer();
+            drawerProfileToggle?.classList.remove('expanded');
+            drawerProfilePanel?.classList.remove('expanded');
+        });
+
+        // Drawer Interactions
+        if (drawerProfileToggle && drawerProfilePanel) {
+            drawerProfileToggle.addEventListener('click', () => {
+                drawerProfileToggle.classList.toggle('expanded');
+                drawerProfilePanel.classList.toggle('expanded');
+            });
+        }
+
+        if (drawerLogoutBtn) {
+            drawerLogoutBtn.addEventListener('click', async () => {
+                await Auth.logout();
+                closeDrawer();
+            });
+        }
+
+        // Edit Profile Toggle in Drawer
+        if (drawerEditProfileBtn) {
+            drawerEditProfileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const viewMode = document.getElementById('drawer-profile-view');
+                const editMode = document.getElementById('drawer-profile-edit');
+                if (viewMode && editMode) {
+                    viewMode.classList.add('hidden');
+                    editMode.classList.remove('hidden');
+                    // Pre-fill
+                    const userStr = localStorage.getItem('auth_user');
+                    if (userStr) {
+                        const user = JSON.parse(userStr);
+                        const n = document.getElementById('edit-name') as HTMLInputElement;
+                        const em = document.getElementById('edit-email') as HTMLInputElement;
+                        if (n) n.value = user.name || '';
+                        if (em) em.value = user.email || '';
+                    }
                 }
             });
         }
+        const drawerCancelEdit = document.getElementById('drawer-cancel-edit');
+        if (drawerCancelEdit) {
+            drawerCancelEdit.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                document.getElementById('drawer-profile-view')?.classList.remove('hidden');
+                document.getElementById('drawer-profile-edit')?.classList.add('hidden');
+            });
+        }
+
+        // Drawer: Delete Logic
+        if (drawerDeleteAccountBtn) {
+            drawerDeleteAccountBtn.addEventListener('click', async () => {
+                const confirm = await AppUI.promptModal('Excluir Conta', 'Tem certeza?');
+                if (confirm) {
+                    await Auth.deleteUserAccount();
+                }
+            });
+        }
+
+        // Categories
+        if (drawerCategoriesToggle && drawerCategoriesPanel) {
+            drawerCategoriesToggle.addEventListener('click', () => {
+                drawerCategoriesToggle.classList.toggle('expanded');
+                drawerCategoriesPanel.classList.toggle('expanded');
+                if (drawerCategoriesPanel.classList.contains('expanded')) {
+                    Categories.renderCategoriesList('categories-list');
+                }
+            });
+        }
+
+        // Auth Flip
+        if (btnToRegister && cardInner) {
+            btnToRegister.addEventListener('click', (e) => { e.preventDefault(); cardInner.classList.add('flipped'); });
+        }
+        if (btnToLogin && cardInner) {
+            btnToLogin.addEventListener('click', (e) => { e.preventDefault(); cardInner.classList.remove('flipped'); });
+        }
+
+        // Auth Forms (Basic Hooks)
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = (document.getElementById('login-email') as HTMLInputElement).value;
+                const pass = (document.getElementById('login-password') as HTMLInputElement).value;
+                await Auth.login(email, pass);
+                Cart.updateBadge(); // Update cart on login
+            });
+        }
+
+        // Register Form
+        const regForm = document.getElementById('register-form');
+        if (regForm) {
+            regForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                // ... simplified reg logic or full port ...
+                // Providing full port for completeness
+                const name = (document.getElementById('register-name') as HTMLInputElement).value;
+                const email = (document.getElementById('register-email') as HTMLInputElement).value;
+                const pass = (document.getElementById('register-password') as HTMLInputElement).value;
+                const confirm = (document.getElementById('register-confirm') as HTMLInputElement).value;
+                const role = (document.getElementById('register-role') as HTMLSelectElement).value;
+
+                if (pass !== confirm) { AppUI.showMessage('Senhas não conferem', 'error'); return; }
+                try {
+                    const endpoint = role === 'instructor' ? '/auth/register/instructor' : '/auth/register/student';
+                    await AppUI.apiFetch(endpoint, { method: 'POST', body: JSON.stringify({ name, email, password: pass }) });
+                    AppUI.showMessage('Conta criada! Faça Login.', 'success');
+                    (regForm as HTMLFormElement).reset();
+                    cardInner?.classList.remove('flipped');
+                } catch (err: any) {
+                    AppUI.showMessage(err.message || 'Erro', 'error');
+                }
+            });
+        }
+
+        // Profile View Buttons
+        const btnViewProfile = document.getElementById('btn-view-profile');
+        if (btnViewProfile) btnViewProfile.addEventListener('click', (e) => { e.preventDefault(); Auth.showProfileView(); });
+        const btnLogout = document.getElementById('btn-logout');
+        if (btnLogout) btnLogout.addEventListener('click', (e) => { e.preventDefault(); Auth.logout(); Cart.updateBadge(); });
+
+        // My Learning
+        const btnMyLearning = document.getElementById('btn-my-learning');
+        if (btnMyLearning) btnMyLearning.addEventListener('click', (e) => { e.preventDefault(); window.location.href = '/estudante'; });
+    },
+
+    updateDrawerUserInfo: () => {
+        const userStr = localStorage.getItem('auth_user');
+        if (!userStr) return;
+        try {
+            const user = JSON.parse(userStr);
+            const dName = document.getElementById('drawer-user-name');
+            const dEmail = document.getElementById('drawer-user-email');
+            const dRole = document.getElementById('drawer-user-role');
+            const drawerManagementSection = document.getElementById('drawer-management-section');
+
+            if (dName) dName.textContent = user.name || 'Usuário';
+            if (dEmail) dEmail.textContent = user.email || '';
+            const role = (user.role || '').toLowerCase();
+            if (dRole) dRole.textContent = role === 'instructor' ? 'Professor' : 'Aluno';
+
+            if (drawerManagementSection) {
+                if (role === 'instructor' || role === 'admin') drawerManagementSection.classList.remove('hidden');
+                else drawerManagementSection.classList.add('hidden');
+            }
+        } catch (e) { }
     },
 
     setupSidebarToggle: () => {
-        const layout = document.querySelector('.player-layout');
-        const btnToggle = document.getElementById('btn-drawer-toggle');
+        const layout = document.querySelector('.player-layout') as HTMLElement;
+        const btnToggle = document.getElementById('btn-toggle-sidebar') as HTMLElement;
+        const sidebar = document.querySelector('.player-sidebar') as HTMLElement;
+        const backdrop = document.querySelector('.sidebar-overlay-backdrop') as HTMLElement;
 
-        if (!layout || !btnToggle) return;
+        if (!layout || !btnToggle || !sidebar || !backdrop) return;
 
         const toggleSidebar = (forceState?: boolean) => {
-            const isCollapsed = forceState !== undefined
-                ? forceState
-                : !layout.classList.contains('sidebar-collapsed');
+            const isMobile = window.innerWidth <= 1024;
 
-            if (isCollapsed) {
-                layout.classList.add('sidebar-collapsed');
-                localStorage.setItem('player_sidebar_collapsed', 'true');
+            if (isMobile) {
+                // Mobile: Toggle drawer open/closed
+                const isOpen = forceState !== undefined
+                    ? forceState
+                    : !sidebar.classList.contains('sidebar-open');
+
+                if (isOpen) {
+                    sidebar.classList.add('sidebar-open');
+                    backdrop.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    sidebar.classList.remove('sidebar-open');
+                    backdrop.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+
+                // Update icon
+                const icon = btnToggle.querySelector('.material-symbols-outlined');
+                if (icon) {
+                    icon.textContent = isOpen ? 'close' : 'menu';
+                }
             } else {
-                layout.classList.remove('sidebar-collapsed');
-                localStorage.setItem('player_sidebar_collapsed', 'false');
-            }
+                // Desktop: Toggle collapse state (from absolute position toggle)
+                const isCollapsed = forceState !== undefined
+                    ? forceState
+                    : !layout.classList.contains('sidebar-collapsed');
 
-            // Icon rotation is handled by CSS based on parent class
+                if (isCollapsed) {
+                    layout.classList.add('sidebar-collapsed');
+                    localStorage.setItem('player_sidebar_collapsed', 'true');
+                } else {
+                    layout.classList.remove('sidebar-collapsed');
+                    localStorage.setItem('player_sidebar_collapsed', 'false');
+                }
+
+                // Ensure sidebar is not in drawer mode
+                sidebar.classList.remove('sidebar-open');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            }
         };
 
         btnToggle.addEventListener('click', () => toggleSidebar());
 
-        // Restore state
-        const savedState = localStorage.getItem('player_sidebar_collapsed') === 'true';
-        if (savedState) toggleSidebar(true);
+        // Close drawer when clicking backdrop
+        backdrop.addEventListener('click', () => {
+            if (sidebar.classList.contains('sidebar-open')) {
+                toggleSidebar(false);
+            }
+        });
+
+        // Close drawer on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+                toggleSidebar(false);
+            }
+        });
+
+        // Close drawer when selecting a class
+        const modulesList = document.getElementById('modules-list');
+        if (modulesList) {
+            modulesList.addEventListener('click', () => {
+                if (window.innerWidth <= 1024 && sidebar.classList.contains('sidebar-open')) {
+                    setTimeout(() => toggleSidebar(false), 300);
+                }
+            });
+        }
+
+        // Restore desktop state if was collapsed
+        const isMobile = window.innerWidth <= 1024;
+        if (!isMobile) {
+            const savedState = localStorage.getItem('player_sidebar_collapsed') === 'true';
+            if (savedState) toggleSidebar(true);
+        }
     },
 
     setupTabs: () => {
@@ -269,26 +616,16 @@ const Player = {
         });
 
         // Video Ended (Mark Completed)
-        video.addEventListener('ended', () => {
+        video.addEventListener('ended', async () => {
             if (!Player.courseData || !Player.currentClassId) return;
 
-            // Find and update current class
-            let found = false;
-            Player.courseData.modules.forEach(mod => {
-                mod.classes.forEach(cls => {
-                    if (cls.id === Player.currentClassId) {
-                        if (!cls.isCompleted) {
-                            cls.isCompleted = true;
-                            found = true;
-                        }
-                    }
-                });
-            });
-
-            if (found) {
-                Player.updateLessonsCompleted();
-                Player.renderSidebar(); // Unlock next lesson
-                AppUI.showMessage('Aula concluída! Próxima aula desbloqueada.', 'success');
+            // Find and mark current class as completed
+            for (const mod of Player.courseData.modules) {
+                const cls = mod.classes.find(c => c.id === Player.currentClassId);
+                if (cls && !cls.isCompleted) {
+                    await Player.toggleCompletion(cls);
+                    break;
+                }
             }
         });
     },
@@ -376,68 +713,6 @@ const Player = {
         }
     },
 
-    setupAuthUI: (user: any) => {
-        const avatarBtn = document.getElementById('user-avatar-btn');
-        const authContainer = document.getElementById('auth-card-container');
-        const authLogged = document.getElementById('auth-logged-in');
-        const viewProfileBtn = document.getElementById('btn-view-profile');
-        const profileView = document.getElementById('auth-profile-view');
-        const backProfileBtn = document.getElementById('btn-back-from-profile');
-        const logoutBtn = document.getElementById('btn-logout');
-
-        // Update User Info
-        const nameDisplay = document.getElementById('user-name-display');
-        const emailDisplay = document.getElementById('user-email-display');
-        const profileName = document.getElementById('profile-view-name');
-        const profileEmail = document.getElementById('profile-view-email');
-        const profileRole = document.getElementById('profile-view-role');
-
-        if (nameDisplay) nameDisplay.textContent = user.name;
-        if (emailDisplay) emailDisplay.textContent = user.email;
-        if (profileName) profileName.textContent = user.name;
-        if (profileEmail) profileEmail.textContent = user.email;
-        if (profileRole) profileRole.textContent = user.role === 'INSTRUCTOR' ? 'Instrutor' : 'Estudante';
-
-
-        if (avatarBtn && authContainer) {
-            avatarBtn.addEventListener('click', () => {
-                authContainer.classList.toggle('show');
-            });
-
-            // Close when clicking outside
-            window.addEventListener('click', (e) => {
-                if (
-                    authContainer.classList.contains('show') &&
-                    !authContainer.contains(e.target as Node) &&
-                    !avatarBtn.contains(e.target as Node)
-                ) {
-                    authContainer.classList.remove('show');
-                }
-            });
-        }
-
-        if (viewProfileBtn && authLogged && profileView) {
-            viewProfileBtn.addEventListener('click', () => {
-                authLogged.classList.add('hidden');
-                profileView.classList.remove('hidden');
-            });
-        }
-
-        if (backProfileBtn && authLogged && profileView) {
-            backProfileBtn.addEventListener('click', () => {
-                profileView.classList.add('hidden');
-                authLogged.classList.remove('hidden');
-            });
-        }
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('auth_user');
-                window.location.href = '/inicio';
-            });
-        }
-    },
 
     loadCourseData: async () => {
         try {
@@ -445,7 +720,8 @@ const Player = {
             const courseRes = await AppUI.apiFetch(`/courses/${Player.courseId}`);
             const course = courseRes.data;
 
-            document.getElementById('course-title')!.textContent = course.title;
+            const titleEl = document.getElementById('course-title');
+            if (titleEl) titleEl.textContent = course.title;
 
             // Update breadcrumb
             const breadcrumbCourse = document.getElementById('breadcrumb-course');
@@ -474,11 +750,6 @@ const Player = {
                 Player.loadClass(firstClass);
             }
 
-            // Check Certificate Availability
-            if (course.progress === 100) {
-                Player.showCertificateButton();
-            }
-
         } catch (error) {
             AppUI.showMessage('Erro ao carregar dados do curso', 'error');
             console.error(error);
@@ -489,9 +760,7 @@ const Player = {
         const list = document.getElementById('modules-list');
         if (!list || !Player.courseData) return;
 
-        list.innerHTML = '';
-
-        let globalLocked = false; // logic to lock future lessons
+        list.innerHTML = ''; // Clearing list is fine
 
         Player.courseData.modules.forEach((mod, index) => {
             const moduleEl = document.createElement('details');
@@ -515,14 +784,30 @@ const Player = {
             const header = document.createElement('summary');
             header.className = 'module-header';
 
-            // New Structure: Info Wrapper (Title + Meta) on left, Chevron on right
-            header.innerHTML = `
-                <div class="module-info-wrapper">
-                    <span class="module-title">${mod.title}</span>
-                    <span class="module-meta">${mod.classes.length} Aulas</span> 
-                </div>
-                <span class="material-symbols-outlined layer-icon" style="color: var(--text-muted); transition: transform 0.2s;">expand_more</span>
-            `;
+            // --- New Structure: Info Wrapper (Title + Meta) on left, Chevron on right ---
+            const infoWrapper = document.createElement('div');
+            infoWrapper.className = 'module-info-wrapper';
+
+            const moduleTitle = document.createElement('span');
+            moduleTitle.className = 'module-title';
+            moduleTitle.textContent = mod.title;
+
+            const moduleMeta = document.createElement('span');
+            moduleMeta.className = 'module-meta';
+            moduleMeta.textContent = `${mod.classes.length} Aulas`;
+
+            infoWrapper.appendChild(moduleTitle);
+            infoWrapper.appendChild(moduleMeta);
+
+            const arrowIcon = document.createElement('span');
+            arrowIcon.className = 'material-symbols-outlined layer-icon';
+            arrowIcon.style.color = 'var(--text-muted)';
+            arrowIcon.style.transition = 'transform 0.2s';
+            arrowIcon.textContent = 'expand_more';
+
+            header.appendChild(infoWrapper);
+            header.appendChild(arrowIcon);
+            // -------------------------------------------------------------
 
             // Toggle Logic to track state
             moduleEl.addEventListener('toggle', () => {
@@ -541,41 +826,57 @@ const Player = {
                 const isCompleted = cls.isCompleted;
                 const isActive = cls.id === Player.currentClassId;
 
-                // Determine Lock State
-                const isLocked = globalLocked;
-
-                // Update globalLocked for the NEXT iteration
-                if (!isCompleted) {
-                    globalLocked = true;
-                }
-
-                classEl.className = `class-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''}`;
+                classEl.className = `class-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`;
                 classEl.dataset.id = cls.id;
 
-                let iconName = 'play_circle';
-                if (isLocked) iconName = 'lock';
-                else if (isCompleted) iconName = 'check_circle';
+                // Icon logic: check_circle when completed, radio_button_unchecked when not
+                let iconName = isCompleted ? 'check_circle' : 'radio_button_unchecked';
 
-                const playingBadge = isActive ? '<span class="badge-playing">PLAYING</span>' : '';
+                // --- Safe DOM Construction for Class Item ---
+                // 1. Icon Container
+                const iconContainer = document.createElement('div');
+                iconContainer.className = 'class-icon-container';
+                Object.assign(iconContainer.style, {
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '40px', height: '40px',
+                    borderRadius: '8px', flexShrink: '0'
+                });
 
-                classEl.innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(94, 23, 235, 0.1); border-radius: 8px; flex-shrink: 0;">
-                        <span class="material-symbols-outlined class-status-icon" style="font-size: 1.5rem; color: var(--primary);">
-                            ${iconName}
-                        </span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; flex: 1;">
-                        <span class="class-title-mini" style="font-size: 0.95rem; font-weight: 600; ${isLocked ? 'color: var(--text-muted);' : ''}">${cls.title}</span>
-                    </div>
-                    ${playingBadge}
-                `;
+                const statusIcon = document.createElement('span');
+                statusIcon.className = 'material-symbols-outlined class-status-icon';
+                statusIcon.style.fontSize = '1.5rem';
+                // Let CSS handle the color based on completed/active state
+                statusIcon.textContent = iconName;
 
-                if (!isLocked) {
-                    classEl.addEventListener('click', () => Player.loadClass(cls));
-                } else {
-                    classEl.style.cursor = 'not-allowed';
-                    classEl.style.opacity = '0.6';
-                }
+                // Add click handler to toggle completion
+                statusIcon.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    await Player.toggleCompletion(cls);
+                });
+                statusIcon.style.cursor = 'pointer';
+
+                iconContainer.appendChild(statusIcon);
+
+                // 2. Title Container
+                const titleContainer = document.createElement('div');
+                Object.assign(titleContainer.style, {
+                    display: 'flex', flexDirection: 'column', flex: '1'
+                });
+
+                const classTitleMini = document.createElement('span');
+                classTitleMini.className = 'class-title-mini';
+                Object.assign(classTitleMini.style, {
+                    fontSize: '0.95rem', fontWeight: '600'
+                });
+                classTitleMini.textContent = cls.title;
+
+                titleContainer.appendChild(classTitleMini);
+
+                classEl.appendChild(iconContainer);
+                classEl.appendChild(titleContainer);
+
+                // All classes are clickable - no locking
+                classEl.addEventListener('click', () => Player.loadClass(cls));
 
                 classesContainer.appendChild(classEl);
             });
@@ -583,7 +884,50 @@ const Player = {
             moduleEl.appendChild(header);
             moduleEl.appendChild(classesContainer);
             list.appendChild(moduleEl);
+
+            // Green style for completed module
+            const allCompleted = mod.classes.every(c => c.isCompleted);
+            if (allCompleted) {
+                moduleEl.classList.add('completed-module');
+            }
         });
+
+        // Certificate Button (In sidebar header if course is 100% complete)
+        const certContainer = document.getElementById('certificate-container');
+        if (certContainer) {
+            if (Player.courseData.progress === 100) {
+                certContainer.innerHTML = ''; // Clear
+                certContainer.classList.remove('hidden');
+
+                const btnCert = document.createElement('button');
+                btnCert.className = 'sidebar-certificate-btn';
+
+                const certIcon = document.createElement('span');
+                certIcon.className = 'material-symbols-outlined';
+                certIcon.textContent = 'workspace_premium';
+
+                const certText = document.createElement('span');
+                certText.textContent = 'Gerar Certificado';
+
+                btnCert.appendChild(certIcon);
+                btnCert.appendChild(certText);
+
+                btnCert.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
+                        if (res.data && res.data.hash) {
+                            window.location.href = `/certificate.html?hash=${res.data.hash}`;
+                        }
+                    } catch (err) {
+                        AppUI.showMessage('Erro ao gerar certificado.', 'error');
+                    }
+                });
+                certContainer.appendChild(btnCert);
+            } else {
+                certContainer.classList.add('hidden');
+            }
+        }
     },
 
     updateLessonsCompleted: () => {
@@ -599,7 +943,7 @@ const Player = {
 
         const lessonsCompletedEl = document.getElementById('course-lessons-completed');
         if (lessonsCompletedEl) {
-            lessonsCompletedEl.textContent = `${completedClasses}/${totalClasses} Lessons Completed`;
+            lessonsCompletedEl.textContent = `${completedClasses}/${totalClasses} Aulas Concluídas`;
         }
     },
 
@@ -740,14 +1084,29 @@ const Player = {
         }
 
         // Completion Button State
+        // Completion Button State
         const btnComplete = document.getElementById('btn-mark-completed');
         if (btnComplete) {
+            // Clear current content
+            btnComplete.innerHTML = '';
+
+            // Create Icon
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.textContent = 'check_circle';
+
+            // Create Text
+            const text = document.createElement('span');
+            text.className = 'btn-text';
+            text.textContent = cls.isCompleted ? 'Concluída' : 'Marcar como Concluída';
+
+            btnComplete.appendChild(icon);
+            btnComplete.appendChild(text);
+
             if (cls.isCompleted) {
                 btnComplete.classList.add('completed');
-                btnComplete.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="btn-text">Concluída</span>';
             } else {
                 btnComplete.classList.remove('completed');
-                btnComplete.innerHTML = '<span class="material-symbols-outlined">check_circle</span> <span class="btn-text">Marcar como Concluída</span>';
             }
 
             // Clone to remove old listeners (lazy way) or just handle logic carefully
@@ -799,13 +1158,27 @@ const Player = {
             const item = document.createElement('div');
             item.className = 'material-item';
             item.style.cursor = 'pointer';
-            item.innerHTML = `
-                <span class="material-symbols-outlined material-icon">download</span>
-                <div class="material-info">
-                    <span class="material-name">Baixar Material de Apoio</span>
-                    <span class="material-size">Clique para baixar</span>
-                </div>
-             `;
+
+            const matIcon = document.createElement('span');
+            matIcon.className = 'material-symbols-outlined material-icon';
+            matIcon.textContent = 'download';
+
+            const matInfo = document.createElement('div');
+            matInfo.className = 'material-info';
+
+            const matName = document.createElement('span');
+            matName.className = 'material-name';
+            matName.textContent = 'Baixar Material de Apoio';
+
+            const matSize = document.createElement('span');
+            matSize.className = 'material-size';
+            matSize.textContent = 'Clique para baixar';
+
+            matInfo.appendChild(matName);
+            matInfo.appendChild(matSize);
+
+            item.appendChild(matIcon);
+            item.appendChild(matInfo);
 
             item.addEventListener('click', async () => {
                 try {
@@ -889,11 +1262,6 @@ const Player = {
                     progressFill.style.width = `${prog}%`;
                     progressText.textContent = `${prog}%`;
                 }
-
-                // Check Certificate Availability
-                if (Player.courseData.progress === 100) {
-                    Player.showCertificateButton();
-                }
             }
 
             // Refresh View
@@ -908,39 +1276,12 @@ const Player = {
         }
     },
 
-    showCertificateButton: () => {
-        const actionsContainer = document.querySelector('.class-actions');
-        if (!actionsContainer) return;
-
-        // Check if button already exists
-        if (document.getElementById('btn-generate-certificate')) return;
-
-        const btnCert = document.createElement('button');
-        btnCert.id = 'btn-generate-certificate';
-        btnCert.className = 'btn-action completed'; // Use green style
-        btnCert.innerHTML = '<span class="material-symbols-outlined">workspace_premium</span> <span class="btn-text">Gerar Certificado</span>';
-        // Remove direct margin as we use flex gap
-
-        btnCert.addEventListener('click', async () => {
-            try {
-                const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
-                if (res.data && res.data.hash) {
-                    window.location.href = `certificate.html?hash=${res.data.hash}`;
-                }
-            } catch (e) {
-                AppUI.showMessage('Erro ao gerar certificado.', 'error');
-            }
-        });
-
-        actionsContainer.appendChild(btnCert);
-    },
-
     checkCertificateStatus: async () => {
+        // Deprecated: Logic moved to renderSidebar checking progress === 100
+        // If we strictly wanted to force a sidebar re-render here we could, but typical flow handles it.
         if (Player.courseData && Player.courseData.progress === 100) {
-            Player.showCertificateButton();
+            Player.renderSidebar();
         }
     }
 };
-
-// Start
 document.addEventListener('DOMContentLoaded', Player.init);

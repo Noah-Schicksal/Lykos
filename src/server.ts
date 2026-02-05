@@ -22,3 +22,12 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
+
+process.on('exit', (code) => {
+  console.log(`About to exit with code: ${code}`);
+});
+
+// Force keep-alive for debugging
+setInterval(() => {
+  // console.log('Heartbeat...'); 
+}, 10000);

@@ -60,15 +60,27 @@
           <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
           <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
         </button>
-        <!-- Login Button (only visible when not logged in) -->
-        <button id="user-avatar-btn" class="btn-text-login hidden">
-          Entrar
+        <button id="user-avatar-btn" class="user-menu-btn hidden">
+          <span class="material-symbols-outlined">login</span>
+          <span class="menu-text">Login</span>
         </button>
         <!-- User Info Button (only visible when logged in) -->
-        <button id="user-info-btn" class="btn-text-user hidden">
-          <span class="material-symbols-outlined">account_circle</span>
-          <span id="user-display-name" class="user-display-name">Usuário</span>
-        </button>
+        <div class="user-menu-container">
+          <button id="user-info-btn" class="user-menu-btn hidden">
+            <span id="user-display-name" class="menu-text">Usuário</span>
+            <span class="material-symbols-outlined menu-arrow">expand_more</span>
+          </button>
+          <div id="user-dropdown-menu" class="user-dropdown">
+            <button id="dropdown-profile" class="dropdown-item">
+              <span class="material-symbols-outlined">person</span>
+              <span>Perfil</span>
+            </button>
+            <button id="dropdown-logout" class="dropdown-item dropdown-item-danger">
+              <span class="material-symbols-outlined">logout</span>
+              <span>Sair</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </nav>
@@ -724,6 +736,75 @@
         <span class="material-symbols-outlined">logout</span>
         Sair
       </button>
+    </div>
+  </div>
+
+  <!-- Course Details Modal -->
+  <div id="course-modal" class="course-modal hidden">
+    <div class="course-modal-overlay"></div>
+    <div class="course-modal-content">
+      <button id="close-modal" class="course-modal-close">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div class="course-modal-body">
+        <!-- Course Image -->
+        <div class="course-modal-image-container">
+          <img id="modal-course-img" src="" alt="Course" class="course-modal-image" />
+          <div class="course-modal-badge" id="modal-course-category">
+            Categoria
+          </div>
+        </div>
+
+        <!-- Course Info -->
+        <div class="course-modal-info">
+          <h2 id="modal-course-title" class="course-modal-title">
+            Título do Curso
+          </h2>
+
+          <div class="course-modal-meta">
+            <div class="course-modal-meta-item">
+              <span class="material-symbols-outlined">person</span>
+              <span id="modal-course-instructor">Instrutor</span>
+            </div>
+            <div class="course-modal-meta-item">
+              <span class="material-symbols-outlined">calendar_today</span>
+              <span id="modal-course-date">Data</span>
+            </div>
+            <div class="course-modal-meta-item">
+              <span class="material-symbols-outlined">groups</span>
+              <span id="modal-course-slots">Vagas</span>
+            </div>
+          </div>
+
+          <p id="modal-course-desc" class="course-modal-description">
+            Descrição do curso...
+          </p>
+
+          <!-- Modules List -->
+          <div class="course-modal-modules">
+            <h3 class="course-modal-modules-title">
+              <span class="material-symbols-outlined">list</span>
+              Módulos do Curso
+            </h3>
+            <div id="modal-modules-list" class="modules-list">
+              <p class="loading-msg">Carregando módulos...</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="course-modal-actions">
+            <div class="course-modal-price">
+              <span class="price-label">Preço:</span>
+              <span id="modal-course-price" class="price-value">R$ 0,00</span>
+            </div>
+            <button id="modal-add-cart-btn" class="btn-modal-cart">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              Adicionar ao Carrinho
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -211,31 +211,11 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Navbar offset for instructor page with full-height sidebar */
-body:has(.dashboard-sidebar) .navbar {
-  margin-left: 300px;
-  width: calc(100% - 300px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-body:has(.dashboard-sidebar.collapsed) .navbar {
-  margin-left: 5.5rem;
-  width: calc(100% - 5.5rem);
-}
-
-/* Remove navbar offset on mobile/tablet */
-@media (max-width: 1024px) {
-
-  body:has(.dashboard-sidebar) .navbar,
-  body:has(.dashboard-sidebar.collapsed) .navbar {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
-}
+/* Navbar stays full width - sidebar is now positioned below it */
 
 .nav-container {
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 1.5rem 0.75rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -379,7 +359,7 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.8rem;
   margin-left: auto;
 }
 
@@ -1373,22 +1353,18 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
   width: 100%;
   height: 200px;
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.1),
-    rgba(0, 73, 83, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.1),
+      rgba(0, 73, 83, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 :root.light .card-img-container {
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.05),
-    rgba(0, 73, 83, 0.05)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.05),
+      rgba(0, 73, 83, 0.05));
 }
 
 .card-img {
@@ -2084,19 +2060,15 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
   margin-top: 5rem;
   padding: 3rem 1rem;
   border-top: 1px solid var(--border-light);
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(94, 23, 235, 0.03) 100%
-  );
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(94, 23, 235, 0.03) 100%);
 }
 
 :root.light .home-footer {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(94, 23, 235, 0.02) 100%
-  );
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(94, 23, 235, 0.02) 100%);
 }
 
 .home-footer-content {
@@ -2331,22 +2303,18 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
   object-fit: cover;
   object-position: center;
   border-radius: 0.25rem;
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.1),
-    rgba(0, 73, 83, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.1),
+      rgba(0, 73, 83, 0.1));
 }
 
 .cart-item-img-placeholder {
   width: 5rem;
   height: 3rem;
   border-radius: 0.25rem;
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.1),
-    rgba(0, 73, 83, 0.1)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.1),
+      rgba(0, 73, 83, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2361,11 +2329,9 @@ body:has(.dashboard-sidebar.collapsed) .navbar {
 
 :root.light .cart-item-img,
 :root.light .cart-item-img-placeholder {
-  background: linear-gradient(
-    135deg,
-    rgba(94, 23, 235, 0.05),
-    rgba(0, 73, 83, 0.05)
-  );
+  background: linear-gradient(135deg,
+      rgba(94, 23, 235, 0.05),
+      rgba(0, 73, 83, 0.05));
 }
 
 .cart-item-info {
@@ -2741,8 +2707,10 @@ body.drawer-open {
   align-items: center;
   gap: 1rem;
   padding: 1.5rem 1.5rem 0;
-  position: relative; /* Context for absolute button */
-  height: 60px; /* Ensure container has height */
+  position: relative;
+  /* Context for absolute button */
+  height: 60px;
+  /* Ensure container has height */
 }
 
 .menu-toggle-btn {
@@ -2751,7 +2719,8 @@ body.drawer-open {
   position: absolute;
   left: 1.5rem;
   z-index: 10;
-  width: 2.5rem; /* Fix width for calculation */
+  width: 2.5rem;
+  /* Fix width for calculation */
   height: 2.5rem;
   display: flex;
   align-items: center;
@@ -2760,7 +2729,8 @@ body.drawer-open {
 }
 
 .user-drawer.show .menu-toggle-btn {
-  left: calc(100% - 4rem); /* 100% - (1.5rem padding + 2.5rem width) */
+  left: calc(100% - 4rem);
+  /* 100% - (1.5rem padding + 2.5rem width) */
   transform: rotate(180deg);
   background-color: rgba(94, 23, 235, 0.1);
   color: var(--primary);
@@ -3176,6 +3146,7 @@ body.drawer-open {
 
 /* Responsive */
 @media (max-width: 1100px) {
+
   /* On tablet/small desktop, overlay instead of push */
   body.drawer-open .navbar,
   body.drawer-open .main-content,
@@ -3200,7 +3171,8 @@ body.drawer-open {
    User Drawer Light Mode
    =========================== */
 :root.light .user-drawer {
-  background-color: #ffffff; /* Brighter background for light mode */
+  background-color: #ffffff;
+  /* Brighter background for light mode */
   border-right: 1px solid var(--border-light);
 }
 
@@ -3214,7 +3186,8 @@ body.drawer-open {
 
 :root.light .drawer-item:hover {
   color: var(--primary);
-  background: rgba(94, 23, 235, 0.08); /* Lighter hover background */
+  background: rgba(94, 23, 235, 0.08);
+  /* Lighter hover background */
 }
 
 :root.light .drawer-section-header {
@@ -3274,7 +3247,8 @@ body.drawer-open {
 }
 
 :root.light .user-menu-btn {
-  background-color: white; /* Light mode specific bg */
+  background-color: white;
+  /* Light mode specific bg */
   border-color: var(--border-light);
 }
 
@@ -3295,4 +3269,81 @@ body.drawer-open {
 
 .btn-validate-home:hover .material-symbols-outlined {
   color: white !important;
+}
+
+/* ===========================
+   User Dropdown Menu
+   =========================== */
+.user-menu-container {
+  position: relative;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-light);
+  border-radius: 0.5rem;
+  min-width: 180px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.user-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+:root.light .user-dropdown {
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(94, 23, 235, 0.1);
+  color: var(--primary);
+}
+
+.dropdown-item .material-symbols-outlined {
+  font-size: 1.125rem;
+}
+
+.dropdown-item-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+:root.light .dropdown-item:hover {
+  background-color: rgba(94, 23, 235, 0.08);
+  color: var(--text-primary);
+}
+
+:root.light .dropdown-item-danger:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
 }
