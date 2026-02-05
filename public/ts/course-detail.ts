@@ -618,7 +618,7 @@ function checkIfUserIsCreator(course: Course) {
         <div class="status-card status-enrolled">
           <span class="material-symbols-outlined status-icon">check_circle</span>
           <span class="status-text">Você já possui este curso</span>
-          <a href="/student.html" class="status-link">Acessar conteúdo <span class="material-symbols-outlined" style="font-size: 1rem; vertical-align: middle;">arrow_forward</span></a>
+          <a href="/estudante" class="status-link">Acessar conteúdo <span class="material-symbols-outlined" style="font-size: 1rem; vertical-align: middle;">arrow_forward</span></a>
         </div>
       `;
     }

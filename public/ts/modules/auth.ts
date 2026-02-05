@@ -81,7 +81,7 @@ export const Auth = {
 
       if (isRestricted) {
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/inicio';
         }, 1500); // Small delay to allow toast to be visible
       }
 
@@ -154,7 +154,7 @@ export const Auth = {
         }
 
         if (user.role === 'ADMIN') {
-          window.location.href = '/admin.html';
+          window.location.href = '/admin';
           return;
         }
 

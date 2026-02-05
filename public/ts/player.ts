@@ -420,7 +420,7 @@ const Player = {
                 // Update icon
                 const icon = btnToggle.querySelector('.material-symbols-outlined');
                 if (icon) {
-                    icon.textContent = isOpen ? 'close' : 'menu';
+                    icon.textContent = isOpen ? 'close' : 'view_sidebar';
                 }
             } else {
                 // Desktop: Toggle collapse state (from absolute position toggle)
@@ -917,7 +917,7 @@ const Player = {
                     try {
                         const res = await AppUI.apiFetch(`/courses/${Player.courseId}/certificate`, { method: 'POST' });
                         if (res.data && res.data.hash) {
-                            window.location.href = `/certificate.html?hash=${res.data.hash}`;
+                            window.location.href = `/certificado?hash=${res.data.hash}`;
                         }
                     } catch (err) {
                         AppUI.showMessage('Erro ao gerar certificado.', 'error');
