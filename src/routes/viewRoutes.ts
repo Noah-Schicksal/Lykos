@@ -12,6 +12,10 @@ const serveView = (viewName: string) => {
 
 // --- Mapeamento de Rotas de Visualização (Telas) ---
 
+// Home / Root
+viewRoutes.get('/', serveView('index.html'));
+viewRoutes.get('/inicio', serveView('index.html'));
+
 // Estudante
 viewRoutes.get('/estudante', serveView('student.html'));
 
@@ -27,6 +31,7 @@ viewRoutes.get('/carrinho', serveView('cart.html'));
 // O arquivo html (watch.html) precisa de JS para pegar o ID da URL.
 viewRoutes.get('/aula/:id', serveView('player.html'));
 
-viewRoutes.get('/inicio', serveView('index.html'));
+// Admin Area
+viewRoutes.get('/admin', serveView('admin.html'));
 
 export default viewRoutes;

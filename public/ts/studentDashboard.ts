@@ -192,7 +192,7 @@ function setupCourseCardListeners() {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             const courseId = (button as HTMLElement).dataset.courseId;
-            if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+            if (courseId) window.location.href = `/aula/${courseId}`;
         });
     });
 }
@@ -252,38 +252,37 @@ async function loadCategories() {
  * Sets up sidebar navigation and UI toggles
  */
 function setupNavigation() {
-    // Sidebar Toggle (inside sidebar)
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
+    // Unified Sidebar Toggle (header button)
     const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    const mainContent = document.querySelector('.main-content');
 
-    // Mobile Menu Toggle (in header)
-    const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+    if (sidebar && toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
 
-    if (sidebar) {
-        // Toggle from sidebar button
-        if (btnToggle) {
-            btnToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
+            // Check if mobile (CSS can handle the visual difference but JS handles classes)
+            const isMobile = window.innerWidth < 1024;
+
+            if (isMobile) {
                 sidebar.classList.toggle('active');
-            });
-        }
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainContent?.classList.toggle('sidebar-collapsed');
+            }
 
-        // Toggle from mobile menu button in header
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sidebar.classList.toggle('active');
-            });
-        }
+            // Toggle open state for rotation animation
+            toggleBtn.classList.toggle('open');
+        });
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
             if (sidebar.classList.contains('active') &&
                 !sidebar.contains(target) &&
-                (!btnToggle || !btnToggle.contains(target)) &&
-                (!mobileMenuBtn || !mobileMenuBtn.contains(target))) {
+                !toggleBtn.contains(target)) {
                 sidebar.classList.remove('active');
+                toggleBtn.classList.remove('open');
             }
         });
     }
@@ -292,7 +291,7 @@ function setupNavigation() {
     const sidebarAvatarBtn = document.getElementById('sidebar-avatar-btn');
     if (sidebarAvatarBtn) {
         sidebarAvatarBtn.addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         });
     }
 
@@ -312,64 +311,80 @@ function setupNavigation() {
         });
     }
 
-    // --- Auth Card UI Listeners ---
-    const avatarBtn = document.getElementById('user-avatar-btn');
+    // --- User Dropdown ---
+    const userInfoBtn = document.getElementById('user-info-btn');
+    const dropdownMenu = document.getElementById('user-dropdown-menu');
     const authContainer = document.getElementById('auth-card-container');
-    const cardInner = document.getElementById('auth-card');
 
-    if (avatarBtn && authContainer) {
-        console.log('Avatar button and auth container found');
-        avatarBtn.addEventListener('click', (e) => {
-            console.log('Avatar button clicked');
+    if (userInfoBtn && dropdownMenu) {
+        userInfoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            authContainer.classList.toggle('show');
-            const isShown = authContainer.classList.contains('show');
-            console.log('Auth container "show" class:', isShown);
-
-            // Refresh content when showing
-            if (isShown) {
-                Auth.updateAuthUI();
-            }
+            dropdownMenu.classList.toggle('show');
+            userInfoBtn.classList.toggle('open');
         });
 
         document.addEventListener('click', (e) => {
             if (
-                authContainer.classList.contains('show') &&
-                !authContainer.contains(e.target as Node) &&
-                !avatarBtn.contains(e.target as Node)
+                dropdownMenu.classList.contains('show') &&
+                !dropdownMenu.contains(e.target as Node) &&
+                !userInfoBtn.contains(e.target as Node)
             ) {
-                authContainer.classList.remove('show');
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
             }
         });
-    }
 
-    // Auth Card Action Handlers
-    document.getElementById('btn-logout')?.addEventListener('click', async () => {
-        const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
-        if (confirmed) {
-            await Auth.logout();
-            window.location.href = '/inicio';
+        // Dropdown Items
+        const dropdownProfile = document.getElementById('dropdown-profile');
+        const dropdownLogout = document.getElementById('dropdown-logout');
+
+        if (dropdownProfile) {
+            dropdownProfile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
+
+                // Ensure auth container is visible and show profile view
+                if (authContainer) {
+                    authContainer.classList.add('show');
+                    Auth.showProfileView();
+                }
+            });
         }
-    });
+
+        if (dropdownLogout) {
+            dropdownLogout.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
+
+                const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
+                if (confirmed) {
+                    await Auth.logout();
+                    window.location.href = '/inicio';
+                }
+            });
+        }
+    }
 
     document.getElementById('btn-my-learning')?.addEventListener('click', () => {
         authContainer?.classList.remove('show');
         // Redireciona para a página correta do dashboard do aluno
-        window.location.href = 'student.html';
+        window.location.href = '/estudante';
     });
 
     document.getElementById('btn-instructor-dash')?.addEventListener('click', () => {
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-create-course')?.addEventListener('click', () => {
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-manage-categories')?.addEventListener('click', (e) => {
         e.preventDefault();
         // Redirect to instructor dash for this for now as it needs complex templates
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-view-profile')?.addEventListener('click', () => {
@@ -419,7 +434,7 @@ function setupNavigation() {
     const btnLogout = document.getElementById('btn-logout-sidebar');
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         });
     }
 
