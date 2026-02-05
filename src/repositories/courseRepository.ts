@@ -102,6 +102,9 @@ export class CourseRepository {
         const countQuery = `SELECT COUNT(*) as total FROM (${query})`;
         const total = (db.prepare(countQuery).get(...params) as any).total;
 
+        // Ordena por data de criação (mais recentes primeiro)
+        query += ` ORDER BY c.created_at DESC`;
+
         // adiciona limite e offset para paginação
         query += ` LIMIT ? OFFSET ?`;
         params.push(limit, offset);
@@ -156,6 +159,7 @@ export class CourseRepository {
             FROM courses c
             JOIN users u ON c.instructor_id = u.id
             WHERE c.category_id = ? AND c.is_active = 1
+            ORDER BY c.created_at DESC
             LIMIT ? OFFSET ?
         `;
 

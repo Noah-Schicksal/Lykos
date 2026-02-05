@@ -4,8 +4,9 @@ import { AppUI } from './utils/ui.js';
 import { initThemeToggle } from './theme-toggle.js';
 import { Auth } from './modules/auth.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Init services
+    Auth.init();
     initThemeToggle();
 
     // Elements

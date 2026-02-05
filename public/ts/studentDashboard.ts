@@ -11,6 +11,9 @@ import { initThemeToggle } from './theme-toggle.js';
 let allCourses: any[] = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize Auth
+    Auth.init();
+
     // Check if user is logged in
     const userStr = localStorage.getItem('auth_user');
     const user = userStr ? JSON.parse(userStr) : null;
