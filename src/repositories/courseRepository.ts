@@ -56,7 +56,8 @@ export class CourseRepository {
                 c.*, 
                 cat.name as category_name, 
                 u.name as instructor_name,
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count
+                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_count,
+                (SELECT AVG(rating) FROM reviews WHERE course_id = c.id) as rating_average
         `;
 
         // ... (rest of selection logic unchanged until FROM)
@@ -127,6 +128,7 @@ export class CourseRepository {
                 coverImageUrl: row.cover_image_url,
                 maxStudents: row.max_students,
                 enrolledCount: row.enrolled_count,
+                averageRating: row.rating_average || 0,
                 isEnrolled: !!row.is_enrolled,
                 progress: row.is_enrolled ? progress : undefined, // Only send progress if enrolled
                 instructorId: row.instructor_id, // Added for owner check

@@ -73,4 +73,9 @@ export class ReviewService {
             return this.reviewRepository.save(review);
         }
     }
+
+    // Deleta a avaliação do usuário para um curso
+    async deleteReview(userId: string, courseId: string): Promise<boolean> {
+        return this.reviewRepository.deleteByUserAndCourse(userId, courseId);
+    }
 }
