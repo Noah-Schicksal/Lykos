@@ -204,8 +204,6 @@ body {
   z-index: 100;
   display: flex;
   align-items: center;
-  overflow-x: hidden;
-  max-width: 100vw;
 }
 
 :root.light .navbar {
@@ -219,12 +217,10 @@ body {
   margin: 0 auto;
   padding: 1.5rem 0.75rem;
   width: 100%;
-  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  overflow: hidden;
+  gap: 1rem;
 }
 
 .logo {
@@ -569,6 +565,25 @@ body {
 
 .user-menu-btn.open .material-symbols-outlined {
   transform: rotate(180deg);
+}
+
+/* Responsive navbar - hide text on mobile, show icons only */
+@media (max-width: 480px) {
+  .logo {
+    display: none;
+  }
+  
+  .nav-actions {
+    gap: 0.5rem;
+  }
+  
+  .user-menu-btn {
+    padding: 0.5rem;
+  }
+  
+  .user-menu-btn .menu-text {
+    display: none;
+  }
 }
 
 /* ===========================

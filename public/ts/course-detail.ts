@@ -53,7 +53,138 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadReviews(courseId, 1);
     setupReviewForm(courseId, course.isEnrolled ?? false);
   }
+
+  // Setup user dropdown menu
+  setupUserDropdown();
 });
+
+/**
+ * Setup user dropdown menu functionality
+ */
+function setupUserDropdown() {
+  const avatarBtn = document.getElementById('user-avatar-btn');
+  const userInfoBtn = document.getElementById('user-info-btn');
+  const dropdownMenu = document.getElementById('user-dropdown-menu');
+  const authContainer = document.getElementById('auth-card-container');
+
+  // Avatar button opens auth card for login
+  if (avatarBtn) {
+    avatarBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (authContainer) {
+        authContainer.classList.toggle('show');
+      }
+    });
+  }
+
+  // User info button toggles dropdown
+  if (userInfoBtn && dropdownMenu) {
+    userInfoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('show');
+      userInfoBtn.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (
+        dropdownMenu.classList.contains('show') &&
+        !dropdownMenu.contains(e.target as Node) &&
+        !userInfoBtn.contains(e.target as Node)
+      ) {
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+      }
+    });
+
+    // Dropdown profile button
+    const dropdownProfile = document.getElementById('dropdown-profile');
+    if (dropdownProfile) {
+      dropdownProfile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+        // Show message - profile is only available on home page
+        AppUI.showMessage('Para acessar seu perfil, vá para a página inicial.', 'info');
+      });
+    }
+
+    // Dropdown logout button
+    const dropdownLogout = document.getElementById('dropdown-logout');
+    if (dropdownLogout) {
+      dropdownLogout.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+        Auth.logout();
+      });
+    }
+  }
+
+  // Update visibility based on auth state
+  updateUserMenuVisibility();
+
+  // Listen for auth changes
+  window.addEventListener('auth-login', updateUserMenuVisibility);
+  window.addEventListener('auth-logout', updateUserMenuVisibility);
+}
+
+/**
+ * Update user menu visibility based on auth state
+ */
+function updateUserMenuVisibility() {
+  const user = localStorage.getItem('auth_user');
+  const avatarBtn = document.getElementById('user-avatar-btn');
+  const userInfoBtn = document.getElementById('user-info-btn');
+  const openDrawerBtn = document.getElementById('open-drawer-btn');
+
+  // Show login button only when NOT logged in
+  if (avatarBtn) {
+    if (user) {
+      avatarBtn.classList.add('hidden');
+    } else {
+      avatarBtn.classList.remove('hidden');
+    }
+  }
+
+  // Show user info button only when logged in
+  if (userInfoBtn) {
+    if (user) {
+      userInfoBtn.classList.remove('hidden');
+      // Update role display
+      try {
+        const userData = JSON.parse(user);
+        const displayName = document.getElementById('user-display-name');
+        if (displayName) {
+          const roleMap: { [key: string]: string } = {
+            INSTRUCTOR: 'Instrutor',
+            STUDENT: 'Estudante',
+            ADMIN: 'Admin',
+            instructor: 'Instrutor',
+            student: 'Estudante',
+            admin: 'Admin',
+          };
+          const role = userData.role || 'STUDENT';
+          displayName.textContent = roleMap[role] || 'Usuário';
+        }
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    } else {
+      userInfoBtn.classList.add('hidden');
+    }
+  }
+
+  // Show drawer button only when logged in
+  if (openDrawerBtn) {
+    if (user) {
+      openDrawerBtn.classList.remove('hidden');
+    } else {
+      openDrawerBtn.classList.add('hidden');
+    }
+  }
+}
 
 /**
  * Load and display course data
