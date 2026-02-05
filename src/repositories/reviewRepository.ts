@@ -88,12 +88,6 @@ export class ReviewRepository {
         return { reviews, total };
     }
 
-    // deleta uma avaliação
-    delete(id: string): void {
-        const stmt = db.prepare('DELETE FROM reviews WHERE id = ?');
-        stmt.run(id);
-    }
-
     // busca uma avaliação pelo id
     findById(id: string): Review | null {
         const stmt = db.prepare('SELECT * FROM reviews WHERE id = ?');
@@ -133,6 +127,20 @@ export class ReviewRepository {
         const stmt = db.prepare('SELECT AVG(rating) as avgRating FROM reviews WHERE course_id = ?');
         const result = stmt.get(courseId) as { avgRating: number };
         return result.avgRating || 0;
+    }
+
+    // deleta uma avaliação por ID
+    delete(id: string): boolean {
+        const stmt = db.prepare('DELETE FROM reviews WHERE id = ?');
+        const result = stmt.run(id);
+        return result.changes > 0;
+    }
+
+    // deleta avaliação por usuário e curso
+    deleteByUserAndCourse(userId: string, courseId: string): boolean {
+        const stmt = db.prepare('DELETE FROM reviews WHERE user_id = ? AND course_id = ?');
+        const result = stmt.run(userId, courseId);
+        return result.changes > 0;
     }
 }
 

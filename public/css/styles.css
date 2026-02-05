@@ -220,7 +220,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .logo {
@@ -565,6 +565,25 @@ body {
 
 .user-menu-btn.open .material-symbols-outlined {
   transform: rotate(180deg);
+}
+
+/* Responsive navbar - hide text on mobile, show icons only */
+@media (max-width: 480px) {
+  .logo {
+    display: none;
+  }
+  
+  .nav-actions {
+    gap: 0.5rem;
+  }
+  
+  .user-menu-btn {
+    padding: 0.5rem;
+  }
+  
+  .user-menu-btn .menu-text {
+    display: none;
+  }
 }
 
 /* ===========================

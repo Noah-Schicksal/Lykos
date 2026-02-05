@@ -18,8 +18,8 @@ reviewRoutes.post(
 );
 
 // Operação direta em reviews
-reviewRoutes.delete('/:id', authMiddleware, (req, res) =>
-  reviewController.delete(req, res),
+reviewRoutes.delete('/:id', authMiddleware, (req, res, next) =>
+  reviewController.delete(req, res, next),
 );
 
 export default reviewRoutes;
