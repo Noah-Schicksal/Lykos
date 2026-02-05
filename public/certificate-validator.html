@@ -1,358 +1,401 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validação de Certificado - ChemAcademy</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Validação de Certificado - ChemAcademy</title>
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+      (function () {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light') {
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
 
-  <!-- Apply theme immediately to prevent flash -->
-  <script>
-    (function () {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.documentElement.classList.add('light');
-      }
-    })();
-  </script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
-  <style>
-    .validator-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at top right, rgba(94, 23, 235, 0.05), transparent),
-        radial-gradient(circle at bottom left, rgba(94, 23, 235, 0.05), transparent);
-      background-color: var(--bg-dark);
-      padding: 1rem;
-    }
-
-    .validator-card {
-      background-color: var(--bg-card);
-      padding: 2.5rem;
-      border-radius: 1.5rem;
-      border: 1px solid var(--border-light);
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .validator-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), #a855f7);
-    }
-
-    .input-hash {
-      width: 100%;
-      padding: 1rem;
-      background-color: var(--bg-dark);
-      border: 2px solid var(--border-light);
-      border-radius: 0.75rem;
-      color: var(--text-primary);
-      font-family: 'JetBrains Mono', monospace;
-      margin: 1.5rem 0;
-      text-align: center;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-    }
-
-    .input-hash:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(94, 23, 235, 0.1);
-      outline: none;
-    }
-
-    .result-box {
-      margin-top: 2rem;
-      padding: 2rem;
-      border-radius: 1rem;
-      display: none;
-      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+    <style>
+      .validator-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(
+            circle at top right,
+            rgba(94, 23, 235, 0.05),
+            transparent
+          ),
+          radial-gradient(
+            circle at bottom left,
+            rgba(94, 23, 235, 0.05),
+            transparent
+          );
+        background-color: var(--bg-dark);
+        padding: 1rem;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .result-box.valid {
-      display: block;
-      background-color: rgba(16, 185, 129, 0.05);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .result-box.invalid {
-      display: block;
-      background-color: rgba(239, 68, 68, 0.05);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .shake {
-      animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    @keyframes shake {
-
-      10%,
-      90% {
-        transform: translate3d(-1px, 0, 0);
+      .validator-card {
+        background-color: var(--bg-card);
+        padding: 2.5rem;
+        border-radius: 1.5rem;
+        border: 1px solid var(--border-light);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
       }
 
-      20%,
-      80% {
-        transform: translate3d(2px, 0, 0);
+      .validator-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary), #a855f7);
       }
 
-      30%,
-      50%,
-      70% {
-        transform: translate3d(-4px, 0, 0);
+      .input-hash {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--bg-dark);
+        border: 2px solid var(--border-light);
+        border-radius: 0.75rem;
+        color: var(--text-primary);
+        font-family: 'JetBrains Mono', monospace;
+        margin: 1.5rem 0;
+        text-align: center;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
       }
 
-      40%,
-      60% {
-        transform: translate3d(4px, 0, 0);
+      .input-hash:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(94, 23, 235, 0.1);
+        outline: none;
       }
-    }
 
-    .status-icon {
-      font-size: 3.5rem;
-      margin-bottom: 1rem;
-      display: block;
-    }
+      .result-box {
+        margin-top: 2rem;
+        padding: 2rem;
+        border-radius: 1rem;
+        display: none;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
 
-    .valid .status-icon {
-      color: #10b981;
-    }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
 
-    .invalid .status-icon {
-      color: #ef4444;
-    }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    .cert-info {
-      text-align: left;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-light);
-    }
+      .result-box.valid {
+        display: block;
+        background-color: rgba(16, 185, 129, 0.05);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+      }
 
-    .info-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
+      .result-box.invalid {
+        display: block;
+        background-color: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
 
-    .info-label {
-      color: var(--text-muted);
-    }
+      .shake {
+        animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
 
-    .info-value {
-      color: var(--text-primary);
-      font-weight: 500;
-    }
+      @keyframes shake {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
 
-    .btn-validate {
-      background: linear-gradient(135deg, var(--primary), #7c3aed);
-      color: white;
-      border: none;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      cursor: pointer;
-      font-weight: 700;
-      width: 100%;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(94, 23, 235, 0.2);
-    }
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
 
-    .btn-validate:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(94, 23, 235, 0.3);
-    }
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
 
-    .btn-validate:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  </style>
-</head>
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
+      }
 
-<body>
-  <div class="validator-container">
-    <div class="validator-card">
-      <div class="mb-6">
-        <i class="ph ph-certificate text-4xl mb-2" style="color: var(--primary);"></i>
-        <h1 class="text-2xl font-bold" style="color: var(--text-primary);">Validar Autenticidade</h1>
-        <p class="text-sm" style="color: var(--text-muted); margin-top: 0.5rem;">
-          Verifique a validade de certificados emitidos pela Lykos.
-        </p>
-      </div>
+      .status-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
 
-      <input type="text" id="hash-input" class="input-hash" placeholder="Insira o código do certificado"
-        spellcheck="false" />
+      .valid .status-icon {
+        color: #10b981;
+      }
 
-      <button id="validate-btn" class="btn-validate">
-        Validar Certificado
-      </button>
+      .invalid .status-icon {
+        color: #ef4444;
+      }
 
-      <div id="result" class="result-box">
-        <i id="status-icon" class="status-icon ph"></i>
-        <h3 id="result-title" class="text-xl font-bold mb-1"></h3>
-        <p id="result-msg" class="text-sm" style="color: var(--text-muted);"></p>
+      .cert-info {
+        text-align: left;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+      }
 
-        <div id="cert-details" class="cert-info">
-          <div class="info-item">
-            <span class="info-label">Aluno</span>
-            <span id="info-student" class="info-value"></span>
+      .info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .info-label {
+        color: var(--text-muted);
+      }
+
+      .info-value {
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      .btn-validate {
+        background: linear-gradient(135deg, var(--primary), #7c3aed);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        font-weight: 700;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(94, 23, 235, 0.2);
+      }
+
+      .btn-validate:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(94, 23, 235, 0.3);
+      }
+
+      .btn-validate:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="validator-container">
+      <div class="validator-card">
+        <div class="mb-6">
+          <i
+            class="ph ph-certificate text-4xl mb-2"
+            style="color: var(--primary)"
+          ></i>
+          <h1 class="text-2xl font-bold" style="color: var(--text-primary)">
+            Validar Autenticidade
+          </h1>
+          <p
+            class="text-sm"
+            style="color: var(--text-muted); margin-top: 0.5rem"
+          >
+            Verifique a validade de certificados emitidos pela Lykos.
+          </p>
+        </div>
+
+        <input
+          type="text"
+          id="hash-input"
+          class="input-hash"
+          placeholder="Insira o código do certificado"
+          spellcheck="false"
+        />
+
+        <button id="validate-btn" class="btn-validate">
+          Validar Certificado
+        </button>
+
+        <div id="result" class="result-box">
+          <i id="status-icon" class="status-icon ph"></i>
+          <h3 id="result-title" class="text-xl font-bold mb-1"></h3>
+          <p
+            id="result-msg"
+            class="text-sm"
+            style="color: var(--text-muted)"
+          ></p>
+
+          <div id="cert-details" class="cert-info">
+            <div class="info-item">
+              <span class="info-label">Aluno</span>
+              <span id="info-student" class="info-value"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Curso</span>
+              <span id="info-course" class="info-value"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Emissão</span>
+              <span id="info-date" class="info-value"></span>
+            </div>
+
+            <a
+              id="view-link"
+              href="#"
+              target="_blank"
+              class="btn-validate"
+              style="
+                display: block;
+                margin-top: 1.5rem;
+                text-decoration: none;
+                background: rgba(94, 23, 235, 0.1);
+                color: var(--primary);
+                box-shadow: none;
+                border: 1px solid var(--primary);
+              "
+              >Visualizar Certificado</a
+            >
           </div>
-          <div class="info-item">
-            <span class="info-label">Curso</span>
-            <span id="info-course" class="info-value"></span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Emissão</span>
-            <span id="info-date" class="info-value"></span>
-          </div>
+        </div>
 
-          <a id="view-link" href="#" target="_blank" class="btn-validate" style="
-            display: block; 
-            margin-top: 1.5rem; 
-            text-decoration: none; 
-            background: rgba(94, 23, 235, 0.1); 
-            color: var(--primary);
-            box-shadow: none;
-            border: 1px solid var(--primary);
-          ">Visualizar Certificado</a>
+        <div class="mt-8" style="margin-top: 1rem">
+          <a
+            href="/"
+            class="text-sm font-medium hover:underline"
+            style="color: var(--primary)"
+          >
+            <i class="ph ph-arrow-left mr-1"></i> Voltar para Home
+          </a>
         </div>
       </div>
-
-      <div class="mt-8" style="margin-top: 1rem;">
-        <a href="index.html" class="text-sm font-medium hover:underline" style="color: var(--primary);">
-          <i class="ph ph-arrow-left mr-1"></i> Voltar para Home
-        </a>
-      </div>
     </div>
-  </div>
 
-  <script>
-    console.log('Validator Script Loaded');
+    <script>
+      console.log('Validator Script Loaded');
 
-    async function handleValidate() {
-      const input = document.getElementById('hash-input');
-      const btn = document.getElementById('validate-btn');
-      const hash = input.value?.trim() || '';
+      async function handleValidate() {
+        const input = document.getElementById('hash-input');
+        const btn = document.getElementById('validate-btn');
+        const hash = input.value?.trim() || '';
 
-      const resultBox = document.getElementById('result');
-      const resultTitle = document.getElementById('result-title');
-      const resultMsg = document.getElementById('result-msg');
-      const statusIcon = document.getElementById('status-icon');
-      const certDetails = document.getElementById('cert-details');
-      const viewLink = document.getElementById('view-link');
+        const resultBox = document.getElementById('result');
+        const resultTitle = document.getElementById('result-title');
+        const resultMsg = document.getElementById('result-msg');
+        const statusIcon = document.getElementById('status-icon');
+        const certDetails = document.getElementById('cert-details');
+        const viewLink = document.getElementById('view-link');
 
-      // Info Fields
-      const infoStudent = document.getElementById('info-student');
-      const infoCourse = document.getElementById('info-course');
-      const infoWorkload = document.getElementById('info-workload');
-      const infoDate = document.getElementById('info-date');
+        // Info Fields
+        const infoStudent = document.getElementById('info-student');
+        const infoCourse = document.getElementById('info-course');
+        const infoWorkload = document.getElementById('info-workload');
+        const infoDate = document.getElementById('info-date');
 
-      if (!hash) {
-        input.classList.add('shake');
-        input.style.borderColor = '#ef4444';
-        setTimeout(() => {
-          input.classList.remove('shake');
-          input.style.borderColor = '';
-        }, 500);
-        return;
-      }
-
-      // Start Loading State
-      btn.disabled = true;
-      const originalText = btn.textContent;
-      btn.textContent = 'Verificando Autenticidade...';
-
-      resultBox.style.display = 'none';
-
-      try {
-        const res = await fetch(`/certificates/${hash}`);
-        const data = await res.json();
-
-        if (res.ok && data.data && data.data.isValid) {
-          resultBox.className = 'result-box valid';
-          statusIcon.className = 'status-icon ph-fill ph-check-circle';
-          resultTitle.textContent = 'Certificado Autêntico';
-          resultTitle.style.color = '#10b981';
-          resultMsg.textContent = 'Este documento foi emitido e validado pela plataforma Lykos.';
-
-          // Fill Details (with defensive checks)
-          if (infoStudent) infoStudent.textContent = data.data.studentName;
-          if (infoCourse) infoCourse.textContent = data.data.courseTitle;
-          if (infoWorkload) infoWorkload.textContent = `${data.data.workloadHours} horas`;
-          if (infoDate) infoDate.textContent = new Date(data.data.issuedAt).toLocaleDateString('pt-BR');
-
-          certDetails.style.display = 'block';
-          viewLink.href = `certificate.html?hash=${hash}`;
-          viewLink.style.display = 'block';
-        } else {
-          throw new Error('Certificado não encontrado');
+        if (!hash) {
+          input.classList.add('shake');
+          input.style.borderColor = '#ef4444';
+          setTimeout(() => {
+            input.classList.remove('shake');
+            input.style.borderColor = '';
+          }, 500);
+          return;
         }
-      } catch (error) {
-        resultBox.className = 'result-box invalid';
-        statusIcon.className = 'status-icon ph-fill ph-x-circle';
-        resultTitle.textContent = 'Código Inválido';
-        resultTitle.style.color = '#ef4444';
-        resultMsg.textContent = 'Não encontramos nenhum certificado registrado com este código.';
-        certDetails.style.display = 'none';
-      } finally {
-        resultBox.style.display = 'block';
-        btn.disabled = false;
-        btn.textContent = originalText;
+
+        // Start Loading State
+        btn.disabled = true;
+        const originalText = btn.textContent;
+        btn.textContent = 'Verificando Autenticidade...';
+
+        resultBox.style.display = 'none';
+
+        try {
+          const res = await fetch(`/certificates/${hash}`);
+          const data = await res.json();
+
+          if (res.ok && data.data && data.data.isValid) {
+            resultBox.className = 'result-box valid';
+            statusIcon.className = 'status-icon ph-fill ph-check-circle';
+            resultTitle.textContent = 'Certificado Autêntico';
+            resultTitle.style.color = '#10b981';
+            resultMsg.textContent =
+              'Este documento foi emitido e validado pela plataforma Lykos.';
+
+            // Fill Details (with defensive checks)
+            if (infoStudent) infoStudent.textContent = data.data.studentName;
+            if (infoCourse) infoCourse.textContent = data.data.courseTitle;
+            if (infoWorkload)
+              infoWorkload.textContent = `${data.data.workloadHours} horas`;
+            if (infoDate)
+              infoDate.textContent = new Date(
+                data.data.issuedAt,
+              ).toLocaleDateString('pt-BR');
+
+            certDetails.style.display = 'block';
+            viewLink.href = `certificate.html?hash=${hash}`;
+            viewLink.style.display = 'block';
+          } else {
+            throw new Error('Certificado não encontrado');
+          }
+        } catch (error) {
+          resultBox.className = 'result-box invalid';
+          statusIcon.className = 'status-icon ph-fill ph-x-circle';
+          resultTitle.textContent = 'Código Inválido';
+          resultTitle.style.color = '#ef4444';
+          resultMsg.textContent =
+            'Não encontramos nenhum certificado registrado com este código.';
+          certDetails.style.display = 'none';
+        } finally {
+          resultBox.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
       }
-    }
 
-    // Bind events
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM Ready. Binding events.');
-      const btn = document.getElementById('validate-btn');
-      const input = document.getElementById('hash-input');
+      // Bind events
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM Ready. Binding events.');
+        const btn = document.getElementById('validate-btn');
+        const input = document.getElementById('hash-input');
 
-      if (btn) {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          handleValidate();
-        });
-      }
-
-      if (input) {
-        input.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
+        if (btn) {
+          btn.addEventListener('click', (e) => {
             e.preventDefault();
             handleValidate();
-          }
-        });
-      }
-    });
-  </script>
-</body>
+          });
+        }
 
+        if (input) {
+          input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleValidate();
+            }
+          });
+        }
+      });
+    </script>
+  </body>
 </html>

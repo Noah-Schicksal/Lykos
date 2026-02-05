@@ -5,9 +5,9 @@ const viewRoutes = Router();
 
 // Helper to serve HTML files
 const serveView = (viewName: string) => {
-    return (req: any, res: any) => {
-        res.sendFile(path.join(__dirname, '../../public', viewName));
-    };
+  return (req: any, res: any) => {
+    res.sendFile(path.join(__dirname, '../../public', viewName));
+  };
 };
 
 // --- Mapeamento de Rotas de Visualização (Telas) ---
@@ -33,5 +33,8 @@ viewRoutes.get('/aula/:id', serveView('player.html'));
 
 // Admin Area
 viewRoutes.get('/admin', serveView('admin.html'));
+
+// Validação de Certificado
+viewRoutes.get('/validar-certificado', serveView('certificate-validator.html'));
 
 export default viewRoutes;
