@@ -27,7 +27,7 @@ export function setupNavbarHandlers(): void {
 export function updateNavbarForUser(isLoggedIn: boolean): void {
   const loggedInOptions = document.getElementById('dropdown-logged-in');
   const loggedOutOptions = document.getElementById('dropdown-logged-out');
-  
+
   if (loggedInOptions && loggedOutOptions) {
     if (isLoggedIn) {
       loggedInOptions.style.display = '';
@@ -58,7 +58,7 @@ export function renderNavbar(): HTMLElement {
           el('span', { className: 'material-symbols-outlined theme-icon light-icon' }, 'light_mode')
         ),
         el('div', { id: 'user-avatar-btn', className: 'user-menu-btn' },
-          el('span', { className: 'menu-label' }, 'Menu'),
+          el('span', { className: 'menu-label' }, 'Instrutor'),
           el('span', { className: 'material-symbols-outlined menu-arrow' }, 'expand_more')
         ),
         el('div', { id: 'user-dropdown-menu', className: 'user-dropdown' },

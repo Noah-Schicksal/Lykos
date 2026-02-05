@@ -44,6 +44,7 @@ window.Categories = Categories;
 
 async function init(): Promise<void> {
   try {
+    await Auth.init();
     await checkAuth();
 
     renderDashboardLayout();
@@ -92,11 +93,14 @@ async function checkAuth(): Promise<void> {
     }
 
     setCurrentUser(user);
-  } catch (error) {
-    AppUI.showMessage(
-      'Erro ao verificar autenticação. Redirecionando...',
-      'error',
-    );
+  } catch (error: any) {
+    // Only show generic error if it wasn't a session expiration (which handles its own toast)
+    if (error.message !== 'Sua sessão expirou. Faça login novamente.') {
+      AppUI.showMessage(
+        'Erro ao verificar autenticação. Redirecionando...',
+        'error',
+      );
+    }
     setTimeout(() => {
       window.location.href = '/inicio';
     }, 2000);

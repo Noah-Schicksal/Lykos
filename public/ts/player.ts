@@ -2,6 +2,7 @@
  * Player Logic
  */
 import { AppUI } from './utils/ui.js';
+import { Auth } from './modules/auth.js';
 
 interface ClassItem {
     id: string;
@@ -54,6 +55,9 @@ const Player = {
         }
 
         Player.courseId = id;
+
+        // Initialize Auth
+        Auth.init();
 
         // Auth Check
         const user = localStorage.getItem('auth_user');

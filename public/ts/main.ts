@@ -246,7 +246,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // User info button (when logged in) does NOT open anything - just displays status
+  // User info button (when logged in) now toggles dropdown
+  const dropdownMenu = document.getElementById('user-dropdown-menu');
+
+  if (userInfoBtn && dropdownMenu) {
+    userInfoBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('show');
+      userInfoBtn.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (
+        dropdownMenu.classList.contains('show') &&
+        !dropdownMenu.contains(e.target as Node) &&
+        !userInfoBtn.contains(e.target as Node)
+      ) {
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+      }
+    });
+
+    // Dropdown Items
+    const dropdownProfile = document.getElementById('dropdown-profile');
+    const dropdownLogout = document.getElementById('dropdown-logout');
+
+    if (dropdownProfile) {
+      dropdownProfile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+
+        // Ensure auth container is visible
+        if (authContainer) authContainer.classList.add('show');
+
+        if (Auth && typeof Auth.showProfileView === 'function') {
+          Auth.showProfileView();
+        }
+      });
+    }
+
+    if (dropdownLogout) {
+      dropdownLogout.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.remove('show');
+        userInfoBtn.classList.remove('open');
+        Auth.logout();
+      });
+    }
+  }
 
   // Open Drawer Button (in navbar) - opens the drawer
   if (openDrawerBtn && userDrawer) {
