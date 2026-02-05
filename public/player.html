@@ -45,14 +45,9 @@
   <!-- Navbar (Aligned with Project Standard) -->
   <nav class="navbar">
     <div class="nav-container">
-      <!-- Sidebar Toggle Button (for player) -->
-      <button id="btn-toggle-sidebar" class="btn-icon sidebar-nav-toggle">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-
-      <div class="logo">
+      <a href="/inicio" class="logo">
         <img src="/assets/logo.svg" alt="Lykos Logo" class="logo-img" />
-      </div>
+      </a>
 
       <!-- Explore removed per user request -->
 
@@ -314,9 +309,8 @@
         <div class="class-header">
           <h1 id="class-title" class="class-title">Título da Aula</h1>
           <div class="class-actions">
-            <button id="btn-toggle-sidebar-restore" class="btn-action hidden">
-              <span class="material-symbols-outlined">menu_open</span>
-              <span class="btn-text">Mostrar Aulas</span>
+            <button id="btn-toggle-sidebar" class="btn-sidebar-toggle">
+              <span class="material-symbols-outlined">view_sidebar</span>
             </button>
             <button id="btn-mark-completed" class="btn-action">
               <span class="material-symbols-outlined">check_circle</span>
@@ -346,7 +340,7 @@
     <aside class="player-sidebar">
       <div class="sidebar-header">
         <div class="sidebar-header-top">
-          <a href="/inicio" class="btn-sidebar-action">
+          <a href="/estudante" class="btn-sidebar-action">
             <span class="material-symbols-outlined">arrow_back</span>
             Cursos
           </a>
@@ -484,7 +478,7 @@
       <!-- Management Section (Instructors only) -->
       <div id="drawer-management-section" class="drawer-section hidden">
         <div class="drawer-section-label">Gerenciamento</div>
-        <a href="/instructor.html" class="drawer-item">
+        <a href="/professor" class="drawer-item">
           <span class="material-symbols-outlined">dashboard</span>
           Painel do Professor
         </a>

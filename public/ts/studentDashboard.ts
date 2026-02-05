@@ -181,7 +181,7 @@ function setupCourseCardListeners() {
             const target = e.target as HTMLElement;
             if (!target.closest('.btn-resume-course')) {
                 const courseId = (card as HTMLElement).dataset.courseId;
-                if (courseId) window.location.href = `/aula/${courseId}`;
+                if (courseId) window.location.href = `/estudante/aula/${courseId}`;
             }
         });
     });
@@ -192,7 +192,7 @@ function setupCourseCardListeners() {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             const courseId = (button as HTMLElement).dataset.courseId;
-            if (courseId) window.location.href = `/aula/${courseId}`;
+            if (courseId) window.location.href = `/estudante/aula/${courseId}`;
         });
     });
 }

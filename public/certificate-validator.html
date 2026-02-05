@@ -354,7 +354,7 @@
               ).toLocaleDateString('pt-BR');
 
             certDetails.style.display = 'block';
-            viewLink.href = `certificate.html?hash=${hash}`;
+            viewLink.href = `/certificado?hash=${hash}`;
             viewLink.style.display = 'block';
           } else {
             throw new Error('Certificado não encontrado');

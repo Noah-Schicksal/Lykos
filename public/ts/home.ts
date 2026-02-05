@@ -263,7 +263,7 @@ export const Home = {
         actionButtonHTML = `
             <a 
               class="btn-icon btn-play-course" 
-              href="/aula/${course.id}"
+              href="/estudante/aula/${course.id}"
               style="
                 background: #10b981; 
                 color: white;
@@ -418,7 +418,7 @@ export const Home = {
     const generateValidateButton = () => {
       return `
         <div style="width: 100%; display: flex; justify-content: center; margin-top: 1rem;">
-          <a href="certificate-validator.html" class="btn-validate-home" style="
+          <a href="/validar-certificado" class="btn-validate-home" style="
             display: flex;
             align-items: center;
             gap: 0.5rem;
