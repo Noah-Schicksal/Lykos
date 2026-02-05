@@ -19,15 +19,16 @@ app.use(
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                scriptSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline needed for some inline scripts/handlers if present, or relax as needed
-                styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+                scriptSrc: ["'self'", "'unsafe-inline'", 'https://unpkg.com'],
+                styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://unpkg.com'],
                 imgSrc: [
                     "'self'",
                     'data:',
-                    'https://lh3.googleusercontent.com', // Allow Google profile images
-                    'https://placehold.co', // Allow placeholder service
+                    'https://lh3.googleusercontent.com',
+                    'https://placehold.co',
+                    'https://unpkg.com',
                 ],
-                fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+                fontSrc: ["'self'", 'https://fonts.gstatic.com', 'https://unpkg.com'],
                 connectSrc: ["'self'"],
                 frameSrc: ["'self'", 'https://www.youtube.com', 'https://youtube.com', 'https://player.vimeo.com', 'https://vimeo.com'],
                 mediaSrc: ["'self'", 'data:', 'blob:'],

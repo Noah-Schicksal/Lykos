@@ -49,7 +49,21 @@ export const AppUI: UIHelper = {
         return null;
       }
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type');
+
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.error('[API] Failed to parse JSON response:', e);
+          throw new Error('Falha ao processar resposta do servidor.');
+        }
+      } else {
+        const text = await response.text();
+        console.warn('[API] Non-JSON response received:', text.substring(0, 100));
+        throw new Error('O servidor retornou um formato inesperado.');
+      }
 
       if (!response.ok) {
         // Handle Session Expiry - only if user was actually logged in

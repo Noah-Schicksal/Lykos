@@ -19,6 +19,7 @@ yarn-error.log*
 coverage/
 *.lcov
 seed_sample.js
+test-certificate.ts
 
 
 # IDEs

@@ -284,7 +284,16 @@ export const Auth = {
 
   updateAuthUI: () => {
     const userStr = localStorage.getItem('auth_user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    let user = null;
+
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+      } catch (e) {
+        console.error('[Auth] Error parsing auth_user from localStorage:', e);
+        localStorage.removeItem('auth_user'); // Clear corrupted data
+      }
+    }
 
     const cardInner = document.getElementById('auth-card');
     const loginFace = cardInner?.querySelector(
@@ -355,7 +364,15 @@ export const Auth = {
     if (profileViewFace) profileViewFace.classList.remove('hidden');
 
     const userStr = localStorage.getItem('auth_user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    let user = null;
+
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+      } catch (e) {
+        console.error('[Auth] Error parsing auth_user in showProfileView:', e);
+      }
+    }
 
     if (user) {
       const nameEl = document.getElementById('profile-name-display');
@@ -378,7 +395,15 @@ export const Auth = {
     if (profileEditFace) profileEditFace.classList.remove('hidden');
 
     const userStr = localStorage.getItem('auth_user');
-    const user = userStr ? JSON.parse(userStr) : null;
+    let user = null;
+
+    if (userStr) {
+      try {
+        user = JSON.parse(userStr);
+      } catch (e) {
+        console.error('[Auth] Error parsing auth_user in showProfileEdit:', e);
+      }
+    }
 
     if (user) {
       const nameInput = document.getElementById('edit-name') as HTMLInputElement;
