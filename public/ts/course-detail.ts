@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Load course data
-  await loadCourseData(courseId);
+  const course = await loadCourseData(courseId);
 
   // Setup cart toggle
   setupCartToggle();
@@ -47,12 +47,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Setup share button
   setupShareButton();
+
+  // Load and setup reviews
+  if (course) {
+    await loadReviews(courseId, 1);
+    setupReviewForm(courseId, course.isEnrolled ?? false);
+  }
 });
 
 /**
  * Load and display course data
  */
-async function loadCourseData(courseId: string) {
+async function loadCourseData(courseId: string): Promise<Course | null> {
   try {
     // Fetch course and modules in parallel
     const [course, modules] = await Promise.all([
@@ -63,12 +69,14 @@ async function loadCourseData(courseId: string) {
     // Populate course details
     populateCourseDetails(course);
     populateModules(modules);
+    return course;
   } catch (error) {
     console.error('Error loading course:', error);
     AppUI.showMessage('Erro ao carregar detalhes do curso', 'error');
     setTimeout(() => {
       window.location.href = '/';
     }, 2000);
+    return null;
   }
 }
 
@@ -629,7 +637,6 @@ function setupShareButton() {
   if (btnShare) {
     btnShare.addEventListener('click', async () => {
       const courseUrl = window.location.href;
-
       try {
         await navigator.clipboard.writeText(courseUrl);
         AppUI.showMessage('Link copiado para a área de transferência!', 'success');
@@ -654,3 +661,439 @@ function setupShareButton() {
     });
   }
 }
+
+// ===== REVIEWS FUNCTIONALITY =====
+
+interface ReviewData {
+  id: string;
+  userName: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
+interface ReviewsResponse {
+  data: ReviewData[];
+  meta: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+    averageRating: number;
+  };
+}
+
+let currentReviewsPage = 1;
+let currentCourseId = '';
+let selectedRating = 0;
+let userHasReview = false;
+
+/**
+ * Load reviews for a course
+ */
+async function loadReviews(courseId: string, page: number = 1) {
+  currentCourseId = courseId;
+  currentReviewsPage = page;
+  
+  const reviewsList = document.getElementById('reviews-list');
+  const paginationEl = document.getElementById('reviews-pagination');
+  
+  if (reviewsList) {
+    reviewsList.innerHTML = '<p class="loading-text">Carregando avaliações...</p>';
+  }
+  
+  try {
+    const response = await AppUI.apiFetch(`/courses/${courseId}/reviews?page=${page}&limit=5`) as ReviewsResponse;
+    
+    // Update summary
+    const averageEl = document.getElementById('reviews-average');
+    const countEl = document.getElementById('reviews-count');
+    
+    if (averageEl) {
+      const avg = response.meta.averageRating ?? 0;
+      averageEl.textContent = avg.toFixed(1);
+    }
+    if (countEl) {
+      const total = response.meta.totalItems;
+      countEl.textContent = `${total} ${total === 1 ? 'avaliação' : 'avaliações'}`;
+    }
+    
+    // Check if current user has a review in this page
+    const authUser = localStorage.getItem('auth_user');
+    let currentUserName = '';
+    if (authUser) {
+      try {
+        currentUserName = JSON.parse(authUser).name;
+      } catch (e) {}
+    }
+    
+    // Find user's review and load it into form
+    const userReview = response.data.find(r => r.userName === currentUserName);
+    if (userReview) {
+      userHasReview = true;
+      loadUserReviewIntoForm(userReview);
+    }
+    
+    // Render reviews
+    renderReviews(response.data, currentUserName);
+    
+    // Render pagination
+    renderReviewsPagination(response.meta, paginationEl);
+    
+  } catch (error) {
+    console.error('Error loading reviews:', error);
+    if (reviewsList) {
+      reviewsList.innerHTML = '<p class="reviews-empty">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
+    }
+  }
+}
+
+/**
+ * Load user's existing review into the form
+ */
+function loadUserReviewIntoForm(review: ReviewData) {
+  const starSelector = document.getElementById('star-rating-selector');
+  const ratingText = document.getElementById('selected-rating-text');
+  const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
+  const submitBtn = document.querySelector('.btn-submit-review') as HTMLButtonElement;
+  const formTitle = document.querySelector('.review-form-title');
+  
+  // Set rating
+  selectedRating = review.rating;
+  if (starSelector) {
+    const starBtns = starSelector.querySelectorAll('.star-btn');
+    starBtns.forEach((btn, i) => {
+      if (i < review.rating) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+  if (ratingText) {
+    ratingText.textContent = `${review.rating} estrela${review.rating > 1 ? 's' : ''}`;
+  }
+  
+  // Set comment
+  if (commentEl && review.comment) {
+    commentEl.value = review.comment;
+  }
+  
+  // Update UI to show "edit mode"
+  if (formTitle) {
+    formTitle.textContent = 'Editar sua Avaliação';
+  }
+  if (submitBtn) {
+    submitBtn.innerHTML = `
+      <span class="material-symbols-outlined">edit</span>
+      Atualizar Avaliação
+    `;
+  }
+  
+  // Show delete button
+  showDeleteButton();
+}
+
+/**
+ * Show delete button in the form
+ */
+function showDeleteButton() {
+  const form = document.getElementById('review-form');
+  if (!form) return;
+  
+  // Check if delete button already exists
+  if (form.querySelector('.btn-delete-review')) return;
+  
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'btn-delete-review';
+  deleteBtn.innerHTML = `
+    <span class="material-symbols-outlined">delete</span>
+    Remover Avaliação
+  `;
+  deleteBtn.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  `;
+  deleteBtn.onmouseover = () => {
+    deleteBtn.style.background = '#ef4444';
+    deleteBtn.style.color = 'white';
+  };
+  deleteBtn.onmouseout = () => {
+    deleteBtn.style.background = 'transparent';
+    deleteBtn.style.color = '#ef4444';
+  };
+  
+  deleteBtn.addEventListener('click', async () => {
+    if (!confirm('Tem certeza que deseja remover sua avaliação?')) return;
+    
+    deleteBtn.disabled = true;
+    try {
+      await AppUI.apiFetch(`/courses/${currentCourseId}/reviews`, {
+        method: 'DELETE'
+      });
+      
+      AppUI.showMessage('Avaliação removida com sucesso!', 'success');
+      
+      // Reset form
+      resetReviewForm();
+      userHasReview = false;
+      
+      // Reload reviews
+      await loadReviews(currentCourseId, 1);
+      
+    } catch (error: any) {
+      AppUI.showMessage(error.message || 'Erro ao remover avaliação.', 'error');
+    } finally {
+      deleteBtn.disabled = false;
+    }
+  });
+  
+  // Add button container for both buttons
+  const submitBtn = form.querySelector('.btn-submit-review');
+  if (submitBtn && submitBtn.parentElement) {
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display: flex; gap: 1rem; flex-wrap: wrap;';
+    submitBtn.parentElement.insertBefore(btnContainer, submitBtn);
+    btnContainer.appendChild(submitBtn);
+    btnContainer.appendChild(deleteBtn);
+  }
+}
+
+/**
+ * Reset review form to initial state
+ */
+function resetReviewForm() {
+  const starSelector = document.getElementById('star-rating-selector');
+  const ratingText = document.getElementById('selected-rating-text');
+  const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
+  const submitBtn = document.querySelector('.btn-submit-review') as HTMLButtonElement;
+  const formTitle = document.querySelector('.review-form-title');
+  const deleteBtn = document.querySelector('.btn-delete-review');
+  
+  selectedRating = 0;
+  
+  if (starSelector) {
+    starSelector.querySelectorAll('.star-btn').forEach(btn => {
+      btn.classList.remove('active', 'hover');
+    });
+  }
+  if (ratingText) ratingText.textContent = 'Selecione';
+  if (commentEl) commentEl.value = '';
+  if (formTitle) formTitle.textContent = 'Sua Avaliação';
+  if (submitBtn) {
+    submitBtn.innerHTML = `
+      <span class="material-symbols-outlined">send</span>
+      Enviar Avaliação
+    `;
+  }
+  if (deleteBtn) deleteBtn.remove();
+}
+
+/**
+ * Render reviews list
+ */
+function renderReviews(reviews: ReviewData[], currentUserName: string = '') {
+  const reviewsList = document.getElementById('reviews-list');
+  if (!reviewsList) return;
+  
+  if (reviews.length === 0) {
+    reviewsList.innerHTML = '<p class="reviews-empty">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
+    return;
+  }
+  
+  reviewsList.innerHTML = reviews.map(review => {
+    const date = new Date(review.createdAt);
+    const formattedDate = date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    
+    // Generate stars
+    const starsHTML = Array.from({ length: 5 }, (_, i) => {
+      const isFilled = i < review.rating;
+      return `<span class="material-symbols-outlined ${isFilled ? '' : 'empty'}">star</span>`;
+    }).join('');
+    
+    // Highlight user's own review
+    const isOwnReview = review.userName === currentUserName;
+    const cardClass = isOwnReview ? 'review-card own-review' : 'review-card';
+    
+    return `
+      <div class="${cardClass}" ${isOwnReview ? 'style="border-color: var(--primary); border-width: 2px;"' : ''}>
+        <div class="review-card-header">
+          <div class="review-user-info">
+            <span class="review-user-name">${review.userName} ${isOwnReview ? '<span style="color: var(--primary); font-size: 0.75rem;">(você)</span>' : ''}</span>
+            <span class="review-date">${formattedDate}</span>
+          </div>
+          <div class="review-stars">${starsHTML}</div>
+        </div>
+        ${review.comment ? `<p class="review-comment">${review.comment}</p>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/**
+ * Render reviews pagination
+ */
+function renderReviewsPagination(meta: ReviewsResponse['meta'], container: HTMLElement | null) {
+  if (!container) return;
+  
+  if (meta.totalPages <= 1) {
+    container.innerHTML = '';
+    return;
+  }
+  
+  const prevDisabled = meta.currentPage === 1;
+  const nextDisabled = meta.currentPage >= meta.totalPages;
+  
+  container.innerHTML = `
+    <button 
+      type="button" 
+      class="reviews-pagination-btn" 
+      data-page="${meta.currentPage - 1}"
+      ${prevDisabled ? 'disabled' : ''}
+    >
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+    <span class="reviews-pagination-info">
+      ${meta.currentPage} de ${meta.totalPages}
+    </span>
+    <button 
+      type="button" 
+      class="reviews-pagination-btn" 
+      data-page="${meta.currentPage + 1}"
+      ${nextDisabled ? 'disabled' : ''}
+    >
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  `;
+  
+  // Add click listeners
+  container.querySelectorAll('.reviews-pagination-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const page = parseInt((btn as HTMLButtonElement).dataset.page || '1');
+      loadReviews(currentCourseId, page);
+    });
+  });
+}
+
+/**
+ * Setup review form for enrolled students
+ */
+function setupReviewForm(courseId: string, isEnrolled: boolean) {
+  const formContainer = document.getElementById('review-form-container');
+  const form = document.getElementById('review-form') as HTMLFormElement;
+  const starSelector = document.getElementById('star-rating-selector');
+  const ratingText = document.getElementById('selected-rating-text');
+  
+  // Only show form if user is enrolled
+  if (!isEnrolled || !localStorage.getItem('auth_user')) {
+    if (formContainer) formContainer.classList.add('hidden');
+    return;
+  }
+  
+  if (formContainer) formContainer.classList.remove('hidden');
+  
+  // Setup star rating interaction
+  if (starSelector) {
+    const starBtns = starSelector.querySelectorAll('.star-btn');
+    
+    starBtns.forEach((btn, index) => {
+      // Hover effect
+      btn.addEventListener('mouseenter', () => {
+        starBtns.forEach((b, i) => {
+          if (i <= index) {
+            b.classList.add('hover');
+          } else {
+            b.classList.remove('hover');
+          }
+        });
+      });
+      
+      // Click to select
+      btn.addEventListener('click', () => {
+        selectedRating = index + 1;
+        starBtns.forEach((b, i) => {
+          if (i <= index) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+        if (ratingText) {
+          ratingText.textContent = `${selectedRating} estrela${selectedRating > 1 ? 's' : ''}`;
+        }
+      });
+    });
+    
+    // Reset hover on mouse leave
+    starSelector.addEventListener('mouseleave', () => {
+      starBtns.forEach((btn, i) => {
+        btn.classList.remove('hover');
+        if (i < selectedRating) {
+          btn.classList.add('active');
+        }
+      });
+    });
+  }
+  
+  // Form submission
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (selectedRating === 0) {
+        AppUI.showMessage('Por favor, selecione uma nota de 1 a 5 estrelas.', 'error');
+        return;
+      }
+      
+      const commentEl = document.getElementById('review-comment') as HTMLTextAreaElement;
+      const comment = commentEl?.value.trim() || '';
+      
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      if (submitBtn) submitBtn.disabled = true;
+      
+      try {
+        await AppUI.apiFetch(`/courses/${courseId}/reviews`, {
+          method: 'POST',
+          body: JSON.stringify({
+            rating: selectedRating,
+            comment: comment
+          })
+        });
+        
+        const message = userHasReview ? 'Avaliação atualizada com sucesso!' : 'Avaliação enviada com sucesso!';
+        AppUI.showMessage(message, 'success');
+        userHasReview = true;
+        
+        // Reload reviews to show the updated one
+        await loadReviews(courseId, 1);
+        
+        // Also update the main rating display
+        const mainRatingEl = document.getElementById('course-rating');
+        const avgEl = document.getElementById('reviews-average');
+        if (mainRatingEl && avgEl) {
+          mainRatingEl.textContent = avgEl.textContent || '--';
+        }
+        
+      } catch (error: any) {
+        AppUI.showMessage(error.message || 'Erro ao enviar avaliação.', 'error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+}
+

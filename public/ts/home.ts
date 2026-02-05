@@ -342,6 +342,12 @@ export const Home = {
             <span>Criado por: ${course.instructor?.name || 'Instrutor Desconhecido'}</span>
           </div>
 
+          <div class="card-rating" style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; margin-bottom: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 1rem; color: #fbbf24; font-variation-settings: 'FILL' 1;">star</span>
+            <span style="font-weight: 600; color: var(--text-primary);">${((course as any).averageRating || 0).toFixed(1)}</span>
+            <span style="color: var(--text-muted);">/ 5.0</span>
+          </div>
+
           ${!isEnrolled ? `
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
              <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}
