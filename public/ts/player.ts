@@ -394,13 +394,9 @@ const Player = {
         const layout = document.querySelector('.player-layout') as HTMLElement;
         const btnToggle = document.getElementById('btn-drawer-toggle') as HTMLElement;
         const sidebar = document.querySelector('.player-sidebar') as HTMLElement;
+        const backdrop = document.querySelector('.sidebar-overlay-backdrop') as HTMLElement;
 
-        if (!layout || !btnToggle || !sidebar) return;
-
-        // Create backdrop for mobile drawer
-        const backdrop = document.createElement('div');
-        backdrop.className = 'sidebar-backdrop';
-        document.body.appendChild(backdrop);
+        if (!layout || !btnToggle || !sidebar || !backdrop) return;
 
         const toggleSidebar = (forceState?: boolean) => {
             const isMobile = window.innerWidth <= 1024;
@@ -414,9 +410,11 @@ const Player = {
                 if (isOpen) {
                     sidebar.classList.add('sidebar-open');
                     backdrop.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 } else {
                     sidebar.classList.remove('sidebar-open');
                     backdrop.classList.remove('active');
+                    document.body.style.overflow = '';
                 }
 
                 // Update icon
@@ -425,7 +423,7 @@ const Player = {
                     icon.textContent = isOpen ? 'close' : 'menu';
                 }
             } else {
-                // Desktop: Toggle collapse state
+                // Desktop: Toggle collapse state (from absolute position toggle)
                 const isCollapsed = forceState !== undefined
                     ? forceState
                     : !layout.classList.contains('sidebar-collapsed');
@@ -437,6 +435,11 @@ const Player = {
                     layout.classList.remove('sidebar-collapsed');
                     localStorage.setItem('player_sidebar_collapsed', 'false');
                 }
+
+                // Ensure sidebar is not in drawer mode
+                sidebar.classList.remove('sidebar-open');
+                backdrop.classList.remove('active');
+                document.body.style.overflow = '';
             }
         };
 
@@ -461,7 +464,7 @@ const Player = {
         if (modulesList) {
             modulesList.addEventListener('click', () => {
                 if (window.innerWidth <= 1024 && sidebar.classList.contains('sidebar-open')) {
-                    toggleSidebar(false);
+                    setTimeout(() => toggleSidebar(false), 300);
                 }
             });
         }
