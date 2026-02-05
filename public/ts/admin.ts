@@ -24,14 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const detailDesc = document.getElementById('detail-description') as HTMLElement;
     const modulesList = document.getElementById('modules-list') as HTMLElement;
 
-    // Buttons
-    const btnLogoutSidebar = document.getElementById('btn-logout-sidebar'); // Updated ID
-    const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
-
     // User Profile Elements
-    const sidebarUserName = document.getElementById('sidebar-user-name');
-    const sidebarUserRole = document.getElementById('sidebar-user-role');
-    const sidebarUserAvatar = document.getElementById('sidebar-user-avatar');
+    const headerUserRole = document.getElementById('header-user-role');
+    const userDropdownMenu = document.getElementById('user-dropdown-menu');
+    const userAvatarBtn = document.getElementById('user-avatar-btn');
+    // Buttons
+    const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+    const btnLogout = document.getElementById('dropdown-logout');
 
     // Danger Zone Elements
     const toggleStatusBtn = document.getElementById('toggle-status') as HTMLButtonElement;
@@ -84,10 +83,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    if (btnLogoutSidebar) {
-        btnLogoutSidebar.addEventListener('click', async () => {
-            // Use window.confirm properly
-            if (window.confirm('Logout?')) {
+    if (userAvatarBtn && userDropdownMenu) {
+        userAvatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            userDropdownMenu.classList.toggle('show');
+            userAvatarBtn.classList.toggle('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            userDropdownMenu.classList.remove('show');
+            userAvatarBtn.classList.remove('open');
+        });
+    }
+
+    if (btnLogout) {
+        btnLogout.addEventListener('click', async () => {
+            if (window.confirm('Deseja realmente sair?')) {
                 await Auth.logout();
                 window.location.href = '/';
             }
@@ -104,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleStatusBtn.classList.remove('active');
                 toggleStatusBtn.classList.add('inactive');
 
-                statusText.textContent = 'DANGER';
+                statusText.textContent = 'PERIGO';
                 statusText.classList.remove('active');
                 statusText.classList.add('inactive'); // Red text
 
@@ -117,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 toggleStatusBtn.classList.add('active');
                 toggleStatusBtn.classList.remove('inactive');
 
-                statusText.textContent = 'SAFE';
+                statusText.textContent = 'SEGURO';
                 statusText.classList.add('active');
                 statusText.classList.remove('inactive');
 
@@ -150,10 +162,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (reset) {
             currentPage = 1;
-            sidebarList.innerHTML = '<p class="loading-text">Loading...</p>';
+            sidebarList.innerHTML = '<p class="loading-text">Carregando...</p>';
             loadMoreBtn.classList.add('hidden');
         } else {
-            loadMoreBtn.textContent = 'Loading...';
+            loadMoreBtn.textContent = 'Carregando...';
             loadMoreBtn.disabled = true;
             currentPage++;
         }
@@ -184,19 +196,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (hasNext) {
                     loadMoreBtn.classList.remove('hidden');
                     loadMoreBtn.disabled = false;
-                    loadMoreBtn.innerHTML = 'Load More <span class="material-symbols-outlined">expand_more</span>';
+                    loadMoreBtn.innerHTML = 'Carregar Mais <span class="material-symbols-outlined">expand_more</span>';
                 } else {
                     loadMoreBtn.classList.add('hidden');
                 }
 
             } else {
-                if (reset) sidebarList.innerHTML = '<p class="loading-text">No courses found.</p>';
+                if (reset) sidebarList.innerHTML = '<p class="loading-text">Nenhum curso encontrado.</p>';
                 loadMoreBtn.classList.add('hidden');
             }
 
         } catch (error) {
             console.error(error);
-            if (reset) sidebarList.innerHTML = '<p class="loading-text text-danger">Error loading courses</p>';
+            if (reset) sidebarList.innerHTML = '<p class="loading-text text-danger">Erro ao carregar cursos</p>';
         } finally {
             isLoading = false;
             if (!reset) {
@@ -223,7 +235,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Enrolled Count
             const studentCount = course.enrolledCount !== undefined ? course.enrolledCount : 0;
-            const studentLabel = studentCount === 1 ? 'Student' : 'Students';
+            const studentLabel = studentCount === 1 ? 'Aluno' : 'Alunos';
 
             card.innerHTML = `
                 <div class="course-thumb-mini">
@@ -257,7 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         detailsView.classList.remove('hidden');
 
         // Reset contents
-        detailTitle.textContent = 'Loading...';
+        detailTitle.textContent = 'Carregando...';
         detailDesc.textContent = '';
         modulesList.innerHTML = '';
         currentCourseId = id;
@@ -272,7 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderDetails(course);
         } catch (error) {
             console.error(error);
-            AppUI.showMessage('Error loading course details', 'error');
+            AppUI.showMessage('Erro ao carregar detalhes do curso', 'error');
         }
     }
 
@@ -282,7 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             toggleStatusBtn.classList.remove('inactive');
         }
         if (statusText) {
-            statusText.textContent = 'SAFE';
+            statusText.textContent = 'SEGURO';
             statusText.classList.add('active');
             statusText.classList.remove('inactive');
         }
@@ -296,7 +308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderDetails(course: any) {
         detailTitle.textContent = course.title;
         if (detailId) detailId.textContent = `ID: ${course.id}`;
-        detailDesc.textContent = course.description || 'No description provided.';
+        detailDesc.textContent = course.description || 'Nenhuma descrição informada.';
 
         // Modules
         if (course.modules && course.modules.length > 0) {
@@ -306,7 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         } else {
             // Using a distinct visual for empty modules, separate from description
-            modulesList.innerHTML = '<div style="padding: 2rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 0.5rem; text-align: center; color: #64748b;">No modules found.</div>';
+            modulesList.innerHTML = '<div style="padding: 2rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 0.5rem; text-align: center; color: #64748b;">Nenhum módulo encontrado.</div>';
         }
     }
 
@@ -360,7 +372,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function createLessonItem(lesson: any) {
         const isVideo = !!lesson.videoUrl;
         const icon = isVideo ? 'play_circle' : 'description';
-        const typeLabel = isVideo ? 'Video' : 'Handout';
+        const typeLabel = isVideo ? 'Vídeo' : 'Material';
         const iconClass = isVideo ? '' : 'file';
 
         return `
@@ -386,7 +398,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function deleteCourse(id: string) {
         try {
             await AppUI.apiFetch(`/admin/courses/${id}`, { method: 'DELETE' });
-            AppUI.showMessage('Course deleted successfully', 'success');
+            AppUI.showMessage('Curso excluído com sucesso', 'success');
 
             // Reset view
             showEmptyState();
@@ -396,7 +408,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error(error);
-            AppUI.showMessage('Failed to delete course', 'error');
+            AppUI.showMessage('Erro ao excluir curso', 'error');
         }
     }
 
@@ -415,10 +427,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderUserProfile() {
         const userStr = localStorage.getItem('auth_user');
-        if (userStr && sidebarUserName && sidebarUserRole) {
+        if (userStr) {
             const user = JSON.parse(userStr);
-            sidebarUserName.textContent = user.name || 'Admin';
-            sidebarUserRole.textContent = user.role || 'ADMIN';
+            if (headerUserRole) {
+                headerUserRole.textContent = user.role === 'ADMIN' ? 'Administrador' : user.role;
+            }
         }
     }
 
