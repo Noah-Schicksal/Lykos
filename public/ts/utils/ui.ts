@@ -13,6 +13,9 @@ export interface UIHelper {
   getPriceValue: (input: HTMLInputElement) => number;
 }
 
+// Track recently shown messages to prevent spam
+const recentMessages = new Set<string>();
+
 export const AppUI: UIHelper = {
   apiFetch: async (url: string, options: RequestInit = {}) => {
     console.log(`[API] ${url}`, options);
@@ -66,6 +69,9 @@ export const AppUI: UIHelper = {
           } else {
             console.log('[API] Unauthorized (no active session)');
           }
+
+          // Throw a standard message for 401 so debouncer catches duplicates
+          throw new Error('Sua sessão expirou. Faça login novamente.');
         }
         throw new Error(data.message || data.error || 'Erro na requisição');
       }
@@ -77,6 +83,16 @@ export const AppUI: UIHelper = {
   },
 
   showMessage: (msg: string, type: 'success' | 'error' | 'info') => {
+    // Prevent duplicate messages within 3 seconds
+    if (recentMessages.has(msg)) {
+      return;
+    }
+
+    recentMessages.add(msg);
+    setTimeout(() => {
+      recentMessages.delete(msg);
+    }, 3000);
+
     // 1. Ensure Toast Container Exists
     let container = document.querySelector('.toast-container');
     if (!container) {
