@@ -57,58 +57,6 @@ export const Home = {
       categorySelect.addEventListener('change', () => Home.applyFilters());
     }
 
-    // Modal Close listeners
-    const closeModalBtn = document.getElementById('close-modal');
-    const modal = document.getElementById('course-modal');
-    if (closeModalBtn) {
-      closeModalBtn.addEventListener('click', () => Home.closeCourseModal());
-    }
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        // Close if clicking on the modal itself (overlay) or the overlay div
-        const target = e.target as HTMLElement;
-        if (
-          target.id === 'course-modal' ||
-          target.classList.contains('course-modal-overlay')
-        ) {
-          Home.closeCourseModal();
-        }
-      });
-    }
-
-    // Modal Cart listener
-    const modalCartBtn = document.getElementById('modal-add-cart-btn');
-    if (modalCartBtn) {
-      modalCartBtn.addEventListener('click', () => {
-        // Check if button is disabled (owner case)
-        if (modalCartBtn.hasAttribute('disabled')) {
-          return;
-        }
-
-        const courseId = modalCartBtn.getAttribute('data-course-id');
-        console.log(`[Home] Modal cart button clicked for course ${courseId}`);
-        if (courseId) {
-          if (Home.cartItems.includes(courseId)) {
-            console.log(
-              `[Home] Course ${courseId} is already in cart. Opening sidebar...`,
-            );
-            const cartToggle = document.getElementById('cart-toggle-btn');
-            if (cartToggle) {
-              Home.closeCourseModal();
-              setTimeout(() => {
-                console.log('[Home] Triggering cart toggle click');
-                cartToggle.click();
-              }, 100);
-            } else {
-              console.error('[Home] cart-toggle-btn not found');
-            }
-            return;
-          }
-          Home.addToCart(courseId);
-        }
-      });
-    }
-
     Home.syncCart();
 
     // Listen for cart updates to keep local state in sync
@@ -241,11 +189,11 @@ export const Home = {
       card.className = 'card-base group cursor-pointer';
       card.setAttribute('data-course-id', course.id);
 
-      // Add click listener to card (but not if clicking the cart button)
+      // Add click listener to card to redirect to course detail page
       card.addEventListener('click', (e) => {
         const target = e.target as HTMLElement;
         if (target.closest('.btn-add-cart')) return;
-        Home.openCourseModal(course.id);
+        window.location.href = `/course-detail.html?id=${course.id}`;
       });
 
       // Handle Image URL
@@ -315,7 +263,7 @@ export const Home = {
         actionButtonHTML = `
             <a 
               class="btn-icon btn-play-course" 
-              href="/aula/${course.id}"
+              href="/estudante/aula/${course.id}"
               style="
                 background: #10b981; 
                 color: white;
@@ -394,6 +342,11 @@ export const Home = {
             <span>Criado por: ${course.instructor?.name || 'Instrutor Desconhecido'}</span>
           </div>
 
+          <div class="card-rating" style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; margin-bottom: 0.5rem;">
+            <span class="material-symbols-outlined" style="font-size: 1rem; color: #fbbf24; font-variation-settings: 'FILL' 1;">star</span>
+            <span style="font-weight: 600; color: var(--text-primary);">${((course as any).averageRating || 0).toFixed(1)}</span>
+          </div>
+
           ${!isEnrolled ? `
           <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
              <span class="material-symbols-outlined" style="font-size: 0.9rem; vertical-align: middle;">group</span> ${course.maxStudents === undefined || course.maxStudents === null ? '<span style="font-size: 1.2rem; vertical-align: middle; line-height: 1;">∞</span> Vagas ilimitadas' : `Vagas: ${course.maxStudents} / ${course.enrolledCount || 0}`}
@@ -470,7 +423,7 @@ export const Home = {
     const generateValidateButton = () => {
       return `
         <div style="width: 100%; display: flex; justify-content: center; margin-top: 1rem;">
-          <a href="certificate-validator.html" class="btn-validate-home" style="
+          <a href="/validar-certificado" class="btn-validate-home" style="
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -604,233 +557,4 @@ export const Home = {
     Home.renderPage(1, false);
   },
 
-  /**
-   * Abre o modal de detalhes do curso
-   */
-  openCourseModal: async (courseId: string) => {
-    try {
-      const modal = document.getElementById('course-modal');
-      if (!modal) return;
-
-      // Show modal immediately with loading state
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden'; // Prevent scroll
-
-      // Reset modal content to loading or empty
-      const modulesList = document.getElementById('modal-modules-list');
-      if (modulesList)
-        modulesList.innerHTML =
-          '<p class="loading-msg">Carregando módulos...</p>';
-
-      // Fetch data in parallel
-      const [course, modules] = await Promise.all([
-        Courses.getById(courseId),
-        Modules.getByCourse(courseId),
-      ]);
-
-      // Populate Modal
-      const title = document.getElementById('modal-course-title');
-      const desc = document.getElementById('modal-course-desc');
-      const instructor = document.getElementById('modal-course-instructor');
-      const date = document.getElementById('modal-course-date');
-      const price = document.getElementById('modal-course-price');
-      const img = document.getElementById(
-        'modal-course-img',
-      ) as HTMLImageElement;
-      const category = document.getElementById('modal-course-category');
-      const slots = document.getElementById('modal-course-slots');
-      const cartBtn = document.getElementById('modal-add-cart-btn');
-
-      if (title) title.textContent = course.title;
-      if (desc)
-        desc.textContent = course.description || 'Sem descrição disponível.';
-      if (instructor)
-        instructor.textContent =
-          course.instructor?.name || 'Instrutor Desconhecido';
-
-      // Format Date
-      if (date) {
-        const d = new Date(course.createdAt);
-        date.textContent = d.toLocaleDateString('pt-BR', {
-          day: '2-digit',
-          month: 'long',
-          year: 'numeric',
-        });
-      }
-
-      // Format Price
-      if (price) {
-        price.textContent = new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        }).format(course.price);
-      }
-
-      if (img) {
-        let imageUrl = course.coverImageUrl;
-        let hasImage = false;
-
-        // First, clean up any existing placeholder from previous modal opens
-        const container = img.parentElement;
-        if (container) {
-          const existingPlaceholder = container.querySelector(
-            '.card-img-placeholder',
-          );
-          if (existingPlaceholder) {
-            existingPlaceholder.remove();
-          }
-        }
-
-        if (
-          imageUrl &&
-          !imageUrl.startsWith('http') &&
-          !imageUrl.startsWith('/')
-        ) {
-          imageUrl = '/' + imageUrl;
-          hasImage = true;
-        } else if (imageUrl) {
-          hasImage = true;
-        }
-
-        // Use the same fallback approach as in course cards
-        if (hasImage && imageUrl) {
-          img.src = imageUrl;
-          img.style.display = 'block';
-          // Handle error by using the same placeholder as cards
-          img.onerror = function (this: HTMLImageElement) {
-            this.onerror = null;
-            this.style.display = 'none';
-            const container = this.parentElement;
-            if (container) {
-              const placeholder = document.createElement('div');
-              placeholder.className = 'card-img-placeholder';
-              placeholder.style.cssText =
-                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
-              placeholder.innerHTML = `
-                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
-                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
-              `;
-              container.insertBefore(placeholder, this);
-            }
-          };
-        } else {
-          // No image URL - hide img and show placeholder
-          img.style.display = 'none';
-          if (container) {
-            // Check if placeholder already exists
-            let placeholder = container.querySelector(
-              '.card-img-placeholder',
-            ) as HTMLElement | null;
-            if (!placeholder) {
-              placeholder = document.createElement('div');
-              placeholder.className = 'card-img-placeholder';
-              placeholder.style.cssText =
-                'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(94, 23, 235, 0.05); border-radius: 0.5rem;';
-              placeholder.innerHTML = `
-                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--text-muted);">image</span>
-                <span style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Sem imagem</span>
-              `;
-              container.insertBefore(placeholder, img);
-            }
-          }
-        }
-      }
-
-      if (category)
-        category.textContent = course.category?.name || 'Sem Categoria';
-
-      if (slots) {
-        const enrolledCount = course.enrolledCount || 0;
-        if (course.maxStudents === undefined || course.maxStudents === null) {
-          slots.textContent = `${enrolledCount} matriculados / ∞ vagas ilimitadas`;
-        } else {
-          slots.textContent = `${enrolledCount} matriculados / ${course.maxStudents} vagas`;
-        }
-      }
-
-      if (cartBtn) {
-        cartBtn.setAttribute('data-course-id', course.id);
-
-        // Check if logged user is the course owner
-        const userStr = localStorage.getItem('auth_user');
-        const currentUser = userStr ? JSON.parse(userStr) : null;
-        const isOwner = currentUser && (course.instructorId === currentUser.id || course.instructor?.id === currentUser.id);
-        const isEnrolled = (course as any).isEnrolled;
-
-        if (isOwner) {
-          // Owner cannot add their own course to cart
-          cartBtn.innerHTML = `
-            <span class="material-symbols-outlined">verified</span>
-            Criador
-          `;
-          cartBtn.setAttribute('disabled', 'true');
-          (cartBtn as HTMLElement).style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
-          (cartBtn as HTMLElement).style.cursor = 'not-allowed';
-          (cartBtn as HTMLElement).style.opacity = '0.9';
-        } else if (isEnrolled) {
-          // User already has this course
-          cartBtn.innerHTML = `
-            <span class="material-symbols-outlined">check_circle</span>
-            Obtido
-          `;
-          cartBtn.setAttribute('disabled', 'true');
-          (cartBtn as HTMLElement).style.background = '#10b981';
-          (cartBtn as HTMLElement).style.cursor = 'not-allowed';
-          (cartBtn as HTMLElement).style.opacity = '0.9';
-        } else if (Home.cartItems.includes(courseId)) {
-          cartBtn.innerHTML = `
-            <span class="material-symbols-outlined">shopping_cart_checkout</span>
-            Ir para Carrinho
-          `;
-          cartBtn.removeAttribute('disabled');
-          (cartBtn as HTMLElement).style.background = '';
-          (cartBtn as HTMLElement).style.cursor = '';
-          (cartBtn as HTMLElement).style.opacity = '';
-        } else {
-          cartBtn.innerHTML = `
-            <span class="material-symbols-outlined">shopping_cart</span>
-            Adicionar ao Carrinho
-          `;
-          cartBtn.removeAttribute('disabled');
-          (cartBtn as HTMLElement).style.background = '';
-          (cartBtn as HTMLElement).style.cursor = '';
-          (cartBtn as HTMLElement).style.opacity = '';
-        }
-      }
-
-      // Render Modules
-      if (modulesList) {
-        if (modules.length === 0) {
-          modulesList.innerHTML =
-            '<p class="loading-msg">Nenhum módulo cadastrado ainda.</p>';
-        } else {
-          modulesList.innerHTML = '';
-          modules.forEach((mod, index) => {
-            const item = document.createElement('div');
-            item.className = 'module-item';
-            item.innerHTML = `
-              <span class="module-index">${(index + 1).toString().padStart(2, '0')}</span>
-              <span class="module-name">${mod.title}</span>
-            `;
-            modulesList.appendChild(item);
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error opening course modal:', error);
-      AppUI.showMessage('Erro ao carregar detalhes do curso.', 'error');
-      Home.closeCourseModal();
-    }
-  },
-
-  /**
-   * Fecha o modal de detalhes do curso
-   */
-  closeCourseModal: () => {
-    const modal = document.getElementById('course-modal');
-    if (modal) {
-      modal.classList.add('hidden');
-      document.body.style.overflow = ''; // Restore scroll
-    }
-  },
 };

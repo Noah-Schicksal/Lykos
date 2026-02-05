@@ -2,25 +2,25 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Certificado de Conclusão - Lykos</title>
 
     <!-- Apply theme immediately to prevent flash -->
     <script>
-      (function() {
-        const theme = localStorage.getItem('theme');
-        if (theme === 'light') {
-          document.documentElement.classList.add('light');
-        }
-      })();
+        (function () {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'light') {
+                document.documentElement.classList.add('light');
+            }
+        })();
     </script>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
     <style>
         :root {
             --primary: #5e17eb;
@@ -34,6 +34,20 @@
             --primary-dark: #4c1d95;
             --text-main: #ffffff;
             --border-light: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
         }
 
         /* Embed Mode Adjustments */
@@ -70,18 +84,6 @@
             display: none !important;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
-            min-height: 100vh;
-        }
-
         .cert-container {
             width: 100%;
             min-height: 100vh;
@@ -104,37 +106,10 @@
                 0 0 60px rgba(94, 23, 235, 0.3),
                 0 20px 40px rgba(0, 0, 0, 0.5),
                 inset 0 0 100px rgba(94, 23, 235, 0.05);
+            user-select: none;
         }
 
-        /* Decorative corners */
-        .certificate::before,
-        .certificate::after {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 2px solid var(--primary);
-        }
-
-        .certificate::before {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .certificate::after {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
-        }
-
-        .cert-logo {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
+        /* Decorative corners removed as per user request */
 
         .cert-company {
             font-family: 'Playfair Display', serif;
@@ -177,6 +152,7 @@
             color: var(--text-muted);
             z-index: 1;
             position: relative;
+            font-family: 'Playfair Display', serif;
         }
 
         .student-name {
@@ -190,19 +166,22 @@
             display: block;
             margin: 1.5rem 0;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
         }
 
         .course-name {
+            font-family: 'Playfair Display', serif;
             font-weight: 700;
-            color: var(--text-primary);
-            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.7rem;
         }
 
         .cert-footer {
             margin-top: 4rem;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
             align-items: flex-end;
             gap: 2rem;
             z-index: 1;
@@ -210,10 +189,12 @@
         }
 
         .signature {
+            grid-column: 2;
             text-align: center;
-            border-top: 2px solid var(--border-color);
             padding-top: 0.75rem;
-            flex: 1;
+            max-width: 300px;
+            margin: 0 auto;
+            user-select: none;
         }
 
         .signature p {
@@ -228,10 +209,10 @@
         }
 
         .hash-info {
+            grid-column: 3;
             font-size: 0.75rem;
             color: var(--text-muted);
             text-align: right;
-            flex: 1;
         }
 
         .hash-info p {
@@ -390,9 +371,7 @@
 </head>
 
 <body>
-
     <div class="cert-container">
-
         <div id="loading" class="loading">Validando certificado...</div>
 
         <div id="error-msg" class="error-msg hidden">
@@ -421,21 +400,18 @@
             </div>
 
             <footer class="cert-footer">
+                <div class="empty-spacer" style="grid-column: 1;"></div>
+
                 <div class="signature">
                     <p id="instructor-name">Instrutor</p>
                     <small>Instrutor Responsável</small>
-                </div>
-
-                <div class="signature">
-                    <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem;">Lykos</p>
-                    <small>Diretoria Acadêmica</small>
                 </div>
 
                 <div class="hash-info">
                     <p>Emitido em: <span id="issue-date">Data</span></p>
                     <p>Código de Validação:</p>
                     <strong id="cert-hash"
-                        style="color: var(--primary-light); font-size: 0.75rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
+                        style="color: var(--primary-light); font-size: 0.7rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
                 </div>
             </footer>
 
@@ -445,18 +421,10 @@
         </div>
 
         <!-- Floating Actions -->
-        <div class="cert-actions" id="cert-actions-container">
-            <button id="btn-download" class="btn-download">
-                <span class="material-symbols-outlined">print</span>
-                Imprimir / Salvar PDF
-            </button>
-        </div>
-
     </div>
 
     <!-- PDF Library -->
     <script src="js/libs/html2pdf.bundle.min.js"></script>
-
     <script src="js/certificate.js"></script>
 
     <script>
@@ -468,7 +436,9 @@
         }
 
         // Attach listener for the internal button
-        document.getElementById('btn-internal-print')?.addEventListener('click', printCertificate);
+        document
+            .getElementById('btn-internal-print')
+            ?.addEventListener('click', printCertificate);
 
         async function loadCertificate() {
             const params = new URLSearchParams(window.location.search);
@@ -482,7 +452,6 @@
             if (!hash) {
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error-msg').classList.remove('hidden');
-                document.getElementById('cert-actions').style.display = 'none';
                 return;
             }
 
@@ -504,7 +473,10 @@
                     updateText('course-title', cert.courseTitle);
                     updateText('instructor-name', cert.instructorName);
                     updateText('cert-hash', cert.certificateHash);
-                    updateText('issue-date', new Date(cert.issuedAt).toLocaleDateString('pt-BR'));
+                    updateText(
+                        'issue-date',
+                        new Date(cert.issuedAt).toLocaleDateString('pt-BR'),
+                    );
 
                     // Show content
                     document.getElementById('loading').classList.add('hidden');
@@ -516,10 +488,11 @@
                         setTimeout(() => {
                             const container = document.querySelector('.cert-container');
                             const certificate = document.getElementById('certificate');
-                            const scale = Math.min(
-                                container.offsetWidth / certificate.offsetWidth,
-                                container.offsetHeight / certificate.offsetHeight
-                            ) * 0.95;
+                            const scale =
+                                Math.min(
+                                    container.offsetWidth / certificate.offsetWidth,
+                                    container.offsetHeight / certificate.offsetHeight,
+                                ) * 0.95;
 
                             certificate.style.transform = `scale(${scale})`;
                         }, 100);
@@ -531,10 +504,10 @@
                 console.error('Error loading certificate:', error);
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('error-msg').classList.remove('hidden');
-                document.getElementById('cert-actions').style.display = 'none';
             }
         }
 
+        // Initialize loader
         loadCertificate();
     </script>
 </body>

@@ -32,6 +32,8 @@
   z-index: 100;
 }
 
+
+
 /* Desktop only - fixed positioning */
 @media (min-width: 1024px) {
   .sidebar {
@@ -62,33 +64,58 @@
   padding-right: 0.5rem;
 }
 
-/* Brand */
+/* Brand Section */
 .brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0 0.5rem;
-  position: relative;
+  gap: 1.25rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
 }
 
 .sidebar.collapsed .brand {
+  padding: 0.5rem;
   flex-direction: column;
-  padding: 0;
   gap: 1.5rem;
 }
 
-.brand-icon {
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+.brand-logo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.brand-logo img {
+  height: 25px;
+  /* Compact height as per reference */
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 15px rgba(94, 23, 235, 0.3));
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .brand-logo {
+  opacity: 0;
+  visibility: hidden;
+  width: 0;
+  padding: 0;
+}
+
+.sidebar.collapsed .brand-logo img {
+  display: none;
 }
 
 .brand-info {
   flex: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar.collapsed .brand-info {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-10px);
 }
 
 .brand-title {
@@ -237,12 +264,33 @@
 }
 
 .sidebar.collapsed .sidebar-footer {
-  opacity: 0;
-  pointer-events: none;
-  height: 0;
-  overflow: hidden;
+  padding: 1rem 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar.collapsed .sidebar-user-card {
+  padding: 0.5rem;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+}
+
+.sidebar.collapsed .sidebar-user-info,
+.sidebar.collapsed .sidebar-user-role {
+  display: none !important;
+}
+
+.sidebar.collapsed .sidebar-user-avatar {
   margin: 0;
-  padding: 0;
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar.collapsed .sidebar-user-menu-btn {
+  margin-left: 0;
+  margin-top: 0.5rem;
 }
 
 /* Sidebar User Card */
@@ -566,15 +614,84 @@
   overflow-y: auto;
   padding: 1.5rem 2rem;
   margin-left: 18rem;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Top Header */
+.main-content.sidebar-collapsed {
+  margin-left: 5.5rem;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* Top Header & Breadcrumb */
 .top-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 2rem;
   gap: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1rem;
+}
+
+.breadcrumb-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(94, 23, 235, 0.1);
+  border: 1px solid rgba(94, 23, 235, 0.2);
+  border-radius: 0.5rem;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  background: rgba(94, 23, 235, 0.2);
+  transform: scale(1.05);
+}
+
+.menu-btn.open .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.menu-btn .material-symbols-outlined {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb a:hover {
+  color: var(--primary);
+}
+
+.breadcrumb .material-symbols-outlined {
+  font-size: 1.25rem;
+  opacity: 0.5;
+}
+
+#breadcrumb-current {
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .header-actions {
@@ -697,6 +814,121 @@
 
 :root.light .header-btn {
   background-color: rgba(94, 23, 235, 0.03);
+}
+
+/* User Dropdown */
+.user-menu-container {
+  position: relative;
+}
+
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(94, 23, 235, 0.1);
+  border: 1px solid var(--border-med);
+  border-radius: 0.75rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.user-menu-btn:hover {
+  background-color: rgba(94, 23, 235, 0.15);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.user-menu-btn.open {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(94, 23, 235, 0.1);
+}
+
+.menu-arrow {
+  font-size: 1.25rem;
+  color: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.user-menu-btn.open .menu-arrow {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 200px;
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-med);
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+.user-dropdown.show {
+  display: flex;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(94, 23, 235, 0.05);
+  color: var(--primary);
+}
+
+.dropdown-item span:first-child {
+  font-size: 1.25rem;
+}
+
+.dropdown-item-danger {
+  color: #ef4444;
+}
+
+.dropdown-item-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+:root.light .user-dropdown {
+  background-color: white;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
 }
 
 .user-avatar-header {
@@ -1082,7 +1314,8 @@
 .courses-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 1.5rem;
+  /* Matched with certificates-grid */
 }
 
 @media (min-width: 640px) {
@@ -1457,32 +1690,7 @@
   color: var(--primary);
 }
 
-/* ===========================
-   Responsive Design
-   =========================== */
-@media (max-width: 768px) {
-  .sidebar {
-    display: none;
-  }
 
-  .main-content {
-    padding: 1rem;
-    margin-left: 0;
-  }
-
-  .top-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .search-wrapper {
-    max-width: 100%;
-  }
-
-  .progress-section {
-    flex-direction: column;
-  }
-}
 
 /* Main Content Views */
 .view-section {
@@ -2099,552 +2307,12 @@
   }
 }
 
-/* ============================================
-   MOBILE RESPONSIVENESS (320px+)
-   ============================================ */
-
-/* Tablet and Below (< 1024px) */
-@media (max-width: 1023px) {
-  .student-dashboard {
-    flex-direction: column;
-  }
-
-  /* Force sidebar off-screen on mobile */
-  .student-dashboard .sidebar {
-    position: fixed !important;
-    left: -280px !important;
-    top: 0;
-    height: 100vh;
-    width: 280px;
-    padding: 1.5rem;
-    z-index: 10000;
-    transition: left 0.3s ease;
-  }
-
-  /* Show sidebar when active */
-  .student-dashboard .sidebar.active {
-    left: 0 !important;
-  }
-
-  .main-content {
-    margin-left: 0 !important;
-    width: 100%;
-  }
-
-  .btn-toggle-sidebar {
-    display: flex !important;
-  }
-}
-
-/* Mobile Devices (< 768px) */
-@media (max-width: 767px) {
-
-  /* Sidebar Mobile Overlay - width already set in 1023px breakpoint */
-  .student-dashboard .sidebar {
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-  }
-
-  .sidebar.active::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
-
-  /* Header Adjustments */
-  .dashboard-header {
-    padding: 1rem;
-  }
-
-  .breadcrumb {
-    font-size: 0.75rem;
-  }
-
-  .header-actions {
-    gap: 0.5rem;
-  }
-
-  /* Welcome Section */
-  .welcome-title {
-    font-size: 1.75rem !important;
-  }
-
-  .courses-status {
-    font-size: 0.875rem;
-  }
-
-  /* Search and Filters */
-  .search-wrapper {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .search-container,
-  .category-filter {
-    width: 100%;
-  }
-
-  /* Course Cards Grid */
-  .courses-grid {
-    grid-template-columns: 1fr !important;
-    gap: 1rem;
-  }
-
-  .course-card {
-    padding: 1rem;
-  }
-
-  .course-cover {
-    height: 140px;
-  }
-
-  /* Certificates List */
-  .certificates-grid {
-    gap: 0.75rem !important;
-  }
-
-  .certificate-card {
-    padding: 1rem 1.25rem !important;
-    min-height: 70px !important;
-  }
-
-  .cert-card-title {
-    font-size: 1rem !important;
-  }
-
-  .cert-card-date {
-    font-size: 0.7rem;
-  }
-
-  .cert-card-hash {
-    font-size: 0.9rem !important;
-    margin-right: 0.75rem !important;
-  }
-
-  .btn-view-cert {
-    padding: 0.5rem 1rem !important;
-    font-size: 0.75rem !important;
-  }
-
-  /* Modal Adjustments */
-  .certificate-modal-container {
-    width: 95%;
-    max-height: 85vh;
-  }
-
-  .certificate-preview {
-    padding: 1rem;
-  }
-
-  .modal-footer {
-    padding: 1rem;
-    flex-direction: column;
-  }
-
-  .btn-auth-submit {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Auth Card */
-  .auth-container {
-    width: 90%;
-    max-width: 340px;
-  }
-
-  /* Section Headers */
-  .section-title {
-    font-size: 1.5rem;
-  }
-
-  .section-intro {
-    font-size: 0.875rem;
-  }
-}
-
-/* Extra Small Devices (< 480px) */
-@media (max-width: 479px) {
-
-  /* Further reduce sidebar width */
-  .student-dashboard .sidebar {
-    width: 260px !important;
-    left: -260px !important;
-  }
-
-  .student-dashboard .sidebar.active {
-    left: 0 !important;
-  }
-
-  .student-dashboard .sidebar.active::before {
-    left: 260px;
-  }
-
-  /* Header */
-  .dashboard-header {
-    padding: 0.75rem;
-  }
-
-  .breadcrumb {
-    font-size: 0.7rem;
-  }
-
-  .breadcrumb-separator {
-    margin: 0 0.25rem;
-  }
-
-  /* Welcome */
-  .welcome-title {
-    font-size: 1.5rem !important;
-  }
-
-  .courses-status {
-    font-size: 0.8rem;
-  }
-
-  /* Course Cards */
-  .course-card {
-    padding: 0.875rem;
-  }
-
-  .course-cover {
-    height: 120px;
-  }
-
-  .course-title {
-    font-size: 1rem;
-  }
-
-  .course-meta {
-    font-size: 0.75rem;
-  }
-
-  .btn-resume-course {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
-  }
-
-  /* Certificates */
-  .certificate-card {
-    padding: 0.875rem 1rem !important;
-    flex-wrap: wrap;
-  }
-
-  .cert-card-icon {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .cert-card-icon .material-symbols-outlined {
-    font-size: 1.25rem;
-  }
-
-  .cert-card-info {
-    margin-left: 1rem !important;
-  }
-
-  .cert-card-title {
-    font-size: 0.95rem !important;
-  }
-
-  .cert-card-footer {
-    width: 100%;
-    margin-top: 0.75rem;
-    justify-content: space-between;
-  }
-
-  .cert-card-hash {
-    font-size: 0.85rem !important;
-  }
-
-  /* Modal */
-  .modal-title {
-    font-size: 1.1rem;
-  }
-
-  .certificate-document {
-    padding: 20px;
-  }
-
-  .cert-title {
-    font-size: 32px;
-  }
-
-  .cert-user-name {
-    font-size: 24px;
-  }
-
-  .cert-course-name {
-    font-size: 18px;
-  }
-
-  /* Section Titles */
-  .section-title {
-    font-size: 1.25rem;
-  }
-}
-
-/* Ultra Small Devices (320px - 374px) */
-@media (max-width: 374px) {
-
-  /* Sidebar */
-  .student-dashboard .sidebar {
-    width: 240px !important;
-    left: -240px !important;
-  }
-
-  .student-dashboard .sidebar.active {
-    left: 0 !important;
-  }
-
-  .student-dashboard .sidebar.active::before {
-    left: 240px;
-  }
-
-  .brand-title {
-    font-size: 1rem;
-  }
-
-  .nav-text {
-    font-size: 0.875rem;
-  }
-
-  /* Header */
-  .welcome-title {
-    font-size: 1.25rem !important;
-  }
-
-  /* Cards */
-  .course-cover {
-    height: 100px;
-  }
-
-  .course-title {
-    font-size: 0.95rem;
-  }
-
-  /* Certificates */
-  .cert-card-title {
-    font-size: 0.9rem !important;
-  }
-
-  .cert-card-hash {
-    font-size: 0.75rem !important;
-    display: none;
-    /* Hide hash on very small screens */
-  }
-
-  .btn-view-cert {
-    padding: 0.4rem 0.8rem !important;
-    font-size: 0.7rem !important;
-  }
-
-  /* Modal */
-  .certificate-modal-container {
-    width: 98%;
-  }
-
-  .modal-header,
-  .modal-footer {
-    padding: 0.75rem;
-  }
-
-  .cert-title {
-    font-size: 28px;
-  }
-
-  .cert-user-name {
-    font-size: 20px;
-  }
-
-  .cert-course-name {
-    font-size: 16px;
-  }
-
-  .cert-body {
-    font-size: 16px;
-  }
-}
-
-/* Prevent horizontal scroll */
-@media (max-width: 1023px) {
-  body {
-    overflow-x: hidden;
-  }
-
-  .student-dashboard {
-    overflow-x: hidden;
-  }
-
-  .main-content {
-    overflow-x: hidden;
-  }
-}
-
-/* Certificate Modal Mobile Improvements */
-@media (max-width: 767px) {
-
-  /* Certificate Document Scaling */
-  .certificate-document {
-    padding: 20px;
-    font-size: 14px;
-  }
-
-  .cert-background {
-    border-width: 10px;
-  }
-
-  .cert-content {
-    padding: 20px;
-  }
-
-  .cert-logo {
-    font-size: 28px !important;
-  }
-
-  .cert-company {
-    font-size: 18px;
-  }
-
-  .cert-title {
-    font-size: 36px;
-  }
-
-  .cert-subtitle {
-    font-size: 14px;
-  }
-
-  .cert-body {
-    font-size: 16px;
-  }
-
-  .cert-user-name {
-    font-size: 24px;
-  }
-
-  .cert-course-name {
-    font-size: 18px;
-  }
-
-  .cert-footer .label {
-    font-size: 8px;
-  }
-
-  .cert-footer .value {
-    font-size: 10px;
-  }
-}
-
-@media (max-width: 479px) {
-
-  /* Further reduce certificate size */
-  .certificate-document {
-    padding: 15px;
-  }
-
-  .cert-content {
-    padding: 15px;
-  }
-
-  .cert-title {
-    font-size: 28px;
-  }
-
-  .cert-user-name {
-    font-size: 20px;
-  }
-
-  .cert-course-name {
-    font-size: 16px;
-  }
-
-  .cert-body {
-    font-size: 14px;
-  }
-
-  /* Modal buttons stack */
-  .modal-footer {
-    gap: 0.5rem;
-  }
-
-  .btn-auth-submit {
-    padding: 0.65rem 1.25rem;
-    font-size: 0.875rem;
-  }
-}
-
-@media (max-width: 374px) {
-
-  /* Ultra small certificate */
-  .certificate-document {
-    padding: 10px;
-  }
-
-  .cert-background {
-    border-width: 8px;
-  }
-
-  .cert-content {
-    padding: 10px;
-  }
-
-  .cert-logo {
-    font-size: 24px !important;
-  }
-
-  .cert-company {
-    font-size: 14px;
-  }
-
-  .cert-title {
-    font-size: 24px;
-  }
-
-  .cert-subtitle {
-    font-size: 12px;
-  }
-
-  .cert-user-name {
-    font-size: 18px;
-  }
-
-  .cert-course-name {
-    font-size: 14px;
-  }
-
-  .cert-body {
-    font-size: 12px;
-    line-height: 1.4;
-  }
-
-  .cert-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .cert-hash {
-    text-align: left;
-  }
-}
 
 /* Hamburger Menu Visibility Fix */
 /* Hide by default on desktop */
 .btn-toggle-sidebar,
 .sidebar-toggle-btn {
   display: none;
-}
-
-/* Show on mobile */
-@media (max-width: 1023px) {
-
-  .btn-toggle-sidebar,
-  .sidebar-toggle-btn {
-    display: flex !important;
-  }
 }
 
 /* Mobile Menu Button in Header */
@@ -2673,165 +2341,55 @@
   justify-content: center;
 }
 
-/* Show mobile menu button on tablets and phones */
-@media (max-width: 1023px) {
-  .mobile-menu-btn {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .breadcrumb-header {
-    display: flex;
-    align-items: center;
-  }
+/* Cart Badge */
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 8px rgba(94, 23, 235, 0.4);
 }
 
-/* Adjust breadcrumb spacing when mobile menu is visible */
-@media (max-width: 767px) {
-  .breadcrumb-header {
-    gap: 0.5rem;
-  }
-
-  .mobile-menu-btn {
-    padding: 0.5rem;
-  }
-
-  .mobile-menu-btn .material-symbols-outlined {
-    font-size: 1.25rem;
-  }
+/* User Badge Button */
+.btn-text-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(94, 23, 235, 0.1);
+  border: 1px solid rgba(94, 23, 235, 1) !important;
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* DEBUG: Force sidebar visibility on all mobile sizes */
-@media (max-width: 1023px) {
-
-  /* Ensure sidebar has proper base styles */
-  .student-dashboard .sidebar {
-    position: fixed !important;
-    top: 0 !important;
-    height: 100vh !important;
-    width: 280px !important;
-    padding: 1.5rem !important;
-    z-index: 10000 !important;
-    background-color: rgba(10, 10, 10, 0.95) !important;
-    transform: translateX(-100%) !important;
-    transition: transform 0.3s ease !important;
-  }
-
-  /* Show sidebar when active - using transform instead of left */
-  .student-dashboard .sidebar.active {
-    transform: translateX(0) !important;
-  }
-
-  /* Backdrop */
-  .student-dashboard .sidebar.active::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 280px;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
-  }
+.btn-text-user .material-symbols-outlined {
+  font-size: 1.25rem;
+  color: rgba(94, 23, 235, 1);
 }
 
-/* ============================================
-   MOBILE SIDEBAR - ICON ONLY MODE
-   ============================================ */
-
-/* Remove all previous mobile sidebar attempts and use simple icon-only approach */
-@media (max-width: 1023px) {
-
-  /* Hide mobile menu button - not needed anymore */
-  .mobile-menu-btn {
-    display: none !important;
-  }
-
-  /* Sidebar stays visible but compact */
-  .student-dashboard .sidebar {
-    position: fixed !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 70px !important;
-    height: 100vh !important;
-    padding: 1rem 0.5rem !important;
-    z-index: 1000 !important;
-    background-color: rgba(10, 10, 10, 0.95) !important;
-    transform: none !important;
-    transition: none !important;
-  }
-
-  /* Hide text labels, show only icons */
-  .sidebar .nav-text,
-  .sidebar .brand-title,
-  .sidebar .sidebar-user-name,
-  .sidebar .sidebar-user-role {
-    display: none !important;
-  }
-
-  /* Center icons */
-  .sidebar .nav-item {
-    justify-content: center !important;
-    padding: 0.75rem !important;
-  }
-
-  .sidebar .brand {
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-  }
-
-  .sidebar .brand-icon {
-    margin: 0 !important;
-  }
-
-  /* Hide toggle button inside sidebar */
-  .sidebar .sidebar-toggle-btn,
-  .sidebar .btn-toggle-sidebar {
-    display: none !important;
-  }
-
-  /* Adjust main content to account for icon sidebar */
-  .main-content {
-    margin-left: 70px !important;
-    width: calc(100% - 70px) !important;
-  }
-
-  /* User card at bottom - icon only */
-  .sidebar-user-card {
-    padding: 0.5rem !important;
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-
-  .sidebar-user-avatar {
-    width: 40px !important;
-    height: 40px !important;
-  }
-
-  .sidebar-user-menu-btn {
-    margin-top: 0.5rem !important;
-  }
+.user-display-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Extra small devices - even more compact */
-@media (max-width: 479px) {
-  .student-dashboard .sidebar {
-    width: 60px !important;
-  }
-
-  .main-content {
-    margin-left: 60px !important;
-    width: calc(100% - 60px) !important;
-  }
-
-  .sidebar .nav-item {
-    padding: 0.6rem !important;
-  }
-
-  .sidebar-user-avatar {
-    width: 35px !important;
-    height: 35px !important;
-  }
+:root.light .btn-text-user {
+  background: rgba(94, 23, 235, 0.08);
+  border-color: rgba(94, 23, 235, 1) !important;
+  color: var(--text-primary);
 }

@@ -49,10 +49,10 @@ export class ReviewService {
 
     // Cria ou atualiza avaliação
     async addOrUpdateReview(userId: string, courseId: string, data: CreateReviewDTO): Promise<Review> {
-        // Opcional: Verificar se aluno está matriculado.
+        // Verificar se o usuário está matriculado no curso
         const enrollment = this.enrollmentRepository.findEnrollment(userId, courseId);
         if (!enrollment) {
-            throw new ApplicationError('Apenas alunos matriculados podem avaliar este curso.');
+            throw new ApplicationError('Você precisa estar matriculado neste curso para poder avaliá-lo.');
         }
 
         const existingReview = this.reviewRepository.findByUserAndCourse(userId, courseId);
@@ -72,5 +72,10 @@ export class ReviewService {
             });
             return this.reviewRepository.save(review);
         }
+    }
+
+    // Deleta a avaliação do usuário para um curso
+    async deleteReview(userId: string, courseId: string): Promise<boolean> {
+        return this.reviewRepository.deleteByUserAndCourse(userId, courseId);
     }
 }

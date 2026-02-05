@@ -30,17 +30,21 @@ export const Cart = {
     /**
      * Add course to cart
      */
-    add: async (courseId: string): Promise<boolean> => {
+    add: async (courseId: string, showToast: boolean = true): Promise<boolean> => {
         try {
             await AppUI.apiFetch('/cart', {
                 method: 'POST',
                 body: JSON.stringify({ courseId })
             });
-            AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
+            if (showToast) {
+                AppUI.showMessage('Curso adicionado ao carrinho!', 'success');
+            }
             await Cart.updateBadge();
             return true;
         } catch (error: any) {
-            AppUI.showMessage(error.message || 'Erro ao adicionar ao carrinho', 'error');
+            if (showToast) {
+                AppUI.showMessage(error.message || 'Erro ao adicionar ao carrinho', 'error');
+            }
             return false;
         }
     },

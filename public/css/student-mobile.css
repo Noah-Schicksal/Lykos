@@ -5,10 +5,8 @@
 /* Force icon-only sidebar on ALL mobile devices */
 @media (max-width: 1023px) {
 
-    /* CRITICAL: Force sidebar to display and position */
-    body .student-dashboard .sidebar,
-    .student-dashboard .sidebar,
-    #sidebar.sidebar {
+    /* sidebar position and display */
+    .student-dashboard .sidebar {
         display: flex !important;
         position: fixed !important;
         left: 0 !important;
@@ -21,92 +19,242 @@
         justify-content: space-between !important;
         transform: none !important;
         transition: none !important;
+        border-right: 1px solid var(--border-light) !important;
+        background-color: rgba(10, 10, 10, 0.95) !important;
     }
 
-    /* Force hide all text elements */
+    /* Hide ALL text and branding logo as requested */
     .sidebar .nav-text,
     .sidebar .brand-title,
+    .sidebar .brand-subtitle,
     .sidebar .sidebar-user-name,
     .sidebar .sidebar-user-role,
-    .nav-text,
-    .brand-title,
-    .sidebar-user-name,
-    .sidebar-user-role {
+    .sidebar .brand-logo {
         display: none !important;
-        visibility: hidden !important;
+        visibility: hidden;
     }
 
     /* Center navigation items */
-    .sidebar .nav-item,
-    .nav-item {
-        justify-content: center !important;
-        padding: 0.75rem 0.5rem !important;
-        display: flex !important;
+    .sidebar .nav-item {
+        justify-content: center;
+        padding: 0.75rem 0.5rem;
+        display: flex;
     }
 
-    /* Stack brand vertically */
-    .sidebar .brand,
-    .brand {
-        flex-direction: column !important;
-        align-items: center !important;
-        padding: 0 !important;
-        display: flex !important;
+    /* Adjust brand container */
+    .sidebar .brand {
+        flex-direction: column;
+        align-items: center;
+        padding: 0;
+        gap: 0.5rem;
+        /* Reduced gap to move nav up */
+        margin-bottom: 1rem !important;
+        /* Reduced margin */
     }
 
-    /* Hide ALL toggle buttons */
-    .sidebar-toggle-btn,
-    .btn-toggle-sidebar,
-    .mobile-menu-btn,
-    .sidebar .sidebar-toggle-btn,
-    .sidebar .btn-toggle-sidebar {
+    /* Hide sidebar toggle button on mobile (sidebar is fixed mini) */
+    .sidebar #sidebar-toggle-btn {
         display: none !important;
-        visibility: hidden !important;
     }
 
-    /* Adjust main content */
-    .main-content,
+    /* Adjust main content - more "respiro" */
     .student-dashboard .main-content {
         margin-left: 70px !important;
         width: calc(100% - 70px) !important;
+        padding: 1.5rem !important;
+        /* Increased padding for breathing room */
+    }
+
+    /* Top Header Adjustments */
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    /* Filter and Search Centering */
+    .courses-filters {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 1rem !important;
+        width: 100% !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .filter-search,
+    .filter-select {
+        width: 100% !important;
+        max-width: 320px !important;
+        min-width: 0 !important;
+        /* Force remove min-width from student.css */
+        margin: 0 auto !important;
+    }
+
+    .filter-group {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .filter-search .search-input {
+        width: 100% !important;
+    }
+
+    /* Course card adjustments to match certificates */
+    .courses-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+        /* Slightly more gap like certificates */
+        padding: 0 1rem;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .course-card {
+        width: 100% !important;
+        max-width: 320px !important;
+        /* Match certificate card logic */
+        min-height: auto !important;
+        margin: 0 auto !important;
+        border-radius: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: hidden !important;
+    }
+
+    .course-cover {
+        height: 160px !important;
+        /* Fixed height for consistency */
+        width: 100% !important;
+    }
+
+    .course-body {
+        padding: 1.25rem !important;
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+
+    .course-title {
+        font-size: 1.125rem !important;
+        margin: 0 !important;
+        line-height: 1.4 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .course-meta {
+        font-size: 0.8rem !important;
+        margin: 0 !important;
+    }
+
+    .course-progress {
+        margin-top: 0.5rem !important;
+    }
+
+    .progress-percent {
+        font-size: 0.875rem !important;
     }
 
     /* User card compact */
-    .sidebar-user-card,
     .sidebar .sidebar-user-card {
-        flex-direction: column !important;
-        align-items: center !important;
-        padding: 0.5rem !important;
-        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        background: transparent;
+        border: none;
     }
 
     .sidebar-user-avatar {
-        width: 40px !important;
-        height: 40px !important;
+        width: 40px;
+        height: 40px;
     }
 
-    /* Course cards single column */
-    .courses-grid {
-        grid-template-columns: 1fr !important;
+    .sidebar-user-info {
+        display: none;
     }
 
-    /* Certificates single column */
-    .certificates-grid {
-        gap: 0.75rem !important;
+    .sidebar-user-menu-btn {
+        margin-top: 0.5rem;
     }
 }
 
-/* Very small screens */
-@media (max-width: 479px) {
-
-    body .student-dashboard .sidebar,
-    .student-dashboard .sidebar,
-    #sidebar.sidebar {
-        width: 60px !important;
+/* Very small screens & Mobile refinement */
+@media (max-width: 480px) {
+    .student-dashboard .sidebar {
+        width: 65px;
+        padding: 0.75rem 0.25rem !important;
     }
 
-    .main-content,
+    /* Move nav menu higher */
+    .sidebar .brand {
+        margin-bottom: 1rem !important;
+    }
+
+    .sidebar .nav-menu {
+        gap: 0.25rem !important;
+    }
+
+    /* Re-force stacking for user card area */
+    .sidebar .sidebar-user-card {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 0.5rem 0.25rem !important;
+        gap: 0.5rem !important;
+    }
+
+    .sidebar .sidebar-user-avatar {
+        width: 35px !important;
+        height: 35px !important;
+        margin: 0 !important;
+    }
+
+    .sidebar .sidebar-user-menu-btn {
+        margin: 0 !important;
+        padding: 0.25rem !important;
+    }
+
+    .student-dashboard .main-content {
+        margin-left: 65px !important;
+        width: calc(100% - 65px) !important;
+        padding: 1rem !important;
+        /* Slightly less padding on tiny screens */
+    }
+
+    /* Cards adjustments for 320px */
+    .courses-grid {
+        padding: 0 0.25rem !important;
+        gap: 1rem !important;
+    }
+}
+
+/* Specific 320px override for absolute precision */
+@media (max-width: 320px) {
+    .student-dashboard .sidebar {
+        width: 60px;
+    }
+
     .student-dashboard .main-content {
         margin-left: 60px !important;
         width: calc(100% - 60px) !important;
+        padding: 0.75rem !important;
+        /* Reduced padding to give inputs more room */
+    }
+
+    .sidebar .sidebar-user-avatar {
+        width: 30px !important;
+        height: 30px !important;
     }
 }

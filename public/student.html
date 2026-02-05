@@ -8,7 +8,7 @@
 
   <!-- Apply theme immediately to prevent flash -->
   <script>
-    (function() {
+    (function () {
       const theme = localStorage.getItem('theme');
       if (theme === 'light') {
         document.documentElement.classList.add('light');
@@ -37,15 +37,14 @@
       <div class="sidebar-content">
         <!-- Branding -->
         <div class="brand">
-          <div class="brand-icon">
-            <span class="material-symbols-outlined">code</span>
-          </div>
-          <div class="brand-info">
-            <h1 class="brand-title">Área do Aluno</h1>
-          </div>
-          <button id="btn-toggle-sidebar" class="sidebar-toggle-btn">
+          <!-- Sidebar Toggle Button -->
+          <button id="sidebar-toggle-btn" class="menu-btn" aria-label="Alternar menu">
             <span class="material-symbols-outlined">menu</span>
           </button>
+
+          <a href="/inicio" class="brand-logo">
+            <img src="assets/logo.svg" alt="Lykos Logo" />
+          </a>
         </div>
 
         <!-- Nav Menu -->
@@ -83,27 +82,38 @@
       <!-- Top Nav -->
       <header class="top-header">
         <div class="breadcrumb-header">
-          <!-- Mobile Menu Toggle -->
-          <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Abrir menu">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
-
-          <nav class="breadcrumb">
-            <a href="/inicio">Início</a>
-            <span class="separator">></span>
-            <span id="breadcrumb-current" class="current">Meus Cursos</span>
-          </nav>
+          <!-- Sidebar Toggle Button (replaces mobile-menu-toggle) -->
+          <!-- Removed as per instruction to move to sidebar -->
         </div>
         <div class="header-actions">
+          <!-- Shopping Cart -->
+          <button id="cart-toggle-btn" class="btn-icon" aria-label="Carrinho de compras">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            <span id="cart-count-badge" class="cart-badge" style="display:none">0</span>
+          </button>
+
           <!-- Theme Toggle -->
           <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
             <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
             <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
           </button>
 
-          <!-- User Avatar -->
-          <div id="user-avatar-btn" class="user-avatar">
-            <img id="user-avatar-img" alt="User" src="https://lh3.googleusercontent.com/a/default-user" />
+          <!-- User Profile Dropdown -->
+          <div class="user-menu-container">
+            <button id="user-info-btn" class="user-menu-btn">
+              <span id="user-display-name" class="menu-text">Estudante</span>
+              <span class="material-symbols-outlined menu-arrow">expand_more</span>
+            </button>
+            <div id="user-dropdown-menu" class="user-dropdown">
+              <button id="dropdown-profile" class="dropdown-item">
+                <span class="material-symbols-outlined">person</span>
+                <span>Perfil</span>
+              </button>
+              <button id="dropdown-logout" class="dropdown-item dropdown-item-danger">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Sair</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -277,6 +287,37 @@
       </div>
     </div>
   </div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cart-modal" class="cart-sidebar">
+    <div class="cart-sidebar-header">
+      <h3 class="cart-sidebar-title">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Seu Carrinho
+      </h3>
+      <button id="close-cart-btn" class="btn-icon">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div id="cart-items-list" class="cart-sidebar-content">
+      <!-- Items will be injected here -->
+      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
+    </div>
+
+    <div class="cart-sidebar-footer">
+      <div class="cart-total-row">
+        <span>Total:</span>
+        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
+      </div>
+      <button id="btn-cart-checkout" class="btn-checkout" disabled>
+        Finalizar Compra
+      </button>
+    </div>
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay"></div>
 
   <!-- Certificate Modal -->
   <div id="certificate-modal" class="modal-overlay hidden">

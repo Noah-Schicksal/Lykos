@@ -38,16 +38,25 @@ export class ReviewController {
             return ApiResponse.created(res, review, 'Avaliação enviada com sucesso');
         } catch (error) {
             if (error instanceof ApplicationError) {
-                if (error.message.includes('Apenas alunos')) return ApiResponse.forbidden(res, error.message);
+                if (error.message.includes('matriculado')) return ApiResponse.forbidden(res, error.message);
             }
             next(error);
         }
     }
 
-    // DELETE /reviews/:id (Mantido da estrutura antiga se necessário, mas foco é course reviews now)
-    delete = async (req: Request, res: Response) => {
-        // Implementação antiga ou placeholder se não for requisito agora
-        // Vou manter placeholder para não quebrar contrato se router antigo chamar.
-        return ApiResponse.noContent(res);
+    // DELETE /courses/:courseId/reviews (delete user's own review)
+    delete = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId = req.user.id;
+            const { id } = req.params as { id: string };
+
+            const deleted = await this.reviewService.deleteReview(userId, id);
+            if (!deleted) {
+                return ApiResponse.notFound(res, 'Avaliação não encontrada');
+            }
+            return ApiResponse.noContent(res);
+        } catch (error) {
+            next(error);
+        }
     }
 }

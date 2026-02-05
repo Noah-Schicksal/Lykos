@@ -13,6 +13,9 @@ export interface UIHelper {
   getPriceValue: (input: HTMLInputElement) => number;
 }
 
+// Track recently shown messages to prevent spam
+const recentMessages = new Set<string>();
+
 export const AppUI: UIHelper = {
   apiFetch: async (url: string, options: RequestInit = {}) => {
     console.log(`[API] ${url}`, options);
@@ -46,14 +49,32 @@ export const AppUI: UIHelper = {
         return null;
       }
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type');
+
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (e) {
+          console.error('[API] Failed to parse JSON response:', e);
+          throw new Error('Falha ao processar resposta do servidor.');
+        }
+      } else {
+        const text = await response.text();
+        console.warn('[API] Non-JSON response received:', text.substring(0, 100));
+        throw new Error('O servidor retornou um formato inesperado.');
+      }
 
       if (!response.ok) {
         // Handle Session Expiry - only if user was actually logged in
         if (response.status === 401) {
           // Check if user was logged in (token is in HTTP-only cookie)
           const hadSession = localStorage.getItem('auth_user');
-          if (hadSession && !sessionExpirationDispatched) {
+
+          // Check if this is a login request (invalid credentials)
+          const isLoginRequest = url.includes('/auth/login');
+
+          if (hadSession && !sessionExpirationDispatched && !isLoginRequest) {
             console.warn('[API] Session expired - dispatching event');
             sessionExpirationDispatched = true;
             window.dispatchEvent(new CustomEvent('session-expired'));
@@ -61,10 +82,18 @@ export const AppUI: UIHelper = {
             setTimeout(() => {
               sessionExpirationDispatched = false;
             }, 3000);
-          } else if (hadSession) {
+          } else if (hadSession && !isLoginRequest) {
             console.log('[API] Session expired event already dispatched');
           } else {
-            console.log('[API] Unauthorized (no active session)');
+            console.log('[API] Unauthorized (no active session or login failure)');
+          }
+
+          // Throw the actual error message from the server for login failures
+          // or standard session expired message for actual session expiration
+          if (isLoginRequest) {
+            throw new Error(data.message || data.error || 'Credenciais inválidas');
+          } else {
+            throw new Error('Sua sessão expirou. Faça login novamente.');
           }
         }
         throw new Error(data.message || data.error || 'Erro na requisição');
@@ -77,6 +106,16 @@ export const AppUI: UIHelper = {
   },
 
   showMessage: (msg: string, type: 'success' | 'error' | 'info') => {
+    // Prevent duplicate messages within 3 seconds
+    if (recentMessages.has(msg)) {
+      return;
+    }
+
+    recentMessages.add(msg);
+    setTimeout(() => {
+      recentMessages.delete(msg);
+    }, 3000);
+
     // 1. Ensure Toast Container Exists
     let container = document.querySelector('.toast-container');
     if (!container) {

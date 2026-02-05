@@ -5,11 +5,15 @@
 import { AppUI } from './utils/ui.js';
 import { Auth } from './modules/auth.js';
 import { Categories } from './modules/categories.js';
+import { Cart } from './modules/cart.js';
 import { initThemeToggle } from './theme-toggle.js';
 
 let allCourses: any[] = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize Auth
+    Auth.init();
+
     // Check if user is logged in
     const userStr = localStorage.getItem('auth_user');
     const user = userStr ? JSON.parse(userStr) : null;
@@ -36,6 +40,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Load dynamic courses
     await loadStudentCourses();
+
+    // Initialize Cart
+    Cart.updateBadge();
+    setupCartListeners();
 });
 
 /**
@@ -173,7 +181,7 @@ function setupCourseCardListeners() {
             const target = e.target as HTMLElement;
             if (!target.closest('.btn-resume-course')) {
                 const courseId = (card as HTMLElement).dataset.courseId;
-                if (courseId) window.location.href = `/aula/${courseId}`;
+                if (courseId) window.location.href = `/estudante/aula/${courseId}`;
             }
         });
     });
@@ -184,7 +192,7 @@ function setupCourseCardListeners() {
         button.addEventListener('click', (e) => {
             e.stopPropagation();
             const courseId = (button as HTMLElement).dataset.courseId;
-            if (courseId) window.location.href = `player.html?courseId=${courseId}`;
+            if (courseId) window.location.href = `/estudante/aula/${courseId}`;
         });
     });
 }
@@ -244,38 +252,37 @@ async function loadCategories() {
  * Sets up sidebar navigation and UI toggles
  */
 function setupNavigation() {
-    // Sidebar Toggle (inside sidebar)
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
+    // Unified Sidebar Toggle (header button)
     const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    const mainContent = document.querySelector('.main-content');
 
-    // Mobile Menu Toggle (in header)
-    const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+    if (sidebar && toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
 
-    if (sidebar) {
-        // Toggle from sidebar button
-        if (btnToggle) {
-            btnToggle.addEventListener('click', (e) => {
-                e.stopPropagation();
+            // Check if mobile (CSS can handle the visual difference but JS handles classes)
+            const isMobile = window.innerWidth < 1024;
+
+            if (isMobile) {
                 sidebar.classList.toggle('active');
-            });
-        }
+            } else {
+                sidebar.classList.toggle('collapsed');
+                mainContent?.classList.toggle('sidebar-collapsed');
+            }
 
-        // Toggle from mobile menu button in header
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                sidebar.classList.toggle('active');
-            });
-        }
+            // Toggle open state for rotation animation
+            toggleBtn.classList.toggle('open');
+        });
 
         // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (e) => {
             const target = e.target as HTMLElement;
             if (sidebar.classList.contains('active') &&
                 !sidebar.contains(target) &&
-                (!btnToggle || !btnToggle.contains(target)) &&
-                (!mobileMenuBtn || !mobileMenuBtn.contains(target))) {
+                !toggleBtn.contains(target)) {
                 sidebar.classList.remove('active');
+                toggleBtn.classList.remove('open');
             }
         });
     }
@@ -284,7 +291,7 @@ function setupNavigation() {
     const sidebarAvatarBtn = document.getElementById('sidebar-avatar-btn');
     if (sidebarAvatarBtn) {
         sidebarAvatarBtn.addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         });
     }
 
@@ -304,64 +311,80 @@ function setupNavigation() {
         });
     }
 
-    // --- Auth Card UI Listeners ---
-    const avatarBtn = document.getElementById('user-avatar-btn');
+    // --- User Dropdown ---
+    const userInfoBtn = document.getElementById('user-info-btn');
+    const dropdownMenu = document.getElementById('user-dropdown-menu');
     const authContainer = document.getElementById('auth-card-container');
-    const cardInner = document.getElementById('auth-card');
 
-    if (avatarBtn && authContainer) {
-        console.log('Avatar button and auth container found');
-        avatarBtn.addEventListener('click', (e) => {
-            console.log('Avatar button clicked');
+    if (userInfoBtn && dropdownMenu) {
+        userInfoBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            authContainer.classList.toggle('show');
-            const isShown = authContainer.classList.contains('show');
-            console.log('Auth container "show" class:', isShown);
-
-            // Refresh content when showing
-            if (isShown) {
-                Auth.updateAuthUI();
-            }
+            dropdownMenu.classList.toggle('show');
+            userInfoBtn.classList.toggle('open');
         });
 
         document.addEventListener('click', (e) => {
             if (
-                authContainer.classList.contains('show') &&
-                !authContainer.contains(e.target as Node) &&
-                !avatarBtn.contains(e.target as Node)
+                dropdownMenu.classList.contains('show') &&
+                !dropdownMenu.contains(e.target as Node) &&
+                !userInfoBtn.contains(e.target as Node)
             ) {
-                authContainer.classList.remove('show');
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
             }
         });
-    }
 
-    // Auth Card Action Handlers
-    document.getElementById('btn-logout')?.addEventListener('click', async () => {
-        const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
-        if (confirmed) {
-            await Auth.logout();
-            window.location.href = '/inicio';
+        // Dropdown Items
+        const dropdownProfile = document.getElementById('dropdown-profile');
+        const dropdownLogout = document.getElementById('dropdown-logout');
+
+        if (dropdownProfile) {
+            dropdownProfile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
+
+                // Ensure auth container is visible and show profile view
+                if (authContainer) {
+                    authContainer.classList.add('show');
+                    Auth.showProfileView();
+                }
+            });
         }
-    });
+
+        if (dropdownLogout) {
+            dropdownLogout.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.remove('show');
+                userInfoBtn.classList.remove('open');
+
+                const confirmed = await AppUI.promptModal('Sair da Conta', 'Tem certeza que deseja sair agora?');
+                if (confirmed) {
+                    await Auth.logout();
+                    window.location.href = '/inicio';
+                }
+            });
+        }
+    }
 
     document.getElementById('btn-my-learning')?.addEventListener('click', () => {
         authContainer?.classList.remove('show');
         // Redireciona para a página correta do dashboard do aluno
-        window.location.href = 'student.html';
+        window.location.href = '/estudante';
     });
 
     document.getElementById('btn-instructor-dash')?.addEventListener('click', () => {
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-create-course')?.addEventListener('click', () => {
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-manage-categories')?.addEventListener('click', (e) => {
         e.preventDefault();
         // Redirect to instructor dash for this for now as it needs complex templates
-        window.location.href = 'instructor.html';
+        window.location.href = '/professor';
     });
 
     document.getElementById('btn-view-profile')?.addEventListener('click', () => {
@@ -411,7 +434,7 @@ function setupNavigation() {
     const btnLogout = document.getElementById('btn-logout-sidebar');
     if (btnLogout) {
         btnLogout.addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = '/inicio';
         });
     }
 
@@ -550,6 +573,143 @@ function openCertificateModal(hash: string, title: string, date: string) {
     }
 
     modal?.classList.remove('hidden');
+}
+
+/**
+ * --- Shopping Cart UI Logic ---
+ */
+
+/**
+ * Sets up cart event listeners
+ */
+function setupCartListeners() {
+    const cartToggleBtn = document.getElementById('cart-toggle-btn');
+    const cartModal = document.getElementById('cart-modal');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+
+    if (cartToggleBtn && cartModal) {
+        cartToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cartModal.classList.toggle('show');
+            if (cartModal.classList.contains('show')) {
+                renderCartItems();
+            }
+        });
+
+        if (closeCartBtn) {
+            closeCartBtn.addEventListener('click', () => {
+                cartModal.classList.remove('show');
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (
+                cartModal.classList.contains('show') &&
+                !cartModal.contains(e.target as Node) &&
+                !cartToggleBtn.contains(e.target as Node)
+            ) {
+                cartModal.classList.remove('show');
+            }
+        });
+    }
+
+    // Handle Checkout Button
+    const checkoutBtn = document.getElementById('btn-cart-checkout');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', async () => {
+            const confirm = await AppUI.promptModal(
+                'Finalizar Compra',
+                'Deseja confirmar a compra dos itens no carrinho?'
+            );
+            if (confirm) {
+                const success = await Cart.checkout();
+                if (success) {
+                    cartModal?.classList.remove('show');
+                    // Refresh courses to reflect new ownership if needed
+                    loadStudentCourses();
+                }
+            }
+        });
+    }
+
+    // Listen for cart-updated events
+    window.addEventListener('cart-updated', () => {
+        Cart.updateBadge();
+        if (cartModal?.classList.contains('show')) {
+            renderCartItems();
+        }
+    });
+}
+
+/**
+ * Renderiza os itens do carrinho no modal
+ */
+async function renderCartItems() {
+    const listContainer = document.getElementById('cart-items-list');
+    const totalPriceEl = document.getElementById('cart-total-price');
+    const checkoutBtn = document.getElementById('btn-cart-checkout') as HTMLButtonElement;
+
+    if (!listContainer || !totalPriceEl) return;
+
+    listContainer.innerHTML = '<div class="cart-empty-msg">Carregando itens...</div>';
+
+    try {
+        const items = await Cart.getCart();
+
+        if (items.length === 0) {
+            listContainer.innerHTML = '<div class="cart-empty-msg">Seu carrinho está vazio.</div>';
+            totalPriceEl.textContent = 'R$ 0,00';
+            if (checkoutBtn) checkoutBtn.disabled = true;
+            return;
+        }
+
+        let total = 0;
+        listContainer.innerHTML = items.map(item => {
+            total += item.price;
+            const price = new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(item.price);
+
+            const hasImage = item.coverImageUrl && item.coverImageUrl.trim() !== '';
+            const imageHTML = hasImage
+                ? `<img src="${item.coverImageUrl}" class="cart-item-img" alt="${item.title}" onerror="this.onerror=null;this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div class=\\'cart-item-img-placeholder\\'><span class=\\'material-symbols-outlined\\'>image</span></div>');">`
+                : `<div class="cart-item-img-placeholder"><span class="material-symbols-outlined">image</span></div>`;
+
+            return `
+                <div class="cart-item">
+                    ${imageHTML}
+                    <div class="cart-item-info">
+                        <h4 class="cart-item-title">${item.title}</h4>
+                        <div class="cart-item-price">${price}</div>
+                    </div>
+                    <button class="btn-remove-cart" data-id="${item.courseId}" title="Remover">
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem">delete</span>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        totalPriceEl.textContent = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(total);
+        if (checkoutBtn) checkoutBtn.disabled = false;
+
+        // Add remove listeners
+        const removeBtns = listContainer.querySelectorAll('.btn-remove-cart');
+        removeBtns.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const courseId = (btn as HTMLElement).dataset.id!;
+                const success = await Cart.remove(courseId);
+                if (success) {
+                    renderCartItems(); // Refresh
+                }
+            });
+        });
+    } catch (error) {
+        listContainer.innerHTML = '<div class="cart-empty-msg" style="color: #ef4444">Erro ao carregar carrinho.</div>';
+    }
 }
 
 /**

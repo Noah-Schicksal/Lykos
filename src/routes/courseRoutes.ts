@@ -57,6 +57,8 @@ courseRoutes.put(
   '/:id',
   authMiddleware,
   roleMiddleware(['INSTRUCTOR']),
+  upload.single('coverImage'),
+  validateCourseCreate,
   (req, res) => courseController.update(req, res),
 );
 courseRoutes.delete(
@@ -80,6 +82,26 @@ courseRoutes.post(
   '/:id/certificate',
   authMiddleware,
   (req, res, next) => certificationController.issueCertificate(req, res, next)
+);
+
+// Review routes (sub-resource of courses)
+import { ReviewController } from '../controllers/reviewController';
+const reviewController = new ReviewController();
+
+courseRoutes.get('/:id/reviews', (req, res, next) =>
+  reviewController.list(req, res, next)
+);
+courseRoutes.post(
+  '/:id/reviews',
+  authMiddleware,
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
+  (req, res, next) => reviewController.create(req, res, next)
+);
+courseRoutes.delete(
+  '/:id/reviews',
+  authMiddleware,
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
+  (req, res, next) => reviewController.delete(req, res, next)
 );
 
 export default courseRoutes;

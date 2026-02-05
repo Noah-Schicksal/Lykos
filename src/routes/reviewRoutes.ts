@@ -13,13 +13,13 @@ reviewRoutes.get('/courses/:id/reviews', (req, res, next) =>
 reviewRoutes.post(
   '/courses/:id/reviews',
   authMiddleware,
-  roleMiddleware(['STUDENT']),
+  roleMiddleware(['STUDENT', 'INSTRUCTOR']),
   (req, res, next) => reviewController.create(req, res, next),
 );
 
 // Operação direta em reviews
-reviewRoutes.delete('/:id', authMiddleware, (req, res) =>
-  reviewController.delete(req, res),
+reviewRoutes.delete('/:id', authMiddleware, (req, res, next) =>
+  reviewController.delete(req, res, next),
 );
 
 export default reviewRoutes;
