@@ -99,10 +99,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnLogout) {
         btnLogout.addEventListener('click', async () => {
-            if (window.confirm('Deseja realmente sair?')) {
-                await Auth.logout();
-                window.location.href = '/';
-            }
+            await Auth.logout();
+            window.location.href = '/';
         });
     }
 

@@ -106,31 +106,10 @@
                 0 0 60px rgba(94, 23, 235, 0.3),
                 0 20px 40px rgba(0, 0, 0, 0.5),
                 inset 0 0 100px rgba(94, 23, 235, 0.05);
+            user-select: none;
         }
 
-        /* Decorative corners */
-        .certificate::before,
-        .certificate::after {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            border: 2px solid var(--primary);
-        }
-
-        .certificate::before {
-            top: 20px;
-            left: 20px;
-            border-right: none;
-            border-bottom: none;
-        }
-
-        .certificate::after {
-            bottom: 20px;
-            right: 20px;
-            border-left: none;
-            border-top: none;
-        }
+        /* Decorative corners removed as per user request */
 
         .cert-company {
             font-family: 'Playfair Display', serif;
@@ -187,7 +166,6 @@
             display: block;
             margin: 1.5rem 0;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
         }
 
         .course-name {
@@ -202,8 +180,8 @@
 
         .cert-footer {
             margin-top: 4rem;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
             align-items: flex-end;
             gap: 2rem;
             z-index: 1;
@@ -211,10 +189,12 @@
         }
 
         .signature {
+            grid-column: 2;
             text-align: center;
-            border-top: 2px solid var(--border-color);
             padding-top: 0.75rem;
-            flex: 1;
+            max-width: 300px;
+            margin: 0 auto;
+            user-select: none;
         }
 
         .signature p {
@@ -229,10 +209,10 @@
         }
 
         .hash-info {
+            grid-column: 3;
             font-size: 0.75rem;
             color: var(--text-muted);
             text-align: right;
-            flex: 1;
         }
 
         .hash-info p {
@@ -420,21 +400,18 @@
             </div>
 
             <footer class="cert-footer">
+                <div class="empty-spacer" style="grid-column: 1;"></div>
+
                 <div class="signature">
                     <p id="instructor-name">Instrutor</p>
                     <small>Instrutor Responsável</small>
-                </div>
-
-                <div class="signature">
-                    <p style="font-family: 'Playfair Display', serif; font-size: 1.2rem;">Lykos</p>
-                    <small>Diretoria Acadêmica</small>
                 </div>
 
                 <div class="hash-info">
                     <p>Emitido em: <span id="issue-date">Data</span></p>
                     <p>Código de Validação:</p>
                     <strong id="cert-hash"
-                        style="color: var(--primary-light); font-size: 0.75rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
+                        style="color: var(--primary-light); font-size: 0.7rem; display: block; margin-top: 0.25rem; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">HASH</strong>
                 </div>
             </footer>
 
