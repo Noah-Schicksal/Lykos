@@ -166,6 +166,10 @@
             display: block;
             margin: 1.5rem 0;
             padding-bottom: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
         }
 
         .course-name {
@@ -176,6 +180,12 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             font-size: 1.7rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         .cert-footer {
