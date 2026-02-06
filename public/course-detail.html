@@ -5,468 +5,89 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lykos | Detalhes do Curso</title>
+  <meta name="description"
+    content="Veja os detalhes do curso, módulos, aulas e avaliações. Lykos - Plataforma de Cursos Online." />
 
-  <!-- Apply theme immediately to prevent flash -->
+  <!-- Theme initialization script - must be before CSS to prevent flash -->
   <script>
     (function () {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'light') {
-        document.documentElement.classList.add('light');
-      }
-      // Detect when Material Symbols font is loaded
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(function () {
-          document.documentElement.classList.add('fonts-loaded');
-        });
-      } else {
-        // Fallback for browsers without font loading API
-        setTimeout(function () {
-          document.documentElement.classList.add('fonts-loaded');
-        }, 500);
-      }
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
     })();
   </script>
 
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
-
-  <!-- Stylesheet -->
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/toast.css" />
   <link rel="stylesheet" href="css/course-detail.css" />
-  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icon visibility (before fonts load) -->
+  <style>
+    .material-symbols-outlined {
+      visibility: hidden;
+    }
+
+    .fonts-loaded .material-symbols-outlined {
+      visibility: visible;
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <!-- Open Drawer Button (only visible when logged in and drawer closed) -->
-      <button id="open-drawer-btn" class="btn-icon menu-btn hidden"
-        style="display: flex; align-items: center; justify-content: center">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
+  <!-- Toast container -->
+  <div id="toast-container" class="toast-container"></div>
 
-      <a href="/" class="logo">
-        <img src="assets/logo.svg" alt="Lykos Logo" class="logo-img" />
-      </a>
-
-      <!-- Right Actions -->
-      <div class="nav-actions">
-        <div class="cart-wrapper">
-          <button id="cart-toggle-btn" class="btn-icon">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            <span id="cart-count-badge" class="badge-count">0</span>
-          </button>
-        </div>
-        <!-- Theme Toggle -->
-        <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
-          <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
-          <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
-        </button>
-
-        <button id="user-avatar-btn" class="user-menu-btn hidden">
-          <span class="material-symbols-outlined">login</span>
-          <span class="menu-text">Login</span>
-        </button>
-        <!-- User Info Button (only visible when logged in) -->
-        <div class="user-menu-container">
-          <button id="user-info-btn" class="user-menu-btn hidden">
-            <span id="user-display-name" class="menu-text">Usuário</span>
-            <span class="material-symbols-outlined menu-arrow">expand_more</span>
-          </button>
-          <div id="user-dropdown-menu" class="user-dropdown">
-            <button id="dropdown-profile" class="dropdown-item">
-              <span class="material-symbols-outlined">person</span>
-              <span>Perfil</span>
-            </button>
-            <button id="dropdown-logout" class="dropdown-item dropdown-item-danger">
-              <span class="material-symbols-outlined">logout</span>
-              <span>Sair</span>
-            </button>
-          </div>
-        </div>
-      </div>
+  <!-- App root - everything is rendered here via JavaScript -->
+  <div id="app-root">
+    <!-- Loading state while JS initializes -->
+    <div class="loading-container"
+      style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <div class="loading-spinner" style="
+          width: 48px;
+          height: 48px;
+          border: 3px solid var(--border-primary);
+          border-top-color: var(--primary);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        "></div>
     </div>
-  </nav>
-
-  <!-- Main Content -->
-  <!-- Main Content -->
-  <main class="course-detail-container">
-    <div class="course-detail-layout">
-      <!-- Content Area -->
-      <div class="course-main-content">
-        <nav class="breadcrumb">
-          <a href="/" class="breadcrumb-link"><span class="material-symbols-outlined"
-              style="font-size: 1rem; vertical-align: middle;">arrow_back</span> Voltar</a>
-          <span class="breadcrumb-separator">/</span>
-          <span id="breadcrumb-category" class="breadcrumb-tag loading-text-inline">Carregando...</span>
-        </nav>
-
-        <header class="course-header">
-          <h1 id="course-title" class="course-title-main loading-text-inline">Carregando título...</h1>
-
-          <div class="course-meta-top">
-            <div id="rating-meta-item" class="meta-item">
-              <span class="material-symbols-outlined star-icon">star</span>
-              <span id="course-rating" class="rating-value">--</span>
-            </div>
-            <div class="meta-item">
-              <span class="material-symbols-outlined">person</span>
-              <span>Criado por <strong id="course-instructor" class="loading-text-inline">Carregando...</strong></span>
-            </div>
-            <div class="meta-item">
-              <span class="material-symbols-outlined">event</span>
-              <span>Criado em <span id="course-created-date" class="loading-text-inline">Carregando...</span></span>
-            </div>
-          </div>
-        </header>
-
-        <section class="learning-outcomes">
-          <h2 class="section-title-alt">O que você vai aprender</h2>
-
-          <!-- Course Description Text -->
-          <p id="course-description" class="learning-description-text">
-            Carregando descrição do curso...
-          </p>
-
-          <!-- Learning Items Grid -->
-          <div id="learning-list" class="learning-grid">
-            <!-- Learning items will be populated dynamically from course description -->
-            <p class="loading-text">Carregando...</p>
-          </div>
-        </section>
-
-        <section id="course-content-section" class="course-content-section">
-          <div class="content-header">
-            <h2 class="section-title-alt">Conteúdo do Curso</h2>
-            <div class="content-meta">
-              <span id="module-count">0 módulos</span> •
-              <span id="class-count">0 aulas</span>
-            </div>
-          </div>
-
-          <div id="modules-accordion" class="modules-accordion">
-            <!-- Modules will be injected here -->
-            <p class="loading-text">Carregando conteúdo...</p>
-          </div>
-        </section>
-
-        <!-- Reviews Section -->
-        <section id="reviews-section" class="reviews-section">
-          <div class="reviews-header">
-            <h2 class="section-title-alt">Avaliações</h2>
-            <div class="reviews-summary">
-              <div class="reviews-summary-rating">
-                <span class="material-symbols-outlined star-icon-large">star</span>
-                <span id="reviews-average" class="reviews-average-value">--</span>
-              </div>
-              <span id="reviews-count" class="reviews-count">0 avaliações</span>
-            </div>
-          </div>
-
-          <!-- Review Form (only for enrolled students) -->
-          <div id="review-form-container" class="review-form-container hidden">
-            <h3 class="review-form-title">Sua Avaliação</h3>
-            <form id="review-form" class="review-form">
-              <div class="star-rating-input">
-                <span class="rating-label">Nota:</span>
-                <div id="star-rating-selector" class="star-rating-selector">
-                  <button type="button" class="star-btn" data-rating="1">
-                    <span class="material-symbols-outlined">star</span>
-                  </button>
-                  <button type="button" class="star-btn" data-rating="2">
-                    <span class="material-symbols-outlined">star</span>
-                  </button>
-                  <button type="button" class="star-btn" data-rating="3">
-                    <span class="material-symbols-outlined">star</span>
-                  </button>
-                  <button type="button" class="star-btn" data-rating="4">
-                    <span class="material-symbols-outlined">star</span>
-                  </button>
-                  <button type="button" class="star-btn" data-rating="5">
-                    <span class="material-symbols-outlined">star</span>
-                  </button>
-                </div>
-                <span id="selected-rating-text" class="selected-rating-text">Selecione</span>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="review-comment">Comentário (opcional)</label>
-                <textarea id="review-comment" class="form-textarea" rows="3"
-                  placeholder="Compartilhe sua experiência com o curso..."></textarea>
-              </div>
-              <button type="submit" class="btn-submit-review">
-                <span class="material-symbols-outlined">send</span>
-                Enviar Avaliação
-              </button>
-            </form>
-          </div>
-
-          <!-- Reviews List -->
-          <div id="reviews-list" class="reviews-list">
-            <p class="loading-text">Carregando avaliações...</p>
-          </div>
-
-          <!-- Reviews Pagination -->
-          <div id="reviews-pagination" class="reviews-pagination"></div>
-        </section>
-
-        <!-- Instructor section removed - will be added when backend provides instructor details -->
-      </div>
-
-      <!-- Sidebar Area -->
-      <aside class="course-sidebar">
-        <div class="sidebar-card">
-          <div class="sidebar-image-container">
-            <div class="sidebar-img-placeholder">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <polyline points="21 15 16 10 5 21" />
-              </svg>
-            </div>
-            <img id="course-sidebar-img" src="" alt="Capa do Curso" class="sidebar-course-img" style="display: none;">
-          </div>
-
-          <div class="sidebar-content">
-            <div class="price-container">
-              <div class="price-values">
-                <span id="course-price" class="current-price loading-text-inline loading-price">Carregando...</span>
-              </div>
-            </div>
-
-            <div id="course-slots" class="slots-container">
-              <span class="material-symbols-outlined">groups</span>
-              <span id="slots-info" class="loading-text-inline loading-compact">Carregando vagas...</span>
-            </div>
-
-            <div class="action-buttons" style="display: none;">
-              <button id="btn-buy-now" class="btn-primary-large">Comprar agora</button>
-              <button id="btn-add-to-cart" class="btn-secondary-large">Adicionar ao carrinho</button>
-            </div>
-
-            <div class="sidebar-footer-actions">
-              <button id="btn-share-course" class="btn-link-sidebar">COMPARTILHAR</button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <!-- Drawer Overlay -->
-  <div class="drawer-overlay"></div>
-
-  <!-- User Drawer -->
-  <div id="user-drawer" class="user-drawer">
-    <div class="user-drawer-header">
-      <button id="menu-drawer-btn" class="btn-icon menu-toggle-btn">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
-    </div>
-
-    <div class="user-drawer-content">
-      <!-- Back to Home Button (only on course detail page) -->
-      <div class="drawer-section">
-        <a href="/inicio" class="drawer-item"
-          style="background: var(--primary-gradient); color: white; font-weight: 600;">
-          <span class="material-symbols-outlined">home</span>
-          Voltar para Home
-        </a>
-      </div>
-
-      <!-- Profile Section with Accordion -->
-      <div class="drawer-section">
-        <button id="drawer-profile-toggle" class="drawer-section-header">
-          <span class="drawer-section-title">
-            <span class="material-symbols-outlined">person</span>
-            Perfil
-          </span>
-          <span class="material-symbols-outlined drawer-chevron">expand_more</span>
-        </button>
-        <div id="drawer-profile-panel" class="drawer-accordion-panel">
-          <!-- View Mode -->
-          <div id="drawer-profile-view">
-            <div class="drawer-profile-info">
-              <div class="drawer-avatar">
-                <span class="material-symbols-outlined">account_circle</span>
-              </div>
-              <div class="drawer-info-row">
-                <p id="drawer-user-name" class="drawer-user-name">
-                  Nome do Usuário
-                </p>
-              </div>
-              <div class="drawer-info-row">
-                <span class="drawer-info-label">EMAIL</span>
-                <p id="drawer-user-email" class="drawer-user-email">
-                  email@exemplo.com
-                </p>
-              </div>
-              <div class="drawer-info-row">
-                <span class="drawer-info-label">FUNÇÃO</span>
-                <span id="drawer-user-role" class="drawer-role-badge">Aluno</span>
-              </div>
-            </div>
-            <div class="drawer-profile-actions">
-              <button id="drawer-edit-profile" class="drawer-btn primary">
-                <span class="material-symbols-outlined">edit</span>
-                Editar Perfil
-              </button>
-              <button id="drawer-delete-account" class="drawer-btn danger">
-                <span class="material-symbols-outlined">delete</span>
-                Excluir Conta
-              </button>
-            </div>
-          </div>
-
-          <!-- Edit Mode (Hidden by default) -->
-          <div id="drawer-profile-edit" class="hidden" style="padding: 0 0.5rem">
-            <div style="
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  margin-bottom: 1rem;
-                ">
-              <h4 style="margin: 0; color: var(--text-primary)">
-                Editar Perfil
-              </h4>
-              <button id="drawer-cancel-edit" class="btn-icon" type="button">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <form id="profile-edit-form" novalidate>
-              <div class="form-group">
-                <label class="form-label" style="font-size: 0.7rem">Nome</label>
-                <input id="edit-name" type="text" class="form-input" placeholder="Seu nome"
-                  style="font-size: 0.85rem" />
-              </div>
-              <div class="form-group">
-                <label class="form-label" style="font-size: 0.7rem">Email</label>
-                <input id="edit-email" type="email" class="form-input" placeholder="seu@email.com"
-                  style="font-size: 0.85rem" />
-              </div>
-              <div class="form-group">
-                <label class="form-label" style="font-size: 0.7rem">Nova Senha</label>
-                <div class="password-wrapper">
-                  <input id="edit-password" type="password" class="form-input" placeholder="Opcional"
-                    style="font-size: 0.85rem" />
-                  <button type="button" class="btn-toggle-password" data-target="edit-password">
-                    <span class="material-symbols-outlined">visibility</span>
-                  </button>
-                </div>
-              </div>
-              <button type="submit" class="drawer-btn primary"
-                style="width: 100%; justify-content: center; margin-top: 1rem">
-                Salvar
-              </button>
-            </form>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Management Section (Instructors only) -->
-      <div id="drawer-management-section" class="drawer-section hidden">
-        <div class="drawer-section-label">Gerenciamento</div>
-        <a href="/professor" class="drawer-item">
-          <span class="material-symbols-outlined">dashboard</span>
-          Painel do Professor
-        </a>
-        <button id="drawer-categories-toggle" class="drawer-section-header">
-          <span class="drawer-section-title">
-            <span class="material-symbols-outlined">category</span>
-            Categorias
-          </span>
-          <span class="material-symbols-outlined drawer-chevron">expand_more</span>
-        </button>
-        <div id="drawer-categories-panel" class="drawer-accordion-panel">
-          <form id="category-create-form" class="category-form">
-            <div class="form-group">
-              <label class="form-label">Nome da Nova Categoria</label>
-              <div class="category-input-group">
-                <input id="new-category-name" type="text" class="form-input" placeholder="ex: Dev Web" required />
-                <button type="submit" class="btn-add">
-                  <span class="material-symbols-outlined">add</span>
-                </button>
-              </div>
-            </div>
-          </form>
-          <div class="drawer-categories-wrapper">
-            <label class="form-label">Categorias Existentes</label>
-            <div id="categories-list" class="categories-list">
-              <p class="loading-text">Carregando...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- My Learning Section -->
-      <div class="drawer-section">
-        <div class="drawer-section-label">Meu Aprendizado</div>
-        <a href="/estudante" class="drawer-item">
-          <span class="material-symbols-outlined">school</span>
-          Meus Cursos
-        </a>
-      </div>
-    </div>
-
-    <div class="user-drawer-footer">
-      <button id="drawer-logout" class="drawer-btn logout">
-        <span class="material-symbols-outlined">logout</span>
-        Sair
-      </button>
-    </div>
+    <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
   </div>
 
-  <!-- Footer -->
-  <footer class="home-footer">
-    <div class="home-footer-content">
-      <p class="home-footer-text">
-        © 2026 Lykos. Todos os direitos reservados.
-      </p>
-    </div>
-  </footer>
+  <!-- Main script module -->
+  <script type="module" src="js/course-detail/main.js"></script>
 
-  <!-- Auth Card Container -->
-  <div id="auth-card-container" class="auth-container">
-    <!-- Reusing same structure from index.html for auth -->
-  </div>
-
-  <!-- Shopping Cart Sidebar -->
-  <div id="cart-modal" class="cart-sidebar">
-    <div class="cart-sidebar-header">
-      <h3 class="cart-sidebar-title">
-        <span class="material-symbols-outlined">shopping_cart</span>
-        Seu Carrinho
-      </h3>
-      <button id="close-cart-btn" class="btn-icon">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <div id="cart-items-list" class="cart-sidebar-content">
-      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
-    </div>
-
-    <div class="cart-sidebar-footer">
-      <div class="cart-total-row">
-        <span>Total:</span>
-        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
-      </div>
-      <button id="btn-cart-checkout" class="btn-checkout" disabled>
-        Finalizar Compra
-      </button>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script type="module" src="js/course-detail.js"></script>
+  <!-- Font loading detection -->
+  <script>
+    if (document.fonts) {
+      document.fonts.ready.then(function () {
+        document.documentElement.classList.add('fonts-loaded');
+      });
+    } else {
+      setTimeout(function () {
+        document.documentElement.classList.add('fonts-loaded');
+      }, 100);
+    }
+  </script>
 </body>
 
 </html>

@@ -1,0 +1,15 @@
+/**
+ * Footer component
+ */
+
+import { el } from '../utils/dom.js';
+
+export function renderFooter(): HTMLElement {
+    return el('footer', { className: 'home-footer' },
+        el('div', { className: 'home-footer-content' },
+            el('p', { className: 'home-footer-text' },
+                '© 2026 Lykos. Todos os direitos reservados.'
+            )
+        )
+    );
+}
