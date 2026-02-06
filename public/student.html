@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard do Aluno | Lykos.eng</title>
+  <title>Dashboard do Aluno | Lykos</title>
 
   <!-- Apply theme immediately to prevent flash -->
   <script>
@@ -20,6 +20,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
+
+  <!-- Preload Material Symbols to reduce FOUT -->
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="https://fonts.gstatic.com/s/materialsymbolsoutlined/v205/kJEhBvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oFsLjBuVY.woff2" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
     rel="stylesheet" />
 
@@ -29,322 +33,35 @@
   <link rel="stylesheet" href="css/student.css" />
   <link rel="stylesheet" href="css/student-mobile.css" />
   <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+
+  <!-- Icon visibility (before fonts load) -->
+  <style>
+    .material-symbols-outlined {
+      visibility: hidden;
+    }
+
+    .fonts-loaded .material-symbols-outlined {
+      visibility: visible;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="student-dashboard">
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-content">
-        <!-- Branding -->
-        <div class="brand">
-          <!-- Sidebar Toggle Button -->
-          <button id="sidebar-toggle-btn" class="menu-btn" aria-label="Alternar menu">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
+  <div id="app-root"></div>
+  <script type="module" src="js/student/main.js"></script>
 
-          <a href="/inicio" class="brand-logo">
-            <img src="assets/logo.svg" alt="Lykos Logo" />
-          </a>
-        </div>
-
-        <!-- Nav Menu -->
-        <nav class="nav-menu">
-          <a href="#" id="nav-courses" class="nav-item active">
-            <span class="material-symbols-outlined">school</span>
-            <span class="nav-text">Meus Cursos</span>
-          </a>
-          <a href="#" id="nav-certificates" class="nav-item">
-            <span class="material-symbols-outlined">verified</span>
-            <span class="nav-text">Certificados</span>
-          </a>
-        </nav>
-      </div>
-
-      <!-- Sidebar Footer -->
-      <div class="sidebar-footer">
-        <div class="sidebar-user-card">
-          <div class="sidebar-user-avatar">
-            <span class="material-symbols-outlined">account_circle</span>
-          </div>
-          <div class="sidebar-user-info">
-            <p class="sidebar-user-name" id="sidebar-user-name">Aluno</p>
-            <p class="sidebar-user-role">Estudante</p>
-          </div>
-          <button class="sidebar-user-menu-btn" id="sidebar-avatar-btn" aria-label="Voltar para o início">
-            <span class="material-symbols-outlined">home</span>
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-      <!-- Top Nav -->
-      <header class="top-header">
-        <div class="breadcrumb-header">
-          <!-- Sidebar Toggle Button (replaces mobile-menu-toggle) -->
-          <!-- Removed as per instruction to move to sidebar -->
-        </div>
-        <div class="header-actions">
-          <!-- Shopping Cart -->
-          <button id="cart-toggle-btn" class="btn-icon" aria-label="Carrinho de compras">
-            <span class="material-symbols-outlined">shopping_cart</span>
-            <span id="cart-count-badge" class="cart-badge" style="display:none">0</span>
-          </button>
-
-          <!-- Theme Toggle -->
-          <button class="btn-icon" id="theme-toggle" aria-label="Alternar tema">
-            <span class="material-symbols-outlined theme-icon dark-icon">dark_mode</span>
-            <span class="material-symbols-outlined theme-icon light-icon">light_mode</span>
-          </button>
-
-          <!-- User Profile Dropdown -->
-          <div class="user-menu-container">
-            <button id="user-info-btn" class="user-menu-btn">
-              <span id="user-display-name" class="menu-text">Estudante</span>
-              <span class="material-symbols-outlined menu-arrow">expand_more</span>
-            </button>
-            <div id="user-dropdown-menu" class="user-dropdown">
-              <button id="dropdown-profile" class="dropdown-item">
-                <span class="material-symbols-outlined">person</span>
-                <span>Perfil</span>
-              </button>
-              <button id="dropdown-logout" class="dropdown-item dropdown-item-danger">
-                <span class="material-symbols-outlined">logout</span>
-                <span>Sair</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Page Heading -->
-      <section class="page-heading">
-        <h1 id="welcome-title" class="page-title">
-          Bem-vindo de volta, Aluno!
-        </h1>
-        <p id="courses-status" class="page-subtitle">
-          Continue sua jornada no mundo do código.
-        </p>
-      </section>
-
-      <!-- My Courses Section -->
-      <div id="courses-view" class="view-section">
-        <div class="courses-achievements">
-          <div class="my-courses">
-            <div class="section-header">
-              <h2 class="section-title">Meus Cursos</h2>
-            </div>
-
-            <!-- Filters and Search -->
-            <div class="courses-filters">
-              <div class="filter-group">
-                <label class="filter-label">Filtrar por</label>
-                <select id="category-filter" class="filter-select">
-                  <option value="">Todas Categorias</option>
-                  <option disabled>Carregando...</option>
-                </select>
-              </div>
-              <div class="filter-search">
-                <span class="material-symbols-outlined search-icon">search</span>
-                <input id="course-search-input" class="search-input" placeholder="Pesquisar meus cursos..."
-                  type="text" />
-              </div>
-            </div>
-
-            <!-- Courses Grid -->
-            <div id="courses-grid" class="courses-grid">
-              <!-- Courses are rendered here dynamically -->
-              <div class="col-span-full py-20 text-center">
-                <p class="text-slate-500">Carregando seus cursos...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Certificates View -->
-      <div id="certificates-view" class="view-section hidden">
-        <div class="courses-achievements">
-          <div class="my-courses" style="flex: 1">
-            <div class="section-header">
-              <h2 class="section-title">Certificados</h2>
-            </div>
-            <div class="section-intro mb-6">
-              <p class="text-muted">Aqui estão as conquistas que você alcançou. Parabéns pela dedicação!</p>
-            </div>
-            <div id="certificates-grid" class="certificates-grid">
-              <!-- Certificates are rendered here dynamically -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-
-  <!-- Auth Card Container -->
-  <div id="auth-card-container" class="auth-container perspective-1000">
-    <div id="auth-card" class="auth-card">
-      <!-- Logged In View -->
-      <div id="auth-logged-in" class="auth-face auth-logged-in">
-        <div class="user-avatar-large">
-          <span class="material-symbols-outlined">account_circle</span>
-        </div>
-        <h3 id="user-name-display" class="user-name">Nome do Usuário</h3>
-        <p id="user-email-display" class="user-email">user@example.com</p>
-        <div id="user-role-badge" class="role-badge">Aluno</div>
-
-        <div class="dashboard-actions">
-          <button id="btn-my-learning" class="btn-dashboard">
-            <span class="material-symbols-outlined">school</span> Meus Cursos
-          </button>
-          <button id="btn-instructor-dash" class="btn-dashboard hidden">
-            <span class="material-symbols-outlined">dashboard</span> Painel do
-            Instrutor
-          </button>
-          <button id="btn-view-profile" class="btn-dashboard">
-            <span class="material-symbols-outlined">person</span> Ver Perfil
-          </button>
-          <button id="btn-logout" class="btn-dashboard btn-logout">
-            <span class="material-symbols-outlined">logout</span> Sair
-          </button>
-        </div>
-      </div>
-
-      <!-- Profile View -->
-      <div id="auth-profile-view" class="auth-face hidden">
-        <div class="view-header">
-          <h3 class="auth-title">Perfil</h3>
-          <button id="btn-back-from-profile" class="btn-icon">
-            <span class="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
-
-        <div class="user-avatar-large">
-          <span class="material-symbols-outlined">account_circle</span>
-        </div>
-
-        <div class="profile-info">
-          <div class="info-item">
-            <label class="form-label">Nome</label>
-            <p id="profile-name-display" class="info-value">
-              Nome do Usuário
-            </p>
-          </div>
-          <div class="info-item">
-            <label class="form-label">Email</label>
-            <p id="profile-email-display" class="info-value">
-              user@example.com
-            </p>
-          </div>
-          <div class="info-item">
-            <label class="form-label">Função</label>
-            <p id="profile-role-display" class="info-value">Aluno</p>
-          </div>
-        </div>
-
-        <div class="profile-actions">
-          <button id="btn-edit-profile" class="btn-submit">
-            <span class="material-symbols-outlined">edit</span> Editar Perfil
-          </button>
-          <button id="btn-delete-account" class="btn-delete">
-            <span class="material-symbols-outlined">delete</span> Excluir
-            Conta
-          </button>
-        </div>
-      </div>
-
-      <!-- Profile Edit -->
-      <div id="auth-profile-edit" class="auth-face hidden">
-        <div class="view-header">
-          <h3 class="auth-title">Editar Perfil</h3>
-          <button id="btn-cancel-edit" class="btn-icon">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-
-        <form id="profile-edit-form">
-          <div class="form-group">
-            <label class="form-label">Nome</label>
-            <input id="edit-name" type="text" class="form-input" placeholder="Seu nome" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input id="edit-email" type="email" class="form-input" placeholder="your.email@example.com" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nova Senha (deixe em branco para manter a atual)</label>
-            <div class="password-wrapper">
-              <input id="edit-password" type="password" class="form-input" placeholder="••••••••" />
-              <button type="button" class="btn-toggle-password" data-target="edit-password">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-            </div>
-          </div>
-          <button type="submit" class="btn-submit">Salvar Alterações</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- Shopping Cart Sidebar -->
-  <div id="cart-modal" class="cart-sidebar">
-    <div class="cart-sidebar-header">
-      <h3 class="cart-sidebar-title">
-        <span class="material-symbols-outlined">shopping_cart</span>
-        Seu Carrinho
-      </h3>
-      <button id="close-cart-btn" class="btn-icon">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <div id="cart-items-list" class="cart-sidebar-content">
-      <!-- Items will be injected here -->
-      <div class="cart-empty-msg">Seu carrinho está vazio.</div>
-    </div>
-
-    <div class="cart-sidebar-footer">
-      <div class="cart-total-row">
-        <span>Total:</span>
-        <span id="cart-total-price" class="cart-total-price">R$ 0,00</span>
-      </div>
-      <button id="btn-cart-checkout" class="btn-checkout" disabled>
-        Finalizar Compra
-      </button>
-    </div>
-  </div>
-
-  <!-- Drawer Overlay -->
-  <div class="drawer-overlay"></div>
-
-  <!-- Certificate Modal -->
-  <div id="certificate-modal" class="modal-overlay hidden">
-    <div class="certificate-modal-container">
-      <div class="modal-header">
-        <h3 class="modal-title">Visualizar Certificado</h3>
-        <button id="close-cert-modal" class="btn-icon" aria-label="Fechar modal">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="modal-body" style="padding: 0; overflow: hidden; height: 75vh;">
-        <iframe id="certificate-iframe" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-      </div>
-      <div class="modal-footer" style="justify-content: center; align-items: center;">
-        <button id="btn-modal-print" class="btn-auth-submit" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">
-          <span class="material-symbols-outlined"
-            style="font-size: 1.2rem; vertical-align: middle; margin-right: 0.5rem;">print</span>
-          Imprimir / Salvar PDF
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/theme-toggle.js"></script>
-  <script type="module" src="js/studentDashboard.js"></script>
+  <!-- Font loading detection -->
+  <script>
+    if (document.fonts) {
+      document.fonts.ready.then(function () {
+        document.documentElement.classList.add('fonts-loaded');
+      });
+    } else {
+      setTimeout(function () {
+        document.documentElement.classList.add('fonts-loaded');
+      }, 100);
+    }
+  </script>
 </body>
 
 </html>
