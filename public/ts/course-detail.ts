@@ -933,6 +933,32 @@ function checkIfUserIsCreator(course: Course) {
  */
 let actionButtonsInitialized = false;
 
+/**
+ * Animate cart badge when item is added
+ */
+function animateCartBadge() {
+  const badge = document.getElementById('cart-count-badge');
+  if (!badge) return;
+
+  // Add pulse animation
+  badge.style.animation = 'none';
+  setTimeout(() => {
+    badge.style.animation = 'badge-pulse 0.5s ease-out';
+  }, 10);
+}
+
+/**
+ * Check if course is already in cart
+ */
+async function isCourseInCart(courseId: string): Promise<boolean> {
+  try {
+    const items = await Cart.getCart();
+    return items.some(item => item.courseId === courseId);
+  } catch (error) {
+    return false;
+  }
+}
+
 function setupActionButtons(courseId: string) {
   // Prevent multiple initializations
   if (actionButtonsInitialized) {
@@ -943,6 +969,14 @@ function setupActionButtons(courseId: string) {
   const btnAddToCart = document.getElementById('btn-add-to-cart');
 
   if (btnAddToCart) {
+    // Check if course is already in cart on load
+    isCourseInCart(courseId).then(inCart => {
+      if (inCart) {
+        btnAddToCart.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2rem;">check_circle</span> Já no carrinho';
+        btnAddToCart.classList.add('btn-in-cart');
+      }
+    });
+
     // Remove any existing listeners by cloning the button
     const newBtnAddToCart = btnAddToCart.cloneNode(true) as HTMLElement;
     btnAddToCart.parentNode?.replaceChild(newBtnAddToCart, btnAddToCart);
@@ -954,7 +988,16 @@ function setupActionButtons(courseId: string) {
       // Disable button temporarily to prevent double clicks
       const btn = e.currentTarget as HTMLButtonElement;
       if (btn.disabled) return;
+
+      // Check if already in cart
+      const alreadyInCart = await isCourseInCart(courseId);
+      if (alreadyInCart) {
+        AppUI.showMessage('Este curso já está no seu carrinho!', 'info');
+        return;
+      }
+
       btn.disabled = true;
+      const originalHTML = btn.innerHTML;
 
       try {
         if (!localStorage.getItem('auth_user')) {
@@ -962,12 +1005,29 @@ function setupActionButtons(courseId: string) {
           return;
         }
 
+        // Show loading state
+        btn.innerHTML = '<span class="material-symbols-outlined spin" style="font-size: 1.2rem;">sync</span> Adicionando...';
+
         await Cart.add(courseId);
-      } finally {
-        // Re-enable button after a short delay
+
+        // Animate badge
+        animateCartBadge();
+
+        // Show success feedback
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2rem;">check_circle</span> Adicionado!';
+        btn.classList.add('btn-success-feedback');
+
+        // Reset after delay
         setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 1.2rem;">check_circle</span> Já no carrinho';
+          btn.classList.remove('btn-success-feedback');
+          btn.classList.add('btn-in-cart');
           btn.disabled = false;
-        }, 1000);
+        }, 2000);
+      } catch (error) {
+        // Reset on error
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
       }
     });
   }
@@ -984,7 +1044,22 @@ function setupActionButtons(courseId: string) {
       // Disable button temporarily to prevent double clicks
       const btn = e.currentTarget as HTMLButtonElement;
       if (btn.disabled) return;
+
+      // Check if already in cart
+      const alreadyInCart = await isCourseInCart(courseId);
+      if (alreadyInCart) {
+        // If already in cart, just open cart modal
+        const cartModal = document.getElementById('cart-modal');
+        if (cartModal) {
+          cartModal.classList.add('show');
+          document.body.style.overflow = 'hidden';
+          renderCartItems();
+        }
+        return;
+      }
+
       btn.disabled = true;
+      const originalHTML = btn.innerHTML;
 
       try {
         if (!localStorage.getItem('auth_user')) {
@@ -992,9 +1067,15 @@ function setupActionButtons(courseId: string) {
           return;
         }
 
+        // Show loading state
+        btn.innerHTML = '<span class="material-symbols-outlined spin" style="font-size: 1.2rem;">sync</span> Processando...';
+
         // Add to cart silently (no toast)
         const success = await Cart.add(courseId, false);
         if (success) {
+          // Animate badge
+          animateCartBadge();
+
           AppUI.showMessage('Curso adicionado! Finalize sua compra no carrinho.', 'success');
 
           // Open cart modal to show the item
@@ -1006,6 +1087,8 @@ function setupActionButtons(courseId: string) {
           }
         }
       } finally {
+        // Reset button
+        btn.innerHTML = originalHTML;
         // Re-enable button after a short delay
         setTimeout(() => {
           btn.disabled = false;
